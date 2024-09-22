@@ -17,7 +17,7 @@ android {
     val properties = Properties().apply {
         load(FileInputStream("${rootDir}/local.properties"))
     }
-    val apiTestAddr = properties["api_addr_test"] ?: ""
+    val apiRoot = properties["api_root"] ?: ""
 
     defaultConfig {
         applicationId = "com.example.knutice"
@@ -31,7 +31,7 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "API_TEST_ADDR", "\"$apiTestAddr\"")
+        buildConfigField("String", "API_ROOT", "\"$apiRoot\"")
     }
 
     buildTypes {
