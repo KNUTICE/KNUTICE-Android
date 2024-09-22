@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">KNUTICE</string>
+    <string name="general_news">일반소식</string>
+    <string name="academic_news">학사공지</string>
+    <string name="scholarship_news">장학안내</string>
+    <string name="event_news">행사안내</string>
+</resources>
