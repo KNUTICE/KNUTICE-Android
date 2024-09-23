@@ -91,7 +91,13 @@ dependencies {
 
     // Dagger Hilt for Dependency Injection
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)       // With Compose Navigation
     kapt(libs.hilt.android.compiler)
+
+    // Retrofit 2
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
 }
 
 // Allow references to generated code
