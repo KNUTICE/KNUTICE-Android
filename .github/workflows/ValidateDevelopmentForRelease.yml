@@ -20,5 +20,13 @@ jobs:
       - name: Change permissions of Wrapper
         run: chmod +x ./gradlew
 
+      - name: Decode BASEURL
+        env:
+          BASEURL: ${{ secrets.BASEURL }}
+        run: echo BASEURL="$BASEURL" > ./local.properties
+
+      - name: Clean Project
+        run: ./gradlew clean
+
       - name: Build with Gradle
         run: ./gradlew build
