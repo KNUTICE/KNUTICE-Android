@@ -18,6 +18,8 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +29,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.doyoonkim.knutice.domain.Notice
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.notificationType1
 import com.doyoonkim.knutice.ui.theme.notificationType2
@@ -34,12 +38,16 @@ import com.doyoonkim.knutice.ui.theme.notificationType3
 import com.doyoonkim.knutice.ui.theme.notificationType4
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
+import com.doyoonkim.knutice.viewModel.CategorizedNotificationViewModel
 import com.example.knutice.R
 
 @Composable
 fun CategorizedNotification(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: CategorizedNotificationViewModel = hiltViewModel()
 ) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Column(
         modifier = modifier.verticalScroll(
             rememberScrollState(0)
@@ -50,7 +58,7 @@ fun CategorizedNotification(
         NotificationPreviewList (
             listTitle = stringResource(R.string.general_news),
             titleColor = MaterialTheme.colorScheme.notificationType1,
-            contents = listOf("First", "Second", "Third")
+            contents = uiState.notificationGeneral
         ) {
             // TODO: onMoreClicked
         }
@@ -58,7 +66,7 @@ fun CategorizedNotification(
         NotificationPreviewList(
             listTitle = stringResource(R.string.academic_news),
             titleColor = MaterialTheme.colorScheme.notificationType2,
-            contents = listOf("First", "Second", "Third")
+            contents = uiState.notificationAcademic
         ) {
             // TODO: onMoreClicked
         }
@@ -66,7 +74,7 @@ fun CategorizedNotification(
         NotificationPreviewList(
             listTitle = stringResource(R.string.scholarship_news),
             titleColor = MaterialTheme.colorScheme.notificationType3,
-            contents = listOf("First", "Second", "Third")
+            contents = uiState.notificationScholarship
         ) {
             // TODO: onMoreClicked
         }
@@ -74,7 +82,7 @@ fun CategorizedNotification(
         NotificationPreviewList(
             listTitle = stringResource(R.string.event_news),
             titleColor = MaterialTheme.colorScheme.notificationType4,
-            contents = listOf("First", "Second", "Third")
+            contents = uiState.notificationEvent
         ) {
             // TODO: onMoreClicked
         }
@@ -87,7 +95,7 @@ fun NotificationPreviewList(
     modifier: Modifier = Modifier,
     listTitle: String = "List Title goes here",
     titleColor: Color = Color.Unspecified,
-    contents: List<String> = listOf(),
+    contents: List<Notice> = listOf(),
     onMoreClicked: () -> Unit = {  }
 ) {
     Column(
@@ -120,7 +128,10 @@ fun NotificationPreviewList(
             )
         }
         contents.forEach { content ->
-            NotificationPreviewContainer(notificationTitle = content) {  }
+            NotificationPreviewContainer(
+                notificationTitle = content.title ?: "Unknown",
+                notificationInfo = "${content.departName} ${content.timestamp}" ?: "Unknown"
+            ) {  }
         }
     }
 }
