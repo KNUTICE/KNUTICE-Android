@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.doyoonkim.knutice.domain.FetchTopThreeNoticeByCategory
 import com.doyoonkim.knutice.domain.Notice
-import com.doyoonkim.knutice.domain.NoticeCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -24,10 +22,12 @@ class CategorizedNotificationViewModel @Inject constructor(
     private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory
 ) : ViewModel() {
     init {
-        fetchTopThreeNotice(NoticeCategory.GENERAL)
-        fetchTopThreeNotice(NoticeCategory.ACADEMIC)
-        fetchTopThreeNotice(NoticeCategory.SCHOLARSHIP)
-        fetchTopThreeNotice(NoticeCategory.EVENT)
+        CoroutineScope(Dispatchers.IO).launch {
+            fetchTopThreeGeneralNotice()
+            fetchTopThreeAcademicNotice()
+            fetchTopThreeScholarshipNotice()
+            fetchTopThreeEventNotice()
+        }
     }
 
     private val fileName = "CategorizedNotificationViewModel"
@@ -52,44 +52,84 @@ class CategorizedNotificationViewModel @Inject constructor(
         }
     }
 
-    fun fetchTopThreeNotice(category: NoticeCategory) {
-        CoroutineScope(Dispatchers.IO).launch {
-            fetchTopThreeNoticeUseCase.invoke(category)
-                .flowOn(Dispatchers.IO)
-                .map { Result.success(it) }
-                .catch { emit(Result.failure(it)) }
-                .collectLatest { result ->
-                    result.fold(
-                        onSuccess = {
-                            when (category) {
-                                NoticeCategory.GENERAL -> {
-                                    updateState(
-                                        updatedNotificationGeneral = listOf(it.notice1!!, it.notice2!!, it.notice3!!)
-                                    )
-                                }
-                                NoticeCategory.ACADEMIC -> {
-                                    updateState(
-                                        updatedNotificationAcademic = listOf(it.notice1!!, it.notice2!!, it.notice3!!)
-                                    )
-                                }
-                                NoticeCategory.SCHOLARSHIP -> {
-                                    updateState(
-                                        updatedNotificationScholarship = listOf(it.notice1!!, it.notice2!!, it.notice3!!)
-                                    )
-                                }
-                                NoticeCategory.EVENT -> {
-                                    updateState(
-                                        updatedNotificationEvent = listOf(it.notice1!!, it.notice2!!, it.notice3!!)
-                                    )
-                                }
-                            }
-                        },
-                        onFailure =  {
-                            Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
-                        }
-                    )
-                }
-        }
+    suspend fun fetchTopThreeGeneralNotice() {
+        fetchTopThreeNoticeUseCase.fetchTopThreeGeneralNotice()
+            .map { Result.success(it) }
+            .catch { emit(Result.failure(it)) }
+            .collectLatest { result ->
+                result.fold(
+                    onSuccess = {
+                        updateState(
+                            updatedNotificationGeneral = listOf(
+                                it.notice1!!, it.notice2!!, it.notice3!!
+                            )
+                        )
+                    },
+                    onFailure = {
+                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
+                    }
+                )
+            }
+    }
+
+    suspend fun fetchTopThreeAcademicNotice() {
+        fetchTopThreeNoticeUseCase.fetchTopThreeAcademicNotice()
+            .map{ Result.success(it) }
+            .catch { emit(Result.failure(it)) }
+            .collectLatest { result ->
+                result.fold(
+                    onSuccess = {
+                        updateState(
+                            updatedNotificationAcademic = listOf(
+                                it.notice1!!, it.notice2!!, it.notice3!!
+                            )
+                        )
+                    },
+                    onFailure = {
+                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
+                    }
+                )
+            }
+    }
+
+    suspend fun fetchTopThreeScholarshipNotice() {
+        fetchTopThreeNoticeUseCase.fetchTopThreeScholarshipNotice()
+            .map { Result.success(it) }
+            .catch { emit(Result.failure(it)) }
+            .collectLatest { result ->
+                result.fold(
+                    onSuccess = {
+                        updateState(
+                            updatedNotificationScholarship = listOf(
+                                it.notice1!!, it.notice2!!, it.notice3!!
+                            )
+                        )
+                    },
+                    onFailure = {
+                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
+                    }
+                )
+            }
+    }
+
+    suspend fun fetchTopThreeEventNotice() {
+        fetchTopThreeNoticeUseCase.fetchTopThreeEventNotice()
+            .map { Result.success(it) }
+            .catch { emit(Result.failure(it)) }
+            .collectLatest { result ->
+                result.fold(
+                    onSuccess = {
+                        updateState(
+                            updatedNotificationEvent = listOf(
+                                it.notice1!!, it.notice2!!, it.notice3!!
+                            )
+                        )
+                    },
+                    onFailure = {
+                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
+                    }
+                )
+            }
     }
 
 }
