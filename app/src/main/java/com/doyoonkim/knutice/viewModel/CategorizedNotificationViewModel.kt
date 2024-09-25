@@ -136,8 +136,8 @@ class CategorizedNotificationViewModel @Inject constructor(
 
 data class CategorizedNotificationState(
     val isDisplayed: Boolean = false,
-    val notificationGeneral: List<Notice> = listOf(),
-    val notificationAcademic: List<Notice> = listOf(),
-    val notificationScholarship: List<Notice> = listOf(),
-    val notificationEvent: List<Notice> = listOf()
+    val notificationGeneral: List<Notice> = listOf(Notice(), Notice(), Notice()),
+    val notificationAcademic: List<Notice> = listOf(Notice(), Notice(), Notice()),
+    val notificationScholarship: List<Notice> = listOf(Notice(), Notice(), Notice()),
+    val notificationEvent: List<Notice> = listOf(Notice(), Notice(), Notice())
 )

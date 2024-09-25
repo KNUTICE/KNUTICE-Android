@@ -26,3 +26,6 @@ val TitleBlack = Color(0xFF000000)
 val TitleWhite = Color(0xFFFFFFFF)
 
 val SubtitleAny = Color(0xFF787879)
+
+val backgroundGray = Color(0xFF3C3C3C)
+val backgroundLightGray = Color(0xFF888888)
