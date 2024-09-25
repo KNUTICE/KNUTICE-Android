@@ -5,4 +5,5 @@
     <string name="academic_news">학사공지</string>
     <string name="scholarship_news">장학안내</string>
     <string name="event_news">행사안내</string>
+    <string name="btn_more">더보기</string>
 </resources>
