@@ -1,10 +1,16 @@
 package com.doyoonkim.knutice.model
 
+import com.doyoonkim.knutice.domain.NoticeDummySource
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /*
@@ -19,21 +25,27 @@ class NoticeLocalRepository @Inject constructor(
 ) {
     private var localData: TopThreeNotices? = null
 
-    fun getTopThreeNotice(): Flow<TopThreeNotices> {
-        return flow<TopThreeNotices> {
-            if (localData?.result?.resultCode == 200) {
-                emit(localData!!)
-            } else {
-                val response = remoteSource.getTopThreeNotice(test = "").also {
-                    localData = it
-                }
-                if (response?.result?.resultCode == 200) {
-                    emit(response)
+    fun getTopThreeNotice(isDummy: Boolean = false): Flow<TopThreeNotices> {
+        if (isDummy) {
+            return channelFlow {
+                trySend(async { NoticeDummySource.getTopThreeNoticeDummy() }.await())
+                close()
+            }.flowOn(Dispatchers.IO)
+        } else {
+            return flow<TopThreeNotices> {
+                if (localData?.result?.resultCode == 200) {
+                    emit(localData!!)
                 } else {
-                    emit(TopThreeNotices())
+                    val response = remoteSource.getTopThreeNotice().also {
+                        localData = it
+                    }
+                    if (response.result?.resultCode == 200) {
+                        emit(response)
+                    } else {
+                        emit(TopThreeNotices())
+                    }
                 }
-            }
-        }.flowOn(Dispatchers.IO)
+            }.flowOn(Dispatchers.IO)
+        }
     }
-
 }

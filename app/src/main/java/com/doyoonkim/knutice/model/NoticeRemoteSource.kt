@@ -14,7 +14,7 @@ class NoticeRemoteSource @Inject constructor() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    suspend fun getTopThreeNotice(test: String = ""): TopThreeNotices? {
+    suspend fun getTopThreeNotice(): TopThreeNotices {
         Log.d("NoticeRemoteSource", "Start retrofit service")
         return retrofit.create(KnuticeService::class.java).run {
             this.getTopThreeNotice()
