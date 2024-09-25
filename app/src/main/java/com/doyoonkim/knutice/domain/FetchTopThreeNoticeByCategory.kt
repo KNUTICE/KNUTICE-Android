@@ -1,7 +1,6 @@
 package com.doyoonkim.knutice.domain
 
 import com.doyoonkim.knutice.model.NoticeLocalRepository
-import com.doyoonkim.knutice.model.NoticeRemoteSource
 import com.doyoonkim.knutice.model.TopThreeNotices
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -13,7 +12,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
 ): FetchTopThreeNotice {
 
     override fun fetchTopThreeGeneralNotice(): Flow<TopThreeInCategory> {
-        return repository.getTopThreeNotice().map {
+        return repository.getTopThreeNotice(true).map {
             if (it.body != null) {
                 val latestGeneralNotices = it.body!!.latestThreeGeneralNews.toNotice()
                 TopThreeInCategory(
@@ -31,7 +30,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     }
 
     override fun fetchTopThreeAcademicNotice(): Flow<TopThreeInCategory> {
-        return repository.getTopThreeNotice().map {
+        return repository.getTopThreeNotice(true).map {
             if (it.body != null) {
                 val latestAcademicNotices = it.body!!.latestThreeAcademicNews.toNotice()
                 TopThreeInCategory(
@@ -49,7 +48,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     }
 
     override fun fetchTopThreeScholarshipNotice(): Flow<TopThreeInCategory> {
-        return repository.getTopThreeNotice().map {
+        return repository.getTopThreeNotice(true).map {
             if (it.body != null) {
                 val latestScholarshipNotices = it.body!!.latestThreeScholarshipNews.toNotice()
                 TopThreeInCategory(
@@ -67,7 +66,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     }
 
     override fun fetchTopThreeEventNotice(): Flow<TopThreeInCategory> {
-        return repository.getTopThreeNotice().map {
+        return repository.getTopThreeNotice(true).map {
             if (it.body != null) {
                 val latestEventNotices = it.body!!.latestThreeEventNews.toNotice()
                 TopThreeInCategory(
@@ -91,10 +90,10 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     private fun ArrayList<TopThreeNotices.Body.LatestThreeNews>.toNotice(): List<Notice> {
         return List<Notice>(3) { index ->
             Notice(
-                title = this[index].title ?: "",
-                url = this[index].contentUrl ?: "",
-                departName = this[index].departName ?: "",
-                timestamp = this[index].registeredAt ?: ""
+                title = this[index].title ?: "Unknown",
+                url = this[index].contentUrl ?: "Unknown",
+                departName = this[index].departName ?: "Unknown",
+                timestamp = this[index].registeredAt ?: "Unknown"
             )
         }
     }
@@ -111,8 +110,8 @@ data class TopThreeInCategory(
 )
 
 data class Notice(
-    val title: String = "",
-    val url: String = "",
-    val departName: String = "",
-    val timestamp: String = ""
+    val title: String = "Unknown",
+    val url: String = "Unknown",
+    val departName: String = "Unknown",
+    val timestamp: String = "Unknown"
 )
