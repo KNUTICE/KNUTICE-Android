@@ -1,6 +1,9 @@
-package com.doyoonkim.knutice.model
+package com.doyoonkim.knutice.data
 
 import com.doyoonkim.knutice.domain.NoticeDummySource
+import com.doyoonkim.knutice.model.NoticeCategory
+import com.doyoonkim.knutice.model.NoticesPerPage
+import com.doyoonkim.knutice.model.TopThreeNotices
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -24,7 +27,7 @@ class NoticeLocalRepository @Inject constructor(
 
     fun getTopThreeNotice(isDummy: Boolean = false): Flow<TopThreeNotices> {
         if (isDummy) {
-            return channelFlow {
+            return channelFlow<TopThreeNotices> {
                 trySend(async { NoticeDummySource.getTopThreeNoticeDummy() }.await())
                 close()
             }.flowOn(Dispatchers.IO)
@@ -44,5 +47,16 @@ class NoticeLocalRepository @Inject constructor(
                 }
             }.flowOn(Dispatchers.IO)
         }
+    }
+
+    fun getNoticesByCategoryPerPage(category: NoticeCategory, lastNttId: Int): Flow<NoticesPerPage> {
+        return flow<NoticesPerPage> {
+            val response = remoteSource.getNoticeListPerPage(category, lastNttId)
+            if (response.result?.resultCode == 200) {
+                emit(response)
+            } else {
+                NoticesPerPage()
+            }
+        }.flowOn(Dispatchers.IO)
     }
 }
