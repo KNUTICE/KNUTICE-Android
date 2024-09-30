@@ -17,7 +17,7 @@ android {
     val properties = Properties().apply {
         load(FileInputStream("${rootDir}/local.properties"))
     }
-    val apiTestAddr = properties["api_addr_test"] ?: ""
+    val apiRoot = properties["api_root"] ?: ""
 
     defaultConfig {
         applicationId = "com.example.knutice"
@@ -31,7 +31,7 @@ android {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "API_TEST_ADDR", "\"$apiTestAddr\"")
+        buildConfigField("String", "API_ROOT", "\"$apiRoot\"")
     }
 
     buildTypes {
@@ -74,7 +74,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)        // Library to test coroutines in JUnit
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
@@ -91,7 +93,13 @@ dependencies {
 
     // Dagger Hilt for Dependency Injection
     implementation(libs.hilt.android)
+    implementation(libs.androidx.hilt.navigation.compose)       // With Compose Navigation
     kapt(libs.hilt.android.compiler)
+
+    // Retrofit 2
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
 }
 
 // Allow references to generated code
