@@ -1,7 +1,8 @@
 package com.doyoonkim.knutice.domain
 
-import com.doyoonkim.knutice.model.NoticeLocalRepository
-import com.doyoonkim.knutice.model.TopThreeNotices
+import com.doyoonkim.knutice.data.NoticeLocalRepository
+import com.doyoonkim.knutice.model.Notice
+import com.doyoonkim.knutice.model.RawNoticeData
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -12,7 +13,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
 ): FetchTopThreeNotice {
 
     override fun fetchTopThreeGeneralNotice(): Flow<TopThreeInCategory> {
-        return repository.getTopThreeNotice(true).map {
+        return repository.getTopThreeNotice().map {
             if (it.body != null) {
                 val latestGeneralNotices = it.body!!.latestThreeGeneralNews.toNotice()
                 TopThreeInCategory(
@@ -30,7 +31,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     }
 
     override fun fetchTopThreeAcademicNotice(): Flow<TopThreeInCategory> {
-        return repository.getTopThreeNotice(true).map {
+        return repository.getTopThreeNotice().map {
             if (it.body != null) {
                 val latestAcademicNotices = it.body!!.latestThreeAcademicNews.toNotice()
                 TopThreeInCategory(
@@ -48,7 +49,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     }
 
     override fun fetchTopThreeScholarshipNotice(): Flow<TopThreeInCategory> {
-        return repository.getTopThreeNotice(true).map {
+        return repository.getTopThreeNotice().map {
             if (it.body != null) {
                 val latestScholarshipNotices = it.body!!.latestThreeScholarshipNews.toNotice()
                 TopThreeInCategory(
@@ -66,7 +67,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     }
 
     override fun fetchTopThreeEventNotice(): Flow<TopThreeInCategory> {
-        return repository.getTopThreeNotice(true).map {
+        return repository.getTopThreeNotice().map {
             if (it.body != null) {
                 val latestEventNotices = it.body!!.latestThreeEventNews.toNotice()
                 TopThreeInCategory(
@@ -87,7 +88,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
         TODO("Not yet implemented")
     }
 
-    private fun ArrayList<TopThreeNotices.Body.LatestThreeNews>.toNotice(): List<Notice> {
+    private fun ArrayList<RawNoticeData>.toNotice(): List<Notice> {
         return List<Notice>(3) { index ->
             Notice(
                 title = this[index].title ?: "Unknown",
@@ -100,18 +101,9 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
 
 }
 
-enum class NoticeCategory { GENERAL, ACADEMIC, SCHOLARSHIP, EVENT }
-
 data class TopThreeInCategory(
     val isSuccessful: Boolean,
     val notice1: Notice? = null,
     val notice2: Notice? = null,
     val notice3: Notice? = null
-)
-
-data class Notice(
-    val title: String = "Unknown",
-    val url: String = "Unknown",
-    val departName: String = "Unknown",
-    val timestamp: String = "Unknown"
 )
