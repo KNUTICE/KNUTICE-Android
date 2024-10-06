@@ -2,7 +2,7 @@ package com.doyoonkim.knutice.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.doyoonkim.knutice.data.NoticeLocalRepository
+import com.doyoonkim.knutice.domain.CrawlFullContentImpl
 import com.doyoonkim.knutice.domain.FetchTopThreeNoticeByCategory
 import com.doyoonkim.knutice.model.Notice
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CategorizedNotificationViewModel @Inject constructor(
     private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory,
-    private val repository: NoticeLocalRepository
+    private val crawlFullContentUseCase: CrawlFullContentImpl
 ) : ViewModel() {
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -140,21 +140,17 @@ class CategorizedNotificationViewModel @Inject constructor(
 
     fun getFullNoticeContent(title: String, info: String, url: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            repository.getFullNoticeContent(url)
+            crawlFullContentUseCase.getFullContentFromSource(title, info, url)
                 .map { Result.success(it) }
                 .catch { emit(Result.failure(it)) }
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = { content ->
-                            Log.d("Received Full Text: ", content)
+                            Log.d("Received Full Text: ", content.toString())
                             _uiState.update {
                                 it.copy(
                                     isDetailedViewOpened = true,
-                                    requestedContent = DetailedContentState(
-                                        title = title,
-                                        info = info,
-                                        fullContent = content
-                                    )
+                                    requestedContent = content
                                 )
                             }
                         },
@@ -180,5 +176,6 @@ data class CategorizedNotificationState(
 data class DetailedContentState(
     val title: String = "",
     val info: String = "",
-    val fullContent: String = ""
+    val fullContent: String = "",
+    val fullContentUrl: String = ""
 )
