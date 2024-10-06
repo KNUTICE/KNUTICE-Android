@@ -67,6 +67,10 @@ val ColorScheme.subTitle: Color
     @Composable
     get() = SubtitleAny
 
+val ColorScheme.buttonContainer: Color
+    @Composable
+    get() = if(isSystemInDarkTheme()) ButtonDark else ButtonLight
+
 
 @Composable
 fun KNUTICETheme(
