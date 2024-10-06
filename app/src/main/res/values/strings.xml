@@ -5,4 +5,5 @@
     <string name="scholarship_news">Scholarship</string>
     <string name="event_news">Event</string>
     <string name="btn_more">More</string>
+    <string name="btn_more_on_browser">View More on Browser</string>
 </resources>
