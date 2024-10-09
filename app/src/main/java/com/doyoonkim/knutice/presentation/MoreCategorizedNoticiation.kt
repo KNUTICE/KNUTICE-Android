@@ -1,12 +1,17 @@
 package com.doyoonkim.knutice.presentation
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
@@ -69,12 +74,25 @@ fun MoreCategorizedNotification(
                             color = MaterialTheme.colorScheme.containerBackground
                         )
                     }
-                    NotificationPreview(
-                        notificationTitle = notice.title,
-                        notificationInfo = "[${notice.departName}] ${notice.timestamp}",
-                        isImageContained = notice.imageUrl != "Unknown",
-                        imageUrl = notice.imageUrl
-                    )
+                    Row(
+                        modifier = Modifier.wrapContentSize()
+                            .clickable {
+                                viewModel.updatedDetailedContentRequest(
+                                    true,
+                                    notice.title,
+                                    "[${notice.departName}] ${notice.timestamp}",
+                                    notice.url
+                                )
+                            }
+                    ) {
+                        NotificationPreview(
+                            notificationTitle = notice.title,
+                            notificationInfo = "[${notice.departName}] ${notice.timestamp}",
+                            isImageContained = notice.imageUrl != "Unknown",
+                            imageUrl = notice.imageUrl
+                        )
+                    }
+
                 }
             }
         }
@@ -84,6 +102,17 @@ fun MoreCategorizedNotification(
             refreshing = uiState.isRefreshRequested,
             state = pullRefreshState
         )
+    }
+
+    AnimatedVisibility(
+        uiState.isDetailedContentVisible
+    ) {
+        DetailedNoticeContent(
+            modifier = Modifier.padding(15.dp),
+            requested = uiState.detailedContentState
+        ) {
+            viewModel.updatedDetailedContentRequest(false)
+        }
     }
 }
 

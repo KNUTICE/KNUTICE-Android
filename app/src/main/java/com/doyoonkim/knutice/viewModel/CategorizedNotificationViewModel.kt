@@ -2,9 +2,9 @@ package com.doyoonkim.knutice.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.doyoonkim.knutice.domain.CrawlFullContentImpl
 import com.doyoonkim.knutice.domain.FetchTopThreeNoticeByCategory
 import com.doyoonkim.knutice.model.Notice
-import com.doyoonkim.knutice.model.NoticeCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategorizedNotificationViewModel @Inject constructor(
-    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory
+    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory,
+    private val crawlFullContentUseCase: CrawlFullContentImpl
 ) : ViewModel() {
     init {
         CoroutineScope(Dispatchers.IO).launch {
@@ -35,13 +36,13 @@ class CategorizedNotificationViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(CategorizedNotificationState())
     var uiState: StateFlow<CategorizedNotificationState> = _uiState.asStateFlow()
 
-    private fun updateState (
+    fun updateState (
         updatedNotificationGeneral: List<Notice> = _uiState.value.notificationGeneral,
         updatedNotificationAcademic: List<Notice> = _uiState.value.notificationAcademic,
         updatedNotificationScholarship: List<Notice> = _uiState.value.notificationScholarship,
         updatedNotificationEvent: List<Notice> = _uiState.value.notificationEvent,
-        updatedIsMoreOptionSelected: Boolean = _uiState.value.isMoreOptionSelected,
-        updatedCategoryForMoreNotice: NoticeCategory = _uiState.value.categoryForMoreNotice
+        updatedIsDetailedViewOpened: Boolean = _uiState.value.isDetailedViewOpened,
+        updatedRequestedContent: DetailedContentState = _uiState.value.requestedContent
     ) {
         CoroutineScope(Dispatchers.Default).launch {
             _uiState.update {
@@ -50,8 +51,8 @@ class CategorizedNotificationViewModel @Inject constructor(
                     notificationAcademic = updatedNotificationAcademic,
                     notificationScholarship = updatedNotificationScholarship,
                     notificationEvent = updatedNotificationEvent,
-                    isMoreOptionSelected = updatedIsMoreOptionSelected,
-                    categoryForMoreNotice = updatedCategoryForMoreNotice
+                    isDetailedViewOpened = updatedIsDetailedViewOpened,
+                    requestedContent = updatedRequestedContent
                 )
             }
         }
@@ -137,7 +138,29 @@ class CategorizedNotificationViewModel @Inject constructor(
             }
     }
 
-
+    fun getFullNoticeContent(title: String, info: String, url: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            crawlFullContentUseCase.getFullContentFromSource(title, info, url)
+                .map { Result.success(it) }
+                .catch { emit(Result.failure(it)) }
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess = { content ->
+                            Log.d("Received Full Text: ", content.toString())
+                            _uiState.update {
+                                it.copy(
+                                    isDetailedViewOpened = true,
+                                    requestedContent = content
+                                )
+                            }
+                        },
+                        onFailure = {
+                            Log.d("Failed to received full text", it.message ?: "")
+                        }
+                    )
+                }
+        }
+    }
 
 }
 
@@ -146,6 +169,13 @@ data class CategorizedNotificationState(
     val notificationAcademic: List<Notice> = listOf(Notice(), Notice(), Notice()),
     val notificationScholarship: List<Notice> = listOf(Notice(), Notice(), Notice()),
     val notificationEvent: List<Notice> = listOf(Notice(), Notice(), Notice()),
-    val isMoreOptionSelected: Boolean = false,
-    val categoryForMoreNotice: NoticeCategory = NoticeCategory.Unspecified
+    val isDetailedViewOpened: Boolean = false,
+    val requestedContent: DetailedContentState = DetailedContentState()
+)
+
+data class DetailedContentState(
+    val title: String = "",
+    val info: String = "",
+    val fullContent: String = "",
+    val fullContentUrl: String = ""
 )

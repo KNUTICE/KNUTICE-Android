@@ -96,6 +96,7 @@ fun MainServiceScreen(
                                 Destination.MORE_ACADEMIC -> R.string.academic_news
                                 Destination.MORE_SCHOLARSHIP -> R.string.scholarship_news
                                 Destination.MORE_EVENT -> R.string.event_news
+                                Destination.SETTINGS -> R.string.title_preference
                                 else -> R.string.app_name
                             }),
                             fontSize = 20.sp,
@@ -110,7 +111,9 @@ fun MainServiceScreen(
                 actions = {
                     if (mainAppState.currentLocation == Destination.MAIN) {
                         IconButton(
-                            onClick = {  }
+                            onClick = {
+                                navController.navigate(Destination.SETTINGS.name)
+                            }
                         ) {
                             Image(
                                 painter = painterResource(R.drawable.baseline_settings_24),

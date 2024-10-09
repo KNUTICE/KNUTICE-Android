@@ -5,12 +5,14 @@ import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
 import com.doyoonkim.knutice.model.TopThreeNotices
 import dagger.hilt.android.scopes.ActivityRetainedScoped
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /*
@@ -57,6 +59,12 @@ class NoticeLocalRepository @Inject constructor(
             } else {
                 NoticesPerPage()
             }
+        }.flowOn(Dispatchers.IO)
+    }
+
+    fun getFullNoticeContent(url: String): Flow<String> {
+        return flow<String> {
+            emit(remoteSource.getFullNoticeContent(url).await())
         }.flowOn(Dispatchers.IO)
     }
 }

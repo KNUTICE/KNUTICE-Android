@@ -6,4 +6,13 @@
     <string name="scholarship_news">장학안내</string>
     <string name="event_news">행사안내</string>
     <string name="btn_more">더보기</string>
+    <string name="btn_more_on_browser">브라우저에서 더보기</string>
+    <string name="enable_notification_title">서비스 알림</string>
+    <string name="enable_service_notification_sub">새로운 공지사항이 등록되면 푸시 알림으로 알려드려요.</string>
+    <string name="about_title">더보기</string>
+    <string name="about_version">버전정보</string>
+    <string name="about_oss">오픈소스 라이센스</string>
+    <string name="version_code">1.0.0 알파 (내부테스트용)</string>
+    <string name="pref_notification_title">알림</string>
+    <string name="title_preference">설정</string>
 </resources>
