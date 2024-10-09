@@ -6,4 +6,12 @@
     <string name="event_news">Event</string>
     <string name="btn_more">More</string>
     <string name="btn_more_on_browser">View More on Browser</string>
+    <string name="enable_notification_title">Enable service notification</string>
+    <string name="enable_service_notification_sub">Allow push notification when a new notice is posted.</string>
+    <string name="about_title">About</string>
+    <string name="about_version">Version</string>
+    <string name="about_oss">Open Source License</string>
+    <string name="version_code">1.0.0 Alpha</string>
+    <string name="pref_notification_title">Notification</string>
+    <string name="title_preference">Preference</string>
 </resources>
