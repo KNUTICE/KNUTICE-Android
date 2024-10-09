@@ -100,6 +100,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
 
+    // Jsoup HTML Parser Library
+    implementation(libs.jsoup)
+
 }
 
 // Allow references to generated code

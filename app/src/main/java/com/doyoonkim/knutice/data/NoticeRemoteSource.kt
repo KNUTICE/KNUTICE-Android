@@ -5,6 +5,11 @@ import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
 import com.doyoonkim.knutice.model.TopThreeNotices
 import com.example.knutice.BuildConfig
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import org.jsoup.Jsoup
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -35,6 +40,14 @@ class NoticeRemoteSource @Inject constructor() {
             }
         }
     }
+
+    suspend fun getFullNoticeContent(url: String): Deferred<String> =
+        CoroutineScope(Dispatchers.IO).async {
+            Jsoup.connect(url)
+                .get()
+                .getElementsByClass("bbs-view-content bbs-view-content-skin05")
+                .text() ?: "Unable to receive full notice content"
+        }
 
 }
 

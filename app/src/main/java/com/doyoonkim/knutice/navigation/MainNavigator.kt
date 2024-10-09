@@ -1,7 +1,9 @@
 package com.doyoonkim.knutice.navigation
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -10,6 +12,7 @@ import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.presentation.CategorizedNotification
 import com.doyoonkim.knutice.presentation.MoreCategorizedNotification
+import com.doyoonkim.knutice.presentation.UserPreference
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
 
 @Composable
@@ -57,6 +60,15 @@ fun MainNavigator(
                 updatedCurrentLocation = Destination.MORE_EVENT
             )
             MoreCategorizedNotification(category = NoticeCategory.EVENT_NEWS)
+        }
+
+        composable(Destination.SETTINGS.name) {
+            viewModel.updateState(
+                updatedCurrentLocation = Destination.SETTINGS
+            )
+            UserPreference(
+                Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp)
+            )
         }
     }
 }

@@ -27,5 +27,5 @@ val TitleWhite = Color(0xFFFFFFFF)
 
 val SubtitleAny = Color(0xFF787879)
 
-val backgroundGray = Color(0xFF3C3C3C)
-val backgroundLightGray = Color(0xFF888888)
+val ButtonLight = Color(0xFF3C3C3C)
+val ButtonDark = Color(0xFF888888)

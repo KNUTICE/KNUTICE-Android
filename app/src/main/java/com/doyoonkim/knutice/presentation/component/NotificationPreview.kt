@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,7 +66,9 @@ fun NotificationPreview(
                 textAlign = TextAlign.Start,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.title
+                color = MaterialTheme.colorScheme.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             Text(
                 modifier = Modifier.fillMaxWidth()
