@@ -5,4 +5,5 @@ plugins {
 
     // Dagger Hilt for Dependency Injection
     id("com.google.dagger.hilt.android") version "2.51.1" apply false
+    alias(libs.plugins.google.gms.google.services) apply false
 }

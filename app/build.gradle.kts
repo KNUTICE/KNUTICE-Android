@@ -8,6 +8,7 @@ plugins {
     // Dagger-Hilt for Dependency Injection
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -18,6 +19,7 @@ android {
         load(FileInputStream("${rootDir}/local.properties"))
     }
     val apiRoot = properties["api_root"] ?: ""
+    val apiRootFcm = properties["api_root_fcm"] ?: ""
 
     defaultConfig {
         applicationId = "com.example.knutice"
@@ -32,6 +34,7 @@ android {
         }
 
         buildConfigField("String", "API_ROOT", "\"$apiRoot\"")
+        buildConfigField("String", "API_ROOT_FCM", "\"$apiRootFcm\"")
     }
 
     buildTypes {
@@ -75,6 +78,8 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material)
+    implementation(libs.firebase.messaging)
+    implementation(libs.firebase.messaging.directboot)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)        // Library to test coroutines in JUnit
     androidTestImplementation(libs.androidx.junit)
