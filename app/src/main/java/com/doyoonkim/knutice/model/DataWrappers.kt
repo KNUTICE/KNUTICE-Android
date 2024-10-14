@@ -36,6 +36,11 @@ data class NoticesPerPage(
     @SerializedName("body") var body: ArrayList<RawNoticeData> = arrayListOf()
 )
 
+data class ValidateTokenResult(
+    @SerializedName("result") var result: Result? = Result(),
+    @SerializedName("body") var body: String
+)
+
 // Data class to be applied to uiState.
 data class Notice(
     val nttId: Int = -1,
@@ -44,4 +49,8 @@ data class Notice(
     val imageUrl: String = "",
     val departName: String = "Unknown",
     val timestamp: String = "Unknown"
+)
+
+data class TokenInfo(
+    val deviceToken: String
 )

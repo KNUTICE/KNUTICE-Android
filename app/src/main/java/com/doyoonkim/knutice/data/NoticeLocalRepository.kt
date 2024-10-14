@@ -5,14 +5,12 @@ import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
 import com.doyoonkim.knutice.model.TopThreeNotices
 import dagger.hilt.android.scopes.ActivityRetainedScoped
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /*
@@ -23,7 +21,7 @@ ActivityRetainedComponent lives across configuration changes, so it is created a
  */
 @ActivityRetainedScoped
 class NoticeLocalRepository @Inject constructor(
-    private val remoteSource: NoticeRemoteSource
+    private val remoteSource: KnuticeRemoteSource
 ) {
     private var localData: TopThreeNotices? = null
 
