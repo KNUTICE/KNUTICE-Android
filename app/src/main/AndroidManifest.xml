@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.KNUTICE"
-        android:directBootAware="true"
         tools:targetApi="31">
         <activity
             android:name="com.doyoonkim.knutice.presentation.MainActivity"
@@ -29,10 +28,8 @@
             </intent-filter>
         </activity>
         <service android:name="com.doyoonkim.knutice.fcm.PushNotificationHandler"
-            android:exported="false"
-            android:directBootAware="true">
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
