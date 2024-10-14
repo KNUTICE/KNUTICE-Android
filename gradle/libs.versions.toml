@@ -3,6 +3,7 @@ agp = "8.6.0"
 coilCompose = "2.4.0"
 converterGson = "2.3.0"
 converterMoshi = "2.9.0"
+firebaseMessagingDirectboot = "24.0.2"
 gson = "2.11.0"
 hiltAndroidCompiler = "2.51.1"
 hiltNavigationCompose = "1.2.0"
@@ -21,6 +22,8 @@ lifecycleRuntimeKtxVersion = "2.8.6"
 navigationCompose = "2.8.1"
 retrofit = "2.9.0"
 swiperefreshlayout = "1.1.0"
+googleGmsGoogleServices = "4.4.2"
+firebaseMessaging = "24.0.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,6 +35,8 @@ androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefre
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
+firebase-messaging-directboot = { module = "com.google.firebase:firebase-messaging-directboot", version.ref = "firebaseMessagingDirectboot" }
+google-firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidCompiler" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
@@ -52,8 +57,10 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutinesAndroid" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 
