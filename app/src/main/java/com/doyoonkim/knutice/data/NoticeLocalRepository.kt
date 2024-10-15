@@ -7,6 +7,7 @@ import com.doyoonkim.knutice.model.TopThreeNotices
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
@@ -33,6 +34,7 @@ class NoticeLocalRepository @Inject constructor(
             }.flowOn(Dispatchers.IO)
         } else {
             return flow<TopThreeNotices> {
+                delay(10L)
                 if (localData?.result?.resultCode == 200) {
                     emit(localData!!)
                 } else {
