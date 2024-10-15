@@ -77,7 +77,7 @@ fun MoreCategorizedNotification(
                             color = MaterialTheme.colorScheme.subTitle
                         )
                     }
-                    viewModel.fetchNotificationPerPage()
+                    viewModel.requestMoreNotices()
                 } else {
                     val notice = uiState.notices[index]
                     if (!uiState.isLoading) {
