@@ -44,6 +44,13 @@ class MoreCategorizedNotificationViewModel @Inject constructor(
                 isRefreshRequested = true
             )
         }
+        fetchNotificationPerPage()
+    }
+
+    fun requestMoreNotices() {
+        if (!_uiState.value.isLoading) {
+            fetchNotificationPerPage()
+        }
     }
 
     fun updatedDetailedContentRequest(
@@ -65,9 +72,6 @@ class MoreCategorizedNotificationViewModel @Inject constructor(
     }
 
     fun fetchNotificationPerPage() {
-        _uiState.update {
-            it.copy(isLoading = true)
-        }
         CoroutineScope(Dispatchers.IO).launch {
             fetchListOfNoticesUseCase.getNoticesPerPage(
                 _uiState.value.notificationCategory, _uiState.value.currentLastNttId
