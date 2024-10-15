@@ -17,6 +17,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +30,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.presentation.component.NotificationPreview
 import com.doyoonkim.knutice.ui.theme.containerBackground
+import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.viewModel.MoreCategorizedNotificationViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -44,7 +46,6 @@ fun MoreCategorizedNotification(
         refreshing = uiState.isRefreshRequested,
         onRefresh = {
             viewModel.requestRefresh()
-            viewModel.fetchNotificationPerPage()
         }
     )
 
@@ -64,9 +65,20 @@ fun MoreCategorizedNotification(
             userScrollEnabled = true
         ) {
             items(uiState.notices.size) { index ->
-                if (index == uiState.notices.size - 1)
+                if (index == uiState.notices.size - 1) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .wrapContentHeight(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.wrapContentSize(),
+                            color = MaterialTheme.colorScheme.subTitle
+                        )
+                    }
                     viewModel.fetchNotificationPerPage()
-                else {
+                } else {
                     val notice = uiState.notices[index]
                     if (!uiState.isLoading) {
                         Divider(
