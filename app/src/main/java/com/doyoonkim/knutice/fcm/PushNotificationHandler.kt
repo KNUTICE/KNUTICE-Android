@@ -1,16 +1,29 @@
 package com.doyoonkim.knutice.fcm
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.doyoonkim.knutice.data.KnuticeRemoteSource
+import com.example.knutice.R
+import com.google.android.datatransport.Priority
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import java.util.UUID
 import javax.inject.Inject
+import kotlin.random.Random
+import kotlin.random.nextInt
 
-class PushNotificationHandler @Inject constructor(
-    private val remoteSource: KnuticeRemoteSource
-) : FirebaseMessagingService() {
+class PushNotificationHandler @Inject constructor() : FirebaseMessagingService() {
+    @Inject lateinit var remoteSource: KnuticeRemoteSource
     private val TAG = "PushNotificationHandler"
 
     override fun onNewToken(token: String) {
@@ -23,14 +36,47 @@ class PushNotificationHandler @Inject constructor(
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        Log.d(TAG, "Message data payload: ${message.data}")
+        Log.d(TAG, "Message data payload: ${message.notification}")
 
         if (message.data.isNotEmpty()) {
             Log.d(TAG, "Message Data Payload: ${message.data}")
+
         }
 
         message.notification?.let {
             Log.d(TAG, "Body: ${it.body}")
+            message.toPushNotification()
+        }
+    }
+
+    private fun RemoteMessage.toPushNotification() {
+        // Utilize channel already created by FCM as default
+        val notificationBuilder = NotificationCompat.Builder(
+            applicationContext, getString(R.string.inapp_notification_channel_id)
+        )
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("New Notice!")
+            .setContentText(this@toPushNotification.notification?.body ?: "No message body")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setAutoCancel(true)
+
+        with(NotificationManagerCompat.from(applicationContext)) {
+            if (ActivityCompat.checkSelfPermission(
+                    applicationContext,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                Log.d("NotificationHandler", "Permission Denied")
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            notify(Random(System.currentTimeMillis().toInt()).nextInt(), notificationBuilder.build())
         }
     }
 
