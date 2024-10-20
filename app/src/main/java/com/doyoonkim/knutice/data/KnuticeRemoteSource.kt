@@ -1,14 +1,13 @@
 package com.doyoonkim.knutice.data
 
 import android.util.Log
+import com.doyoonkim.knutice.model.ApiDeviceTokenRequest
+import com.doyoonkim.knutice.model.DeviceTokenRequest
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
-import com.doyoonkim.knutice.model.TokenInfo
 import com.doyoonkim.knutice.model.TopThreeNotices
 import com.doyoonkim.knutice.model.ValidateTokenResult
 import com.example.knutice.BuildConfig
-import com.google.gson.Gson
-import com.google.gson.JsonObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -18,8 +17,6 @@ import org.jsoup.Jsoup
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
@@ -29,19 +26,14 @@ import javax.inject.Inject
 
 class KnuticeRemoteSource @Inject constructor() {
 
-    private val noticeService = Retrofit.Builder()
+    private val knuticeService = Retrofit.Builder()
         .baseUrl(BuildConfig.API_ROOT)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val fcmService = Retrofit.Builder()
-        .baseUrl(BuildConfig.API_ROOT_FCM)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     suspend fun getTopThreeNotice(): TopThreeNotices {
         Log.d("KnuticeRemoteSource", "Start retrofit service")
-        return noticeService.create(KnuticeService::class.java).run {
+        return knuticeService.create(KnuticeService::class.java).run {
             this.getTopThreeNotice()
         }
     }
@@ -49,7 +41,7 @@ class KnuticeRemoteSource @Inject constructor() {
 
     suspend fun getNoticeListPerPage(category: NoticeCategory, lastNttId: Int): NoticesPerPage {
         Log.d("KnuticeRemoteSource", "Start retrofit service")
-        return noticeService.create(KnuticeService::class.java).run {
+        return knuticeService.create(KnuticeService::class.java).run {
             if (lastNttId == 0) {
                 this.getFirstPageOfNotice(category)
             } else {
@@ -68,11 +60,15 @@ class KnuticeRemoteSource @Inject constructor() {
 
     fun validateToken(token: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            fcmService.create(KnuticeService::class.java).validateToken(
-                TokenInfo(deviceToken = token)
-            ).run {
-                if (this.result?.resultCode == 200) Log.d("KnuticeServer", "Token saved.")
-                else Log.d("KnuticeServer", "Failed to save token")
+            try {
+                knuticeService.create(KnuticeService::class.java).validateToken(
+                    ApiDeviceTokenRequest(body = DeviceTokenRequest(token))
+                ).run {
+                    if (this.result?.resultCode == 200) Log.d("KnuticeServer", "Token saved.")
+                    else Log.d("KnuticeServer", "Failed to save token")
+                }
+            } catch (e: Exception) {
+                Log.d("KnuticeServer", "Failed to validate token\nREASON:${e.message}")
             }
         }
     }
@@ -96,9 +92,9 @@ interface KnuticeService {
     ): NoticesPerPage
 
     @Headers("Content-Type: application/json")
-    @POST("/fcm/sendDeviceToken")
+    @POST("/open-api/token")
     suspend fun validateToken(
-        @Body requestBody: TokenInfo
+        @Body requestBody: ApiDeviceTokenRequest
     ): ValidateTokenResult
 
 }

@@ -1,5 +1,6 @@
 package com.doyoonkim.knutice.model
 
+import com.google.android.gms.common.internal.Objects
 import com.google.gson.annotations.SerializedName
 
 
@@ -38,8 +39,12 @@ data class NoticesPerPage(
 
 data class ValidateTokenResult(
     @SerializedName("result") var result: Result? = Result(),
-    @SerializedName("body") var body: String
-)
+    @SerializedName("body") var body: Body? = Body()
+) {
+    data class Body(
+        val message: String = ""
+    )
+}
 
 // Data class to be applied to uiState.
 data class Notice(
@@ -51,6 +56,11 @@ data class Notice(
     val timestamp: String = "Unknown"
 )
 
-data class TokenInfo(
+data class ApiDeviceTokenRequest(
+    val result: Result = Result(),
+    val body: DeviceTokenRequest
+)
+
+data class DeviceTokenRequest(
     val deviceToken: String
 )
