@@ -19,7 +19,6 @@ android {
         load(FileInputStream("${rootDir}/local.properties"))
     }
     val apiRoot = properties["api_root"] ?: ""
-    val apiRootFcm = properties["api_root_fcm"] ?: ""
 
     defaultConfig {
         applicationId = "com.example.knutice"
@@ -34,7 +33,6 @@ android {
         }
 
         buildConfigField("String", "API_ROOT", "\"$apiRoot\"")
-        buildConfigField("String", "API_ROOT_FCM", "\"$apiRootFcm\"")
     }
 
     buildTypes {
