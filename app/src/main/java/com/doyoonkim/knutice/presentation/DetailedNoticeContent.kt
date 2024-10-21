@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.IconButton
@@ -89,13 +91,19 @@ fun DetailedNoticeContent(
                 fontWeight = FontWeight.Normal
             )
 
-            Text(
+            Surface(
                 modifier = Modifier.fillMaxWidth()
-                    .weight(8f),
-                text = requested.fullContent,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Medium,
-            )
+                    .weight(8f)
+                    .verticalScroll(rememberScrollState()),
+                color = MaterialTheme.colorScheme.containerBackground
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = requested.fullContent,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
 
             Button(
                 onClick = {
