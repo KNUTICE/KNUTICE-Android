@@ -14,6 +14,7 @@
     <string name="version_code">1.0.0 Alpha</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
+    <string name="new_notice">New Notice has been delivered!</string>
     <string name="default_notification_channel_id" translatable="false">knutice_default_fcm_channel</string>
     <string name="default_notification_channel_description" translatable="false">knutice default notification channel for FCM</string>
     <string name="inapp_notification_channel_id" translatable="false">knutice_inapp_notification_channel</string>

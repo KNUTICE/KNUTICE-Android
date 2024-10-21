@@ -15,4 +15,5 @@
     <string name="version_code">1.0.0 알파 (내부테스트용)</string>
     <string name="pref_notification_title">알림</string>
     <string name="title_preference">설정</string>
+    <string name="new_notice">새로운 알림이 도착했어요!</string>
 </resources>
