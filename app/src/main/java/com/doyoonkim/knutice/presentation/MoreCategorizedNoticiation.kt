@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.presentation
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +39,8 @@ import com.doyoonkim.knutice.viewModel.MoreCategorizedNotificationViewModel
 fun MoreCategorizedNotification(
     modifier: Modifier = Modifier,
     viewModel: MoreCategorizedNotificationViewModel = hiltViewModel(),
-    category: NoticeCategory
+    category: NoticeCategory,
+    backButtonHandler: () -> Unit = { }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -48,6 +50,11 @@ fun MoreCategorizedNotification(
             viewModel.requestRefresh()
         }
     )
+
+    BackHandler {
+        if (uiState.isDetailedContentVisible) viewModel.updatedDetailedContentRequest(false)
+        else backButtonHandler()
+    }
 
     Box(
         modifier = modifier.fillMaxWidth()
