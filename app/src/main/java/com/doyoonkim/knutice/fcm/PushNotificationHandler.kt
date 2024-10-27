@@ -5,6 +5,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
@@ -54,8 +56,8 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
         val notificationBuilder = NotificationCompat.Builder(
             applicationContext, getString(R.string.inapp_notification_channel_id)
         )
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("New Notice!")
+            .setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
+            .setContentTitle(getString(R.string.new_notice))
             .setContentText(this@toPushNotification.notification?.body ?: "No message body")
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
