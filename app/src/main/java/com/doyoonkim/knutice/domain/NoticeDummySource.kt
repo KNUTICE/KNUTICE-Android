@@ -12,7 +12,7 @@ class NoticeDummySource {
          * TEST ONLY (Should be removed later)
          */
         suspend fun getTopThreeNoticeDummy(): TopThreeNotices {
-            Log.d("NoticeRemoteSource", "Dummy Data Created")
+            Log.d("KnuticeRemoteSource", "Dummy Data Created")
             delay(1000)
             return TopThreeNotices(
                 result = Result(

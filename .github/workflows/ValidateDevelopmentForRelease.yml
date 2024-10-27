@@ -25,6 +25,14 @@ jobs:
           BASEURL: ${{ secrets.BASEURL }}
         run: echo BASEURL="$BASEURL" > ./local.properties
 
+      - name: Create Necessary File for Building Project
+        run: cat /home/runner/work/KNUTICE-Android/KNUTICE-Android/app/google-services.json | base64
+
+      - name: Putting Data into Created File.
+        env:
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo $DATA > /home/runner/work/KNUTICE-Android/KNUTICE-Android/app/google-services.json
+
       - name: Clean Project
         run: ./gradlew clean
 

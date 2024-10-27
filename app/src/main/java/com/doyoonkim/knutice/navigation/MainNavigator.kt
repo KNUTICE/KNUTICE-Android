@@ -38,28 +38,36 @@ fun MainNavigator(
             viewModel.updateState(
                 updatedCurrentLocation = Destination.MORE_GENERAL
             )
-            MoreCategorizedNotification(category = NoticeCategory.GENERAL_NEWS)
+            MoreCategorizedNotification(category = NoticeCategory.GENERAL_NEWS) {
+                navController.popBackStack()
+            }
         }
 
         composable(Destination.MORE_ACADEMIC.name) {
             viewModel.updateState(
                 updatedCurrentLocation = Destination.MORE_ACADEMIC
             )
-            MoreCategorizedNotification(category = NoticeCategory.ACADEMIC_NEWS)
+            MoreCategorizedNotification(category = NoticeCategory.ACADEMIC_NEWS) {
+                navController.popBackStack()
+            }
         }
 
         composable(Destination.MORE_SCHOLARSHIP.name) {
             viewModel.updateState(
                 updatedCurrentLocation = Destination.MORE_SCHOLARSHIP
             )
-            MoreCategorizedNotification(category = NoticeCategory.SCHOLARSHIP_NEWS)
+            MoreCategorizedNotification(category = NoticeCategory.SCHOLARSHIP_NEWS) {
+                navController.popBackStack()
+            }
         }
 
         composable(Destination.MORE_EVENT.name) {
             viewModel.updateState(
                 updatedCurrentLocation = Destination.MORE_EVENT
             )
-            MoreCategorizedNotification(category = NoticeCategory.EVENT_NEWS)
+            MoreCategorizedNotification(category = NoticeCategory.EVENT_NEWS) {
+                navController.popBackStack()
+            }
         }
 
         composable(Destination.SETTINGS.name) {

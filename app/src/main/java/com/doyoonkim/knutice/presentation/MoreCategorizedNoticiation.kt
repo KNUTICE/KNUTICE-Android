@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.presentation
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.presentation.component.NotificationPreview
 import com.doyoonkim.knutice.ui.theme.containerBackground
+import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.viewModel.MoreCategorizedNotificationViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -36,7 +39,8 @@ import com.doyoonkim.knutice.viewModel.MoreCategorizedNotificationViewModel
 fun MoreCategorizedNotification(
     modifier: Modifier = Modifier,
     viewModel: MoreCategorizedNotificationViewModel = hiltViewModel(),
-    category: NoticeCategory
+    category: NoticeCategory,
+    backButtonHandler: () -> Unit = { }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -44,9 +48,13 @@ fun MoreCategorizedNotification(
         refreshing = uiState.isRefreshRequested,
         onRefresh = {
             viewModel.requestRefresh()
-            viewModel.fetchNotificationPerPage()
         }
     )
+
+    BackHandler {
+        if (uiState.isDetailedContentVisible) viewModel.updatedDetailedContentRequest(false)
+        else backButtonHandler()
+    }
 
     Box(
         modifier = modifier.fillMaxWidth()
@@ -64,9 +72,20 @@ fun MoreCategorizedNotification(
             userScrollEnabled = true
         ) {
             items(uiState.notices.size) { index ->
-                if (index == uiState.notices.size - 1)
-                    viewModel.fetchNotificationPerPage()
-                else {
+                if (index == uiState.notices.size - 1) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .wrapContentHeight(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.wrapContentSize(),
+                            color = MaterialTheme.colorScheme.subTitle
+                        )
+                    }
+                    viewModel.requestMoreNotices()
+                } else {
                     val notice = uiState.notices[index]
                     if (!uiState.isLoading) {
                         Divider(

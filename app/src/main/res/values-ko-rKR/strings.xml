@@ -12,7 +12,9 @@
     <string name="about_title">더보기</string>
     <string name="about_version">버전정보</string>
     <string name="about_oss">오픈소스 라이센스</string>
-    <string name="version_code">1.0.0 알파 (내부테스트용)</string>
+    <string name="version_code">1.0.1 알파 (내부테스트용)</string>
     <string name="pref_notification_title">알림</string>
     <string name="title_preference">설정</string>
+    <string name="new_notice">새로운 알림이 도착했어요!</string>
+    <string name="inapp_notificaiton_channel_name">신규 공지 알림</string>
 </resources>
