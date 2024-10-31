@@ -1,5 +1,6 @@
 package com.doyoonkim.knutice.presentation
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,18 +9,25 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.doyoonkim.knutice.model.Destination
+import com.doyoonkim.knutice.ui.theme.buttonContainer
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.example.knutice.R
 
@@ -28,6 +36,7 @@ import com.example.knutice.R
 @Composable
 fun UserPreference(
     modifier: Modifier = Modifier,
+    navController: NavController = rememberNavController()
 ) {
     Column(
         modifier = modifier,
@@ -133,8 +142,8 @@ fun UserPreference(
 
         Row(
             modifier = Modifier.fillMaxWidth().wrapContentSize()
-                .padding(top = 15.dp, bottom = 15.dp),
-            verticalAlignment = Alignment.Bottom
+                .padding(top = 5.dp, bottom = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
                 modifier = Modifier.wrapContentHeight().weight(5f),
@@ -145,13 +154,15 @@ fun UserPreference(
             )
 
             //TODO: Should be replaced with Actual Icon Button.
-            Text(
-                modifier = Modifier.wrapContentHeight().weight(2f),
-                text = ">",
-                fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
-                textAlign = TextAlign.End
-            )
+            IconButton(
+                onClick = { navController.navigate(Destination.OSS.name) }
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.baseline_arrow_forward_ios_24),
+                    contentDescription = "Button to OSS Notice",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.buttonContainer)
+                )
+            }
         }
 
         HorizontalDivider(
