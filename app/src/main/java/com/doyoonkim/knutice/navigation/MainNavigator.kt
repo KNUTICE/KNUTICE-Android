@@ -12,6 +12,7 @@ import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.presentation.CategorizedNotification
 import com.doyoonkim.knutice.presentation.MoreCategorizedNotification
+import com.doyoonkim.knutice.presentation.OpenSourceLicenseNotice
 import com.doyoonkim.knutice.presentation.UserPreference
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
 
@@ -75,8 +76,16 @@ fun MainNavigator(
                 updatedCurrentLocation = Destination.SETTINGS
             )
             UserPreference(
-                Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp)
+                Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp),
+                navController
             )
+        }
+
+        composable(Destination.OSS.name) {
+            viewModel.updateState(
+                updatedCurrentLocation = Destination.OSS
+            )
+            OpenSourceLicenseNotice()
         }
     }
 }
