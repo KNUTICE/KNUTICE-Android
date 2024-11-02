@@ -84,6 +84,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        viewModelStore.clear()
+        this.externalCacheDir?.delete()
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
