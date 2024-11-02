@@ -1,5 +1,8 @@
 package com.doyoonkim.knutice.presentation
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -14,9 +17,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -24,6 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.doyoonkim.knutice.model.Destination
@@ -38,6 +49,15 @@ fun UserPreference(
     modifier: Modifier = Modifier,
     navController: NavController = rememberNavController()
 ) {
+    var permissionStatus by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        permissionStatus = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -87,9 +107,17 @@ fun UserPreference(
                 }
 
                 Switch(
-                    checked = false,
-                    onCheckedChange = {  },
-                    enabled = false
+                    checked = permissionStatus,
+                    onCheckedChange = {
+                        val settingIntent = Intent(
+                            "android.settings.APP_NOTIFICATION_SETTINGS"
+                        ).apply {
+                            this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            this.putExtra("android.provider.extra.APP_PACKAGE", context.packageName)
+                        }
+                        context.startActivity(settingIntent)
+                    },
+                    enabled = true
                 )
             }
         }
@@ -153,7 +181,6 @@ fun UserPreference(
                 textAlign = TextAlign.Start
             )
 
-            //TODO: Should be replaced with Actual Icon Button.
             IconButton(
                 onClick = { navController.navigate(Destination.OSS.name) }
             ) {
