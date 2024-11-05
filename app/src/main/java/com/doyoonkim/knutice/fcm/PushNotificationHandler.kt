@@ -1,28 +1,20 @@
 package com.doyoonkim.knutice.fcm
 
 import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.drawable.Icon
-import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.doyoonkim.knutice.data.KnuticeRemoteSource
 import com.example.knutice.R
-import com.google.android.datatransport.Priority
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import java.util.UUID
 import javax.inject.Inject
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 class PushNotificationHandler @Inject constructor() : FirebaseMessagingService() {
     @Inject lateinit var remoteSource: KnuticeRemoteSource

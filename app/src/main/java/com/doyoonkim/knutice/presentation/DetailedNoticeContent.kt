@@ -3,6 +3,7 @@ package com.doyoonkim.knutice.presentation
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -48,7 +49,8 @@ fun DetailedNoticeContent(
     val localContext = LocalContext.current
 
     Surface(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
+            .background(MaterialTheme.colorScheme.containerBackground),
         shape = RoundedCornerShape(10.dp),
         color = MaterialTheme.colorScheme.containerBackground
     ) {

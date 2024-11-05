@@ -17,4 +17,5 @@
     <string name="title_preference">설정</string>
     <string name="new_notice">새로운 알림이 도착했어요!</string>
     <string name="inapp_notificaiton_channel_name">신규 공지 알림</string>
+    <string name="oss_notice">오픈소스 라이센스</string>
 </resources>

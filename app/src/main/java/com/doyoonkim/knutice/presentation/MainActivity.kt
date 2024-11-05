@@ -54,6 +54,7 @@ class MainActivity : ComponentActivity() {
             // Permission is already granted, and Push Notification is available
         } else {
             // Need to inform user that the app won't display push notification.
+            // TODO: Add small pop-up style composable to be shown to indicate that a push notification won't available.
         }
     }
 
@@ -82,6 +83,13 @@ class MainActivity : ComponentActivity() {
                 MainServiceScreen()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        viewModelStore.clear()
+        this.externalCacheDir?.delete()
     }
 }
 
@@ -129,6 +137,7 @@ fun MainServiceScreen(
                                 Destination.MORE_SCHOLARSHIP -> R.string.scholarship_news
                                 Destination.MORE_EVENT -> R.string.event_news
                                 Destination.SETTINGS -> R.string.title_preference
+                                Destination.OSS -> R.string.oss_notice
                                 else -> R.string.app_name
                             }),
                             fontSize = 20.sp,
