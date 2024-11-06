@@ -38,7 +38,7 @@ import com.doyoonkim.knutice.ui.theme.buttonContainer
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.DetailedContentState
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
 
 @Composable
 fun DetailedNoticeContent(

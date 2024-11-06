@@ -40,7 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.ui.theme.buttonContainer
 import com.doyoonkim.knutice.ui.theme.subTitle
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
 
 // TODO: Apply Color Theme on HorizontalDivider.
 

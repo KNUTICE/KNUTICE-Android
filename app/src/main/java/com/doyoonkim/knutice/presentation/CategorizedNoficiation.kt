@@ -37,7 +37,7 @@ import com.doyoonkim.knutice.ui.theme.notificationType4
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.viewModel.CategorizedNotificationViewModel
 import com.doyoonkim.knutice.viewModel.DetailedContentState
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
 
 @Composable
 fun CategorizedNotification(

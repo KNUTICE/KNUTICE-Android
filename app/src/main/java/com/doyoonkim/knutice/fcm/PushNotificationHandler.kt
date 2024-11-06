@@ -8,7 +8,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.doyoonkim.knutice.data.KnuticeRemoteSource
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService

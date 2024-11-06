@@ -44,7 +44,7 @@ import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.notificationType1
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
  import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

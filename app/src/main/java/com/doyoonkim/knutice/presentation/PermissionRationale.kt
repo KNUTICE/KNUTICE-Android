@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
 
 @Composable
 fun PermissionRationale(

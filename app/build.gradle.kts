@@ -12,7 +12,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.knutice"
+    namespace = "com.doyoonkim.knutice"
     compileSdk = 34
 
     val properties = Properties().apply {
@@ -21,7 +21,7 @@ android {
     val apiRoot = properties["api_root"] ?: ""
 
     defaultConfig {
-        applicationId = "com.example.knutice"
+        applicationId = "com.doyoonkim.knutice"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
