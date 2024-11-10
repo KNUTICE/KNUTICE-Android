@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -123,11 +124,7 @@ fun MainServiceScreen(
                         if (mainAppState.currentLocation != Destination.MAIN) {
                             IconButton(
                                 onClick = {
-                                    navController.popBackStack(
-                                        Destination.MAIN.name,
-                                        inclusive = false,
-                                        saveState = true
-                                    )
+                                    navController.popBackStack()
                                 }
                             ) {
                                 Image(
@@ -139,17 +136,20 @@ fun MainServiceScreen(
                             }
                         }
                         Text(
-                            text = stringResource(when(mainAppState.currentLocation) {
-                                Destination.MORE_GENERAL -> R.string.general_news
-                                Destination.MORE_ACADEMIC -> R.string.academic_news
-                                Destination.MORE_SCHOLARSHIP -> R.string.scholarship_news
-                                Destination.MORE_EVENT -> R.string.event_news
-                                Destination.SETTINGS -> R.string.title_preference
-                                Destination.OSS -> R.string.oss_notice
-                                else -> R.string.app_name
-                            }),
+                            text = when (mainAppState.currentLocation) {
+                                Destination.MAIN -> stringResource(R.string.app_name)
+                                Destination.MORE_GENERAL -> stringResource(R.string.general_news)
+                                Destination.MORE_ACADEMIC -> stringResource(R.string.academic_news)
+                                Destination.MORE_SCHOLARSHIP -> stringResource(R.string.scholarship_news)
+                                Destination.MORE_EVENT -> stringResource(R.string.event_news)
+                                Destination.SETTINGS -> stringResource(R.string.title_preference)
+                                Destination.OSS -> stringResource(R.string.oss_notice)
+                                Destination.Unspecified -> mainAppState.currentScaffoldTitle
+                            },
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 },
