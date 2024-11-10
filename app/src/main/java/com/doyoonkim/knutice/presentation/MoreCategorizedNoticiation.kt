@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.doyoonkim.knutice.model.FullContent
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.presentation.component.NotificationPreview
 import com.doyoonkim.knutice.ui.theme.containerBackground
@@ -40,7 +41,8 @@ fun MoreCategorizedNotification(
     modifier: Modifier = Modifier,
     viewModel: MoreCategorizedNotificationViewModel = hiltViewModel(),
     category: NoticeCategory,
-    backButtonHandler: () -> Unit = { }
+    backButtonHandler: () -> Unit = { },
+    onNoticeSelected: (FullContent) -> Unit = {  }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -52,8 +54,7 @@ fun MoreCategorizedNotification(
     )
 
     BackHandler {
-        if (uiState.isDetailedContentVisible) viewModel.updatedDetailedContentRequest(false)
-        else backButtonHandler()
+        backButtonHandler()
     }
 
     Box(
@@ -96,12 +97,11 @@ fun MoreCategorizedNotification(
                     Row(
                         modifier = Modifier.wrapContentSize()
                             .clickable {
-                                viewModel.updatedDetailedContentRequest(
-                                    true,
+                                onNoticeSelected(FullContent(
                                     notice.title,
                                     "[${notice.departName}] ${notice.timestamp}",
                                     notice.url
-                                )
+                                ))
                             }
                     ) {
                         NotificationPreview(
@@ -123,15 +123,15 @@ fun MoreCategorizedNotification(
         )
     }
 
-    AnimatedVisibility(
-        uiState.isDetailedContentVisible
-    ) {
-        DetailedNoticeContent(
-            modifier = Modifier.padding(15.dp),
-            requested = uiState.detailedContentState
-        ) {
-            viewModel.updatedDetailedContentRequest(false)
-        }
-    }
+//    AnimatedVisibility(
+//        uiState.isDetailedContentVisible
+//    ) {
+//        DetailedNoticeContent(
+//            modifier = Modifier.padding(7.dp),
+//            requested = uiState.detailedContentState
+//        ) {
+//            viewModel.updatedDetailedContentRequest(false)
+//        }
+//    }
 }
 
