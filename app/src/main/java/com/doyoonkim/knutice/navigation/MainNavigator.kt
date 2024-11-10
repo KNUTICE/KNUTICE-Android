@@ -8,9 +8,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.toRoute
 import com.doyoonkim.knutice.model.Destination
+import com.doyoonkim.knutice.model.FullContent
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.presentation.CategorizedNotification
+import com.doyoonkim.knutice.presentation.DetailedNoticeContent
 import com.doyoonkim.knutice.presentation.MoreCategorizedNotification
 import com.doyoonkim.knutice.presentation.OpenSourceLicenseNotice
 import com.doyoonkim.knutice.presentation.UserPreference
@@ -39,8 +42,11 @@ fun MainNavigator(
             viewModel.updateState(
                 updatedCurrentLocation = Destination.MORE_GENERAL
             )
-            MoreCategorizedNotification(category = NoticeCategory.GENERAL_NEWS) {
-                navController.popBackStack()
+            MoreCategorizedNotification(
+                category = NoticeCategory.GENERAL_NEWS,
+                backButtonHandler = { navController.popBackStack() }
+            ) {
+                navController.navigate(it)
             }
         }
 
@@ -48,8 +54,11 @@ fun MainNavigator(
             viewModel.updateState(
                 updatedCurrentLocation = Destination.MORE_ACADEMIC
             )
-            MoreCategorizedNotification(category = NoticeCategory.ACADEMIC_NEWS) {
-                navController.popBackStack()
+            MoreCategorizedNotification(
+                category = NoticeCategory.ACADEMIC_NEWS,
+                backButtonHandler = { navController.popBackStack() }
+            ) {
+                navController.navigate(it)
             }
         }
 
@@ -57,8 +66,11 @@ fun MainNavigator(
             viewModel.updateState(
                 updatedCurrentLocation = Destination.MORE_SCHOLARSHIP
             )
-            MoreCategorizedNotification(category = NoticeCategory.SCHOLARSHIP_NEWS) {
-                navController.popBackStack()
+            MoreCategorizedNotification(
+                category = NoticeCategory.SCHOLARSHIP_NEWS,
+                backButtonHandler = { navController.popBackStack() }
+            ) {
+                navController.navigate(it)
             }
         }
 
@@ -66,8 +78,11 @@ fun MainNavigator(
             viewModel.updateState(
                 updatedCurrentLocation = Destination.MORE_EVENT
             )
-            MoreCategorizedNotification(category = NoticeCategory.EVENT_NEWS) {
-                navController.popBackStack()
+            MoreCategorizedNotification(
+                category = NoticeCategory.EVENT_NEWS,
+                backButtonHandler = { navController.popBackStack() }
+            ) {
+                navController.navigate(it)
             }
         }
 
@@ -86,6 +101,15 @@ fun MainNavigator(
                 updatedCurrentLocation = Destination.OSS
             )
             OpenSourceLicenseNotice()
+        }
+
+        composable<FullContent> { backStackEntry ->
+            val scaffoldTitle = backStackEntry.toRoute<FullContent>().title
+            viewModel.updateState(
+                updatedCurrentLocation = Destination.Unspecified,
+                updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content"
+            )
+            DetailedNoticeContent()
         }
     }
 }
