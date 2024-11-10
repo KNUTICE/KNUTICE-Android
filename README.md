@@ -46,5 +46,5 @@
 - Kotlin Flow를 활용하여 MVVM 아키텍쳐를 준수하며 각 레이어를 이어주는 데이터 파이프라인 구축에 대 자세히 알게 되었어요.
 - Dagger Hilt를 사용한 의존성 주입을 실제 클라이언트에 적용해 보면서 의존성 주입 기법이 가진 장점들을 몸소 경험할 수 있었어요.
 - Kotlin Coroutine을 활용하여 기기에 부담이 되는 작업(외부 저장소에서 데이터 획득 등)을 효율적으로 비동기 처리하는 방법에 대해 자세히 알게 되었어요.
-- Jetpack Compose Navigaton을 활용하여 싱글 엑티비티에서 다양한 Composable 간의 이동을 가능하게 하는 방법에 대해 알게 되었어요.
+- Jetpack Compose Navigaton을 활용하여 싱글 엑티비티에서 다양한 Composable 간의 전환 및 데이터 이동을 가능하게 하는 방법에 대해 알게 되었어요.
 - GitHub Action를 사용한 CI기능을 구현해 볼 수 있었어요.
