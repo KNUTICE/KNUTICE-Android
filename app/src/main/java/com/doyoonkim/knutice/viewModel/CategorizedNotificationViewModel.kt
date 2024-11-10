@@ -40,9 +40,7 @@ class CategorizedNotificationViewModel @Inject constructor(
         updatedNotificationGeneral: List<Notice> = _uiState.value.notificationGeneral,
         updatedNotificationAcademic: List<Notice> = _uiState.value.notificationAcademic,
         updatedNotificationScholarship: List<Notice> = _uiState.value.notificationScholarship,
-        updatedNotificationEvent: List<Notice> = _uiState.value.notificationEvent,
-        updatedIsDetailedViewOpened: Boolean = _uiState.value.isDetailedViewOpened,
-        updatedRequestedContent: DetailedContentState = _uiState.value.requestedContent
+        updatedNotificationEvent: List<Notice> = _uiState.value.notificationEvent
     ) {
         CoroutineScope(Dispatchers.Default).launch {
             _uiState.update {
@@ -50,9 +48,7 @@ class CategorizedNotificationViewModel @Inject constructor(
                     notificationGeneral = updatedNotificationGeneral,
                     notificationAcademic = updatedNotificationAcademic,
                     notificationScholarship = updatedNotificationScholarship,
-                    notificationEvent = updatedNotificationEvent,
-                    isDetailedViewOpened = updatedIsDetailedViewOpened,
-                    requestedContent = updatedRequestedContent
+                    notificationEvent = updatedNotificationEvent
                 )
             }
         }
@@ -137,45 +133,11 @@ class CategorizedNotificationViewModel @Inject constructor(
                 )
             }
     }
-
-    fun getFullNoticeContent(title: String, info: String, url: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            crawlFullContentUseCase.getFullContentFromSource(title, info, url)
-                .map { Result.success(it) }
-                .catch { emit(Result.failure(it)) }
-                .collectLatest { result ->
-                    result.fold(
-                        onSuccess = { content ->
-                            Log.d("Received Full Text: ", content.toString())
-                            _uiState.update {
-                                it.copy(
-                                    isDetailedViewOpened = true,
-                                    requestedContent = content
-                                )
-                            }
-                        },
-                        onFailure = {
-                            Log.d("Failed to received full text", it.message ?: "")
-                        }
-                    )
-                }
-        }
-    }
-
 }
 
 data class CategorizedNotificationState(
     val notificationGeneral: List<Notice> = listOf(Notice(), Notice(), Notice()),
     val notificationAcademic: List<Notice> = listOf(Notice(), Notice(), Notice()),
     val notificationScholarship: List<Notice> = listOf(Notice(), Notice(), Notice()),
-    val notificationEvent: List<Notice> = listOf(Notice(), Notice(), Notice()),
-    val isDetailedViewOpened: Boolean = false,
-    val requestedContent: DetailedContentState = DetailedContentState()
-)
-
-data class DetailedContentState(
-    val title: String = "",
-    val info: String = "",
-    val fullContent: String = "",
-    val fullContentUrl: String = ""
+    val notificationEvent: List<Notice> = listOf(Notice(), Notice(), Notice())
 )
