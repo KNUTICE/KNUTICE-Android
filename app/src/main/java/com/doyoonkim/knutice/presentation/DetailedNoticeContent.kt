@@ -2,31 +2,30 @@ package com.doyoonkim.knutice.presentation
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -34,25 +33,29 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.knutice.ui.theme.buttonContainer
 import com.doyoonkim.knutice.ui.theme.containerBackground
-import com.doyoonkim.knutice.ui.theme.title
-import com.doyoonkim.knutice.viewModel.DetailedContentState
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.viewModel.DetailedNoticeContentViewModel
 
 @Composable
 fun DetailedNoticeContent(
     modifier: Modifier = Modifier,
-    requested: DetailedContentState = DetailedContentState(),
-    onCloseRequested: () -> Unit = {  }
+    viewModel: DetailedNoticeContentViewModel = hiltViewModel()
 ) {
     val localContext = LocalContext.current
 
-    Surface(
-        modifier = modifier.fillMaxWidth()
-            .background(MaterialTheme.colorScheme.containerBackground),
-        shape = RoundedCornerShape(10.dp),
-        color = MaterialTheme.colorScheme.containerBackground
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.requestFullContent()
+    }
+
+    Box(
+        Modifier.fillMaxSize()
+            .clickable(false) { /* Do Nothing; Prevent user to control UI behind the popped-up composable. */ }
     ) {
         Column(
             Modifier.padding(15.dp)
@@ -65,22 +68,12 @@ fun DetailedNoticeContent(
             ) {
                 Text(
                     modifier = Modifier.weight(5f).wrapContentHeight(),
-                    text = requested.title,
+                    text = state.title,
                     fontSize = 28.sp,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
-                IconButton(
-                    modifier = Modifier.weight(1f).wrapContentSize(),
-                    onClick = { onCloseRequested() }
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.baseline_close_24),
-                        contentDescription = "Close Button",
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
-                    )
-                }
             }
 
             Text(
@@ -88,7 +81,7 @@ fun DetailedNoticeContent(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .weight(0.5f),
-                text = requested.info,
+                text = state.info,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Normal
             )
@@ -97,11 +90,12 @@ fun DetailedNoticeContent(
                 modifier = Modifier.fillMaxWidth()
                     .weight(8f)
                     .verticalScroll(rememberScrollState()),
-                color = MaterialTheme.colorScheme.containerBackground
+                color = MaterialTheme.colorScheme.containerBackground,
+                shape = RoundedCornerShape(10.dp)
             ) {
                 Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = requested.fullContent,
+                    modifier = Modifier.fillMaxWidth().padding(10.dp),
+                    text = state.fullContent,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
                 )
@@ -109,12 +103,12 @@ fun DetailedNoticeContent(
 
             Button(
                 onClick = {
-                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(requested.fullContentUrl))
+                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(state.fullContentUrl))
                     localContext.startActivity(webIntent)
                 },
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier.fillMaxWidth()
-                    .padding(start = 15.dp, end = 15.dp, top = 5.dp, bottom = 5.dp)
+                    .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 5.dp)
                     .weight(0.7f),
                 colors = ButtonColors(
                     containerColor = MaterialTheme.colorScheme.buttonContainer,
@@ -133,17 +127,11 @@ fun DetailedNoticeContent(
             }
         }
     }
+
 }
 
 
 @Preview
 @Composable
 fun DetailedNoticeContent_Preview() {
-    DetailedNoticeContent(
-        requested = DetailedContentState(
-            title = "Test",
-            info = "Test",
-            fullContent = "Full Content"
-        )
-    )
 }
