@@ -2,7 +2,6 @@ package com.doyoonkim.knutice.presentation
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,8 +35,8 @@ import com.doyoonkim.knutice.ui.theme.notificationType3
 import com.doyoonkim.knutice.ui.theme.notificationType4
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.viewModel.CategorizedNotificationViewModel
-import com.doyoonkim.knutice.viewModel.DetailedContentState
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.model.FullContent
 
 @Composable
 fun CategorizedNotification(
@@ -49,8 +48,7 @@ fun CategorizedNotification(
 
     // Back button/gesture actions
     BackHandler {
-        if (uiState.isDetailedViewOpened) viewModel.updateState(updatedIsDetailedViewOpened = false)
-        else navController.popBackStack()
+        navController.popBackStack()
     }
 
     Column(
@@ -66,7 +64,7 @@ fun CategorizedNotification(
             contents = uiState.notificationGeneral,
             onMoreClicked = { navController.navigate(Destination.MORE_GENERAL.name) }
         ) { title, info, url ->
-            viewModel.getFullNoticeContent(title, info, url)
+            navController.navigate(FullContent(title, info, url))
         }
 
         NotificationPreviewList(
@@ -75,7 +73,7 @@ fun CategorizedNotification(
             contents = uiState.notificationAcademic,
             onMoreClicked = { navController.navigate(Destination.MORE_ACADEMIC.name) }
         ) { title, info, url ->
-            viewModel.getFullNoticeContent(title, info, url)
+            navController.navigate(FullContent(title, info, url))
         }
 
         NotificationPreviewList(
@@ -84,7 +82,7 @@ fun CategorizedNotification(
             contents = uiState.notificationScholarship,
             onMoreClicked = { navController.navigate(Destination.MORE_SCHOLARSHIP.name) }
         ) { title, info, url ->
-            viewModel.getFullNoticeContent(title, info, url)
+            navController.navigate(FullContent(title, info, url))
         }
 
         NotificationPreviewList(
@@ -93,21 +91,7 @@ fun CategorizedNotification(
             contents = uiState.notificationEvent,
             onMoreClicked = { navController.navigate(Destination.MORE_EVENT.name) }
         ) { title, info, url ->
-            viewModel.getFullNoticeContent(title, info, url)
-        }
-    }
-
-    AnimatedVisibility(
-        visible = uiState.isDetailedViewOpened
-    ) {
-        DetailedNoticeContent(
-            modifier = Modifier.padding(10.dp),
-            requested = uiState.requestedContent
-        ) {
-            viewModel.updateState(
-                updatedIsDetailedViewOpened = false,
-                updatedRequestedContent = DetailedContentState()
-            )
+            navController.navigate(FullContent(title, info, url))
         }
     }
 }
