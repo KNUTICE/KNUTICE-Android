@@ -2,7 +2,6 @@ package com.doyoonkim.knutice.presentation
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,7 +28,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.knutice.model.FullContent
-import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.presentation.component.NotificationPreview
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.subTitle
@@ -40,7 +38,6 @@ import com.doyoonkim.knutice.viewModel.MoreCategorizedNotificationViewModel
 fun MoreCategorizedNotification(
     modifier: Modifier = Modifier,
     viewModel: MoreCategorizedNotificationViewModel = hiltViewModel(),
-    category: NoticeCategory,
     backButtonHandler: () -> Unit = { },
     onNoticeSelected: (FullContent) -> Unit = {  }
 ) {
@@ -63,8 +60,8 @@ fun MoreCategorizedNotification(
     ) {
         LaunchedEffect(Unit) {
             Log.d("MoreCategorizedNotification", "Initialize Notice Category to be fetched")
-            if (uiState.currentLastNttId == 0)
-                viewModel.setNotificationCategory(category)
+//            if (uiState.currentLastNttId == 0)
+//                viewModel.setNotificationCategory(category)
             viewModel.fetchNotificationPerPage()
         }
         LazyColumn(
@@ -122,16 +119,5 @@ fun MoreCategorizedNotification(
             state = pullRefreshState
         )
     }
-
-//    AnimatedVisibility(
-//        uiState.isDetailedContentVisible
-//    ) {
-//        DetailedNoticeContent(
-//            modifier = Modifier.padding(7.dp),
-//            requested = uiState.detailedContentState
-//        ) {
-//            viewModel.updatedDetailedContentRequest(false)
-//        }
-//    }
 }
 

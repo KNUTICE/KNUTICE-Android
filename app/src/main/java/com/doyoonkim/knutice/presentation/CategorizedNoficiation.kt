@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.presentation.component.NotificationPreviewCard
@@ -42,13 +41,15 @@ import com.doyoonkim.knutice.model.FullContent
 fun CategorizedNotification(
     modifier: Modifier = Modifier,
     viewModel: CategorizedNotificationViewModel = hiltViewModel(),
-    navController: NavController
+    onGoBackAction: () -> Unit,
+    onMoreNoticeRequested: (Destination) -> Unit,
+    onFullContentRequested: (FullContent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     // Back button/gesture actions
     BackHandler {
-        navController.popBackStack()
+        onGoBackAction()
     }
 
     Column(
@@ -62,36 +63,36 @@ fun CategorizedNotification(
             listTitle = stringResource(R.string.general_news),
             titleColor = MaterialTheme.colorScheme.notificationType1,
             contents = uiState.notificationGeneral,
-            onMoreClicked = { navController.navigate(Destination.MORE_GENERAL.name) }
+            onMoreClicked = { onMoreNoticeRequested(Destination.MORE_GENERAL) }
         ) { title, info, url ->
-            navController.navigate(FullContent(title, info, url))
+            onFullContentRequested(FullContent(title, info, url))
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.academic_news),
             titleColor = MaterialTheme.colorScheme.notificationType2,
             contents = uiState.notificationAcademic,
-            onMoreClicked = { navController.navigate(Destination.MORE_ACADEMIC.name) }
+            onMoreClicked = { onMoreNoticeRequested(Destination.MORE_ACADEMIC) }
         ) { title, info, url ->
-            navController.navigate(FullContent(title, info, url))
+            onFullContentRequested(FullContent(title, info, url))
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.scholarship_news),
             titleColor = MaterialTheme.colorScheme.notificationType3,
             contents = uiState.notificationScholarship,
-            onMoreClicked = { navController.navigate(Destination.MORE_SCHOLARSHIP.name) }
+            onMoreClicked = { onMoreNoticeRequested(Destination.MORE_SCHOLARSHIP) }
         ) { title, info, url ->
-            navController.navigate(FullContent(title, info, url))
+            onFullContentRequested(FullContent(title, info, url))
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.event_news),
             titleColor = MaterialTheme.colorScheme.notificationType4,
             contents = uiState.notificationEvent,
-            onMoreClicked = { navController.navigate(Destination.MORE_EVENT.name) }
+            onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
         ) { title, info, url ->
-            navController.navigate(FullContent(title, info, url))
+            onFullContentRequested(FullContent(title, info, url))
         }
     }
 }
