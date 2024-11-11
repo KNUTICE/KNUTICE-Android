@@ -1,9 +1,12 @@
 package com.doyoonkim.knutice.viewModel
 
 import android.util.Log
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.doyoonkim.knutice.domain.CrawlFullContentImpl
+import androidx.navigation.toRoute
 import com.doyoonkim.knutice.domain.FetchNoticesPerPageInCategory
+import com.doyoonkim.knutice.model.Destination
+import com.doyoonkim.knutice.model.NavDestination
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MoreCategorizedNotificationViewModel @Inject constructor(
-    private val fetchListOfNoticesUseCase: FetchNoticesPerPageInCategory
+    private val fetchListOfNoticesUseCase: FetchNoticesPerPageInCategory,
+    private val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     private val filename = "MoreCategorizedNotificationViewModel"
 
@@ -28,9 +32,14 @@ class MoreCategorizedNotificationViewModel @Inject constructor(
     private var _uiState = MutableStateFlow<MoreNotificationListState>(MoreNotificationListState())
     val uiState = _uiState.asStateFlow()
 
-    fun setNotificationCategory(category: NoticeCategory) {
-        _uiState.update {
-            it.copy(notificationCategory = category)
+    // Category of Requested Notice List
+    private val category = savedStateHandle.toRoute<NavDestination>().run {
+        when (this.arrived) {
+            Destination.MORE_GENERAL -> NoticeCategory.GENERAL_NEWS
+            Destination.MORE_ACADEMIC -> NoticeCategory.ACADEMIC_NEWS
+            Destination.MORE_SCHOLARSHIP -> NoticeCategory.SCHOLARSHIP_NEWS
+            Destination.MORE_EVENT -> NoticeCategory.EVENT_NEWS
+            else -> NoticeCategory.Unspecified
         }
     }
 
@@ -54,7 +63,7 @@ class MoreCategorizedNotificationViewModel @Inject constructor(
     fun fetchNotificationPerPage() {
         CoroutineScope(Dispatchers.IO).launch {
             fetchListOfNoticesUseCase.getNoticesPerPage(
-                _uiState.value.notificationCategory, _uiState.value.currentLastNttId
+                category, _uiState.value.currentLastNttId
             )
                 .map { Result.success(it) }
                 .catch { emit(Result.failure(it)) }
@@ -96,7 +105,6 @@ class MoreCategorizedNotificationViewModel @Inject constructor(
 
 data class MoreNotificationListState(
     val currentLastNttId: Int = 0,
-    val notificationCategory: NoticeCategory = NoticeCategory.Unspecified,
     val notices: List<Notice> = List<Notice>(20) { Notice() },
     val isLoading: Boolean = false,
     val isRefreshRequested: Boolean = false
