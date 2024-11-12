@@ -46,7 +46,8 @@ import com.doyoonkim.knutice.ui.theme.notificationType1
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
 import com.doyoonkim.knutice.R
- import dagger.hilt.android.AndroidEntryPoint
+import com.doyoonkim.knutice.model.NavDestination
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -70,10 +71,10 @@ class MainActivity : ComponentActivity() {
                 // Permission is already granted, and Push Notification is available
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
                 // RequestPermissionRationale does not triggered.
-                Log.d("MainActivity", "Triggered")
-                PermissionRationale(Modifier.fillMaxWidth()) { result ->
-                    if (result) requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
+//                Log.d("MainActivity", "Triggered")
+//                PermissionRationale(Modifier.fillMaxWidth()) { result ->
+//                    if (result) requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+//                }
             }
             else {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -161,7 +162,7 @@ fun MainServiceScreen(
                     if (mainAppState.currentLocation == Destination.MAIN) {
                         IconButton(
                             onClick = {
-                                navController.navigate(Destination.SETTINGS.name)
+                                navController.navigate(NavDestination(Destination.SETTINGS))
                             }
                         ) {
                             Image(
