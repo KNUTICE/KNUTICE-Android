@@ -11,7 +11,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code">1.0.1 Alpha</string>
+    <string name="version_code">Beta 1.0.0 RC 2</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -21,4 +21,8 @@
     <string name="inapp_notification_channel_description" translatable="false">knutice inapp notification channel</string>
     <string name="inapp_notificaiton_channel_name">KNUTICE In-app Notice</string>
     <string name="oss_notice">Open Source License</string>
+    <string name="permission_rationale_title">Don\'t miss new notices!</string>
+    <string name="permission_rationale_description">Allow KNUTICE to notify you when new notices are being posted.</string>
+    <string name="button_allow">Allow</string>
+    <string name="button_deny">Deny</string>
 </resources>

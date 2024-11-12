@@ -7,7 +7,7 @@ import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
 import com.doyoonkim.knutice.model.TopThreeNotices
 import com.doyoonkim.knutice.model.ValidateTokenResult
-import com.example.knutice.BuildConfig
+import com.doyoonkim.knutice.BuildConfig
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers

@@ -12,10 +12,14 @@
     <string name="about_title">더보기</string>
     <string name="about_version">버전정보</string>
     <string name="about_oss">오픈소스 라이센스</string>
-    <string name="version_code">1.0.1 알파 (내부테스트용)</string>
+    <string name="version_code">(베타) 1.0.0 RC 2</string>
     <string name="pref_notification_title">알림</string>
     <string name="title_preference">설정</string>
     <string name="new_notice">새로운 알림이 도착했어요!</string>
     <string name="inapp_notificaiton_channel_name">신규 공지 알림</string>
     <string name="oss_notice">오픈소스 라이센스</string>
+    <string name="permission_rationale_title">새로운 공지 알림을 받아보세요!</string>
+    <string name="permission_rationale_description">새로운 공지가 올라올 때마다 푸시 알림으로 알려드려요.</string>
+    <string name="button_allow">좋아요</string>
+    <string name="button_deny">나중에 할래요</string>
 </resources>

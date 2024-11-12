@@ -35,19 +35,17 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.ui.theme.buttonContainer
 import com.doyoonkim.knutice.ui.theme.subTitle
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
 
 // TODO: Apply Color Theme on HorizontalDivider.
 
 @Composable
 fun UserPreference(
     modifier: Modifier = Modifier,
-    navController: NavController = rememberNavController()
+    onOssClicked: (Destination) -> Unit
 ) {
     var permissionStatus by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -182,7 +180,7 @@ fun UserPreference(
             )
 
             IconButton(
-                onClick = { navController.navigate(Destination.OSS.name) }
+                onClick = { onOssClicked(Destination.OSS) }
             ) {
                 Image(
                     painter = painterResource(R.drawable.baseline_arrow_forward_ios_24),
@@ -204,5 +202,5 @@ fun UserPreference(
 @Preview(showSystemUi = true, locale = "KO")
 @Composable
 fun UserPreference_Preview() {
-    UserPreference(Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp))
+
 }

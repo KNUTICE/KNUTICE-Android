@@ -1,5 +1,6 @@
 package com.doyoonkim.knutice.data
 
+import androidx.annotation.WorkerThread
 import com.doyoonkim.knutice.domain.NoticeDummySource
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
@@ -26,6 +27,7 @@ class NoticeLocalRepository @Inject constructor(
 ) {
     private var localData: TopThreeNotices? = null
 
+    @WorkerThread
     fun getTopThreeNotice(isDummy: Boolean = false): Flow<TopThreeNotices> {
         if (isDummy) {
             return channelFlow<TopThreeNotices> {

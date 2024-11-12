@@ -64,3 +64,10 @@ data class ApiDeviceTokenRequest(
 data class DeviceTokenRequest(
     val deviceToken: String
 )
+
+data class DetailedContentState(
+    val title: String = "",
+    val info: String = "",
+    val fullContent: String = "",
+    val fullContentUrl: String = ""
+)
