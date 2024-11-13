@@ -103,8 +103,10 @@ fun DetailedNoticeContent(
 
             Button(
                 onClick = {
-                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(state.fullContentUrl))
-                    localContext.startActivity(webIntent)
+                    if (state.fullContentUrl != "") {
+                        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(state.fullContentUrl))
+                        localContext.startActivity(webIntent)
+                    }
                 },
                 shape = RoundedCornerShape(15.dp),
                 modifier = Modifier.fillMaxWidth()
