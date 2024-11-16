@@ -45,6 +45,7 @@ import com.doyoonkim.knutice.R
 @Composable
 fun UserPreference(
     modifier: Modifier = Modifier,
+    onCustomerServiceClicked: (Destination) -> Unit,
     onOssClicked: (Destination) -> Unit
 ) {
     var permissionStatus by remember { mutableStateOf(false) }
@@ -116,6 +117,49 @@ fun UserPreference(
                         context.startActivity(settingIntent)
                     },
                     enabled = true
+                )
+            }
+        }
+
+        HorizontalDivider(
+            Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.subTitle
+        )
+
+        Text(
+            modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                .padding(top = 20.dp),
+            text = stringResource(R.string.title_support),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 14.sp,
+            textAlign = TextAlign.Start
+        )
+
+        HorizontalDivider(
+            Modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.subTitle
+        )
+
+        Row(
+            modifier = Modifier.fillMaxWidth().wrapContentSize()
+                .padding(top = 5.dp, bottom = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.wrapContentHeight().weight(5f),
+                text = stringResource(R.string.title_customer_service),
+                fontWeight = FontWeight.Medium,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Start
+            )
+
+            IconButton(
+                onClick = { onCustomerServiceClicked(Destination.CS) }
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.baseline_arrow_forward_ios_24),
+                    contentDescription = "Go to customer service page.",
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.buttonContainer)
                 )
             }
         }
