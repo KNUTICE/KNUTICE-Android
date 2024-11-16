@@ -71,6 +71,10 @@ val ColorScheme.buttonContainer: Color
     @Composable
     get() = if(isSystemInDarkTheme()) ButtonDark else ButtonLight
 
+val ColorScheme.textPurple: Color
+    @Composable
+    get() = if(isSystemInDarkTheme()) Purple80 else Purple40
+
 
 @Composable
 fun KNUTICETheme(

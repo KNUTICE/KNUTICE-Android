@@ -22,4 +22,10 @@
     <string name="permission_rationale_description">새로운 공지가 올라올 때마다 푸시 알림으로 알려드려요.</string>
     <string name="button_allow">좋아요</string>
     <string name="button_deny">나중에 할래요</string>
+    <string name="title_support">지원</string>
+    <string name="title_customer_service">고객센터</string>
+    <string name="customer_service_subtitile_1">• 서비스 이용 중 불편한 점이 있으시면 이곳에 문의해 주세요.</string>
+    <string name="customer_service_subtitle_2">• 상황을 구체적으로 설명해 주시면 서비스 개선에 도움이 됩니다.</string>
+    <string name="btn_submit">제출하기</string>
+    <string name="placeholder_customer_report">이곳에 문의사항을 적어주세요.</string>
 </resources>
