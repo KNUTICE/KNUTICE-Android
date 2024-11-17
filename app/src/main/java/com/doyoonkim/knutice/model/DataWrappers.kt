@@ -71,3 +71,8 @@ data class DetailedContentState(
     val fullContent: String = "",
     val fullContentUrl: String = ""
 )
+
+data class CustomerServiceReportState(
+    val userReport: String = "",
+    val reachedMaCharacters: Boolean = false
+)

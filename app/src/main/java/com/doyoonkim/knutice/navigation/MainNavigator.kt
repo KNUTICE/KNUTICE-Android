@@ -13,6 +13,7 @@ import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.FullContent
 import com.doyoonkim.knutice.model.NavDestination
 import com.doyoonkim.knutice.presentation.CategorizedNotification
+import com.doyoonkim.knutice.presentation.CustomerService
 import com.doyoonkim.knutice.presentation.DetailedNoticeContent
 import com.doyoonkim.knutice.presentation.MoreCategorizedNotification
 import com.doyoonkim.knutice.presentation.OpenSourceLicenseNotice
@@ -44,11 +45,13 @@ fun MainNavigator(
                     onFullContentRequested = { navController.navigate(it) }
                 )
                 Destination.SETTINGS -> UserPreference(
-                    Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp)
+                    Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp),
+                    onCustomerServiceClicked = { navController.navigate(NavDestination(it))}
                 ) {
                     navController.navigate(NavDestination(it))
                 }
                 Destination.OSS -> OpenSourceLicenseNotice()
+                Destination.CS -> CustomerService(Modifier.padding(15.dp))
                 else -> MoreCategorizedNotification(
                     backButtonHandler = { navController.popBackStack() },
                     onNoticeSelected = { navController.navigate(it) }

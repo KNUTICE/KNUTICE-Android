@@ -25,4 +25,10 @@
     <string name="permission_rationale_description">Allow KNUTICE to notify you when new notices are being posted.</string>
     <string name="button_allow">Allow</string>
     <string name="button_deny">Deny</string>
+    <string name="title_support">Support</string>
+    <string name="title_customer_service">Customer Service</string>
+    <string name="customer_service_subtitile_1">• Let us know any inconvenience you\'ve exeprienced.</string>
+    <string name="customer_service_subtitle_2">• It would be helpful if you provide circumstance as detailed as possible.</string>
+    <string name="btn_submit">Submit</string>
+    <string name="placeholder_customer_report">Write your report here.</string>
 </resources>

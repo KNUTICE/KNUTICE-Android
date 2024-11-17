@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
@@ -129,7 +130,11 @@ fun MainServiceScreen(
                                 }
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
+                                    painter = if (mainAppState.currentLocation == Destination.CS) {
+                                        painterResource(R.drawable.baseline_close_24)
+                                    } else {
+                                        painterResource(R.drawable.baseline_arrow_back_ios_new_24)
+                                    },
                                     contentDescription = "back",
                                     modifier = Modifier.wrapContentSize(),
                                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
@@ -145,7 +150,13 @@ fun MainServiceScreen(
                                 Destination.MORE_EVENT -> stringResource(R.string.event_news)
                                 Destination.SETTINGS -> stringResource(R.string.title_preference)
                                 Destination.OSS -> stringResource(R.string.oss_notice)
+                                Destination.CS -> stringResource(R.string.title_customer_service)
                                 Destination.Unspecified -> mainAppState.currentScaffoldTitle
+                            },
+                            textAlign = if (mainAppState.currentLocation == Destination.CS) {
+                                TextAlign.Center
+                            } else {
+                                TextAlign.Start
                             },
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
