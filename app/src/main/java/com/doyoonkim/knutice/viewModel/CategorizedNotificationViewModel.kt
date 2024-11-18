@@ -2,6 +2,7 @@ package com.doyoonkim.knutice.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.doyoonkim.knutice.domain.CrawlFullContentImpl
 import com.doyoonkim.knutice.domain.FetchTopThreeNoticeByCategory
 import com.doyoonkim.knutice.model.Notice
@@ -24,7 +25,7 @@ class CategorizedNotificationViewModel @Inject constructor(
     private val crawlFullContentUseCase: CrawlFullContentImpl
 ) : ViewModel() {
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.Default) {
             fetchTopThreeGeneralNotice()
             fetchTopThreeAcademicNotice()
             fetchTopThreeScholarshipNotice()
@@ -42,7 +43,7 @@ class CategorizedNotificationViewModel @Inject constructor(
         updatedNotificationScholarship: List<Notice> = _uiState.value.notificationScholarship,
         updatedNotificationEvent: List<Notice> = _uiState.value.notificationEvent
     ) {
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch(Dispatchers.Default) {
             _uiState.update {
                 it.copy(
                     notificationGeneral = updatedNotificationGeneral,
