@@ -69,7 +69,8 @@ data class DetailedContentState(
     val title: String = "",
     val info: String = "",
     val fullContent: String = "",
-    val fullContentUrl: String = ""
+    val fullContentUrl: String = "",
+    val imageUrl: String = ""
 )
 
 data class CustomerServiceReportState(

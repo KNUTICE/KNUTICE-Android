@@ -45,7 +45,8 @@ class DetailedNoticeContentViewModel @Inject constructor(
                                     title = content.title,
                                     info = content.info,
                                     fullContent = content.fullContent,
-                                    fullContentUrl = content.fullContentUrl
+                                    fullContentUrl = content.fullContentUrl,
+                                    imageUrl = requested.imgUrl
                                 )
                             }
                         },

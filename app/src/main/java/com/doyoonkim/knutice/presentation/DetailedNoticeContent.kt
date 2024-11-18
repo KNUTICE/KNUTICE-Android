@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +36,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.doyoonkim.knutice.ui.theme.buttonContainer
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.R
@@ -93,12 +96,29 @@ fun DetailedNoticeContent(
                 color = MaterialTheme.colorScheme.containerBackground,
                 shape = RoundedCornerShape(10.dp)
             ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth().padding(10.dp),
-                    text = state.fullContent,
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                )
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Top
+                ) {
+                    if (state.imageUrl != "") {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(state.imageUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Loaded Image, which is a part of the notice.",
+                            contentScale = ContentScale.FillWidth,
+                            modifier = Modifier.fillMaxSize().padding(7.dp)
+                        )
+                    }
+                    Text(
+                        modifier = Modifier.fillMaxWidth().padding(10.dp),
+                        text = state.fullContent,
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+
             }
 
             Button(
