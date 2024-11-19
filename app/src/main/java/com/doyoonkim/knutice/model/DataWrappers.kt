@@ -1,6 +1,5 @@
 package com.doyoonkim.knutice.model
 
-import com.google.android.gms.common.internal.Objects
 import com.google.gson.annotations.SerializedName
 
 

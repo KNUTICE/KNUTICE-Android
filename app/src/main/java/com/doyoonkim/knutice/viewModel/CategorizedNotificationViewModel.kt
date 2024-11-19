@@ -20,8 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategorizedNotificationViewModel @Inject constructor(
-    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory,
-    private val crawlFullContentUseCase: CrawlFullContentImpl
+    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory
 ) : ViewModel() {
     init {
         viewModelScope.launch(Dispatchers.Default) {
