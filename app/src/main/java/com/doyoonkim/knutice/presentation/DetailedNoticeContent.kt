@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +43,8 @@ import coil.request.ImageRequest
 import com.doyoonkim.knutice.ui.theme.buttonContainer
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.presentation.component.AnimatedGradient
+import com.doyoonkim.knutice.presentation.component.LazyText
 import com.doyoonkim.knutice.viewModel.DetailedNoticeContentViewModel
 
 @Composable
@@ -56,98 +60,96 @@ fun DetailedNoticeContent(
         viewModel.requestFullContent()
     }
 
-    Box(
-        Modifier.fillMaxSize()
-            .clickable(false) { /* Do Nothing; Prevent user to control UI behind the popped-up composable. */ }
+    Column(
+        Modifier.padding(15.dp)
     ) {
-        Column(
-            Modifier.padding(15.dp)
+        Row(
+            Modifier.fillMaxWidth()
+                .weight(0.5f),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.Bottom
         ) {
-            Row(
-                Modifier.fillMaxWidth()
-                    .weight(0.5f),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.Bottom
-            ) {
-                Text(
-                    modifier = Modifier.weight(5f).wrapContentHeight(),
-                    text = state.title,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-
-            Text(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .weight(0.5f),
-                text = state.info,
-                fontSize = 16.sp,
-                fontWeight = FontWeight.Normal
+            LazyText(
+                modifier = Modifier.weight(5f).wrapContentHeight(),
+                text = state.title,
+                fontSize = 28.sp,
+                fontWeight = FontWeight.SemiBold,
+                maxLine = 1,
+                overflow = TextOverflow.Ellipsis,
+                completion = state.isLoaded
             )
+        }
 
-            Surface(
-                modifier = Modifier.fillMaxWidth()
-                    .weight(8f)
-                    .verticalScroll(rememberScrollState()),
-                color = MaterialTheme.colorScheme.containerBackground,
-                shape = RoundedCornerShape(10.dp)
+        LazyText(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .weight(0.5f),
+            text = state.info,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+            completion = state.isLoaded
+        )
+
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+                .weight(8f)
+                .verticalScroll(rememberScrollState()),
+            color = MaterialTheme.colorScheme.containerBackground,
+            shape = RoundedCornerShape(10.dp)
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Top
             ) {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Top
-                ) {
-                    if (state.imageUrl != "") {
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(state.imageUrl)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = "Loaded Image, which is a part of the notice.",
-                            contentScale = ContentScale.FillWidth,
-                            modifier = Modifier.fillMaxSize().padding(7.dp)
-                        )
-                    }
-                    Text(
-                        modifier = Modifier.fillMaxWidth().padding(10.dp),
-                        text = state.fullContent,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Medium,
+                if (state.imageUrl != "") {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(state.imageUrl)
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = "Loaded Image, which is a part of the notice.",
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier.fillMaxSize().padding(7.dp)
                     )
                 }
-
-            }
-
-            Button(
-                onClick = {
-                    if (state.fullContentUrl != "") {
-                        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(state.fullContentUrl))
-                        localContext.startActivity(webIntent)
-                    }
-                },
-                shape = RoundedCornerShape(15.dp),
-                modifier = Modifier.fillMaxWidth()
-                    .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 5.dp)
-                    .weight(0.7f),
-                colors = ButtonColors(
-                    containerColor = MaterialTheme.colorScheme.buttonContainer,
-                    contentColor = Color.White,
-                    disabledContentColor = Color.Unspecified,
-                    disabledContainerColor = Color.Unspecified
-                )
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(R.string.btn_more_on_browser),
-                    textAlign = TextAlign.Center,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold
+                LazyText(
+                    modifier = Modifier.fillMaxWidth().padding(10.dp),
+                    text = state.fullContent,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                    completion = state.isLoaded
                 )
             }
         }
+
+        Button(
+            onClick = {
+                if (state.fullContentUrl != "") {
+                    val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse(state.fullContentUrl))
+                    localContext.startActivity(webIntent)
+                }
+            },
+            shape = RoundedCornerShape(15.dp),
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 5.dp)
+                .weight(0.7f),
+            colors = ButtonColors(
+                containerColor = MaterialTheme.colorScheme.buttonContainer,
+                contentColor = Color.White,
+                disabledContentColor = Color.Unspecified,
+                disabledContainerColor = Color.Unspecified
+            )
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(R.string.btn_more_on_browser),
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+        }
+
     }
 
 }
