@@ -3,7 +3,6 @@ package com.doyoonkim.knutice.viewModel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.knutice.domain.CrawlFullContentImpl
 import com.doyoonkim.knutice.domain.FetchTopThreeNoticeByCategory
 import com.doyoonkim.knutice.model.Notice
 import dagger.hilt.android.lifecycle.HiltViewModel
