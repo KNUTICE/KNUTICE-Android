@@ -75,6 +75,18 @@ val ColorScheme.textPurple: Color
     @Composable
     get() = if(isSystemInDarkTheme()) Purple80 else Purple40
 
+val ColorScheme.animationGradientStart: Color
+    @Composable
+    get() = if(isSystemInDarkTheme()) GradientStartDark else GradientStartLight
+
+val ColorScheme.animationGradientIntermediate: Color
+    @Composable
+    get() = if(isSystemInDarkTheme()) GradientIntermediateDark else GradientIntermediateLight
+
+val ColorScheme.animationGradientEnd: Color
+    @Composable
+    get() = if(isSystemInDarkTheme()) GradientEndDark else GradientEndLight
+
 
 @Composable
 fun KNUTICETheme(
