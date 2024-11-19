@@ -48,6 +48,7 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
         val notificationBuilder = NotificationCompat.Builder(
             applicationContext, getString(R.string.inapp_notification_channel_id)
         )
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
             .setContentTitle(getString(R.string.new_notice))
             .setContentText(this@toPushNotification.notification?.body ?: "No message body")

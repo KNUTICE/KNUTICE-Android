@@ -16,5 +16,6 @@ data class NavDestination(
 data class FullContent(
     val title: String? = null,
     val info: String? = null,
-    val url: String
+    val url: String,
+    val imgUrl: String
 )

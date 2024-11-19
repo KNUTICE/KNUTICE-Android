@@ -2,11 +2,11 @@ package com.doyoonkim.knutice.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.doyoonkim.knutice.domain.CrawlFullContentImpl
 import com.doyoonkim.knutice.domain.FetchTopThreeNoticeByCategory
 import com.doyoonkim.knutice.model.Notice
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,11 +20,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategorizedNotificationViewModel @Inject constructor(
-    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory,
-    private val crawlFullContentUseCase: CrawlFullContentImpl
+    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory
 ) : ViewModel() {
     init {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.Default) {
             fetchTopThreeGeneralNotice()
             fetchTopThreeAcademicNotice()
             fetchTopThreeScholarshipNotice()
@@ -42,7 +41,7 @@ class CategorizedNotificationViewModel @Inject constructor(
         updatedNotificationScholarship: List<Notice> = _uiState.value.notificationScholarship,
         updatedNotificationEvent: List<Notice> = _uiState.value.notificationEvent
     ) {
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch(Dispatchers.Default) {
             _uiState.update {
                 it.copy(
                     notificationGeneral = updatedNotificationGeneral,

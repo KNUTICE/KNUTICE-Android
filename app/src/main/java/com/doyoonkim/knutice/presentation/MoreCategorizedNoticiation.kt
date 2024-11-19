@@ -97,7 +97,8 @@ fun MoreCategorizedNotification(
                                 onNoticeSelected(FullContent(
                                     notice.title,
                                     "[${notice.departName}] ${notice.timestamp}",
-                                    notice.url
+                                    notice.url,
+                                    notice.imageUrl
                                 ))
                             }
                     ) {

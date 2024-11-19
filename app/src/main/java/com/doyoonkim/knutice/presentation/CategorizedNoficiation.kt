@@ -64,8 +64,8 @@ fun CategorizedNotification(
             titleColor = MaterialTheme.colorScheme.notificationType1,
             contents = uiState.notificationGeneral,
             onMoreClicked = { onMoreNoticeRequested(Destination.MORE_GENERAL) }
-        ) { title, info, url ->
-            onFullContentRequested(FullContent(title, info, url))
+        ) { title, info, url, imgUrl ->
+            onFullContentRequested(FullContent(title, info, url, imgUrl))
         }
 
         NotificationPreviewList(
@@ -73,8 +73,8 @@ fun CategorizedNotification(
             titleColor = MaterialTheme.colorScheme.notificationType2,
             contents = uiState.notificationAcademic,
             onMoreClicked = { onMoreNoticeRequested(Destination.MORE_ACADEMIC) }
-        ) { title, info, url ->
-            onFullContentRequested(FullContent(title, info, url))
+        ) { title, info, url, imgUrl ->
+            onFullContentRequested(FullContent(title, info, url, imgUrl))
         }
 
         NotificationPreviewList(
@@ -82,8 +82,8 @@ fun CategorizedNotification(
             titleColor = MaterialTheme.colorScheme.notificationType3,
             contents = uiState.notificationScholarship,
             onMoreClicked = { onMoreNoticeRequested(Destination.MORE_SCHOLARSHIP) }
-        ) { title, info, url ->
-            onFullContentRequested(FullContent(title, info, url))
+        ) { title, info, url, imgUrl ->
+            onFullContentRequested(FullContent(title, info, url, imgUrl))
         }
 
         NotificationPreviewList(
@@ -91,8 +91,8 @@ fun CategorizedNotification(
             titleColor = MaterialTheme.colorScheme.notificationType4,
             contents = uiState.notificationEvent,
             onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
-        ) { title, info, url ->
-            onFullContentRequested(FullContent(title, info, url))
+        ) { title, info, url, imgUrl ->
+            onFullContentRequested(FullContent(title, info, url, imgUrl))
         }
     }
 }
@@ -104,7 +104,7 @@ fun NotificationPreviewList(
     titleColor: Color = Color.Unspecified,
     contents: List<Notice> = listOf(),
     onMoreClicked: () -> Unit = {  },
-    onNoticeClicked: (String, String, String) -> Unit
+    onNoticeClicked: (String, String, String, String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -140,7 +140,11 @@ fun NotificationPreviewList(
                 notificationTitle = content.title,
                 notificationInfo = "[${content.departName}] ${content.timestamp}"
             ) {
-                onNoticeClicked(content.title, content.departName, content.url)
+                onNoticeClicked(
+                    content.title,
+                    "[${content.departName}] ${content.timestamp}",
+                    content.url,
+                    content.imageUrl)
             }
         }
     }

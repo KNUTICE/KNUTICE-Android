@@ -1,6 +1,5 @@
 package com.doyoonkim.knutice.model
 
-import com.google.android.gms.common.internal.Objects
 import com.google.gson.annotations.SerializedName
 
 
@@ -69,7 +68,9 @@ data class DetailedContentState(
     val title: String = "",
     val info: String = "",
     val fullContent: String = "",
-    val fullContentUrl: String = ""
+    val fullContentUrl: String = "",
+    val imageUrl: String = "",
+    val isLoaded: Boolean = false
 )
 
 data class CustomerServiceReportState(
