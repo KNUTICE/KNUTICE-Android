@@ -29,3 +29,12 @@ val SubtitleAny = Color(0xFF787879)
 
 val ButtonLight = Color(0xFF3C3C3C)
 val ButtonDark = Color(0xFF888888)
+
+val GradientStartDark = Color(0xFF444444)
+val GradientStartLight = Color(0xFFA1A1A1)
+
+val GradientIntermediateDark = Color(0xFF5C5C5C)
+val GradientIntermediateLight = Color(0xFFD2D2D2)
+
+val GradientEndDark = Color(0xFF848484)
+val GradientEndLight = Color(0xFFE5E5E5)
