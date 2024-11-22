@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.presentation
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -144,7 +145,8 @@ fun NotificationPreviewList(
                     content.title,
                     "[${content.departName}] ${content.timestamp}",
                     content.url,
-                    content.imageUrl)
+                    content.imageUrl
+                )
             }
         }
     }
