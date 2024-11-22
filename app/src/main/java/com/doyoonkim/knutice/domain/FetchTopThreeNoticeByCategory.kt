@@ -94,7 +94,8 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
                 title = this[index].title ?: "Unknown",
                 url = this[index].contentUrl ?: "Unknown",
                 departName = this[index].departName ?: "Unknown",
-                timestamp = this[index].registeredAt ?: "Unknown"
+                timestamp = this[index].registeredAt ?: "Unknown",
+                imageUrl = this[index].contentImage ?: "Unknown"
             )
         }
     }
