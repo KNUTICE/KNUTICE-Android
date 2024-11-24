@@ -8,6 +8,7 @@ import com.doyoonkim.knutice.model.NoticesPerPage
 import com.doyoonkim.knutice.model.TopThreeNotices
 import com.doyoonkim.knutice.model.ValidateTokenResult
 import com.doyoonkim.knutice.BuildConfig
+import com.doyoonkim.knutice.model.Notice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -31,13 +32,11 @@ class KnuticeRemoteSource @Inject constructor() {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    suspend fun getTopThreeNotice(): TopThreeNotices {
-        Log.d("KnuticeRemoteSource", "Start retrofit service")
+    suspend fun getTopThreeNotice(category: NoticeCategory, size: Int): NoticesPerPage {
         return knuticeService.create(KnuticeService::class.java).run {
-            this.getTopThreeNotice()
+            this.getTopThreeNotice(category, size)
         }
     }
-
 
     suspend fun getNoticeListPerPage(category: NoticeCategory, lastNttId: Int): NoticesPerPage {
         Log.d("KnuticeRemoteSource", "Start retrofit service")
@@ -79,6 +78,12 @@ interface KnuticeService {
 
     @GET("/open-api/notice")
     suspend fun getTopThreeNotice(): TopThreeNotices
+
+    @GET("/open-api/notice/list")
+    suspend fun getTopThreeNotice(
+        @Query("noticeName") category: NoticeCategory,
+        @Query("size") size: Int
+    ): NoticesPerPage
 
     @GET("/open-api/notice/list")
     suspend fun getNoticeListPerPage(
