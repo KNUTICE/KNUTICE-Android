@@ -103,9 +103,9 @@ fun CustomerService(
 
         Button(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-            enabled = false,
+            enabled = true,
             shape = RoundedCornerShape(10.dp),
-            onClick = {  }
+            onClick = { viewModel.submitUserReport() }
         ) {
             Text(
                 text = stringResource(R.string.btn_submit),
