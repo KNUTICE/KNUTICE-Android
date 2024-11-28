@@ -36,7 +36,7 @@ data class NoticesPerPage(
     @SerializedName("body") var body: ArrayList<RawNoticeData> = arrayListOf()
 )
 
-data class ValidateTokenResult(
+data class ApiPostResult(
     @SerializedName("result") var result: Result? = Result(),
     @SerializedName("body") var body: Body? = Body()
 ) {
@@ -44,6 +44,28 @@ data class ValidateTokenResult(
         val message: String = ""
     )
 }
+
+data class ApiDeviceTokenRequest(
+    val result: Result = Result(),
+    val body: DeviceTokenRequest
+)
+
+data class DeviceTokenRequest(
+    val deviceToken: String
+)
+
+data class ApiReportRequest(
+    val result: Result = Result(),
+    val body: ReportRequest
+)
+
+data class ReportRequest(
+    val token: String = "",
+    val content: String = "",
+    val clientType: String = "APP",
+    val deviceName: String = "",
+    val version: String = ""
+)
 
 // Data class to be applied to uiState.
 data class Notice(
@@ -53,15 +75,6 @@ data class Notice(
     val imageUrl: String = "",
     val departName: String = "Unknown",
     val timestamp: String = "Unknown"
-)
-
-data class ApiDeviceTokenRequest(
-    val result: Result = Result(),
-    val body: DeviceTokenRequest
-)
-
-data class DeviceTokenRequest(
-    val deviceToken: String
 )
 
 data class DetailedContentState(
@@ -75,5 +88,7 @@ data class DetailedContentState(
 
 data class CustomerServiceReportState(
     val userReport: String = "",
-    val reachedMaCharacters: Boolean = false
+    val reachedMaxCharacters: Boolean = false,
+    val isSubmissionFailed: Boolean = false
 )
+
