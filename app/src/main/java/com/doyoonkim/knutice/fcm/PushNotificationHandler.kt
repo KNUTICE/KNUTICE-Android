@@ -13,6 +13,10 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -87,7 +91,9 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
             Log.d(TAG, "Received Token: $registrationToken")
 
             // POST request to upload current token to the web server.
-            remoteSource.validateToken(registrationToken)
+            CoroutineScope(Dispatchers.IO).launch {
+                remoteSource.validateToken(registrationToken)
+            }
         })
     }
 
