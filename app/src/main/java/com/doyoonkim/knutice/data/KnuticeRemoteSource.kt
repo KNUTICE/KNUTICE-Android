@@ -1,18 +1,23 @@
 package com.doyoonkim.knutice.data
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.doyoonkim.knutice.model.ApiDeviceTokenRequest
 import com.doyoonkim.knutice.model.DeviceTokenRequest
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
 import com.doyoonkim.knutice.model.TopThreeNotices
-import com.doyoonkim.knutice.model.ValidateTokenResult
+import com.doyoonkim.knutice.model.ApiPostResult
 import com.doyoonkim.knutice.BuildConfig
-import com.doyoonkim.knutice.model.Notice
+import com.doyoonkim.knutice.model.ApiReportRequest
+import com.doyoonkim.knutice.model.ReportRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.jsoup.Jsoup
 import retrofit2.Retrofit
@@ -31,6 +36,9 @@ class KnuticeRemoteSource @Inject constructor() {
         .baseUrl(BuildConfig.API_ROOT)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
+    // TODO: Should relocate this variable.
+    private var validatedToken: MutableStateFlow<String> = MutableStateFlow<String>("")
 
     suspend fun getTopThreeNotice(category: NoticeCategory, size: Int): NoticesPerPage {
         return knuticeService.create(KnuticeService::class.java).run {
@@ -57,18 +65,47 @@ class KnuticeRemoteSource @Inject constructor() {
                 .text() ?: "Unable to receive full notice content"
         }
 
-    fun validateToken(token: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                knuticeService.create(KnuticeService::class.java).validateToken(
-                    ApiDeviceTokenRequest(body = DeviceTokenRequest(token))
-                ).run {
-                    if (this.result?.resultCode == 200) Log.d("KnuticeServer", "Token saved.")
-                    else Log.d("KnuticeServer", "Failed to save token")
+    suspend fun validateToken(token: String): Result<Boolean> {
+        Log.d("KnuticeRemoteSource", "Token Provided: $token")
+        try {
+            knuticeService.create(KnuticeService::class.java).validateToken(
+                ApiDeviceTokenRequest(body = DeviceTokenRequest(token))
+            ).run {
+                if (this.result?.resultCode == 200) {
+                    Log.d("KnuticeServer", "Token saved.").also {
+                        validatedToken.update {
+                            token
+                        }
+                    }
+                    return Result.success(true)
+                } else {
+                    Log.d("KnuticeServer", "Failed to save token")
+                    return Result.success(false)
                 }
-            } catch (e: Exception) {
-                Log.d("KnuticeServer", "Failed to validate token\nREASON:${e.message}")
             }
+        } catch (e: Exception) {
+            Log.d("KnuticeServer", "Failed to validate token\nREASON:${e.message}")
+            return Result.failure(e)
+        }
+    }
+
+    suspend fun submitUserReport(report: ReportRequest): Result<Boolean> {
+        Log.d("KnuticeRemoteSource", "ValidatedToken: ${validatedToken.value}")
+        try {
+            knuticeService.create(KnuticeService::class.java).submitUserReport(
+                ApiReportRequest(body = report.copy(token = validatedToken.value))
+            ).run {
+                if (this.result?.resultCode == 200) {
+                    Log.d("KnuticeServer", "User report has been submitted successfully.\n${this.body?.message}")
+                    return Result.success(true)
+                } else {
+                    Log.d("KnuticeServer", "Failed to submit user report\n${this.body?.message}")
+                    return Result.success(false)
+                }
+            }
+        } catch (e: Exception) {
+            Log.d("KnuticeServer", "Failed to submit user report.\nREASON: ${e.message}")
+            return Result.failure(e)
         }
     }
 
@@ -100,6 +137,12 @@ interface KnuticeService {
     @POST("/open-api/token")
     suspend fun validateToken(
         @Body requestBody: ApiDeviceTokenRequest
-    ): ValidateTokenResult
+    ): ApiPostResult
+
+    @Headers("Content-Type: application/json")
+    @POST("/open-api/report")
+    suspend fun submitUserReport(
+        @Body requestBody: ApiReportRequest
+    ): ApiPostResult
 
 }
