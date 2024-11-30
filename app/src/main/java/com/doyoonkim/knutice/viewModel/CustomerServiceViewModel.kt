@@ -42,6 +42,15 @@ class CustomerServiceViewModel @Inject constructor(
         }
     }
 
+    fun updateCompletionState() {
+        _uiState.update {
+            it.copy(
+                isSubmissionCompleted = false,
+                isSubmissionFailed = false
+            )
+        }
+    }
+
     fun submitUserReport() {
         val report = ReportRequest(
             content = _uiState.value.userReport,
@@ -53,21 +62,33 @@ class CustomerServiceViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val submission = async { remoteSource.submitUserReport(report) }
+                val submission = async { remoteSource.submitUserReport(report, true) }
 
                 submission.await().fold(
-                    onSuccess = {
-                        _uiState.update {
-                            it.copy(
-                                userReport = "",
-                                reachedMaxCharacters = false
-                            )
+                    onSuccess = { submissionResult ->
+                        if (submissionResult) {
+                            _uiState.update {
+                                it.copy(
+                                    userReport = "",
+                                    reachedMaxCharacters = false,
+                                    isSubmissionFailed = false,
+                                    isSubmissionCompleted = true
+                                )
+                            }
+                        } else {
+                            _uiState.update {
+                                it.copy(
+                                    isSubmissionFailed = true,
+                                    isSubmissionCompleted = true
+                                )
+                            }
                         }
                     },
                     onFailure = {
                         _uiState.update {
                             it.copy(
-                                isSubmissionFailed = true
+                                isSubmissionFailed = true,
+                                isSubmissionCompleted = true
                             )
                         }
                     }

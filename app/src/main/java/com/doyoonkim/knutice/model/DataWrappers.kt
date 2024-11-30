@@ -89,6 +89,7 @@ data class DetailedContentState(
 data class CustomerServiceReportState(
     val userReport: String = "",
     val reachedMaxCharacters: Boolean = false,
-    val isSubmissionFailed: Boolean = false
+    val isSubmissionFailed: Boolean = false,
+    val isSubmissionCompleted: Boolean = false
 )
 
