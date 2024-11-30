@@ -1,8 +1,6 @@
 package com.doyoonkim.knutice.data
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import com.doyoonkim.knutice.model.ApiDeviceTokenRequest
 import com.doyoonkim.knutice.model.DeviceTokenRequest
 import com.doyoonkim.knutice.model.NoticeCategory
@@ -16,9 +14,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
+import org.jetbrains.annotations.TestOnly
 import org.jsoup.Jsoup
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -28,8 +24,9 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 import javax.inject.Inject
+import javax.inject.Singleton
 
-
+@Singleton
 class KnuticeRemoteSource @Inject constructor() {
 
     private val knuticeService = Retrofit.Builder()
@@ -38,7 +35,7 @@ class KnuticeRemoteSource @Inject constructor() {
         .build()
 
     // TODO: Should relocate this variable.
-    private var validatedToken: MutableStateFlow<String> = MutableStateFlow<String>("")
+    private var validatedToken: String = ""
 
     suspend fun getTopThreeNotice(category: NoticeCategory, size: Int): NoticesPerPage {
         return knuticeService.create(KnuticeService::class.java).run {
@@ -72,11 +69,8 @@ class KnuticeRemoteSource @Inject constructor() {
                 ApiDeviceTokenRequest(body = DeviceTokenRequest(token))
             ).run {
                 if (this.result?.resultCode == 200) {
-                    Log.d("KnuticeServer", "Token saved.").also {
-                        validatedToken.update {
-                            token
-                        }
-                    }
+                    Log.d("KnuticeServer", "Token saved.")
+                    validatedToken = token
                     return Result.success(true)
                 } else {
                     Log.d("KnuticeServer", "Failed to save token")
@@ -90,10 +84,10 @@ class KnuticeRemoteSource @Inject constructor() {
     }
 
     suspend fun submitUserReport(report: ReportRequest): Result<Boolean> {
-        Log.d("KnuticeRemoteSource", "ValidatedToken: ${validatedToken.value}")
+        Log.d("KnuticeRemoteSource", "ValidatedToken: $validatedToken")
         try {
             knuticeService.create(KnuticeService::class.java).submitUserReport(
-                ApiReportRequest(body = report.copy(token = validatedToken.value))
+                ApiReportRequest(body = report.copy(token = validatedToken))
             ).run {
                 if (this.result?.resultCode == 200) {
                     Log.d("KnuticeServer", "User report has been submitted successfully.\n${this.body?.message}")
@@ -106,6 +100,16 @@ class KnuticeRemoteSource @Inject constructor() {
         } catch (e: Exception) {
             Log.d("KnuticeServer", "Failed to submit user report.\nREASON: ${e.message}")
             return Result.failure(e)
+        }
+    }
+
+    @TestOnly
+    suspend fun submitUserReport(report: ReportRequest, selectedResult: Boolean): Result<Boolean> {
+        Log.d("KnuticeRemoteSource", "Function with @TestOnly annotation has been executed.")
+        return if (selectedResult) {
+            Result.success(true)
+        } else {
+            Result.failure(Exception("Test case: Submission Failed."))
         }
     }
 
