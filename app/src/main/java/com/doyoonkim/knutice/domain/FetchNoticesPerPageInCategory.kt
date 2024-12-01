@@ -1,6 +1,5 @@
 package com.doyoonkim.knutice.domain
 
-import android.util.Log
 import com.doyoonkim.knutice.data.NoticeLocalRepository
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
