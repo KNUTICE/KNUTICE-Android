@@ -103,16 +103,6 @@ class KnuticeRemoteSource @Inject constructor() {
         }
     }
 
-    @TestOnly
-    suspend fun submitUserReport(report: ReportRequest, selectedResult: Boolean): Result<Boolean> {
-        Log.d("KnuticeRemoteSource", "Function with @TestOnly annotation has been executed.")
-        return if (selectedResult) {
-            Result.success(true)
-        } else {
-            Result.failure(Exception("Test case: Submission Failed."))
-        }
-    }
-
 }
 
 interface KnuticeService {

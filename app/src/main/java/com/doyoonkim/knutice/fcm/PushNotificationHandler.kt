@@ -15,7 +15,6 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
@@ -38,7 +37,6 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
 
         if (message.data.isNotEmpty()) {
             Log.d(TAG, "Message Data Payload: ${message.data}")
-
         }
 
         message.notification?.let {

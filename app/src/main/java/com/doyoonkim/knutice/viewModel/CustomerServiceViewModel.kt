@@ -62,7 +62,7 @@ class CustomerServiceViewModel @Inject constructor(
 
         viewModelScope.launch {
             withContext(Dispatchers.IO) {
-                val submission = async { remoteSource.submitUserReport(report, true) }
+                val submission = async { remoteSource.submitUserReport(report) }
 
                 submission.await().fold(
                     onSuccess = { submissionResult ->
