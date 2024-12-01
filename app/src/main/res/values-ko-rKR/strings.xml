@@ -12,7 +12,7 @@
     <string name="about_title">더보기</string>
     <string name="about_version">버전정보</string>
     <string name="about_oss">오픈소스 라이센스</string>
-    <string name="version_code">(베타) 1.0.0 RC 4</string>
+    <string name="version_code">1.1.0</string>
     <string name="pref_notification_title">알림</string>
     <string name="title_preference">설정</string>
     <string name="new_notice">새로운 알림이 도착했어요!</string>
@@ -28,4 +28,7 @@
     <string name="customer_service_subtitle_2">• 상황을 구체적으로 설명해 주시면 서비스 개선에 도움이 됩니다.</string>
     <string name="btn_submit">제출하기</string>
     <string name="placeholder_customer_report">이곳에 문의사항을 적어주세요.</string>
+    <string name="submission_completed_title">제출이 완료되었어요</string>
+    <string name="submission_completed__subtitle">소중한 의견를 성공적으로 제출했어요.</string>
+    <string name="btn_confirm">확인</string>
 </resources>

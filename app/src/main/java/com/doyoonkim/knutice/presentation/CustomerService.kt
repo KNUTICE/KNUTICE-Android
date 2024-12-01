@@ -3,7 +3,6 @@ package com.doyoonkim.knutice.presentation
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +14,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +54,6 @@ fun CustomerService(
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(
-            modifier = Modifier.clickable(!uiState.isSubmissionCompleted) {  },
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -84,6 +81,7 @@ fun CustomerService(
                     modifier = Modifier.fillMaxSize(),
                     value = uiState.userReport,
                     placeholder = { Text(stringResource(R.string.placeholder_customer_report)) },
+                    enabled = !uiState.isSubmissionCompleted,
                     onValueChange = {
                         viewModel.updateUserReportContent(it)
                     },
@@ -112,7 +110,7 @@ fun CustomerService(
 
             Button(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                enabled = true,
+                enabled = !uiState.isSubmissionCompleted && uiState.userReport.isNotBlank(),
                 shape = RoundedCornerShape(10.dp),
                 onClick = { viewModel.submitUserReport() }
             ) {
@@ -134,28 +132,31 @@ fun CustomerService(
             Surface(
                 modifier = Modifier.padding(15.dp)
                     .clip(RoundedCornerShape(15.dp)),
-                color = MaterialTheme.colorScheme.subTitle
+                color = MaterialTheme.colorScheme.surfaceBright
             ) {
                 Column(
                     modifier = Modifier.wrapContentHeight()
+                        .padding(30.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Text(
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
-                        text = "Submission Completed"
+                        text = stringResource(R.string.submission_completed_title)
                     )
                     Text(
                         fontSize = 14.sp,
                         fontWeight = FontWeight.Bold,
-                        text = "Submission Completed"
+                        text = stringResource(R.string.submission_completed__subtitle)
                     )
                     Button(
-                        onClick = { viewModel.updateCompletionState() }
+                        onClick = { viewModel.updateCompletionState() },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.Bold,
-                            text = "Confirm"
+                            text = stringResource(R.string.btn_confirm)
                         )
                     }
                 }
@@ -169,5 +170,5 @@ fun CustomerService(
 @Composable
 @Preview(showSystemUi = true, locale = "ko-rKR",)
 fun CustomerService_Preview() {
-    CustomerService(Modifier.padding(10.dp))
+
 }
