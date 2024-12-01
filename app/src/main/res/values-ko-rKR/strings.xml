@@ -29,6 +29,6 @@
     <string name="btn_submit">제출하기</string>
     <string name="placeholder_customer_report">이곳에 문의사항을 적어주세요.</string>
     <string name="submission_completed_title">제출이 완료되었어요</string>
-    <string name="submission_completed__subtitle">소중한 의견를 성공적으로 제출했어요.</string>
+    <string name="submission_completed__subtitle">소중한 의견을 성공적으로 제출했어요.</string>
     <string name="btn_confirm">확인</string>
 </resources>
