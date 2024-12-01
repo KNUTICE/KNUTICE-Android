@@ -2,11 +2,11 @@ package com.doyoonkim.knutice.viewModel
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.doyoonkim.knutice.domain.CrawlFullContentImpl
+import androidx.lifecycle.viewModelScope
 import com.doyoonkim.knutice.domain.FetchTopThreeNoticeByCategory
 import com.doyoonkim.knutice.model.Notice
+import com.doyoonkim.knutice.model.NoticeCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,15 +20,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategorizedNotificationViewModel @Inject constructor(
-    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory,
-    private val crawlFullContentUseCase: CrawlFullContentImpl
+    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory
 ) : ViewModel() {
     init {
-        CoroutineScope(Dispatchers.IO).launch {
-            fetchTopThreeGeneralNotice()
-            fetchTopThreeAcademicNotice()
-            fetchTopThreeScholarshipNotice()
-            fetchTopThreeEventNotice()
+        viewModelScope.launch(Dispatchers.Default) {
+            fetchTopThreeNoticesPerCategory(NoticeCategory.GENERAL_NEWS)
+            fetchTopThreeNoticesPerCategory(NoticeCategory.ACADEMIC_NEWS)
+            fetchTopThreeNoticesPerCategory(NoticeCategory.SCHOLARSHIP_NEWS)
+            fetchTopThreeNoticesPerCategory(NoticeCategory.EVENT_NEWS)
         }
     }
 
@@ -40,142 +39,55 @@ class CategorizedNotificationViewModel @Inject constructor(
         updatedNotificationGeneral: List<Notice> = _uiState.value.notificationGeneral,
         updatedNotificationAcademic: List<Notice> = _uiState.value.notificationAcademic,
         updatedNotificationScholarship: List<Notice> = _uiState.value.notificationScholarship,
-        updatedNotificationEvent: List<Notice> = _uiState.value.notificationEvent,
-        updatedIsDetailedViewOpened: Boolean = _uiState.value.isDetailedViewOpened,
-        updatedRequestedContent: DetailedContentState = _uiState.value.requestedContent
+        updatedNotificationEvent: List<Notice> = _uiState.value.notificationEvent
     ) {
-        CoroutineScope(Dispatchers.Default).launch {
+        viewModelScope.launch(Dispatchers.Default) {
             _uiState.update {
                 it.copy(
                     notificationGeneral = updatedNotificationGeneral,
                     notificationAcademic = updatedNotificationAcademic,
                     notificationScholarship = updatedNotificationScholarship,
-                    notificationEvent = updatedNotificationEvent,
-                    isDetailedViewOpened = updatedIsDetailedViewOpened,
-                    requestedContent = updatedRequestedContent
+                    notificationEvent = updatedNotificationEvent
                 )
             }
         }
     }
 
-    private suspend fun fetchTopThreeGeneralNotice() {
-        fetchTopThreeNoticeUseCase.fetchTopThreeGeneralNotice()
+    private suspend fun fetchTopThreeNoticesPerCategory(category: NoticeCategory) {
+        fetchTopThreeNoticeUseCase.getTopThreeNotices(category)
             .map { Result.success(it) }
             .catch { emit(Result.failure(it)) }
             .collectLatest { result ->
                 result.fold(
-                    onSuccess = {
-                        updateState(
-                            updatedNotificationGeneral = listOf(
-                                it.notice1!!, it.notice2!!, it.notice3!!
+                    onSuccess =  {
+                        val notices = listOf(it.notice1!!, it.notice2!!, it.notice3!!)
+                        when(category) {
+                            NoticeCategory.GENERAL_NEWS -> updateState(
+                                updatedNotificationGeneral = notices
                             )
-                        )
-                    },
-                    onFailure = {
-                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
-                    }
-                )
-            }
-    }
-
-    private suspend fun fetchTopThreeAcademicNotice() {
-        fetchTopThreeNoticeUseCase.fetchTopThreeAcademicNotice()
-            .map{ Result.success(it) }
-            .catch { emit(Result.failure(it)) }
-            .collectLatest { result ->
-                result.fold(
-                    onSuccess = {
-                        updateState(
-                            updatedNotificationAcademic = listOf(
-                                it.notice1!!, it.notice2!!, it.notice3!!
+                            NoticeCategory.ACADEMIC_NEWS -> updateState(
+                                updatedNotificationAcademic = notices
                             )
-                        )
-                    },
-                    onFailure = {
-                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
-                    }
-                )
-            }
-    }
-
-    private suspend fun fetchTopThreeScholarshipNotice() {
-        fetchTopThreeNoticeUseCase.fetchTopThreeScholarshipNotice()
-            .map { Result.success(it) }
-            .catch { emit(Result.failure(it)) }
-            .collectLatest { result ->
-                result.fold(
-                    onSuccess = {
-                        updateState(
-                            updatedNotificationScholarship = listOf(
-                                it.notice1!!, it.notice2!!, it.notice3!!
+                            NoticeCategory.SCHOLARSHIP_NEWS -> updateState(
+                                updatedNotificationScholarship = notices
                             )
-                        )
-                    },
-                    onFailure = {
-                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
-                    }
-                )
-            }
-    }
-
-    private suspend fun fetchTopThreeEventNotice() {
-        fetchTopThreeNoticeUseCase.fetchTopThreeEventNotice()
-            .map { Result.success(it) }
-            .catch { emit(Result.failure(it)) }
-            .collectLatest { result ->
-                result.fold(
-                    onSuccess = {
-                        updateState(
-                            updatedNotificationEvent = listOf(
-                                it.notice1!!, it.notice2!!, it.notice3!!
+                            NoticeCategory.EVENT_NEWS -> updateState(
+                                updatedNotificationEvent = notices
                             )
-                        )
-                    },
-                    onFailure = {
-                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
-                    }
-                )
-            }
-    }
-
-    fun getFullNoticeContent(title: String, info: String, url: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            crawlFullContentUseCase.getFullContentFromSource(title, info, url)
-                .map { Result.success(it) }
-                .catch { emit(Result.failure(it)) }
-                .collectLatest { result ->
-                    result.fold(
-                        onSuccess = { content ->
-                            Log.d("Received Full Text: ", content.toString())
-                            _uiState.update {
-                                it.copy(
-                                    isDetailedViewOpened = true,
-                                    requestedContent = content
-                                )
-                            }
-                        },
-                        onFailure = {
-                            Log.d("Failed to received full text", it.message ?: "")
+                            else -> {  }
                         }
-                    )
-                }
-        }
+                    },
+                    onFailure = {
+                        Log.d(fileName, "Retrofit2: Failure: ${it.toString()}")
+                    }
+                )
+            }
     }
-
 }
 
 data class CategorizedNotificationState(
     val notificationGeneral: List<Notice> = listOf(Notice(), Notice(), Notice()),
     val notificationAcademic: List<Notice> = listOf(Notice(), Notice(), Notice()),
     val notificationScholarship: List<Notice> = listOf(Notice(), Notice(), Notice()),
-    val notificationEvent: List<Notice> = listOf(Notice(), Notice(), Notice()),
-    val isDetailedViewOpened: Boolean = false,
-    val requestedContent: DetailedContentState = DetailedContentState()
-)
-
-data class DetailedContentState(
-    val title: String = "",
-    val info: String = "",
-    val fullContent: String = "",
-    val fullContentUrl: String = ""
+    val notificationEvent: List<Notice> = listOf(Notice(), Notice(), Notice())
 )

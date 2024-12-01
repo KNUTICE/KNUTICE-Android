@@ -1,8 +1,8 @@
 package com.doyoonkim.knutice.presentation
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -27,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.presentation.component.NotificationPreviewCard
@@ -37,21 +35,22 @@ import com.doyoonkim.knutice.ui.theme.notificationType3
 import com.doyoonkim.knutice.ui.theme.notificationType4
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.viewModel.CategorizedNotificationViewModel
-import com.doyoonkim.knutice.viewModel.DetailedContentState
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.model.FullContent
 
 @Composable
 fun CategorizedNotification(
     modifier: Modifier = Modifier,
     viewModel: CategorizedNotificationViewModel = hiltViewModel(),
-    navController: NavController
+    onGoBackAction: () -> Unit,
+    onMoreNoticeRequested: (Destination) -> Unit,
+    onFullContentRequested: (FullContent) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     // Back button/gesture actions
     BackHandler {
-        if (uiState.isDetailedViewOpened) viewModel.updateState(updatedIsDetailedViewOpened = false)
-        else navController.popBackStack()
+        onGoBackAction()
     }
 
     Column(
@@ -65,50 +64,36 @@ fun CategorizedNotification(
             listTitle = stringResource(R.string.general_news),
             titleColor = MaterialTheme.colorScheme.notificationType1,
             contents = uiState.notificationGeneral,
-            onMoreClicked = { navController.navigate(Destination.MORE_GENERAL.name) }
-        ) { title, info, url ->
-            viewModel.getFullNoticeContent(title, info, url)
+            onMoreClicked = { onMoreNoticeRequested(Destination.MORE_GENERAL) }
+        ) { title, info, url, imgUrl ->
+            onFullContentRequested(FullContent(title, info, url, imgUrl))
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.academic_news),
             titleColor = MaterialTheme.colorScheme.notificationType2,
             contents = uiState.notificationAcademic,
-            onMoreClicked = { navController.navigate(Destination.MORE_ACADEMIC.name) }
-        ) { title, info, url ->
-            viewModel.getFullNoticeContent(title, info, url)
+            onMoreClicked = { onMoreNoticeRequested(Destination.MORE_ACADEMIC) }
+        ) { title, info, url, imgUrl ->
+            onFullContentRequested(FullContent(title, info, url, imgUrl))
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.scholarship_news),
             titleColor = MaterialTheme.colorScheme.notificationType3,
             contents = uiState.notificationScholarship,
-            onMoreClicked = { navController.navigate(Destination.MORE_SCHOLARSHIP.name) }
-        ) { title, info, url ->
-            viewModel.getFullNoticeContent(title, info, url)
+            onMoreClicked = { onMoreNoticeRequested(Destination.MORE_SCHOLARSHIP) }
+        ) { title, info, url, imgUrl ->
+            onFullContentRequested(FullContent(title, info, url, imgUrl))
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.event_news),
             titleColor = MaterialTheme.colorScheme.notificationType4,
             contents = uiState.notificationEvent,
-            onMoreClicked = { navController.navigate(Destination.MORE_EVENT.name) }
-        ) { title, info, url ->
-            viewModel.getFullNoticeContent(title, info, url)
-        }
-    }
-
-    AnimatedVisibility(
-        visible = uiState.isDetailedViewOpened
-    ) {
-        DetailedNoticeContent(
-            modifier = Modifier.padding(10.dp),
-            requested = uiState.requestedContent
-        ) {
-            viewModel.updateState(
-                updatedIsDetailedViewOpened = false,
-                updatedRequestedContent = DetailedContentState()
-            )
+            onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
+        ) { title, info, url, imgUrl ->
+            onFullContentRequested(FullContent(title, info, url, imgUrl))
         }
     }
 }
@@ -120,7 +105,7 @@ fun NotificationPreviewList(
     titleColor: Color = Color.Unspecified,
     contents: List<Notice> = listOf(),
     onMoreClicked: () -> Unit = {  },
-    onNoticeClicked: (String, String, String) -> Unit
+    onNoticeClicked: (String, String, String, String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -156,7 +141,12 @@ fun NotificationPreviewList(
                 notificationTitle = content.title,
                 notificationInfo = "[${content.departName}] ${content.timestamp}"
             ) {
-                onNoticeClicked(content.title, content.departName, content.url)
+                onNoticeClicked(
+                    content.title,
+                    "[${content.departName}] ${content.timestamp}",
+                    content.url,
+                    content.imageUrl
+                )
             }
         }
     }

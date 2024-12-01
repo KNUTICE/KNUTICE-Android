@@ -12,9 +12,23 @@
     <string name="about_title">더보기</string>
     <string name="about_version">버전정보</string>
     <string name="about_oss">오픈소스 라이센스</string>
-    <string name="version_code">1.0.1 알파 (내부테스트용)</string>
+    <string name="version_code">1.1.0</string>
     <string name="pref_notification_title">알림</string>
     <string name="title_preference">설정</string>
     <string name="new_notice">새로운 알림이 도착했어요!</string>
     <string name="inapp_notificaiton_channel_name">신규 공지 알림</string>
+    <string name="oss_notice">오픈소스 라이센스</string>
+    <string name="permission_rationale_title">새로운 공지 알림을 받아보세요!</string>
+    <string name="permission_rationale_description">새로운 공지가 올라올 때마다 푸시 알림으로 알려드려요.</string>
+    <string name="button_allow">좋아요</string>
+    <string name="button_deny">나중에 할래요</string>
+    <string name="title_support">지원</string>
+    <string name="title_customer_service">고객센터</string>
+    <string name="customer_service_subtitile_1">• 서비스 이용 중 불편한 점이 있으시면 이곳에 문의해 주세요.</string>
+    <string name="customer_service_subtitle_2">• 상황을 구체적으로 설명해 주시면 서비스 개선에 도움이 됩니다.</string>
+    <string name="btn_submit">제출하기</string>
+    <string name="placeholder_customer_report">이곳에 문의사항을 적어주세요.</string>
+    <string name="submission_completed_title">제출이 완료되었어요</string>
+    <string name="submission_completed__subtitle">소중한 의견를 성공적으로 제출했어요.</string>
+    <string name="btn_confirm">확인</string>
 </resources>

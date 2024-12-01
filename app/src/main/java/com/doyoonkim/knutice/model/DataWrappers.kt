@@ -1,6 +1,5 @@
 package com.doyoonkim.knutice.model
 
-import com.google.android.gms.common.internal.Objects
 import com.google.gson.annotations.SerializedName
 
 
@@ -37,7 +36,7 @@ data class NoticesPerPage(
     @SerializedName("body") var body: ArrayList<RawNoticeData> = arrayListOf()
 )
 
-data class ValidateTokenResult(
+data class ApiPostResult(
     @SerializedName("result") var result: Result? = Result(),
     @SerializedName("body") var body: Body? = Body()
 ) {
@@ -45,6 +44,28 @@ data class ValidateTokenResult(
         val message: String = ""
     )
 }
+
+data class ApiDeviceTokenRequest(
+    val result: Result = Result(),
+    val body: DeviceTokenRequest
+)
+
+data class DeviceTokenRequest(
+    val deviceToken: String
+)
+
+data class ApiReportRequest(
+    val result: Result = Result(),
+    val body: ReportRequest
+)
+
+data class ReportRequest(
+    val token: String = "",
+    val content: String = "",
+    val clientType: String = "APP",
+    val deviceName: String = "",
+    val version: String = ""
+)
 
 // Data class to be applied to uiState.
 data class Notice(
@@ -56,11 +77,19 @@ data class Notice(
     val timestamp: String = "Unknown"
 )
 
-data class ApiDeviceTokenRequest(
-    val result: Result = Result(),
-    val body: DeviceTokenRequest
+data class DetailedContentState(
+    val title: String = "",
+    val info: String = "",
+    val fullContent: String = "",
+    val fullContentUrl: String = "",
+    val imageUrl: String = "",
+    val isLoaded: Boolean = false
 )
 
-data class DeviceTokenRequest(
-    val deviceToken: String
+data class CustomerServiceReportState(
+    val userReport: String = "",
+    val reachedMaxCharacters: Boolean = false,
+    val isSubmissionFailed: Boolean = false,
+    val isSubmissionCompleted: Boolean = false
 )
+

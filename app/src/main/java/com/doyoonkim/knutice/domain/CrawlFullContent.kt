@@ -1,6 +1,6 @@
 package com.doyoonkim.knutice.domain
 
-import com.doyoonkim.knutice.viewModel.DetailedContentState
+import com.doyoonkim.knutice.model.DetailedContentState
 import kotlinx.coroutines.flow.Flow
 
 interface CrawlFullContent {

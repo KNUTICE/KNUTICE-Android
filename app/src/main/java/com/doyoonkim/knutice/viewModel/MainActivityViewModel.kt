@@ -14,16 +14,19 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     fun updateState(
-        updatedCurrentLocation: Destination = _uiState.value.currentLocation
+        updatedCurrentLocation: Destination = _uiState.value.currentLocation,
+        updatedCurrentScaffoldTitle: String = _uiState.value.currentScaffoldTitle
     ) {
         _uiState.update {
             it.copy(
-                currentLocation = updatedCurrentLocation
+                currentLocation = updatedCurrentLocation,
+                currentScaffoldTitle = updatedCurrentScaffoldTitle
             )
         }
     }
 }
 
 data class MainAppState(
-    val currentLocation: Destination = Destination.MAIN
+    val currentLocation: Destination = Destination.MAIN,
+    val currentScaffoldTitle: String = ""
 )

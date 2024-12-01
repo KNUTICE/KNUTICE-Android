@@ -30,6 +30,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
@@ -42,8 +44,9 @@ import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.notificationType1
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
-import com.example.knutice.R
- import dagger.hilt.android.AndroidEntryPoint
+import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.model.NavDestination
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -54,19 +57,25 @@ class MainActivity : ComponentActivity() {
             // Permission is already granted, and Push Notification is available
         } else {
             // Need to inform user that the app won't display push notification.
+            // TODO: Add small pop-up style composable to be shown to indicate that a push notification won't available.
         }
     }
 
-    private fun askNotificationPermission() {
+    @Composable
+    private fun AskNotificationPermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager
                 .PERMISSION_GRANTED
             ) {
                 // Permission is already granted, and Push Notification is available
             } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-                // Instruct user to understand why this permission is requested, and let user know
-                // the push notification won't be display if they deny to grant permission.
-            } else {
+                // RequestPermissionRationale does not triggered.
+//                Log.d("MainActivity", "Triggered")
+//                PermissionRationale(Modifier.fillMaxWidth()) { result ->
+//                    if (result) requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+//                }
+            }
+            else {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }
         }
@@ -74,14 +83,22 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Permission Check
-        askNotificationPermission()
+
         enableEdgeToEdge()
         setContent {
             KNUTICETheme {
+                // Permission Check
+                AskNotificationPermission()
                 MainServiceScreen()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        viewModelStore.clear()
+        this.externalCacheDir?.delete()
     }
 }
 
@@ -107,15 +124,15 @@ fun MainServiceScreen(
                         if (mainAppState.currentLocation != Destination.MAIN) {
                             IconButton(
                                 onClick = {
-                                    navController.popBackStack(
-                                        Destination.MAIN.name,
-                                        inclusive = false,
-                                        saveState = true
-                                    )
+                                    navController.popBackStack()
                                 }
                             ) {
                                 Image(
-                                    painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
+                                    painter = if (mainAppState.currentLocation == Destination.CS) {
+                                        painterResource(R.drawable.baseline_close_24)
+                                    } else {
+                                        painterResource(R.drawable.baseline_arrow_back_ios_new_24)
+                                    },
                                     contentDescription = "back",
                                     modifier = Modifier.wrapContentSize(),
                                     colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
@@ -123,16 +140,26 @@ fun MainServiceScreen(
                             }
                         }
                         Text(
-                            text = stringResource(when(mainAppState.currentLocation) {
-                                Destination.MORE_GENERAL -> R.string.general_news
-                                Destination.MORE_ACADEMIC -> R.string.academic_news
-                                Destination.MORE_SCHOLARSHIP -> R.string.scholarship_news
-                                Destination.MORE_EVENT -> R.string.event_news
-                                Destination.SETTINGS -> R.string.title_preference
-                                else -> R.string.app_name
-                            }),
+                            text = when (mainAppState.currentLocation) {
+                                Destination.MAIN -> stringResource(R.string.app_name)
+                                Destination.MORE_GENERAL -> stringResource(R.string.general_news)
+                                Destination.MORE_ACADEMIC -> stringResource(R.string.academic_news)
+                                Destination.MORE_SCHOLARSHIP -> stringResource(R.string.scholarship_news)
+                                Destination.MORE_EVENT -> stringResource(R.string.event_news)
+                                Destination.SETTINGS -> stringResource(R.string.title_preference)
+                                Destination.OSS -> stringResource(R.string.oss_notice)
+                                Destination.CS -> stringResource(R.string.title_customer_service)
+                                Destination.Unspecified -> mainAppState.currentScaffoldTitle
+                            },
+                            textAlign = if (mainAppState.currentLocation == Destination.CS) {
+                                TextAlign.Center
+                            } else {
+                                TextAlign.Start
+                            },
                             fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 },
@@ -144,7 +171,7 @@ fun MainServiceScreen(
                     if (mainAppState.currentLocation == Destination.MAIN) {
                         IconButton(
                             onClick = {
-                                navController.navigate(Destination.SETTINGS.name)
+                                navController.navigate(NavDestination(Destination.SETTINGS))
                             }
                         ) {
                             Image(

@@ -6,7 +6,7 @@ import android.app.NotificationManager
 import android.os.Build
 import androidx.core.content.getSystemService
 import com.doyoonkim.knutice.fcm.PushNotificationHandler
-import com.example.knutice.R
+import com.doyoonkim.knutice.R
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 

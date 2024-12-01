@@ -1,28 +1,23 @@
 package com.doyoonkim.knutice.fcm
 
 import android.Manifest
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.drawable.Icon
-import android.os.Build
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.doyoonkim.knutice.data.KnuticeRemoteSource
-import com.example.knutice.R
-import com.google.android.datatransport.Priority
+import com.doyoonkim.knutice.R
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import java.util.UUID
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
-import kotlin.random.nextInt
 
 class PushNotificationHandler @Inject constructor() : FirebaseMessagingService() {
     @Inject lateinit var remoteSource: KnuticeRemoteSource
@@ -42,7 +37,6 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
 
         if (message.data.isNotEmpty()) {
             Log.d(TAG, "Message Data Payload: ${message.data}")
-
         }
 
         message.notification?.let {
@@ -56,6 +50,7 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
         val notificationBuilder = NotificationCompat.Builder(
             applicationContext, getString(R.string.inapp_notification_channel_id)
         )
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
             .setContentTitle(getString(R.string.new_notice))
             .setContentText(this@toPushNotification.notification?.body ?: "No message body")
@@ -94,7 +89,9 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
             Log.d(TAG, "Received Token: $registrationToken")
 
             // POST request to upload current token to the web server.
-            remoteSource.validateToken(registrationToken)
+            CoroutineScope(Dispatchers.IO).launch {
+                remoteSource.validateToken(registrationToken)
+            }
         })
     }
 

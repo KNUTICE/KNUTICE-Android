@@ -1,6 +1,8 @@
 package com.doyoonkim.knutice.data
 
+import androidx.annotation.WorkerThread
 import com.doyoonkim.knutice.domain.NoticeDummySource
+import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
 import com.doyoonkim.knutice.model.TopThreeNotices
@@ -24,31 +26,15 @@ ActivityRetainedComponent lives across configuration changes, so it is created a
 class NoticeLocalRepository @Inject constructor(
     private val remoteSource: KnuticeRemoteSource
 ) {
-    private var localData: TopThreeNotices? = null
+    @WorkerThread
+    fun getTopThreeNotice(category: NoticeCategory): Flow<NoticesPerPage> {
+        return flow<NoticesPerPage> {
+            delay(10L)
+            val response = remoteSource.getTopThreeNotice(category, 3)
 
-    fun getTopThreeNotice(isDummy: Boolean = false): Flow<TopThreeNotices> {
-        if (isDummy) {
-            return channelFlow<TopThreeNotices> {
-                trySend(async { NoticeDummySource.getTopThreeNoticeDummy() }.await())
-                close()
-            }.flowOn(Dispatchers.IO)
-        } else {
-            return flow<TopThreeNotices> {
-                delay(10L)
-                if (localData?.result?.resultCode == 200) {
-                    emit(localData!!)
-                } else {
-                    val response = remoteSource.getTopThreeNotice().also {
-                        localData = it
-                    }
-                    if (response.result?.resultCode == 200) {
-                        emit(response)
-                    } else {
-                        emit(TopThreeNotices())
-                    }
-                }
-            }.flowOn(Dispatchers.IO)
-        }
+            if (response.result?.resultCode == 200) emit(response)
+            else emit(NoticesPerPage())
+        }.flowOn(Dispatchers.IO)
     }
 
     fun getNoticesByCategoryPerPage(category: NoticeCategory, lastNttId: Int): Flow<NoticesPerPage> {

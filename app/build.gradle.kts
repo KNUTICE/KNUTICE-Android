@@ -9,10 +9,12 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     alias(libs.plugins.google.gms.google.services)
+
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
-    namespace = "com.example.knutice"
+    namespace = "com.doyoonkim.knutice"
     compileSdk = 34
 
     val properties = Properties().apply {
@@ -21,11 +23,11 @@ android {
     val apiRoot = properties["api_root"] ?: ""
 
     defaultConfig {
-        applicationId = "com.example.knutice"
+        applicationId = "com.doyoonkim.knutice"
         minSdk = 29
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 5
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -56,7 +58,7 @@ android {
         buildConfig = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.7"
     }
     packaging {
         resources {
@@ -86,6 +88,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.kotlin.serialization)
 
     // Coroutine for Android
     implementation(libs.kotlinx.coroutines.android)
