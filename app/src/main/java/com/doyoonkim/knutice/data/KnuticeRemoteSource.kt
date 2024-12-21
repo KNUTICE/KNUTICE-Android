@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.data
 
 import android.util.Log
+import androidx.compose.runtime.key
 import com.doyoonkim.knutice.model.ApiDeviceTokenRequest
 import com.doyoonkim.knutice.model.DeviceTokenRequest
 import com.doyoonkim.knutice.model.NoticeCategory
@@ -52,6 +53,11 @@ class KnuticeRemoteSource @Inject constructor() {
                 this.getNoticeListPerPage(category, lastNttId)
             }
         }
+    }
+
+    suspend fun queryNoticesByKeyword(keyword: String): NoticesPerPage {
+        Log.d("KnuticeRemoteSource", "Start retrofit service (Querying Notices...)")
+        return knuticeService.create(KnuticeService::class.java).queryNoticeByKeyword(keyword)
     }
 
     suspend fun getFullNoticeContent(url: String): Deferred<String> =
@@ -125,6 +131,11 @@ interface KnuticeService {
     @GET("/open-api/notice/list")
     suspend fun getFirstPageOfNotice(
         @Query("noticeName") category: NoticeCategory
+    ): NoticesPerPage
+
+    @GET("/open-api/search")
+    suspend fun queryNoticeByKeyword(
+        @Query("keyword") keyword: String
     ): NoticesPerPage
 
     @Headers("Content-Type: application/json")

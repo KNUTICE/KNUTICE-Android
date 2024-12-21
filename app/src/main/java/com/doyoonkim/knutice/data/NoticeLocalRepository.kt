@@ -48,6 +48,18 @@ class NoticeLocalRepository @Inject constructor(
         }.flowOn(Dispatchers.IO)
     }
 
+    fun queryNoticesByKeyword(keyword: String): Flow<NoticesPerPage> {
+        return flow {
+            remoteSource.queryNoticesByKeyword(keyword).run {
+                if (this.result?.resultCode == 200) {
+                    emit(this)
+                } else {
+                    emit(NoticesPerPage())
+                }
+            }
+        }.flowOn(Dispatchers.IO)
+    }
+
     fun getFullNoticeContent(url: String): Flow<String> {
         return flow<String> {
             emit(remoteSource.getFullNoticeContent(url).await())

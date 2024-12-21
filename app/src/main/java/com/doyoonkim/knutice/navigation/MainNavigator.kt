@@ -18,6 +18,7 @@ import com.doyoonkim.knutice.presentation.DetailedNoticeContent
 import com.doyoonkim.knutice.presentation.MoreCategorizedNotification
 import com.doyoonkim.knutice.presentation.OpenSourceLicenseNotice
 import com.doyoonkim.knutice.presentation.UserPreference
+import com.doyoonkim.knutice.presentation.component.SearchNotice
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
 
 @Composable
@@ -52,6 +53,10 @@ fun MainNavigator(
                 }
                 Destination.OSS -> OpenSourceLicenseNotice()
                 Destination.CS -> CustomerService(Modifier.padding(15.dp))
+                Destination.SEARCH -> SearchNotice(
+                    onBackClicked = { navController.popBackStack() },
+                    onNoticeClicked = { navController.navigate(it) }
+                )
                 else -> MoreCategorizedNotification(
                     backButtonHandler = { navController.popBackStack() },
                     onNoticeSelected = { navController.navigate(it) }
