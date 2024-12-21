@@ -78,12 +78,13 @@ data class Notice(
 )
 
 data class DetailedContentState(
+    val url: String = "",
     val title: String = "",
     val info: String = "",
     val fullContent: String = "",
     val fullContentUrl: String = "",
     val imageUrl: String = "",
-    val isLoaded: Boolean = false
+    val loadingStatue: Float = 0.0f
 )
 
 data class CustomerServiceReportState(
@@ -91,5 +92,11 @@ data class CustomerServiceReportState(
     val reachedMaxCharacters: Boolean = false,
     val isSubmissionFailed: Boolean = false,
     val isSubmissionCompleted: Boolean = false
+)
+
+data class SearchNoticeState(
+    val searchKeyword: String = "",
+    val isQuerying: Boolean = false,
+    val queryResult: List<Notice> = emptyList()
 )
 
