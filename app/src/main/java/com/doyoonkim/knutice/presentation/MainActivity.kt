@@ -152,6 +152,7 @@ fun MainServiceScreen(
                                 Destination.OSS -> stringResource(R.string.oss_notice)
                                 Destination.CS -> stringResource(R.string.title_customer_service)
                                 Destination.SEARCH -> stringResource(R.string.title_search)
+                                Destination.NOTIFICATION -> stringResource(R.string.title_notification_pref)
                                 Destination.Unspecified -> mainAppState.currentScaffoldTitle
                             },
                             textAlign = if (mainAppState.currentLocation == Destination.CS ||
