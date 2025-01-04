@@ -1,5 +1,6 @@
-<img src="https://github.com/user-attachments/assets/f1bc12e8-f218-4d58-a7bf-5e8d4c24327b" width="100">
+![Banner](https://github.com/user-attachments/assets/67608836-b085-4d6b-9f6f-faa562e20912)
 <br>
+
 
 # 🔔 KNUTICE
 - 국립한국교통대학교 공지사항 알리미
