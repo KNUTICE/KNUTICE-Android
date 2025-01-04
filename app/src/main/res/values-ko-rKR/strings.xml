@@ -31,4 +31,14 @@
     <string name="submission_completed__subtitle">소중한 의견을 성공적으로 제출했어요.</string>
     <string name="btn_confirm">확인</string>
     <string name="title_search">검색</string>
+    <string name="main_notification_channel_group_name">신규공지 알림</string>
+    <string name="general_notificaiton_channel_name">일반 공지 알림</string>
+    <string name="scholarship_notification_channel_name">장학 공지 알림</string>
+    <string name="academic_notification_channel_name">학사 공지 알림</string>
+    <string name="event_notification_channel_name">행사 공지 알림</string>
+    <string name="general_notification_channel_description">새로운 일반 공지가 올라오면 알림을 받을래요.</string>
+    <string name="scholarship_notification_channel_description">새로운 장학 공지가 올라오면 알림을 받을래요.</string>
+    <string name="academic_notification_channel_description">새로운 학사 공지가 올라오면 알림을 받을래요.</string>
+    <string name="event_notification_channel_description">새로운 행사 공지가 올라오면 알림을 받을래요.</string>
+    <string name="title_notification_pref">알림 설정</string>
 </resources>
