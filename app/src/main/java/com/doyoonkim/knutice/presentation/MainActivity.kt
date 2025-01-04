@@ -9,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -46,6 +47,7 @@ import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.model.NavDestination
+import com.doyoonkim.knutice.ui.theme.displayBackground
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -111,7 +113,7 @@ fun MainServiceScreen(
     val navController = rememberNavController()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.displayBackground),
         topBar = {
             TopAppBar(
                 title = {
@@ -149,10 +151,13 @@ fun MainServiceScreen(
                                 Destination.SETTINGS -> stringResource(R.string.title_preference)
                                 Destination.OSS -> stringResource(R.string.oss_notice)
                                 Destination.CS -> stringResource(R.string.title_customer_service)
+                                Destination.SEARCH -> stringResource(R.string.title_search)
+                                Destination.NOTIFICATION -> stringResource(R.string.title_notification_pref)
                                 Destination.Unspecified -> mainAppState.currentScaffoldTitle
                             },
-                            textAlign = if (mainAppState.currentLocation == Destination.CS) {
-                                TextAlign.Center
+                            textAlign = if (mainAppState.currentLocation == Destination.CS ||
+                                mainAppState.currentLocation == Destination.SEARCH) {
+                                    TextAlign.Center
                             } else {
                                 TextAlign.Start
                             },
@@ -169,6 +174,18 @@ fun MainServiceScreen(
                 ),
                 actions = {
                     if (mainAppState.currentLocation == Destination.MAIN) {
+                        IconButton(
+                            onClick = {
+                                navController.navigate(NavDestination(Destination.SEARCH))
+                            }
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.baseline_search_24),
+                                contentDescription = "Search",
+                                modifier = Modifier.wrapContentSize(),
+                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
+                            )
+                        }
                         IconButton(
                             onClick = {
                                 navController.navigate(NavDestination(Destination.SETTINGS))

@@ -16,8 +16,10 @@ import com.doyoonkim.knutice.presentation.CategorizedNotification
 import com.doyoonkim.knutice.presentation.CustomerService
 import com.doyoonkim.knutice.presentation.DetailedNoticeContent
 import com.doyoonkim.knutice.presentation.MoreCategorizedNotification
+import com.doyoonkim.knutice.presentation.NotificationPreferences
 import com.doyoonkim.knutice.presentation.OpenSourceLicenseNotice
 import com.doyoonkim.knutice.presentation.UserPreference
+import com.doyoonkim.knutice.presentation.component.SearchNotice
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
 
 @Composable
@@ -46,12 +48,20 @@ fun MainNavigator(
                 )
                 Destination.SETTINGS -> UserPreference(
                     Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp),
-                    onCustomerServiceClicked = { navController.navigate(NavDestination(it))}
-                ) {
+                    onCustomerServiceClicked = { navController.navigate(NavDestination(it))},
+                    onNotificationPreferenceClicked = { navController.navigate(NavDestination(it)) }) {
                     navController.navigate(NavDestination(it))
                 }
                 Destination.OSS -> OpenSourceLicenseNotice()
                 Destination.CS -> CustomerService(Modifier.padding(15.dp))
+                Destination.SEARCH -> SearchNotice(
+                    onBackClicked = { navController.popBackStack() },
+                    onNoticeClicked = { navController.navigate(it) }
+                )
+                Destination.NOTIFICATION -> NotificationPreferences(
+                    onBackClicked = { navController.popBackStack() },
+                    onMainNotificationSwitchToggled = {  }
+                )
                 else -> MoreCategorizedNotification(
                     backButtonHandler = { navController.popBackStack() },
                     onNoticeSelected = { navController.navigate(it) }
