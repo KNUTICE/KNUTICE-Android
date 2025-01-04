@@ -67,6 +67,17 @@ data class ReportRequest(
     val version: String = ""
 )
 
+data class ApiTopicSubscriptionRequest(
+    val result: Result = Result(),
+    val body: ManageTopicRequest = ManageTopicRequest()
+)
+
+data class ManageTopicRequest(
+    val deviceToken: String = "",
+    val noticeName: String = "",
+    val isSubscribed: Boolean = false
+)
+
 // Data class to be applied to uiState.
 data class Notice(
     val nttId: Int = -1,
@@ -98,5 +109,11 @@ data class SearchNoticeState(
     val searchKeyword: String = "",
     val isQuerying: Boolean = false,
     val queryResult: List<Notice> = emptyList()
+)
+
+data class NotificationPreferenceStatus(
+    val isMainNotificationPermissionGranted: Boolean = false,
+    //TODO: Consider change data type to MAP
+    val isEachChannelAllowed: List<Boolean> = listOf(true, true, true, true)
 )
 
