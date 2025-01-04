@@ -1,7 +1,6 @@
 package com.doyoonkim.knutice.data
 
 import android.util.Log
-import androidx.compose.runtime.key
 import com.doyoonkim.knutice.model.ApiDeviceTokenRequest
 import com.doyoonkim.knutice.model.DeviceTokenRequest
 import com.doyoonkim.knutice.model.NoticeCategory
@@ -10,12 +9,13 @@ import com.doyoonkim.knutice.model.TopThreeNotices
 import com.doyoonkim.knutice.model.ApiPostResult
 import com.doyoonkim.knutice.BuildConfig
 import com.doyoonkim.knutice.model.ApiReportRequest
+import com.doyoonkim.knutice.model.ApiTopicSubscriptionRequest
+import com.doyoonkim.knutice.model.ManageTopicRequest
 import com.doyoonkim.knutice.model.ReportRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import org.jetbrains.annotations.TestOnly
 import org.jsoup.Jsoup
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -109,6 +109,28 @@ class KnuticeRemoteSource @Inject constructor() {
         }
     }
 
+    suspend fun submitTopicSubscriptionPreference(topic: NoticeCategory, status: Boolean): Result<Boolean> {
+        Log.d("KnuticeRemoteSource", "Update Topic Subscription Preference")
+        try {
+            knuticeService.create(KnuticeService::class.java).submitTopicSubscriptionPreference(
+                ApiTopicSubscriptionRequest(
+                    body = ManageTopicRequest(validatedToken, topic.name, status)
+                )
+            ).run {
+                if (this.result?.resultCode == 200) {
+                    Log.d("KnuticeServer", "Topic preference has been updated.\n${this.body}")
+                    return Result.success(true)
+                } else {
+                    Log.d("KnuticeServer", "Failed to update topic preference.\n${this.body?.message}")
+                    return Result.success(false)
+                }
+            }
+        } catch (e: Exception) {
+            Log.d("KnuticeServer", "Failed to submit user report. \nREASON: ${e.message}")
+            return Result.failure(e)
+        }
+    }
+
 }
 
 interface KnuticeService {
@@ -148,6 +170,12 @@ interface KnuticeService {
     @POST("/open-api/report")
     suspend fun submitUserReport(
         @Body requestBody: ApiReportRequest
+    ): ApiPostResult
+
+    @Headers("Content-Type: application/json")
+    @POST("/open-api/token/topic")
+    suspend fun submitTopicSubscriptionPreference(
+        @Body requestBody: ApiTopicSubscriptionRequest
     ): ApiPostResult
 
 }
