@@ -3,6 +3,7 @@ agp = "8.6.0"
 coilCompose = "2.4.0"
 converterGson = "2.3.0"
 converterMoshi = "2.9.0"
+datastorePreferences = "1.1.1"
 firebaseMessagingDirectboot = "24.0.2"
 gson = "2.11.0"
 hiltAndroidCompiler = "2.51.1"
@@ -28,6 +29,7 @@ kotlinSerialization = "1.6.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-runtime-ktx-v286 = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtxVersion" }
 androidx-material = { module = "androidx.compose.material:material" }
