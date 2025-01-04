@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 enum class NoticeCategory { GENERAL_NEWS, ACADEMIC_NEWS, SCHOLARSHIP_NEWS, EVENT_NEWS, Unspecified }
 
-enum class Destination { MAIN, MORE_GENERAL, MORE_ACADEMIC, MORE_SCHOLARSHIP, MORE_EVENT, SETTINGS, OSS, CS, SEARCH, Unspecified }
+enum class Destination { MAIN, MORE_GENERAL, MORE_ACADEMIC, MORE_SCHOLARSHIP, MORE_EVENT, SETTINGS, OSS, CS, SEARCH, NOTIFICATION ,Unspecified }
 
 // Navigation Destinations
 @Serializable
