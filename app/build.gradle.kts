@@ -26,8 +26,8 @@ android {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 29
         targetSdk = 34
-        versionCode = 8
-        versionName = "1.1.1.02"
+        versionCode = 9
+        versionName = "1.2.0.01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -109,6 +109,9 @@ dependencies {
 
     // Jsoup HTML Parser Library
     implementation(libs.jsoup)
+
+    // DataStore
+    implementation (libs.androidx.datastore.preferences)
 
 }
 
