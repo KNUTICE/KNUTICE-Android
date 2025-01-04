@@ -65,4 +65,12 @@ class NoticeLocalRepository @Inject constructor(
             emit(remoteSource.getFullNoticeContent(url).await())
         }.flowOn(Dispatchers.IO)
     }
+
+    fun postNoticeSubscriptionPreference(topic: NoticeCategory, status: Boolean): Flow<Result<Boolean>> {
+        return flow {
+            emit(remoteSource.submitTopicSubscriptionPreference(
+                topic, status
+            ))
+        }
+    }
 }
