@@ -11,6 +11,9 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
 
     alias(libs.plugins.kotlinSerialization)
+
+    // KSP Plugin for Room Database
+//    id("com.google.devtools.ksp")
 }
 
 android {
@@ -80,6 +83,7 @@ dependencies {
     implementation(libs.androidx.material)
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.directboot)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)        // Library to test coroutines in JUnit
     androidTestImplementation(libs.androidx.junit)
@@ -112,6 +116,12 @@ dependencies {
 
     // DataStore
     implementation (libs.androidx.datastore.preferences)
+
+    // Room Database
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
+    // Room Database - Kotlin Extensions and Coroutine Support
+    implementation(libs.androidx.room.ktx)
 
 }
 
