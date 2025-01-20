@@ -36,6 +36,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.ui.theme.subTitle
+import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.NotificationPreferenceViewModel
 
 @Composable
@@ -70,6 +71,7 @@ fun NotificationPreferences(
             Text(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 text = stringResource(R.string.pref_notification_title),
+                color = MaterialTheme.colorScheme.title,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Start
@@ -96,6 +98,7 @@ fun NotificationPreferences(
                         Text(
                             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                             text = stringResource(R.string.enable_notification_title),
+                            color = MaterialTheme.colorScheme.title,
                             fontWeight = FontWeight.Medium,
                             fontSize = 18.sp,
                             textAlign = TextAlign.Start
@@ -104,6 +107,7 @@ fun NotificationPreferences(
                         Text(
                             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                             text = stringResource(R.string.enable_service_notification_sub),
+                            color = MaterialTheme.colorScheme.subTitle,
                             fontWeight = FontWeight.Normal,
                             fontSize = 12.sp,
                             textAlign = TextAlign.Start
@@ -195,6 +199,7 @@ fun LabeledToggleSwitch(
                 Text(
                     modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                     text = titleText,
+                    color = MaterialTheme.colorScheme.title,
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp,
                     textAlign = TextAlign.Start
@@ -203,6 +208,7 @@ fun LabeledToggleSwitch(
                 Text(
                     modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                     text = subTitleText,
+                    color = MaterialTheme.colorScheme.subTitle,
                     fontWeight = FontWeight.Normal,
                     fontSize = 12.sp,
                     textAlign = TextAlign.Start

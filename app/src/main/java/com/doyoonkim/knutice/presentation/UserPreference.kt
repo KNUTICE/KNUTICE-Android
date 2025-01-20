@@ -28,6 +28,7 @@ import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.ui.theme.buttonContainer
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.ui.theme.title
 
 // TODO: Apply Color Theme on HorizontalDivider.
 
@@ -49,7 +50,8 @@ fun UserPreference(
             text = stringResource(R.string.pref_notification_title),
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            textAlign = TextAlign.Start
+            textAlign = TextAlign.Start,
+            color = MaterialTheme.colorScheme.title
         )
 
         HorizontalDivider(
@@ -74,7 +76,8 @@ fun UserPreference(
                     text = stringResource(R.string.enable_notification_title),
                     fontWeight = FontWeight.Medium,
                     fontSize = 18.sp,
-                    textAlign = TextAlign.Start
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.title
                 )
             }
         }
@@ -90,7 +93,8 @@ fun UserPreference(
             text = stringResource(R.string.title_support),
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            textAlign = TextAlign.Start
+            textAlign = TextAlign.Start,
+            color = MaterialTheme.colorScheme.title
         )
 
         HorizontalDivider(
@@ -108,7 +112,8 @@ fun UserPreference(
                 text = stringResource(R.string.title_customer_service),
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                color = MaterialTheme.colorScheme.title
             )
 
             IconButton(
@@ -133,7 +138,8 @@ fun UserPreference(
             text = stringResource(R.string.about_title),
             fontWeight = FontWeight.SemiBold,
             fontSize = 14.sp,
-            textAlign = TextAlign.Start
+            textAlign = TextAlign.Start,
+            color = MaterialTheme.colorScheme.title
         )
 
         HorizontalDivider(
@@ -151,7 +157,8 @@ fun UserPreference(
                 text = stringResource(R.string.about_version),
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                color = MaterialTheme.colorScheme.title
             )
 
             Text(
@@ -159,7 +166,8 @@ fun UserPreference(
                 text = stringResource(R.string.version_code),
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
-                textAlign = TextAlign.End
+                textAlign = TextAlign.End,
+                color = MaterialTheme.colorScheme.title
             )
         }
 
@@ -178,7 +186,8 @@ fun UserPreference(
                 text = stringResource(R.string.about_oss),
                 fontWeight = FontWeight.Medium,
                 fontSize = 18.sp,
-                textAlign = TextAlign.Start
+                textAlign = TextAlign.Start,
+                color = MaterialTheme.colorScheme.title
             )
 
             IconButton(

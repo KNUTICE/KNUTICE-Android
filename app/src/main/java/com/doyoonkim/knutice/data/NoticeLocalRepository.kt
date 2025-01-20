@@ -1,11 +1,16 @@
 package com.doyoonkim.knutice.data
 
+import android.content.Context
 import androidx.annotation.WorkerThread
+import com.doyoonkim.knutice.data.local.KnuticeLocalSource
+import com.doyoonkim.knutice.data.local.LocalDatabase
 import com.doyoonkim.knutice.domain.NoticeDummySource
+import com.doyoonkim.knutice.model.Bookmark
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
 import com.doyoonkim.knutice.model.TopThreeNotices
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -22,10 +27,39 @@ ActivityRetainedComponent lives across configuration changes, so it is created a
  @ActivityRetainedScope its guarantees that your object will be a singleton and survive across
  configuration changes
  */
+// TODO: Consider change class name to KnuticeLocalRepository
 @ActivityRetainedScoped
 class NoticeLocalRepository @Inject constructor(
-    private val remoteSource: KnuticeRemoteSource
+    private val remoteSource: KnuticeRemoteSource,
+    private val localSource: KnuticeLocalSource
 ) {
+    // Local
+    fun createBookmark(bookmark: Bookmark) {
+        localSource.createBookmark(bookmark)
+    }
+
+    fun updateBookmark(bookmark: Bookmark) {
+        localSource.updateBookmark(bookmark)
+    }
+
+    fun deleteBookmark(bookmark: Bookmark) {
+        localSource.deleteBookmark(bookmark)
+    }
+
+    fun getAllBookmarks(): Flow<List<Bookmark>> {
+        return flow {
+            localSource.getAllBookmarks().fold(
+                onSuccess = {
+                    emit(it)
+                },
+                onFailure = {
+                    emit(emptyList())
+                }
+            )
+        }
+    }
+
+    // Remote
     @WorkerThread
     fun getTopThreeNotice(category: NoticeCategory): Flow<NoticesPerPage> {
         return flow<NoticesPerPage> {

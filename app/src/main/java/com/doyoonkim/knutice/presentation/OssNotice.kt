@@ -14,7 +14,7 @@ fun OpenSourceLicenseNotice(
     modifier: Modifier = Modifier
 ) {
     AndroidView(
-        modifier = modifier.fillMaxWidth().padding(5.dp),
+        modifier = modifier.padding(),
         factory = { context ->
             WebView(context).apply {
                 loadUrl("https://knutice.github.io/KNUTICE-OpenSourceLicense/Android/opensource.html")

@@ -1,5 +1,6 @@
 package com.doyoonkim.knutice.model
 
+import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 
 
@@ -79,6 +80,7 @@ data class ManageTopicRequest(
 )
 
 // Data class to be applied to uiState.
+// Universal
 data class Notice(
     val nttId: Int = -1,
     val title: String = "Unknown",
@@ -88,6 +90,7 @@ data class Notice(
     val timestamp: String = "Unknown"
 )
 
+// DetailedNoticeContent
 data class DetailedContentState(
     val url: String = "",
     val title: String = "",
@@ -98,6 +101,7 @@ data class DetailedContentState(
     val loadingStatue: Float = 0.0f
 )
 
+// CustomerService
 data class CustomerServiceReportState(
     val userReport: String = "",
     val reachedMaxCharacters: Boolean = false,
@@ -105,15 +109,24 @@ data class CustomerServiceReportState(
     val isSubmissionCompleted: Boolean = false
 )
 
+// Search
 data class SearchNoticeState(
     val searchKeyword: String = "",
     val isQuerying: Boolean = false,
     val queryResult: List<Notice> = emptyList()
 )
 
+// NotificationPreference
 data class NotificationPreferenceStatus(
     val isMainNotificationPermissionGranted: Boolean = false,
     //TODO: Consider change data type to MAP
     val isEachChannelAllowed: List<Boolean> = listOf(true, true, true, true)
+)
+
+// BookmarkComposable
+data class BookmarkComposableState(
+    val bookmarks: List<Bookmark> = emptyList(),
+    val isRefreshing: Boolean = false,
+    val isRefreshRequested: Boolean = false
 )
 
