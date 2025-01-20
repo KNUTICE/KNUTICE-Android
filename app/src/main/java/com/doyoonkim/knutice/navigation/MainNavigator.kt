@@ -1,5 +1,8 @@
 package com.doyoonkim.knutice.navigation
 
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -12,6 +15,7 @@ import androidx.navigation.toRoute
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.FullContent
 import com.doyoonkim.knutice.model.NavDestination
+import com.doyoonkim.knutice.presentation.BookmarkComposable
 import com.doyoonkim.knutice.presentation.CategorizedNotification
 import com.doyoonkim.knutice.presentation.CustomerService
 import com.doyoonkim.knutice.presentation.DetailedNoticeContent
@@ -47,7 +51,7 @@ fun MainNavigator(
                     onFullContentRequested = { navController.navigate(it) }
                 )
                 Destination.SETTINGS -> UserPreference(
-                    Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp),
+                    Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp).fillMaxSize(),
                     onCustomerServiceClicked = { navController.navigate(NavDestination(it))},
                     onNotificationPreferenceClicked = { navController.navigate(NavDestination(it)) }) {
                     navController.navigate(NavDestination(it))
@@ -62,6 +66,9 @@ fun MainNavigator(
                     onBackClicked = { navController.popBackStack() },
                     onMainNotificationSwitchToggled = {  }
                 )
+                Destination.BOOKMARKS -> BookmarkComposable(
+                    Modifier.fillMaxSize()
+                )
                 else -> MoreCategorizedNotification(
                     backButtonHandler = { navController.popBackStack() },
                     onNoticeSelected = { navController.navigate(it) }
@@ -72,10 +79,11 @@ fun MainNavigator(
         composable<FullContent> { backStackEntry ->
             val scaffoldTitle = backStackEntry.toRoute<FullContent>().title
             viewModel.updateState(
-                updatedCurrentLocation = Destination.Unspecified,
+                updatedCurrentLocation = Destination.DETAILED,
                 updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content"
             )
             DetailedNoticeContent()
+            Spacer(Modifier.height(20.dp))
         }
     }
 }
