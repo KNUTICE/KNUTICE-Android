@@ -11,11 +11,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -27,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -34,6 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -113,7 +122,7 @@ fun MainServiceScreen(
     val navController = rememberNavController()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.displayBackground),
+        modifier = Modifier.fillMaxSize().background(Color.Transparent),
         topBar = {
             TopAppBar(
                 title = {
@@ -153,7 +162,9 @@ fun MainServiceScreen(
                                 Destination.CS -> stringResource(R.string.title_customer_service)
                                 Destination.SEARCH -> stringResource(R.string.title_search)
                                 Destination.NOTIFICATION -> stringResource(R.string.title_notification_pref)
-                                Destination.Unspecified -> mainAppState.currentScaffoldTitle
+                                Destination.BOOKMARKS -> stringResource(R.string.app_name)
+                                Destination.DETAILED -> mainAppState.currentScaffoldTitle
+                                Destination.Unspecified -> mainAppState.currentLocation.name
                             },
                             textAlign = if (mainAppState.currentLocation == Destination.CS ||
                                 mainAppState.currentLocation == Destination.SEARCH) {
@@ -201,9 +212,73 @@ fun MainServiceScreen(
                     }
                 }
             )
-        }
+        },
+        floatingActionButton = {
+            if (mainAppState.currentLocation == Destination.DETAILED) {
+                FloatingActionButton(
+                    onClick = {  }
+                ) {
+                    Icon(Icons.Filled.Add, "Floating Action Button")
+                }
+            }
+        },
+        bottomBar = {
+            BottomAppBar(
+                modifier = Modifier
+                    .background(Color.Transparent)
+//                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+//                    .offset(y = 20.dp)
+                ,
+                actions = {
+                    BottomNavigationItem(
+                        selected = mainAppState.currentLocation == Destination.MAIN,
+                        enabled = true,
+                        onClick = {
+                            navController.navigate(NavDestination(Destination.MAIN))
+                        },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_home_24),
+                                contentDescription = "Main",
+                                modifier = Modifier.padding(bottom = 5.dp)
+                            )
+                        },
+                        label = {
+                            Text("Home")
+                        }
+                    )
+                    BottomNavigationItem(
+                        selected = mainAppState.currentLocation == Destination.BOOKMARKS,
+                        enabled = true,
+                        onClick = {
+                            navController.navigate(NavDestination(Destination.BOOKMARKS))
+                        },
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.baseline_bookmarks_24),
+                                contentDescription = "Bookmarks",
+                                modifier = Modifier.padding(bottom = 5.dp)
+                            )
+                        },
+                        label = {
+                            Text("Bookmarks")
+                        }
+                    )
+                },
+                containerColor = MaterialTheme.colorScheme.containerBackground,
+                contentColor = MaterialTheme.colorScheme.title,
+            )
+        },
+        containerColor = Color.Transparent
     ) { innerPadding ->
-        MainNavigator(navController = navController, modifier = Modifier.padding(innerPadding))
+        val adjustmentFactor = 10.dp
+        MainNavigator(navController = navController, modifier = Modifier.padding(
+                PaddingValues(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding()
+                )
+            ).background(MaterialTheme.colorScheme.displayBackground)
+        )
     }
 }
 @Composable
