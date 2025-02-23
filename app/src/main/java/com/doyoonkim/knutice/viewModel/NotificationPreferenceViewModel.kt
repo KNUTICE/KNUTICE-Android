@@ -79,6 +79,8 @@ class NotificationPreferenceViewModel @Inject constructor(
         }
     }
 
+
+    // Needed to be refined later. (If user enters this point without initial permission allowance.
     fun checkMainNotificationPreferenceStatus() {
         val isNotificationAllowed = ContextCompat.checkSelfPermission(
             context, Manifest.permission.POST_NOTIFICATIONS
