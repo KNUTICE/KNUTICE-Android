@@ -41,4 +41,10 @@
     <string name="academic_notification_channel_description">새로운 학사 공지가 올라오면 알림을 받을래요.</string>
     <string name="event_notification_channel_description">새로운 행사 공지가 올라오면 알림을 받을래요.</string>
     <string name="title_notification_pref">알림 설정</string>
+    <string name="subtitle_set_reminder">알림 설정하기</string>
+    <string name="title_edit_bookmark">북마크 수정</string>
+    <string name="subtitle_get_reminder">알림을 받을래요</string>
+    <string name="subtitle_notes">메모</string>
+    <string name="placeholder_notes">북마크 한 공지에 메모를 남겨주세요.</string>
+    <string name="btn_save">저장하기</string>
 </resources>

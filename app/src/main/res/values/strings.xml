@@ -50,4 +50,10 @@
     <string name="academic_notification_channel_description">Get push notification when new academic notice is being posted.</string>
     <string name="event_notification_channel_description">Get push notification when new event notice is being posted.</string>
     <string name="title_notification_pref">Notification Preference</string>
+    <string name="subtitle_set_reminder">Set Reminder</string>
+    <string name="title_edit_bookmark">Edit Bookmark</string>
+    <string name="subtitle_get_reminder">Get Reminder</string>
+    <string name="subtitle_notes">Notes</string>
+    <string name="placeholder_notes">Enter any notes for your bookmarked notice.</string>
+    <string name="btn_save">Save</string>
 </resources>
