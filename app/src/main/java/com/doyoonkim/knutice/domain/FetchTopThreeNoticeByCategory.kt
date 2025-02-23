@@ -55,6 +55,7 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     private fun ArrayList<RawNoticeData>.toNotice(): List<Notice> {
         return List<Notice>(3) { index ->
             Notice(
+                nttId = this[index].nttId ?: -1,
                 title = this[index].title ?: "Unknown",
                 url = this[index].contentUrl ?: "Unknown",
                 departName = this[index].departName ?: "Unknown",
