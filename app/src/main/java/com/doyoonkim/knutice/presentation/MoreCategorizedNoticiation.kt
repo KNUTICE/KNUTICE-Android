@@ -27,7 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.doyoonkim.knutice.model.FullContent
+import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.presentation.component.NotificationPreview
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.subTitle
@@ -39,7 +39,7 @@ fun MoreCategorizedNotification(
     modifier: Modifier = Modifier,
     viewModel: MoreCategorizedNotificationViewModel = hiltViewModel(),
     backButtonHandler: () -> Unit = { },
-    onNoticeSelected: (FullContent) -> Unit = {  }
+    onNoticeSelected: (Notice) -> Unit = {  }
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -94,12 +94,7 @@ fun MoreCategorizedNotification(
                     Row(
                         modifier = Modifier.wrapContentSize()
                             .clickable {
-                                onNoticeSelected(FullContent(
-                                    notice.title,
-                                    "[${notice.departName}] ${notice.timestamp}",
-                                    notice.url,
-                                    notice.imageUrl
-                                ))
+                                onNoticeSelected(notice)
                             }
                     ) {
                         NotificationPreview(
