@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.presentation
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,13 +33,15 @@ import kotlinx.coroutines.launch
 fun BookmarkComposable(
     modifier: Modifier = Modifier,
     viewModel: BookmarkViewModel = hiltViewModel(),
-    onEachItemClicked: (Notice) -> Unit = {  }
+    onEachItemClicked: (Notice) -> Unit = {  },
+    onBackPressed: () -> Unit = {  }
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-//    LaunchedEffect(Unit) {
-//        viewModel.getAllBookmarks()
-//    }
+    BackHandler {
+        onBackPressed()
+    }
+
     SideEffect {
         viewModel.getAllBookmarks()
         Log.d("BookmarkComposable", "Side Effect Called")

@@ -137,7 +137,8 @@ fun MainServiceScreen(
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (mainAppState.currentLocation != Destination.MAIN) {
+                        if (mainAppState.currentLocation != Destination.MAIN
+                            && mainAppState.currentLocation != Destination.BOOKMARKS) {
                             IconButton(
                                 onClick = {
                                     navController.popBackStack()

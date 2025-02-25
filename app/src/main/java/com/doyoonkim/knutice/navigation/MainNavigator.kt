@@ -1,5 +1,7 @@
 package com.doyoonkim.knutice.navigation
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -59,9 +61,8 @@ fun MainNavigator(
 
             when (destination.arrived) {
                 Destination.MAIN -> {
-                    navController.clearBackStack<NavDestination>()
                     CategorizedNotification(
-                        onGoBackAction = { navController.popBackStack() },
+                        onGoBackAction = { /* Disable Swipe-to-Back on Main Page of the App */ },
                         onMoreNoticeRequested = { navController.navigate(NavDestination(arrived = it)) },
                         onFullContentRequested = {
                             viewModel.updateState(updatedTempReservedNoticeForBookmark = it)
@@ -89,8 +90,10 @@ fun MainNavigator(
                     onMainNotificationSwitchToggled = {  }
                 )
                 Destination.BOOKMARKS -> BookmarkComposable(
-                    Modifier.fillMaxSize()
-                ) { navController.navigate(it) }
+                    modifier =Modifier.fillMaxSize(),
+                    onEachItemClicked = { navController.navigate(it) },
+                    onBackPressed = { /* Disable swipe-to-back on BOOKMARKS composable of the app */ }
+                )
                 else -> MoreCategorizedNotification(
                     backButtonHandler = { navController.popBackStack() },
                     onNoticeSelected = {
