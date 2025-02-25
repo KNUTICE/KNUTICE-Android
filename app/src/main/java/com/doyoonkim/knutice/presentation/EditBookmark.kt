@@ -53,24 +53,6 @@ fun EditBookmark(
     Column(
         modifier = modifier
     ) {
-        /*
-        Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Canvas(
-                modifier = Modifier.wrapContentHeight()
-            ) {
-                drawRect(
-                    color = Color.Black,
-                    size = Size(10f, 100f)
-                )
-            }
-
-            NotificationPreview()
-        }
-         */
         NotificationPreviewCard(
             modifier = Modifier.padding(5.dp),
             notificationTitle = uiState.targetNotice.title,
