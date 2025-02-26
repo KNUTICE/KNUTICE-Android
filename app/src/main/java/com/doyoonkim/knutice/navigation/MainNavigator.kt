@@ -123,7 +123,7 @@ fun MainNavigator(
             )
             EditBookmark(Modifier.fillMaxSize().padding(10.dp)) {
                 // onSavedClicked
-                navController.popBackStack()
+                navController.navigate(NavDestination(Destination.BOOKMARKS))
             }
         }
 

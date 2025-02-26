@@ -42,10 +42,9 @@ fun BookmarkComposable(
         onBackPressed()
     }
 
-    SideEffect {
-        viewModel.getAllBookmarks()
-        Log.d("BookmarkComposable", "Side Effect Called")
-    }
+//    LaunchedEffect(uiState.bookmarks) {
+//        viewModel.getAllBookmarks()
+//    }
 
     Box(
         modifier = modifier.background(MaterialTheme.colorScheme.displayBackground)
@@ -59,7 +58,10 @@ fun BookmarkComposable(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            items(uiState.bookmarks) {
+            items(
+                items = uiState.bookmarks,
+                key = { it.second.nttId }
+            ) {
                 // Being called 3 times
                 Log.d("BookmarkComposable", "Element: $it")
                 NotificationPreviewCardMarked(

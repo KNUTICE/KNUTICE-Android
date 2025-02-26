@@ -24,10 +24,13 @@ class BookmarkViewModel @Inject constructor(
     private val localRepository: NoticeLocalRepository,
     private val fetchBookmarkFromDatabase: FetchBookmarkFromDatabase
 ): ViewModel() {
-
     // Prevent direct access to the UI STATE from the 'View'
     private var _uiState = MutableStateFlow(BookmarkComposableState())
     val uiState = _uiState.asStateFlow()
+
+    init {
+        getAllBookmarks()
+    }
 
     fun updateBookmarks(newPair: Pair<Bookmark, Notice>) {
         _uiState.update {
@@ -35,6 +38,7 @@ class BookmarkViewModel @Inject constructor(
                 bookmarks = uiState.value.bookmarks.toMutableList().apply {
                     this.add(newPair)
                 }.distinctBy { e -> e.first.bookmarkId }.toList()
+//                bookmarks = newList
             )
         }
 
