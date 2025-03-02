@@ -28,11 +28,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material.Icon       // For Using BottomNavigationItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material.Text       // For Using BottomNavigationItem
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -61,6 +61,7 @@ import com.doyoonkim.knutice.ui.theme.KNUTICETheme
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.ui.theme.notificationType1
+import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -128,7 +129,9 @@ fun MainServiceScreen(
     val navController = rememberNavController()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.displayBackground),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.displayBackground),
         topBar = {
             TopAppBar(
                 title = {
@@ -182,7 +185,8 @@ fun MainServiceScreen(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.title
                         )
                     }
                 },
@@ -241,10 +245,9 @@ fun MainServiceScreen(
             ) {
                 BottomAppBar(
                     modifier = Modifier
-                        .background(Color.Transparent)
+                        .background(Color.Transparent),
 //                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
 //                    .offset(y = 20.dp)
-                    ,
                     actions = {
                         BottomNavigationItem(
                             selected = mainAppState.currentLocation == Destination.MAIN,
@@ -261,7 +264,9 @@ fun MainServiceScreen(
                             },
                             label = {
                                 Text("Home")
-                            }
+                            },
+                            selectedContentColor = MaterialTheme.colorScheme.title,
+                            unselectedContentColor = MaterialTheme.colorScheme.subTitle
                         )
                         BottomNavigationItem(
                             selected = mainAppState.currentLocation == Destination.BOOKMARKS,
@@ -278,11 +283,13 @@ fun MainServiceScreen(
                             },
                             label = {
                                 Text("Bookmarks")
-                            }
+                            },
+                            selectedContentColor = MaterialTheme.colorScheme.title,
+                            unselectedContentColor = MaterialTheme.colorScheme.subTitle
                         )
                     },
                     containerColor = MaterialTheme.colorScheme.containerBackground,
-                    contentColor = MaterialTheme.colorScheme.title,
+                    contentColor = MaterialTheme.colorScheme.title
                 )
             }
             if (mainAppState.currentLocation != Destination.EDIT_BOOKMARK) {
@@ -299,7 +306,8 @@ fun MainServiceScreen(
                     top = innerPadding.calculateTopPadding(),
                     bottom = innerPadding.calculateBottomPadding()
                 )
-            ).background(MaterialTheme.colorScheme.displayBackground)
+            )
+            .background(MaterialTheme.colorScheme.displayBackground)
         )
     }
 }
