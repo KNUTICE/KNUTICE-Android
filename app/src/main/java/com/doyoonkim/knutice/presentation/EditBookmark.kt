@@ -1,5 +1,7 @@
 package com.doyoonkim.knutice.presentation
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +26,14 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.presentation.component.NotificationPreviewCard
 import com.doyoonkim.knutice.ui.theme.containerBackground
+import com.doyoonkim.knutice.ui.theme.notificationType1
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.EditBookmarkViewModel
@@ -49,6 +56,7 @@ fun EditBookmark(
     onSaveClicked: () -> Unit = {  }
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val localContext = LocalContext.current
 
     Column(
         modifier = modifier
@@ -68,30 +76,54 @@ fun EditBookmark(
             color = MaterialTheme.colorScheme.title
         )
 
-        Row(
+        Column(
             modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                .background(Color.Transparent)
-                .clip(RoundedCornerShape(10.dp))
-                .border(2.dp, MaterialTheme.colorScheme.containerBackground)
-                .padding(start = 10.dp, end = 10.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+                .background(Color.Transparent),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.subtitle_get_reminder),
-                textAlign = TextAlign.Start,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.SemiBold,
-                color = MaterialTheme.colorScheme.title,
-                modifier = Modifier.padding(10.dp).weight(5f)
-            )
+            var notSupportedMessageShowed by remember { mutableStateOf(false) }
 
-            Switch(
-                checked = false,
-                enabled = true,
-                modifier = Modifier.padding(10.dp).weight(1f),
-                onCheckedChange = {  }
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight()
+                    .background(Color.Transparent)
+                    .clip(RoundedCornerShape(10.dp))
+                    .border(2.dp, MaterialTheme.colorScheme.containerBackground)
+                    .padding(start = 10.dp, end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = stringResource(R.string.subtitle_get_reminder),
+                    textAlign = TextAlign.Start,
+                    fontSize = 15.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.title,
+                    modifier = Modifier.padding(10.dp).weight(5f)
+                )
+
+                Switch(
+                    checked = false,
+                    enabled = true,
+                    modifier = Modifier.padding(10.dp).weight(1f),
+                    onCheckedChange = { notSupportedMessageShowed = true }
+                )
+            }
+
+            AnimatedVisibility(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                visible = notSupportedMessageShowed,
+                enter = slideInVertically()
+            ) {
+                Text(
+                    text = stringResource(R.string.text_not_supported),
+                    textAlign = TextAlign.Start,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Normal,
+                    color = MaterialTheme.colorScheme.notificationType1,
+                    modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+                )
+            }
         }
 
         Spacer(Modifier.height(15.dp))
@@ -175,7 +207,7 @@ fun EditBookmark(
                     }
                 ) {
                     Text(
-                        text = "delete",
+                        text = stringResource(R.string.btn_delete),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(10.dp)
