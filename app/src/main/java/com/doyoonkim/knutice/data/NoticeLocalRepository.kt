@@ -1,22 +1,16 @@
 package com.doyoonkim.knutice.data
 
-import android.content.Context
 import androidx.annotation.WorkerThread
 import com.doyoonkim.knutice.data.local.KnuticeLocalSource
-import com.doyoonkim.knutice.data.local.LocalDatabase
-import com.doyoonkim.knutice.domain.NoticeDummySource
 import com.doyoonkim.knutice.model.Bookmark
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
+import com.doyoonkim.knutice.model.NoticeEntity
 import com.doyoonkim.knutice.model.NoticesPerPage
-import com.doyoonkim.knutice.model.TopThreeNotices
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
@@ -34,8 +28,12 @@ class NoticeLocalRepository @Inject constructor(
     private val localSource: KnuticeLocalSource
 ) {
     // Local
-    fun createBookmark(bookmark: Bookmark) {
-        localSource.createBookmark(bookmark)
+    fun createBookmark(bookmark: Bookmark): Result<Boolean> {
+        return localSource.createBookmark(bookmark)
+    }
+
+    fun createBookmark(bookmark: Bookmark, targetNotice: Notice): Result<Boolean> {
+        return localSource.createBookmark(bookmark, targetNotice)
     }
 
     fun updateBookmark(bookmark: Bookmark) {
@@ -46,17 +44,27 @@ class NoticeLocalRepository @Inject constructor(
         localSource.deleteBookmark(bookmark)
     }
 
-    fun getAllBookmarks(): Flow<List<Bookmark>> {
+    fun deleteNoticeEntity(entity: NoticeEntity) {
+        localSource.deleteNoticeEntity(entity)
+    }
+
+    fun getAllBookmarks(): Flow<Bookmark> {
         return flow {
-            localSource.getAllBookmarks().fold(
-                onSuccess = {
-                    emit(it)
-                },
-                onFailure = {
-                    emit(emptyList())
-                }
-            )
+            runCatching {
+                localSource.getAllBookmarks().forEach { emit(it) }
+            }.onFailure { emit(Bookmark(-1)) }
         }
+    }
+
+    fun getNoticeByNttId(nttId: Int): Notice {
+        val noticeEntity = localSource.getNoticeByNttId(nttId)
+        return noticeEntity.toNotice()
+    }
+
+    fun getBookmarkByNttID(nttId: Int): Result<Bookmark> {
+        return runCatching {
+            localSource.getBookmarkByNttId(nttId) ?: Bookmark(-1)
+        }.onFailure { throw it }
     }
 
     // Remote

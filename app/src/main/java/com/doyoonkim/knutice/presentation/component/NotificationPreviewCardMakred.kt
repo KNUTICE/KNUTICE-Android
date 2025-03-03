@@ -3,8 +3,6 @@ package com.doyoonkim.knutice.presentation.component
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
@@ -22,6 +20,7 @@ fun NotificationPreviewCardMarked(
     modifier: Modifier = Modifier,
     noticeTitle: String = "Title goes here",
     noticeSubtitle: String = "Subtitle goes here",
+    onItemClicked: () -> Unit = {  },
     onBackPressed: () -> Unit = {  }
 ) {
     Box(
@@ -32,7 +31,7 @@ fun NotificationPreviewCardMarked(
             notificationTitle = noticeTitle,
             notificationInfo = noticeSubtitle,
         ) {
-
+            onItemClicked()
         }
         Image(
             painter = painterResource(R.drawable.baseline_bookmarks_24),

@@ -1,4 +1,4 @@
-package com.doyoonkim.knutice.presentation.component
+package com.doyoonkim.knutice.presentation
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
@@ -37,7 +37,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.knutice.R
-import com.doyoonkim.knutice.model.FullContent
+import com.doyoonkim.knutice.model.Notice
+import com.doyoonkim.knutice.presentation.component.NotificationPreview
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.textPurple
@@ -55,7 +56,7 @@ fun SearchNotice(
     modifier: Modifier = Modifier,
     viewModel: SearchNoticeViewModel = hiltViewModel(),
     onBackClicked: () -> Unit = {  },
-    onNoticeClicked: (FullContent) -> Unit
+    onNoticeClicked: (Notice) -> Unit
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -123,12 +124,7 @@ fun SearchNotice(
                     Row(
                         modifier = Modifier.fillMaxWidth().wrapContentHeight()
                             .clickable {
-                                onNoticeClicked(FullContent(
-                                    title = notice.title,
-                                    info = "[${notice.departName}] ${notice.timestamp}",
-                                    url = notice.url,
-                                    imgUrl = notice.imageUrl
-                                ))
+                                onNoticeClicked(notice)
                             }
                     ) {
                         NotificationPreview(

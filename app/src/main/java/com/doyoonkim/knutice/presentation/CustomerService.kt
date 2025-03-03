@@ -110,7 +110,7 @@ fun CustomerService(
 
             Button(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                enabled = !uiState.isSubmissionCompleted && uiState.userReport.isNotBlank(),
+                enabled = !uiState.isSubmissionCompleted && uiState.exceedMinCharacters,
                 shape = RoundedCornerShape(10.dp),
                 onClick = { viewModel.submitUserReport() }
             ) {

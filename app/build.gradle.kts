@@ -38,6 +38,12 @@ android {
         }
 
         buildConfigField("String", "API_ROOT", "\"$apiRoot\"")
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments["room.schemaLocation"] = "$projectDir/schemas"
+            }
+        }
     }
 
     buildTypes {

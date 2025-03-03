@@ -8,13 +8,19 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
@@ -22,11 +28,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material.Icon       // For Using BottomNavigationItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material.Text       // For Using BottomNavigationItem
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -47,16 +53,17 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.model.Destination
+import com.doyoonkim.knutice.model.NavDestination
 import com.doyoonkim.knutice.navigation.MainNavigator
 import com.doyoonkim.knutice.ui.theme.KNUTICETheme
 import com.doyoonkim.knutice.ui.theme.containerBackground
+import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.ui.theme.notificationType1
+import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
-import com.doyoonkim.knutice.R
-import com.doyoonkim.knutice.model.NavDestination
-import com.doyoonkim.knutice.ui.theme.displayBackground
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -94,7 +101,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+//         applicationContext.deleteDatabase("Main Local Database")
         enableEdgeToEdge()
         setContent {
             KNUTICETheme {
@@ -122,7 +129,9 @@ fun MainServiceScreen(
     val navController = rememberNavController()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize().background(Color.Transparent),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.displayBackground),
         topBar = {
             TopAppBar(
                 title = {
@@ -130,9 +139,9 @@ fun MainServiceScreen(
                         modifier = Modifier.wrapContentSize(),
                         horizontalArrangement = Arrangement.Center,
                         verticalAlignment = Alignment.CenterVertically
-
                     ) {
-                        if (mainAppState.currentLocation != Destination.MAIN) {
+                        if (mainAppState.currentLocation != Destination.MAIN
+                            && mainAppState.currentLocation != Destination.BOOKMARKS) {
                             IconButton(
                                 onClick = {
                                     navController.popBackStack()
@@ -163,6 +172,7 @@ fun MainServiceScreen(
                                 Destination.SEARCH -> stringResource(R.string.title_search)
                                 Destination.NOTIFICATION -> stringResource(R.string.title_notification_pref)
                                 Destination.BOOKMARKS -> stringResource(R.string.app_name)
+                                Destination.EDIT_BOOKMARK -> stringResource(R.string.title_edit_bookmark)
                                 Destination.DETAILED -> mainAppState.currentScaffoldTitle
                                 Destination.Unspecified -> mainAppState.currentLocation.name
                             },
@@ -175,7 +185,8 @@ fun MainServiceScreen(
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
+                            overflow = TextOverflow.Ellipsis,
+                            color = MaterialTheme.colorScheme.title
                         )
                     }
                 },
@@ -216,68 +227,87 @@ fun MainServiceScreen(
         floatingActionButton = {
             if (mainAppState.currentLocation == Destination.DETAILED) {
                 FloatingActionButton(
-                    onClick = {  }
+                    onClick = {
+                        if (mainAppState.tempReserveNoticeForBookmark.title.isNotBlank()) {
+                            navController.navigate(mainAppState.tempReserveNoticeForBookmark)
+                        }
+                    }
                 ) {
                     Icon(Icons.Filled.Add, "Floating Action Button")
                 }
             }
         },
         bottomBar = {
-            BottomAppBar(
-                modifier = Modifier
-                    .background(Color.Transparent)
+            AnimatedVisibility(
+                visible = mainAppState.isBottomNavBarVisible,
+                enter = slideInVertically(initialOffsetY = { it + (it * 1/2) }),
+                exit = slideOutVertically(targetOffsetY = { it + (it * 1/2) })
+            ) {
+                BottomAppBar(
+                    modifier = Modifier
+                        .background(Color.Transparent),
 //                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
 //                    .offset(y = 20.dp)
-                ,
-                actions = {
-                    BottomNavigationItem(
-                        selected = mainAppState.currentLocation == Destination.MAIN,
-                        enabled = true,
-                        onClick = {
-                            navController.navigate(NavDestination(Destination.MAIN))
-                        },
-                        icon = {
-                            Icon(
-                                painter = painterResource(R.drawable.baseline_home_24),
-                                contentDescription = "Main",
-                                modifier = Modifier.padding(bottom = 5.dp)
-                            )
-                        },
-                        label = {
-                            Text("Home")
-                        }
-                    )
-                    BottomNavigationItem(
-                        selected = mainAppState.currentLocation == Destination.BOOKMARKS,
-                        enabled = true,
-                        onClick = {
-                            navController.navigate(NavDestination(Destination.BOOKMARKS))
-                        },
-                        icon = {
-                            Icon(
-                                painter = painterResource(R.drawable.baseline_bookmarks_24),
-                                contentDescription = "Bookmarks",
-                                modifier = Modifier.padding(bottom = 5.dp)
-                            )
-                        },
-                        label = {
-                            Text("Bookmarks")
-                        }
-                    )
-                },
-                containerColor = MaterialTheme.colorScheme.containerBackground,
-                contentColor = MaterialTheme.colorScheme.title,
-            )
+                    actions = {
+                        BottomNavigationItem(
+                            selected = mainAppState.currentLocation == Destination.MAIN,
+                            enabled = true,
+                            onClick = {
+                                navController.navigate(NavDestination(Destination.MAIN))
+                            },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.baseline_home_24),
+                                    contentDescription = "Main",
+                                    modifier = Modifier.padding(bottom = 5.dp)
+                                )
+                            },
+                            label = {
+                                Text("Home")
+                            },
+                            selectedContentColor = MaterialTheme.colorScheme.title,
+                            unselectedContentColor = MaterialTheme.colorScheme.subTitle
+                        )
+                        BottomNavigationItem(
+                            selected = mainAppState.currentLocation == Destination.BOOKMARKS,
+                            enabled = true,
+                            onClick = {
+                                navController.navigate(NavDestination(Destination.BOOKMARKS))
+                            },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.baseline_bookmarks_24),
+                                    contentDescription = "Bookmarks",
+                                    modifier = Modifier.padding(bottom = 5.dp)
+                                )
+                            },
+                            label = {
+                                Text("Bookmarks")
+                            },
+                            selectedContentColor = MaterialTheme.colorScheme.title,
+                            unselectedContentColor = MaterialTheme.colorScheme.subTitle
+                        )
+                    },
+                    containerColor = MaterialTheme.colorScheme.containerBackground,
+                    contentColor = MaterialTheme.colorScheme.title
+                )
+            }
+            if (mainAppState.currentLocation != Destination.EDIT_BOOKMARK) {
+
+            }
         },
         containerColor = Color.Transparent
     ) { innerPadding ->
         val adjustmentFactor = 10.dp
-        MainNavigator(navController = navController, modifier = Modifier.padding(
+        MainNavigator(navController = navController, modifier = Modifier
+            .consumeWindowInsets(WindowInsets.systemBars)
+            .padding(
                 PaddingValues(
                     top = innerPadding.calculateTopPadding(),
                     bottom = innerPadding.calculateBottomPadding()
                 )
-            ).background(MaterialTheme.colorScheme.displayBackground)
+            )
+            .background(MaterialTheme.colorScheme.displayBackground)
         )
     }
 }

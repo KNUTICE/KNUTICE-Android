@@ -1,5 +1,7 @@
 package com.doyoonkim.knutice.navigation
 
+import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -15,15 +17,17 @@ import androidx.navigation.toRoute
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.FullContent
 import com.doyoonkim.knutice.model.NavDestination
+import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.presentation.BookmarkComposable
 import com.doyoonkim.knutice.presentation.CategorizedNotification
 import com.doyoonkim.knutice.presentation.CustomerService
 import com.doyoonkim.knutice.presentation.DetailedNoticeContent
+import com.doyoonkim.knutice.presentation.EditBookmark
 import com.doyoonkim.knutice.presentation.MoreCategorizedNotification
 import com.doyoonkim.knutice.presentation.NotificationPreferences
 import com.doyoonkim.knutice.presentation.OpenSourceLicenseNotice
 import com.doyoonkim.knutice.presentation.UserPreference
-import com.doyoonkim.knutice.presentation.component.SearchNotice
+import com.doyoonkim.knutice.presentation.SearchNotice
 import com.doyoonkim.knutice.viewModel.MainActivityViewModel
 
 @Composable
@@ -44,12 +48,28 @@ fun MainNavigator(
                 updatedCurrentLocation = destination.arrived
             )
 
-            when (destination.arrived) {
-                Destination.MAIN -> CategorizedNotification(
-                    onGoBackAction = { navController.popBackStack() },
-                    onMoreNoticeRequested = { navController.navigate(NavDestination(arrived = it)) },
-                    onFullContentRequested = { navController.navigate(it) }
+            if (destination.arrived == Destination.CS
+                || destination.arrived == Destination.OSS) {
+                viewModel.updateState(
+                    updatedBottomNavBarVisibility = false
                 )
+            } else {
+                viewModel.updateState(
+                    updatedBottomNavBarVisibility = true
+                )
+            }
+
+            when (destination.arrived) {
+                Destination.MAIN -> {
+                    CategorizedNotification(
+                        onGoBackAction = { /* Disable Swipe-to-Back on Main Page of the App */ },
+                        onMoreNoticeRequested = { navController.navigate(NavDestination(arrived = it)) },
+                        onFullContentRequested = {
+                            viewModel.updateState(updatedTempReservedNoticeForBookmark = it)
+                            navController.navigate(it.toFullContent())
+                        }
+                    )
+                }
                 Destination.SETTINGS -> UserPreference(
                     Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp).fillMaxSize(),
                     onCustomerServiceClicked = { navController.navigate(NavDestination(it))},
@@ -57,33 +77,55 @@ fun MainNavigator(
                     navController.navigate(NavDestination(it))
                 }
                 Destination.OSS -> OpenSourceLicenseNotice()
-                Destination.CS -> CustomerService(Modifier.padding(15.dp))
+                Destination.CS -> { CustomerService(Modifier.padding(15.dp)) }
                 Destination.SEARCH -> SearchNotice(
                     onBackClicked = { navController.popBackStack() },
-                    onNoticeClicked = { navController.navigate(it) }
+                    onNoticeClicked = {
+                        viewModel.updateState(updatedTempReservedNoticeForBookmark = it)
+                        navController.navigate(it.toFullContent())
+                    }
                 )
                 Destination.NOTIFICATION -> NotificationPreferences(
                     onBackClicked = { navController.popBackStack() },
                     onMainNotificationSwitchToggled = {  }
                 )
                 Destination.BOOKMARKS -> BookmarkComposable(
-                    Modifier.fillMaxSize()
+                    modifier =Modifier.fillMaxSize(),
+                    onEachItemClicked = { navController.navigate(it) },
+                    onBackPressed = { /* Disable swipe-to-back on BOOKMARKS composable of the app */ }
                 )
                 else -> MoreCategorizedNotification(
                     backButtonHandler = { navController.popBackStack() },
-                    onNoticeSelected = { navController.navigate(it) }
+                    onNoticeSelected = {
+                        viewModel.updateState(updatedTempReservedNoticeForBookmark = it)
+                        navController.navigate(it.toFullContent())
+                    }
                 )
             }
         }
 
         composable<FullContent> { backStackEntry ->
-            val scaffoldTitle = backStackEntry.toRoute<FullContent>().title
+            val requestedNotice = backStackEntry.toRoute<FullContent>()
+            val scaffoldTitle = requestedNotice.title
             viewModel.updateState(
                 updatedCurrentLocation = Destination.DETAILED,
-                updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content"
+                updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content",
+                updatedBottomNavBarVisibility = true
             )
             DetailedNoticeContent()
             Spacer(Modifier.height(20.dp))
         }
+
+        composable<Notice> {
+            viewModel.updateState(
+                updatedCurrentLocation = Destination.EDIT_BOOKMARK,
+                updatedBottomNavBarVisibility = false
+            )
+            EditBookmark(Modifier.fillMaxSize().padding(10.dp)) {
+                // onSavedClicked
+                navController.navigate(NavDestination(Destination.BOOKMARKS))
+            }
+        }
+
     }
 }
