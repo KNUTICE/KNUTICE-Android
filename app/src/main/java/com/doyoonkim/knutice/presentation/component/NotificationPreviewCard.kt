@@ -17,12 +17,13 @@ import com.doyoonkim.knutice.ui.theme.containerBackground
 
 @Composable
 fun NotificationPreviewCard(
+    modifier: Modifier = Modifier,
     notificationTitle: String = "Title goes here.",
     notificationInfo: String = "Notification info goes here.",
     onClick: () -> Unit = { /* Action should be defined. */ }
 ) {
     Card(
-        Modifier.fillMaxWidth()
+        modifier.fillMaxWidth()
             .wrapContentHeight()
             .clickable {
                 onClick()

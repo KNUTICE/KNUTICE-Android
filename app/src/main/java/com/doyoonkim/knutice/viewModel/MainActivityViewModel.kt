@@ -2,6 +2,7 @@ package com.doyoonkim.knutice.viewModel
 
 import androidx.lifecycle.ViewModel
 import com.doyoonkim.knutice.model.Destination
+import com.doyoonkim.knutice.model.Notice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,12 +16,16 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
     fun updateState(
         updatedCurrentLocation: Destination = _uiState.value.currentLocation,
-        updatedCurrentScaffoldTitle: String = _uiState.value.currentScaffoldTitle
+        updatedCurrentScaffoldTitle: String = _uiState.value.currentScaffoldTitle,
+        updatedBottomNavBarVisibility: Boolean = _uiState.value.isBottomNavBarVisible,
+        updatedTempReservedNoticeForBookmark: Notice = _uiState.value.tempReserveNoticeForBookmark
     ) {
         _uiState.update {
             it.copy(
                 currentLocation = updatedCurrentLocation,
-                currentScaffoldTitle = updatedCurrentScaffoldTitle
+                currentScaffoldTitle = updatedCurrentScaffoldTitle,
+                isBottomNavBarVisible = updatedBottomNavBarVisibility,
+                tempReserveNoticeForBookmark = updatedTempReservedNoticeForBookmark
             )
         }
     }
@@ -28,5 +33,7 @@ class MainActivityViewModel @Inject constructor() : ViewModel() {
 
 data class MainAppState(
     val currentLocation: Destination = Destination.MAIN,
-    val currentScaffoldTitle: String = ""
+    val currentScaffoldTitle: String = "",
+    val isBottomNavBarVisible: Boolean = false,
+    val tempReserveNoticeForBookmark: Notice = Notice()
 )

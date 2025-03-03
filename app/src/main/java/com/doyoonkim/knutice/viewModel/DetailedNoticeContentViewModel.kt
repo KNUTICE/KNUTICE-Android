@@ -3,6 +3,7 @@ package com.doyoonkim.knutice.viewModel
 import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.doyoonkim.knutice.domain.CrawlFullContentImpl
 import com.doyoonkim.knutice.model.DetailedContentState
@@ -30,6 +31,25 @@ class DetailedNoticeContentViewModel @Inject constructor(
 
     private val requested = savedStateHandle.toRoute<FullContent>()
 
+    init {
+        _uiState.update {
+            it.copy(
+                url = requested.url
+            )
+        }
+    }
+
+    fun updateLoadingStatus(newStatus: Int) {
+        Log.d("DetailedNoticeContentViewModel", "Update loading status")
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    loadingStatue = (newStatus / 100).toFloat()
+                )
+            }
+        }
+    }
+
     fun requestFullContent() {
         CoroutineScope(Dispatchers.IO).launch {
             crawlFullContentUseCase.getFullContentFromSource(
@@ -46,8 +66,7 @@ class DetailedNoticeContentViewModel @Inject constructor(
                                     info = content.info,
                                     fullContent = content.fullContent,
                                     fullContentUrl = content.fullContentUrl,
-                                    imageUrl = requested.imgUrl,
-                                    isLoaded = true
+                                    imageUrl = requested.imgUrl
                                 )
                             }
                         },

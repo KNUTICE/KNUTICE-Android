@@ -7,18 +7,17 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class FetchNoticesPerPageInCategory @Inject constructor(
+class QueryNoticesUsingKeyword @Inject constructor(
     private val repository: NoticeLocalRepository
-) : FetchListOfNotices {
+): FetchListOfNotices {
 
     override fun getNoticesPerPage(category: NoticeCategory, lastNttId: Int): Flow<List<Notice>> {
-        return repository.getNoticesByCategoryPerPage(category, lastNttId).map {
-            it.body.toNotice()
-        }
-    }
-
-    override fun getNoticesByKeyword(keyword: String): Flow<List<Notice>> {
         TODO("Does not required to be implemented.")
     }
 
+    override fun getNoticesByKeyword(keyword: String): Flow<List<Notice>> {
+        return repository.queryNoticesByKeyword(keyword).map {
+            it.body.toNotice()
+        }
+    }
 }

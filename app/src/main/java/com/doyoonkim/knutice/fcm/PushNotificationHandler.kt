@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.fcm
 
 import android.Manifest
+import android.app.Notification
 import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
 import android.util.Log
@@ -46,6 +47,7 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
     }
 
     private fun RemoteMessage.toPushNotification() {
+        val notificationId = Random(System.currentTimeMillis().toInt()).nextInt()
         // Utilize channel already created by FCM as default
         val notificationBuilder = NotificationCompat.Builder(
             applicationContext, getString(R.string.inapp_notification_channel_id)
@@ -73,7 +75,7 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
-            notify(Random(System.currentTimeMillis().toInt()).nextInt(), notificationBuilder.build())
+            notify(notificationId, notificationBuilder.build())
         }
     }
 

@@ -11,7 +11,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code">1.1.0</string>
+    <string name="version_code" translatable="false">1.3.0</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -34,4 +34,32 @@
     <string name="submission_completed_title">Submission Completed!</string>
     <string name="submission_completed__subtitle">Your report has been submitted!</string>
     <string name="btn_confirm">Confirm</string>
+    <string name="title_search">Search</string>
+    <string name="main_notification_channel_group_id" translatable="false">main_group</string>
+    <string name="main_notification_channel_group_name">KNUTICE Notice</string>
+    <string name="general_notificaiton_channel_id" translatable="false">notification_general</string>
+    <string name="scholarship_notification_channel_id" translatable="false">notification_scholar</string>
+    <string name="academic_notification_channel_id" translatable="false">notification_academic</string>
+    <string name="event_notification_channel_id" translatable="false">notification_event</string>
+    <string name="general_notificaiton_channel_name">General Notices</string>
+    <string name="scholarship_notification_channel_name">Scholarship Notices</string>
+    <string name="academic_notification_channel_name">Academic Notices</string>
+    <string name="event_notification_channel_name">Event Notices</string>
+    <string name="general_notification_channel_description">Get push notification when new general notice is being posted.</string>
+    <string name="scholarship_notification_channel_description">Get push notification when new scholarship notice is being posted.</string>
+    <string name="academic_notification_channel_description">Get push notification when new academic notice is being posted.</string>
+    <string name="event_notification_channel_description">Get push notification when new event notice is being posted.</string>
+    <string name="title_notification_pref">Notification Preference</string>
+    <string name="subtitle_set_reminder">Set Reminder</string>
+    <string name="title_edit_bookmark">Edit Bookmark</string>
+    <string name="subtitle_get_reminder">Get Reminder</string>
+    <string name="subtitle_notes">Notes</string>
+    <string name="placeholder_notes">Enter any notes for your bookmarked notice.</string>
+    <string name="btn_save">Save</string>
+    <string name="text_no_bookmark">No bookmarks to be shown</string>
+    <string name="btn_delete">delete</string>
+    <string name="bottom_bar_home">Home</string>
+    <string name="bottom_bar_bookmark">Bookmarks</string>
+    <string name="test_very_long_text" translatable="false">Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing.</string>
+    <string name="text_not_supported">Not yet supported.</string>
 </resources>

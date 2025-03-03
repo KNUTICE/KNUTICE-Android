@@ -35,6 +35,7 @@ class CustomerServiceViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         userReport = content,
+                        exceedMinCharacters = content.length >= 5,
                         reachedMaxCharacters = content.length >= 500
                     )
                 }
