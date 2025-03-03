@@ -47,4 +47,9 @@
     <string name="subtitle_notes">메모</string>
     <string name="placeholder_notes">북마크 한 공지에 메모를 남겨주세요.</string>
     <string name="btn_save">저장하기</string>
+    <string name="text_no_bookmark">저장된 북마크가 없어요</string>
+    <string name="btn_delete">삭제</string>
+    <string name="bottom_bar_home">홈</string>
+    <string name="bottom_bar_bookmark">북마크</string>
+    <string name="text_not_supported">아직 준비중이에요. 다음 업데이트에서 만나요.</string>
 </resources>
