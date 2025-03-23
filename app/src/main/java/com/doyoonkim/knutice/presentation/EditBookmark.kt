@@ -1,9 +1,12 @@
 package com.doyoonkim.knutice.presentation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,19 +22,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -42,24 +46,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.model.Bookmark
+import com.doyoonkim.knutice.presentation.component.DateTimePicker
 import com.doyoonkim.knutice.presentation.component.NotificationPreviewCard
 import com.doyoonkim.knutice.ui.theme.containerBackground
-import com.doyoonkim.knutice.ui.theme.notificationType1
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.EditBookmarkViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.time.ZoneId
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
 
 @Composable
 fun EditBookmark(
     modifier: Modifier = Modifier,
     viewModel: EditBookmarkViewModel = hiltViewModel(),
-    onSaveClicked: () -> Unit = {  }
+    onSaveClicked: (Bookmark?) -> Unit = {  }
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val localContext = LocalContext.current
 
+    LaunchedEffect(uiState.isReminderRequested) {
+        if (uiState.timeForRemind == 0L) {
+            viewModel.updateReminderOptions(updatedTimeForRemind = System.currentTimeMillis())
+        }
+    }
+
     Column(
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
         NotificationPreviewCard(
             modifier = Modifier.padding(5.dp),
@@ -82,7 +100,6 @@ fun EditBookmark(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            var notSupportedMessageShowed by remember { mutableStateOf(false) }
 
             Row(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight()
@@ -103,26 +120,39 @@ fun EditBookmark(
                 )
 
                 Switch(
-                    checked = false,
+                    checked = uiState.isReminderRequested,
                     enabled = true,
                     modifier = Modifier.padding(10.dp).weight(1f),
-                    onCheckedChange = { notSupportedMessageShowed = true }
+                    onCheckedChange = { viewModel.updateReminderOptions(reminderRequested = !uiState.isReminderRequested) }
                 )
             }
-
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                visible = notSupportedMessageShowed,
-                enter = slideInVertically()
+                visible = uiState.isReminderRequested,
+                enter = slideInVertically(),
+                exit = slideOutVertically()
             ) {
-                Text(
-                    text = stringResource(R.string.text_not_supported),
-                    textAlign = TextAlign.Start,
-                    fontSize = 13.sp,
-                    fontWeight = FontWeight.Normal,
-                    color = MaterialTheme.colorScheme.notificationType1,
-                    modifier = Modifier.padding(start = 10.dp, end = 10.dp)
-                )
+                Surface(
+                    modifier = Modifier.wrapContentSize()
+                        .border(
+                            2.dp, MaterialTheme.colorScheme.containerBackground, RoundedCornerShape(10.dp)
+                        )
+                        .background(Color.Transparent),
+                    color = Color.Transparent
+                ) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth().padding(20.dp)
+                            .clickable { viewModel.updateReminderOptions(
+                                updatedDatePickerVisible = !uiState.datePickerVisible
+                            ) },
+                        text = uiState.timeForRemind.toFormattedDate(
+                            SimpleDateFormat("yyyy/MM/dd a HH:mm", Locale.getDefault())),
+                        textAlign = TextAlign.Start,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.title
+                    )
+                }
             }
         }
 
@@ -175,6 +205,7 @@ fun EditBookmark(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
+            val coroutineScope = rememberCoroutineScope()
             Button(
                 modifier = Modifier.wrapContentHeight().weight(1f),
                 enabled = true,
@@ -185,7 +216,10 @@ fun EditBookmark(
                     } else {
                         viewModel.createNewBookmark()
                     }
-                    onSaveClicked()
+                    coroutineScope.launch {
+                        delay(500L)
+                        onSaveClicked(uiState.bookmarkInstance)
+                    }
                 }
             ) {
                 Text(
@@ -203,7 +237,7 @@ fun EditBookmark(
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
                         viewModel.removeBookmark()
-                        onSaveClicked()
+                        onSaveClicked(null)
                     }
                 ) {
                     Text(
@@ -215,9 +249,44 @@ fun EditBookmark(
                 }
             }
         }
+    }
+
+    // DateTimePicker
+    AnimatedVisibility(
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        visible = uiState.datePickerVisible,
+        enter = slideInVertically(initialOffsetY = { it + it / 2 }),
+        exit = slideOutVertically(targetOffsetY = { it / 2 })
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize().padding(start = 5.dp, end = 5.dp)
+                .clickable { viewModel.updateReminderOptions(
+                    updatedDatePickerVisible = !uiState.datePickerVisible)
+                }
+        ) {
+            DateTimePicker(
+                modifier = Modifier.padding(5.dp)
+                    .shadow(5.dp)
+                    .align(Alignment.BottomCenter)
+            ) {
+                if (it != null) {
+                    Log.d("EditBookmark", "${it}")
+                    viewModel.updateReminderOptions(
+                        updatedTimeForRemind = it,
+                        updatedDatePickerVisible = !uiState.datePickerVisible
+                    )
+                }
+            }
+        }
 
     }
 }
+
+private fun Long.toFormattedDate(f: SimpleDateFormat): String {
+    return f.apply { timeZone = TimeZone.getTimeZone(ZoneId.systemDefault()) }.format(Date(this))
+}
+
+
 
 @Preview(showBackground = true)
 @Composable
