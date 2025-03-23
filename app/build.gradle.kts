@@ -27,7 +27,7 @@ android {
 
     defaultConfig {
         applicationId = "com.doyoonkim.knutice"
-        minSdk = 29
+        minSdk = 31
         targetSdk = 34
         versionCode = 10
         versionName = "1.3.0"
@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.directboot)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.protolite.well.known.types)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)        // Library to test coroutines in JUnit
     androidTestImplementation(libs.androidx.junit)
