@@ -62,4 +62,9 @@
     <string name="bottom_bar_bookmark">Bookmarks</string>
     <string name="test_very_long_text" translatable="false">Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing.</string>
     <string name="text_not_supported">Not yet supported.</string>
+    <string name="text_reminder_title">You have reminder to check out</string>
+    <string name="btn_go_to_settings">Go to settings</string>
+    <string name="title_alarm_and_reminder">Alarm and Reminder</string>
+    <string name="text_rationale_title">Please allow following permission</string>
+    <string name="text_rationale_description">Alarm and Reminder permission is required to send you a reminder regards bookmark you saved.</string>
 </resources>
