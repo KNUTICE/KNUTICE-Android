@@ -1,7 +1,6 @@
 package com.doyoonkim.knutice.navigation
 
 import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -28,13 +27,13 @@ import com.doyoonkim.knutice.presentation.NotificationPreferences
 import com.doyoonkim.knutice.presentation.OpenSourceLicenseNotice
 import com.doyoonkim.knutice.presentation.UserPreference
 import com.doyoonkim.knutice.presentation.SearchNotice
-import com.doyoonkim.knutice.viewModel.MainActivityViewModel
+import com.doyoonkim.knutice.viewModel.MainServiceViewModel
 
 @Composable
 fun MainNavigator(
     modifier: Modifier = Modifier,
-    viewModel: MainActivityViewModel = hiltViewModel(),
-    navController: NavHostController
+    viewModel: MainServiceViewModel = hiltViewModel(),
+    navController: NavHostController,
 ) {
     // Navigation
     NavHost(
@@ -121,8 +120,16 @@ fun MainNavigator(
                 updatedCurrentLocation = Destination.EDIT_BOOKMARK,
                 updatedBottomNavBarVisibility = false
             )
-            EditBookmark(Modifier.fillMaxSize().padding(10.dp)) {
+            EditBookmark(Modifier.padding(10.dp)) { bookmark ->
+                Log.d("MainNavigator", "Bookmark instance received: ${bookmark ?: "null"}")
                 // onSavedClicked
+                if (bookmark != null) {
+                    Log.d("MainNavigator", "Bookmark instance received.")
+                    viewModel.updateState(
+                        updatedCurrentTargetBookmark = bookmark,
+                        updatedScheduleTriggered = true
+                    )
+                }
                 navController.navigate(NavDestination(Destination.BOOKMARKS))
             }
         }

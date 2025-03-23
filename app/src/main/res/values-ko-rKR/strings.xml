@@ -52,4 +52,9 @@
     <string name="bottom_bar_home">홈</string>
     <string name="bottom_bar_bookmark">북마크</string>
     <string name="text_not_supported">아직 준비중이에요. 다음 업데이트에서 만나요.</string>
+    <string name="text_reminder_title">확인해야 할 북마크가 있어요</string>
+    <string name="btn_go_to_settings">설정으로 이동하기</string>
+    <string name="title_alarm_and_reminder">알람 및 미리알림</string>
+    <string name="text_rationale_title">더 향상된 사용자 경험을 위해 아래의 권한을 허용해 주세요.</string>
+    <string name="text_rationale_description">\'알람 및 미리알림\' 권한은 북마크에 설정된 시간에 푸시알림을 보내드리기 위해 필요해요.</string>
 </resources>
