@@ -38,6 +38,20 @@ class EditBookmarkViewModel @Inject constructor(
         getBookmarkByNotice()
     }
 
+    fun updateReminderOptions(
+        reminderRequested: Boolean = uiState.value.isReminderRequested,
+        updatedTimeForRemind: Long = uiState.value.timeForRemind,
+        updatedDatePickerVisible: Boolean = uiState.value.datePickerVisible
+    ) {
+        _uiState.update {
+            it.copy(
+                isReminderRequested = reminderRequested,
+                timeForRemind = updatedTimeForRemind,
+                datePickerVisible = updatedDatePickerVisible
+            )
+        }
+    }
+
     fun updateBookmarkNotes(newString: String) {
         viewModelScope.launch(Dispatchers.Default) {
             if (uiState.value.bookmarkNote.length < 500) {
@@ -47,6 +61,21 @@ class EditBookmarkViewModel @Inject constructor(
                     )
                 }
             }
+        }
+    }
+
+    private fun updateBookmarkInstance() {
+        val updatedInstance = Bookmark(
+            uiState.value.bookmarkId,
+            uiState.value.isReminderRequested,
+            uiState.value.timeForRemind,
+            uiState.value.bookmarkNote,
+            uiState.value.targetNotice.nttId
+        )
+        _uiState.update {
+            it.copy(
+                bookmarkInstance = updatedInstance
+            )
         }
     }
 
@@ -88,6 +117,7 @@ class EditBookmarkViewModel @Inject constructor(
             localRepository.createBookmark(newBookmark, targetNotice).fold(
                 onSuccess = {
                     Log.d("EditBookmarkViewModel", "Creation Inquiry Processed Successfully with state: $it")
+                    updateBookmarkInstance()
                 },
                 onFailure = {
                     Log.d("EditBookmarkViewModel", "Unable to process creation inquiry\nREASON:${it.message}")
@@ -107,7 +137,11 @@ class EditBookmarkViewModel @Inject constructor(
                 nttId = uiState.value.targetNotice.nttId
             )
 
-            localRepository.updateBookmark(modifiedBookmark)
+            kotlin.runCatching {
+                localRepository.updateBookmark(modifiedBookmark)
+                updateBookmarkInstance()
+            }.onFailure { Log.d("EditBookmarkViewModel", "Unable to modify bookmark") }
+
         }
     }
 
