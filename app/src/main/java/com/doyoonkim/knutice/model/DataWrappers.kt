@@ -161,6 +161,8 @@ data class EditBookmarkState(
     val isReminderRequested: Boolean = false,
     val timeForRemind: Long = 0,      // Should be replaced with an appropriate data type later.
     val bookmarkNote: String = "",
-    val requireCreation: Boolean = true
+    val requireCreation: Boolean = true,
+    val bookmarkInstance: Bookmark? = null,
+    val datePickerVisible: Boolean = false
 )
 
