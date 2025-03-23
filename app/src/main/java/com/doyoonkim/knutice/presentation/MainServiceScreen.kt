@@ -1,5 +1,6 @@
 package com.doyoonkim.knutice.presentation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -28,6 +29,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -44,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.model.Bookmark
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.NavDestination
 import com.doyoonkim.knutice.navigation.MainNavigator
@@ -51,15 +54,44 @@ import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
-import com.doyoonkim.knutice.viewModel.MainActivityViewModel
+import com.doyoonkim.knutice.viewModel.MainServiceViewModel
+import kotlinx.coroutines.async
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainServiceScreen(
-    viewModel: MainActivityViewModel = hiltViewModel()
+    viewModel: MainServiceViewModel = hiltViewModel(),
+    onScheduleAlarmTriggered: (Bookmark) -> Unit,               // Should be refactored later
 ) {
     val mainAppState by viewModel.uiState.collectAsState()
     val navController = rememberNavController()
+
+
+    LaunchedEffect(mainAppState.scheduleTriggered) {
+        Log.d("MainServiceScreen", "Triggered")
+        if (!mainAppState.scheduleTriggered || mainAppState.currentTargetBookmark.bookmarkId == -1) {
+            return@LaunchedEffect
+        }
+        val scheduleResult = async {
+            kotlin.runCatching {
+                onScheduleAlarmTriggered(mainAppState.currentTargetBookmark)
+            }
+        }
+        scheduleResult.await().fold(
+            onSuccess = {
+                viewModel.updateState(
+                    updatedCurrentTargetBookmark = Bookmark(-1),
+                    updatedScheduleTriggered = false
+                )
+            },
+            onFailure = {
+                Log.d("MainServiceScreen", "Unable to schedule alarm.\nREASON:${it}")
+                viewModel.updateState(
+                    updatedScheduleTriggered = false
+                )
+            }
+        )
+    }
 
     Scaffold(
         modifier = Modifier
@@ -74,7 +106,8 @@ fun MainServiceScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (mainAppState.currentLocation != Destination.MAIN
-                            && mainAppState.currentLocation != Destination.BOOKMARKS) {
+                            && mainAppState.currentLocation != Destination.BOOKMARKS
+                        ) {
                             IconButton(
                                 onClick = {
                                     navController.popBackStack()
@@ -110,7 +143,8 @@ fun MainServiceScreen(
                                 Destination.Unspecified -> mainAppState.currentLocation.name
                             },
                             textAlign = if (mainAppState.currentLocation == Destination.CS ||
-                                mainAppState.currentLocation == Destination.SEARCH) {
+                                mainAppState.currentLocation == Destination.SEARCH
+                            ) {
                                 TextAlign.Center
                             } else {
                                 TextAlign.Start
@@ -173,8 +207,8 @@ fun MainServiceScreen(
         bottomBar = {
             AnimatedVisibility(
                 visible = mainAppState.isBottomNavBarVisible,
-                enter = slideInVertically(initialOffsetY = { it + (it * 1/2) }),
-                exit = slideOutVertically(targetOffsetY = { it + (it * 1/2) })
+                enter = slideInVertically(initialOffsetY = { it + (it * 1 / 2) }),
+                exit = slideOutVertically(targetOffsetY = { it + (it * 1 / 2) })
             ) {
                 BottomAppBar(
                     modifier = Modifier
@@ -196,7 +230,7 @@ fun MainServiceScreen(
                                 )
                             },
                             label = {
-                                Text("Home")
+                                Text(stringResource(R.string.bottom_bar_home))
                             },
                             selectedContentColor = MaterialTheme.colorScheme.title,
                             unselectedContentColor = MaterialTheme.colorScheme.subTitle
@@ -215,7 +249,7 @@ fun MainServiceScreen(
                                 )
                             },
                             label = {
-                                Text("Bookmarks")
+                                Text(stringResource(R.string.bottom_bar_bookmark))
                             },
                             selectedContentColor = MaterialTheme.colorScheme.title,
                             unselectedContentColor = MaterialTheme.colorScheme.subTitle
@@ -232,15 +266,16 @@ fun MainServiceScreen(
         containerColor = Color.Transparent
     ) { innerPadding ->
         val adjustmentFactor = 10.dp
-        MainNavigator(navController = navController, modifier = Modifier
-            .consumeWindowInsets(WindowInsets.systemBars)
-            .padding(
-                PaddingValues(
-                    top = innerPadding.calculateTopPadding(),
-                    bottom = innerPadding.calculateBottomPadding()
+        MainNavigator(
+            navController = navController, modifier = Modifier
+                .consumeWindowInsets(WindowInsets.systemBars)
+                .padding(
+                    PaddingValues(
+                        top = innerPadding.calculateTopPadding(),
+                        bottom = innerPadding.calculateBottomPadding()
+                    )
                 )
-            )
-            .background(MaterialTheme.colorScheme.displayBackground)
+                .background(MaterialTheme.colorScheme.displayBackground)
         )
     }
 }
