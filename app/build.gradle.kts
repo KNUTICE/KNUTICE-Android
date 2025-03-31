@@ -131,7 +131,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     // Translation
-    implementation(libs.translate)
+//    implementation(libs.translate)
 
 }
 
