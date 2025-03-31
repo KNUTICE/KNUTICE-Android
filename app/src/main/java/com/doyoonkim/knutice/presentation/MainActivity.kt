@@ -32,6 +32,7 @@ import com.doyoonkim.knutice.alarm.NotificationAlarmScheduler
 import com.doyoonkim.knutice.presentation.component.PermissionRationaleComposable
 import com.doyoonkim.knutice.ui.theme.KNUTICETheme
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Locale
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

@@ -1,17 +1,23 @@
 package com.doyoonkim.knutice.domain
 
+import android.util.Log
 import com.doyoonkim.knutice.data.NoticeLocalRepository
+import com.doyoonkim.knutice.domain.translate.TextTranslator
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.RawNoticeData
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
+import java.util.Locale
 import javax.inject.Inject
 
 
 class FetchTopThreeNoticeByCategory @Inject constructor (
-    private val repository: NoticeLocalRepository
+    private val repository: NoticeLocalRepository,
+    private val translator: TextTranslator
 ): FetchTopThreeNotice {
 
     override fun fetchTopThreeGeneralNotice(): Flow<TopThreeInCategory> {
@@ -35,15 +41,17 @@ class FetchTopThreeNoticeByCategory @Inject constructor (
     }
 
     fun getTopThreeNotices(category: NoticeCategory): Flow<TopThreeInCategory> {
+        val translateNeeded: Boolean = Locale.getDefault() != Locale.KOREAN
         return repository.getTopThreeNotice(category).map {
             if (it.body.isNotEmpty()) {
                 val result = it.body.toNotice()
+
                 TopThreeInCategory(
                     isSuccessful = true,
                     notice1 = result[0],
                     notice2 = result[1],
                     notice3 = result[2]
-                )
+                ).also { Log.d("TEST", it.toString()) }
             } else {
                 TopThreeInCategory(
                     isSuccessful = false
