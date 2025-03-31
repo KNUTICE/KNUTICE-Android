@@ -11,7 +11,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code" translatable="false">1.3.0</string>
+    <string name="version_code" translatable="false">1.3.2</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -67,4 +67,7 @@
     <string name="title_alarm_and_reminder">Alarm and Reminder</string>
     <string name="text_rationale_title">Please allow following permission</string>
     <string name="text_rationale_description">Alarm and Reminder permission is required to send you a reminder regards bookmark you saved.</string>
+    <string name="title_langauge_model_download">Need translation?</string>
+    <string name="text_language">English</string>
+    <string name="description_language_model_download">Language model can be downloaded to use live translation</string>
 </resources>
