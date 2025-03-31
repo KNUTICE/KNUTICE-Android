@@ -5,6 +5,7 @@
     <string name="academic_news">学事</string>
     <string name="scholarship_news">奨学</string>
     <string name="event_news">イベント</string>
+    <string name="btn_more_on_browser">View more on Browser</string>
     <string name="enable_notification_title">アラム</string>
     <string name="enable_service_notification_sub">新しいお知らせがあればアラムを送りします</string>
     <string name="about_title">アプリについて</string>
@@ -57,4 +58,6 @@
     <string name="title_langauge_model_download">翻訳がひ必要ですか？</string>
     <string name="text_language">日本語</string>
     <string name="description_language_model_download">言語モデルをダウンロードして翻訳機能を使われます</string>
+    <string name="btn_more">More</string>
+    <string name="main_notification_channel_group_name">KNUTICE Notice</string>
 </resources>

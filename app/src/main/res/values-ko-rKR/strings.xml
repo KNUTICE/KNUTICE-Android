@@ -57,6 +57,7 @@
     <string name="title_alarm_and_reminder">알람 및 미리알림</string>
     <string name="text_rationale_title">더 향상된 사용자 경험을 위해 아래의 권한을 허용해 주세요.</string>
     <string name="text_rationale_description">\'알람 및 미리알림\' 권한은 북마크에 설정된 시간에 푸시알림을 보내드리기 위해 필요해요.</string>
+    <string name="title_langauge_model_download">번역이 필요하신가요?</string>
     <string name="text_language">한국어</string>
     <string name="description_language_model_download">번역 기능을 사용하려면 언어 모델을 다운로드 해야 합니다.</string>
 </resources>
