@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.knutice.domain.FetchTopThreeNoticeByCategory
-import com.doyoonkim.knutice.domain.translate.TextTranslator
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,8 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CategorizedNotificationViewModel @Inject constructor(
-    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory,
-    private val translator: TextTranslator
+    private val fetchTopThreeNoticeUseCase: FetchTopThreeNoticeByCategory
 ) : ViewModel() {
     init {
         viewModelScope.launch(Dispatchers.Default) {
@@ -90,51 +88,6 @@ class CategorizedNotificationViewModel @Inject constructor(
             }
     }
 
-    fun translate(category: NoticeCategory) {
-        Log.d("Test", "Translation Queried")
-        viewModelScope.launch {
-            val notices = uiState.value.notificationGeneral
-
-            val translated = mutableListOf<Notice>()
-
-            Log.d("Test", "Translation Started")
-            notices.forEach { notice ->
-                var translatedTitle = notice.title
-                var translatedDept = notice.departName
-
-                var updated = notice
-
-                val title = async { translator.translateTo(notice.title)
-                    .addOnSuccessListener {
-                        Log.d("Test", "$it")
-                        translatedTitle = it
-                        updated = updated.copy(title = it)
-                    }
-                    .addOnFailureListener { Log.d("Test", "Unable: ${it.message}") }
-                }
-
-                translator.translateTo(notice.departName)
-                    .addOnSuccessListener {
-                        translatedDept = it
-                        updated = updated.copy(departName = it)
-                    }
-                    .addOnFailureListener { Log.d("Test", "Unable: ${it.message}") }
-//                Log.d("Test", updated.toString())
-                translated.add(notice.copy(
-                    title = translatedTitle,
-                    departName = translatedDept
-                ).also { Log.d("Test", it.toString()) })
-            }
-
-            when(category) {
-                NoticeCategory.GENERAL_NEWS -> { _uiState.update { it.copy(notificationGeneral = translated).also { Log.d("Test", it.notificationGeneral.toString()) } } }
-                NoticeCategory.ACADEMIC_NEWS -> { _uiState.update { it.copy(notificationAcademic = translated) } }
-                NoticeCategory.SCHOLARSHIP_NEWS -> { _uiState.update { it.copy(notificationScholarship = translated) } }
-                NoticeCategory.EVENT_NEWS -> { _uiState.update { it.copy(notificationEvent = translated) } }
-                else -> {  }
-            }
-        }
-    }
 }
 
 data class CategorizedNotificationState(

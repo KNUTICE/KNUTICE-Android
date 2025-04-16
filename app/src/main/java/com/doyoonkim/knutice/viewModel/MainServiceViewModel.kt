@@ -1,25 +1,17 @@
 package com.doyoonkim.knutice.viewModel
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.doyoonkim.knutice.domain.translate.TextTranslator
 import com.doyoonkim.knutice.model.Bookmark
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.Notice
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainServiceViewModel @Inject constructor(
-    private val translator: TextTranslator
-) : ViewModel() {
+class MainServiceViewModel @Inject constructor() : ViewModel() {
     private var _uiState = MutableStateFlow(MainServiceState())
     val uiState = _uiState.asStateFlow()
 
@@ -48,19 +40,6 @@ class MainServiceViewModel @Inject constructor(
             it.copy(
                 languageModelDownloadResult = newStatus
             )
-        }
-    }
-
-    fun requestModelDownload() {
-        updateLanguageModelDownloadStatus("REQUESTED")
-        viewModelScope.launch {
-            translator.downloadLanguageModel()
-                .addOnSuccessListener {
-                    updateLanguageModelDownloadStatus("COMPLETED")
-                }
-                .addOnFailureListener {
-                    updateLanguageModelDownloadStatus("FAILED")
-                }
         }
     }
 }

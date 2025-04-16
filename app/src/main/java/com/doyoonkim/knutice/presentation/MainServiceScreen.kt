@@ -1,17 +1,12 @@
 package com.doyoonkim.knutice.presentation
 
-import android.Manifest
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -37,9 +32,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -58,14 +50,12 @@ import com.doyoonkim.knutice.model.Bookmark
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.NavDestination
 import com.doyoonkim.knutice.navigation.MainNavigator
-import com.doyoonkim.knutice.presentation.component.PermissionRationaleComposable
 import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.MainServiceViewModel
 import kotlinx.coroutines.async
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,12 +66,13 @@ fun MainServiceScreen(
     val mainAppState by viewModel.uiState.collectAsState()
     val navController = rememberNavController()
 
-    var showLanguageDownloadRationale by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (Locale.getDefault() != Locale.KOREAN) {
-            showLanguageDownloadRationale = true
-        }
-    }
+//    //TODO Live translation feature (TBD)
+//    var showLanguageDownloadRationale by remember { mutableStateOf(false) }
+//    LaunchedEffect(Unit) {
+//        if (Locale.getDefault() != Locale.KOREAN) {
+//            showLanguageDownloadRationale = true
+//        }
+//    }
 
     LaunchedEffect(mainAppState.scheduleTriggered) {
         Log.d("MainServiceScreen", "Triggered")
@@ -294,25 +285,26 @@ fun MainServiceScreen(
                 .background(MaterialTheme.colorScheme.displayBackground)
         )
 
-        AnimatedVisibility(
-            visible = showLanguageDownloadRationale,
-            enter = scaleIn(),
-            exit = scaleOut()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-                    .clickable { showLanguageDownloadRationale = false }
-            ) {
-                PermissionRationaleComposable(
-                    modifier = Modifier.align(Alignment.Center).padding(start = 20.dp, end = 20.dp),
-                    permissionName = stringResource(R.string.text_language),
-                    rationaleTitle = stringResource(R.string.title_langauge_model_download),
-                    description = stringResource(R.string.description_language_model_download)
-                ) {
-                    viewModel.requestModelDownload()
-                    showLanguageDownloadRationale = true
-                }
-            }
-        }
+        //TODO Live Translation Feature (TBD)
+//        AnimatedVisibility(
+//            visible = showLanguageDownloadRationale,
+//            enter = scaleIn(),
+//            exit = scaleOut()
+//        ) {
+//            Box(
+//                modifier = Modifier.fillMaxSize()
+//                    .clickable { showLanguageDownloadRationale = false }
+//            ) {
+//                PermissionRationaleComposable(
+//                    modifier = Modifier.align(Alignment.Center).padding(start = 20.dp, end = 20.dp),
+//                    permissionName = stringResource(R.string.text_language),
+//                    rationaleTitle = stringResource(R.string.title_langauge_model_download),
+//                    description = stringResource(R.string.description_language_model_download)
+//                ) {
+//                    viewModel.requestModelDownload()
+//                    showLanguageDownloadRationale = true
+//                }
+//            }
+//        }
     }
 }

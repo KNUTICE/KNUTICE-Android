@@ -10,15 +10,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,9 +37,6 @@ import com.doyoonkim.knutice.ui.theme.notificationType4
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.viewModel.CategorizedNotificationViewModel
 import com.doyoonkim.knutice.R
-import com.doyoonkim.knutice.model.FullContent
-import com.doyoonkim.knutice.model.NoticeCategory
-import java.util.Locale
 
 @Composable
 fun CategorizedNotification(
@@ -57,13 +51,6 @@ fun CategorizedNotification(
     // Back button/gesture actions
     BackHandler {
         onGoBackAction()
-    }
-
-    LaunchedEffect(uiState.notificationGeneral, uiState.notificationAcademic, uiState.notificationScholarship, uiState.notificationEvent) {
-        Log.d("Test", "${Locale.getDefault()} ${Locale.KOREAN} ${Locale.getDefault() != Locale.KOREAN}")
-        if (Locale.getDefault() != Locale.KOREAN) {
-            viewModel.translate(NoticeCategory.GENERAL_NEWS)
-        }
     }
 
     Column(

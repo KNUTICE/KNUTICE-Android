@@ -2,22 +2,18 @@ package com.doyoonkim.knutice.domain
 
 import android.util.Log
 import com.doyoonkim.knutice.data.NoticeLocalRepository
-import com.doyoonkim.knutice.domain.translate.TextTranslator
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.RawNoticeData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.fold
 import kotlinx.coroutines.flow.map
 import java.util.Locale
 import javax.inject.Inject
 
 
 class FetchTopThreeNoticeByCategory @Inject constructor (
-    private val repository: NoticeLocalRepository,
-    private val translator: TextTranslator
+    private val repository: NoticeLocalRepository
 ): FetchTopThreeNotice {
 
     override fun fetchTopThreeGeneralNotice(): Flow<TopThreeInCategory> {
