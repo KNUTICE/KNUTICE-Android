@@ -8,6 +8,7 @@ import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.NoticeCategory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -62,9 +63,12 @@ class CategorizedNotificationViewModel @Inject constructor(
                     onSuccess =  {
                         val notices = listOf(it.notice1!!, it.notice2!!, it.notice3!!)
                         when(category) {
-                            NoticeCategory.GENERAL_NEWS -> updateState(
-                                updatedNotificationGeneral = notices
-                            )
+                            NoticeCategory.GENERAL_NEWS -> {
+
+                                updateState(
+                                    updatedNotificationGeneral = notices
+                                )
+                            }
                             NoticeCategory.ACADEMIC_NEWS -> updateState(
                                 updatedNotificationAcademic = notices
                             )
@@ -83,6 +87,7 @@ class CategorizedNotificationViewModel @Inject constructor(
                 )
             }
     }
+
 }
 
 data class CategorizedNotificationState(

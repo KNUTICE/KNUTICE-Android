@@ -66,6 +66,13 @@ fun MainServiceScreen(
     val mainAppState by viewModel.uiState.collectAsState()
     val navController = rememberNavController()
 
+//    //TODO Live translation feature (TBD)
+//    var showLanguageDownloadRationale by remember { mutableStateOf(false) }
+//    LaunchedEffect(Unit) {
+//        if (Locale.getDefault() != Locale.KOREAN) {
+//            showLanguageDownloadRationale = true
+//        }
+//    }
 
     LaunchedEffect(mainAppState.scheduleTriggered) {
         Log.d("MainServiceScreen", "Triggered")
@@ -277,5 +284,27 @@ fun MainServiceScreen(
                 )
                 .background(MaterialTheme.colorScheme.displayBackground)
         )
+
+        //TODO Live Translation Feature (TBD)
+//        AnimatedVisibility(
+//            visible = showLanguageDownloadRationale,
+//            enter = scaleIn(),
+//            exit = scaleOut()
+//        ) {
+//            Box(
+//                modifier = Modifier.fillMaxSize()
+//                    .clickable { showLanguageDownloadRationale = false }
+//            ) {
+//                PermissionRationaleComposable(
+//                    modifier = Modifier.align(Alignment.Center).padding(start = 20.dp, end = 20.dp),
+//                    permissionName = stringResource(R.string.text_language),
+//                    rationaleTitle = stringResource(R.string.title_langauge_model_download),
+//                    description = stringResource(R.string.description_language_model_download)
+//                ) {
+//                    viewModel.requestModelDownload()
+//                    showLanguageDownloadRationale = true
+//                }
+//            }
+//        }
     }
 }

@@ -34,6 +34,14 @@ class MainServiceViewModel @Inject constructor() : ViewModel() {
             )
         }
     }
+
+    fun updateLanguageModelDownloadStatus(newStatus: String) {
+        _uiState.update {
+            it.copy(
+                languageModelDownloadResult = newStatus
+            )
+        }
+    }
 }
 
 data class MainServiceState(
@@ -42,5 +50,6 @@ data class MainServiceState(
     val isBottomNavBarVisible: Boolean = false,
     val tempReserveNoticeForBookmark: Notice = Notice(),     // ?
     val currentTargetBookmark: Bookmark = Bookmark(-1),
-    val scheduleTriggered: Boolean = false
+    val scheduleTriggered: Boolean = false,
+    val languageModelDownloadResult: String = "YET_STARTED"
 )

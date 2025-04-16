@@ -23,21 +23,21 @@ android {
     val properties = Properties().apply {
         load(FileInputStream("${rootDir}/local.properties"))
     }
-    val apiRoot = properties["api_root"] ?: ""
+    val apiMigrated = properties["api_migrated"] ?: ""
 
     defaultConfig {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 31
         targetSdk = 34
-        versionCode = 11
-        versionName = "1.3.2"
+        versionCode = 13
+        versionName = "1.3.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
 
-        buildConfigField("String", "API_ROOT", "\"$apiRoot\"")
+        buildConfigField("String", "API_MIGRATED", "\"$apiMigrated\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -131,7 +131,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     // Translation
-//    implementation(libs.translate)
+    implementation(libs.translate)
 
 }
 

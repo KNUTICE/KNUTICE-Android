@@ -31,6 +31,7 @@ firebaseMessaging = "24.0.2"
 kotlinSerialization = "1.6.0"
 junitKtx = "1.2.1"
 protoliteWellKnownTypes = "18.0.0"
+translate = "17.0.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -72,6 +73,7 @@ firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging
 kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref="kotlinSerialization" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
+translate = { module = "com.google.mlkit:translate", version.ref = "translate" }
 
 
 [plugins]
