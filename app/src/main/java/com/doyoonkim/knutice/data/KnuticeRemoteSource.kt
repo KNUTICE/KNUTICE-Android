@@ -31,7 +31,7 @@ import javax.inject.Singleton
 class KnuticeRemoteSource @Inject constructor() {
 
     private val knuticeService = Retrofit.Builder()
-        .baseUrl(BuildConfig.API_ROOT)
+        .baseUrl(BuildConfig.API_MIGRATED)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
@@ -93,13 +93,13 @@ class KnuticeRemoteSource @Inject constructor() {
         Log.d("KnuticeRemoteSource", "ValidatedToken: $validatedToken")
         try {
             knuticeService.create(KnuticeService::class.java).submitUserReport(
-                ApiReportRequest(body = report.copy(token = validatedToken))
+                ApiReportRequest(body = report.copy(fcmToken = validatedToken))
             ).run {
                 if (this.result?.resultCode == 200) {
-                    Log.d("KnuticeServer", "User report has been submitted successfully.\n${this.body?.message}")
+                    Log.d("KnuticeServer", "User report has been submitted successfully.\n${this.body}")
                     return Result.success(true)
                 } else {
-                    Log.d("KnuticeServer", "Failed to submit user report\n${this.body?.message}")
+                    Log.d("KnuticeServer", "Failed to submit user report\n${this.body ?: false}")
                     return Result.success(false)
                 }
             }
@@ -121,7 +121,7 @@ class KnuticeRemoteSource @Inject constructor() {
                     Log.d("KnuticeServer", "Topic preference has been updated.\n${this.body}")
                     return Result.success(true)
                 } else {
-                    Log.d("KnuticeServer", "Failed to update topic preference.\n${this.body?.message}")
+                    Log.d("KnuticeServer", "Failed to update topic preference.\n${this.body ?: false}")
                     return Result.success(false)
                 }
             }
@@ -134,9 +134,6 @@ class KnuticeRemoteSource @Inject constructor() {
 }
 
 interface KnuticeService {
-
-    @GET("/open-api/notice")
-    suspend fun getTopThreeNotice(): TopThreeNotices
 
     @GET("/open-api/notice/list")
     suspend fun getTopThreeNotice(
@@ -161,7 +158,7 @@ interface KnuticeService {
     ): NoticesPerPage
 
     @Headers("Content-Type: application/json")
-    @POST("/open-api/token")
+    @POST("/open-api/fcm")
     suspend fun validateToken(
         @Body requestBody: ApiDeviceTokenRequest
     ): ApiPostResult
@@ -173,7 +170,7 @@ interface KnuticeService {
     ): ApiPostResult
 
     @Headers("Content-Type: application/json")
-    @POST("/open-api/token/topic")
+    @POST("/open-api/topic")
     suspend fun submitTopicSubscriptionPreference(
         @Body requestBody: ApiTopicSubscriptionRequest
     ): ApiPostResult
