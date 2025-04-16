@@ -1,6 +1,5 @@
 package com.doyoonkim.knutice.model
 
-import androidx.room.Entity
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
 
@@ -16,8 +15,9 @@ data class RawNoticeData(
     @SerializedName("title") var title: String? = null,
     @SerializedName("contentUrl") var contentUrl: String? = null,
     @SerializedName("contentImage") var contentImage: String? = null,
-    @SerializedName("departName") var departName: String? = null,
-    @SerializedName("registeredAt") var registeredAt: String? = null
+    @SerializedName("departmentName") var departName: String? = null,
+    @SerializedName("registeredAt") var registeredAt: String? = null,
+    @SerializedName("noticeName") var noticeCategory: String? = null
 )
 
 // POJO for receiving raw data from the server.
@@ -40,12 +40,8 @@ data class NoticesPerPage(
 
 data class ApiPostResult(
     @SerializedName("result") var result: Result? = Result(),
-    @SerializedName("body") var body: Body? = Body()
-) {
-    data class Body(
-        val message: String = ""
-    )
-}
+    @SerializedName("body") var body: Boolean? = null
+)
 
 data class ApiDeviceTokenRequest(
     val result: Result = Result(),
@@ -53,7 +49,7 @@ data class ApiDeviceTokenRequest(
 )
 
 data class DeviceTokenRequest(
-    val deviceToken: String
+    val fcmToken: String
 )
 
 data class ApiReportRequest(
@@ -62,7 +58,7 @@ data class ApiReportRequest(
 )
 
 data class ReportRequest(
-    val token: String = "",
+    val fcmToken: String = "",
     val content: String = "",
     val clientType: String = "APP",
     val deviceName: String = "",
@@ -75,7 +71,7 @@ data class ApiTopicSubscriptionRequest(
 )
 
 data class ManageTopicRequest(
-    val deviceToken: String = "",
+    val fcmToken: String = "",
     val noticeName: String = "",
     val isSubscribed: Boolean = false
 )
