@@ -23,3 +23,5 @@ rootProject.name = "KNUTICE"
 include(":app")
 include(":core:network")
 include(":core:model")
+include(":core:data")
+include(":core:domain")

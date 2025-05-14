@@ -129,10 +129,6 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     // Room Database - Kotlin Extensions and Coroutine Support
     implementation(libs.androidx.room.ktx)
-
-    // Translation
-    implementation(libs.translate)
-
 }
 
 // Allow references to generated code
