@@ -115,6 +115,12 @@ fun MainNavigator(
             Spacer(Modifier.height(20.dp))
         }
 
+        // Fetch full content via Deep Link
+        composable("deeplink/{nttId}") { backStackEntry ->
+            val requested = backStackEntry.arguments?.getString("nttId")
+
+        }
+
         composable<Notice> {
             viewModel.updateState(
                 updatedCurrentLocation = Destination.EDIT_BOOKMARK,

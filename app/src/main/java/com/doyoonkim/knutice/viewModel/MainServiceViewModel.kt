@@ -21,7 +21,8 @@ class MainServiceViewModel @Inject constructor() : ViewModel() {
         updatedBottomNavBarVisibility: Boolean = _uiState.value.isBottomNavBarVisible,
         updatedTempReservedNoticeForBookmark: Notice = _uiState.value.tempReserveNoticeForBookmark,
         updatedCurrentTargetBookmark: Bookmark = _uiState.value.currentTargetBookmark,
-        updatedScheduleTriggered: Boolean = _uiState.value.scheduleTriggered
+        updatedScheduleTriggered: Boolean = _uiState.value.scheduleTriggered,
+        updatedDeepLinkRequest: Pair<Boolean, Int> = _uiState.value.deepLinkRequest
     ) {
         _uiState.update {
             it.copy(
@@ -30,7 +31,8 @@ class MainServiceViewModel @Inject constructor() : ViewModel() {
                 isBottomNavBarVisible = updatedBottomNavBarVisibility,
                 tempReserveNoticeForBookmark = updatedTempReservedNoticeForBookmark,
                 currentTargetBookmark = updatedCurrentTargetBookmark,
-                scheduleTriggered = updatedScheduleTriggered
+                scheduleTriggered = updatedScheduleTriggered,
+                deepLinkRequest = updatedDeepLinkRequest
             )
         }
     }
@@ -51,5 +53,6 @@ data class MainServiceState(
     val tempReserveNoticeForBookmark: Notice = Notice(),     // ?
     val currentTargetBookmark: Bookmark = Bookmark(-1),
     val scheduleTriggered: Boolean = false,
-    val languageModelDownloadResult: String = "YET_STARTED"
+    val languageModelDownloadResult: String = "YET_STARTED",
+    val deepLinkRequest: Pair<Boolean, Int> = Pair(false, -1)
 )

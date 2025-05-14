@@ -73,6 +73,10 @@ fun MainServiceScreen(
 //            showLanguageDownloadRationale = true
 //        }
 //    }
+    // FCM Deep Link
+    LaunchedEffect(mainAppState.deepLinkRequest) {
+
+    }
 
     LaunchedEffect(mainAppState.scheduleTriggered) {
         Log.d("MainServiceScreen", "Triggered")

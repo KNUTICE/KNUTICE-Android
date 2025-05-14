@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "KNUTICE"
 include(":app")
+include(":core:network")
+include(":core:model")
