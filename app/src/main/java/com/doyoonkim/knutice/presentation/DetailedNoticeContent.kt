@@ -55,27 +55,6 @@ fun DetailedNoticeContent(
                     webViewClient = object : WebViewClient() {
                         override fun onPageFinished(view: WebView?, url: String?) {
                             val theme = context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)
-                            when (theme) {
-                                Configuration.UI_MODE_NIGHT_YES -> {
-                                    evaluateJavascript(
-                                        """
-                                           var themeStyle = 'div, p, span, ul { background-color: #262729 !important; color: #ffffff !important; }  .bbs_detail { border-top: 0px; } .bbs_detail_tit, .info { background-color: #333437 !important; color: #ffffff !important; border-radius: 15px; border-bottom: 0px; } .bbs_detail_tit h2 {color: #ffffff !important } .bbs_detail_tit .info li { color: #ffffff !important } .bbs_detail span { color: #ffffff !important } .bbs_detail_file { background-color: #787879 !important; color: #ffffff !important; border-radius: 15px; margin-top: 10px; padding: 15px; } .bbs_detail_file a { color: #ffffff; }',
-                                               head = document.head || document.getElementsByTagName('head')[0],
-                                               style = document.createElement('style');
-                                                
-                                               head.appendChild(style);
-                                               style.type = 'text/css';
-                                               if (style.styleSheet) {
-                                                   style.styleSheet.cssText = themeStyle;
-                                               } else {
-                                                   style.appendChild(document.createTextNode(themeStyle));
-                                               }
-                                        """.trimIndent()
-                                    ) {
-                                        Log.d("DetailedNoticeContent", "Dark Theme Applied")
-                                    }
-                                }
-                            }
 
                             evaluateJavascript(
                                 """
@@ -93,12 +72,8 @@ fun DetailedNoticeContent(
                                 
                                 div_accessibility.remove();
                                 div_header.remove();
-                                div_point.remove();
                                 div_footer.remove();
-                                div_footer_root.remove();
                                 
-                                section_svisual.remove();
-                                section_location.remove();
                                 aside_remote.remove();
                                 p_board_butt[0].remove();
                                 
