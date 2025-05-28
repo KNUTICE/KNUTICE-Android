@@ -77,6 +77,13 @@ android {
 }
 
 dependencies {
+    implementation(projects.core.model)
+    implementation(projects.core.domain)
+    implementation(projects.core.data)
+    implementation(projects.core.network)
+    implementation(projects.feature.main)
+    implementation(projects.feature.bookmark)
+    implementation(projects.feature.common)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
