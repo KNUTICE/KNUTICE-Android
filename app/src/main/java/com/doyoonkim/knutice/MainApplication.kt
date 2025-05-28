@@ -23,6 +23,7 @@ class MainApplication() : Application() {
             )
         }
         notificationHandler.requestCurrentToken()
+
     }
 
     override fun onTerminate() {

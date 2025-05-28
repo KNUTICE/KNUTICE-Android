@@ -11,6 +11,7 @@ import com.doyoonkim.knutice.BuildConfig
 import com.doyoonkim.knutice.model.ApiReportRequest
 import com.doyoonkim.knutice.model.ApiTopicSubscriptionRequest
 import com.doyoonkim.knutice.model.ManageTopicRequest
+import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.model.ReportRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -58,6 +59,11 @@ class KnuticeRemoteSource @Inject constructor() {
     suspend fun queryNoticesByKeyword(keyword: String): NoticesPerPage {
         Log.d("KnuticeRemoteSource", "Start retrofit service (Querying Notices...)")
         return knuticeService.create(KnuticeService::class.java).queryNoticeByKeyword(keyword)
+    }
+
+    suspend fun queryNoticeByNttId(nttId: Int): Notice {
+        Log.d("KnuticeRemoteSource", "Start retrofit service (Querying Notices...")
+        return knuticeService.create(KnuticeService::class.java).getNoticeByNttId(nttId)
     }
 
     suspend fun getFullNoticeContent(url: String): Deferred<String> =
@@ -134,6 +140,11 @@ class KnuticeRemoteSource @Inject constructor() {
 }
 
 interface KnuticeService {
+
+    @GET("/open-api/notice")
+    suspend fun getNoticeByNttId(
+        @Query("nttId") nttId: Int
+    ): Notice
 
     @GET("/open-api/notice/list")
     suspend fun getTopThreeNotice(

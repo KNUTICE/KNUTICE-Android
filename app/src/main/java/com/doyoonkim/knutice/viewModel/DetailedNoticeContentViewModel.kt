@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.doyoonkim.knutice.data.NoticeLocalRepository
 import com.doyoonkim.knutice.domain.CrawlFullContentImpl
 import com.doyoonkim.knutice.model.DetailedContentState
 import com.doyoonkim.knutice.model.FullContent
@@ -23,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DetailedNoticeContentViewModel @Inject constructor(
     private val crawlFullContentUseCase: CrawlFullContentImpl,
+    private val repository: NoticeLocalRepository,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -34,7 +36,7 @@ class DetailedNoticeContentViewModel @Inject constructor(
     init {
         _uiState.update {
             it.copy(
-                url = requested.url
+                url = requested.url ?: "www.ut.ac.kr"
             )
         }
     }
@@ -50,31 +52,10 @@ class DetailedNoticeContentViewModel @Inject constructor(
         }
     }
 
-    fun requestFullContent() {
-        CoroutineScope(Dispatchers.IO).launch {
-            crawlFullContentUseCase.getFullContentFromSource(
-                requested.title ?: "", requested.info ?: "", requested.url
-            )
-                .map { Result.success(it) }
-                .catch { emit(Result.failure(it)) }
-                .collectLatest { result ->
-                    result.fold(
-                        onSuccess = { content ->
-                            _uiState.update {
-                                it.copy(
-                                    title = content.title,
-                                    info = content.info,
-                                    fullContent = content.fullContent,
-                                    fullContentUrl = content.fullContentUrl,
-                                    imageUrl = requested.imgUrl
-                                )
-                            }
-                        },
-                        onFailure = {
-                            Log.d("DetailedNoticeContentVM", "Unable to get Full Content.")
-                        }
-                    )
-                }
+    // Retrieve notice by nttid
+    fun getRequestedNotice(nttId: Int) {
+        viewModelScope.launch {
+            repository.getNoticeByNttId(nttId)
         }
     }
 }
