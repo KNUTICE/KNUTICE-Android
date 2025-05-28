@@ -34,6 +34,7 @@ protoliteWellKnownTypes = "18.0.0"
 translate = "17.0.3"
 appcompat = "1.7.0"
 material = "1.12.0"
+dagger = "2.56.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -78,6 +79,11 @@ protolite-well-known-types = { group = "com.google.firebase", name = "protolite-
 translate = { module = "com.google.mlkit:translate", version.ref = "translate" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "dagger" }
+dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "dagger" }
+dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
 
 
 [plugins]
