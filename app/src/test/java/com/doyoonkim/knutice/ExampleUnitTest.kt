@@ -34,7 +34,7 @@ class ExampleUnitTest {
     @Test
     fun retrofitRequestValidation() = runTest {
         val retrofit = Retrofit.Builder()
-            .baseUrl(BuildConfig.API_ROOT)
+            .baseUrl(BuildConfig.API_MIGRATED)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -52,7 +52,7 @@ class ExampleUnitTest {
 
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BuildConfig.API_ROOT)
+            .baseUrl(BuildConfig.API_MIGRATED)
             .build()
         retrofit.create(KnuticeService::class.java).validateToken(
             ApiDeviceTokenRequest(body = DeviceTokenRequest(token))
@@ -67,7 +67,7 @@ class ExampleUnitTest {
     fun queryNotices() = runTest {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BuildConfig.API_ROOT)
+            .baseUrl(BuildConfig.API_MIGRATED)
             .build()
 
         retrofit.create(KnuticeService::class.java).queryNoticeByKeyword(
@@ -81,7 +81,7 @@ class ExampleUnitTest {
     fun updateNotificationChannelPreference() = runTest {
         val retrofit = Retrofit.Builder()
             .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BuildConfig.API_ROOT)
+            .baseUrl(BuildConfig.API_MIGRATED)
             .build()
 
         retrofit.create(KnuticeService::class.java).submitTopicSubscriptionPreference(
