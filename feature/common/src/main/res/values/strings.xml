@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">KNUTICE</string>
+    <string name="general_news">General</string>
+    <string name="academic_news">Academic</string>
+    <string name="scholarship_news">Scholarship</string>
+    <string name="event_news">Event</string>
+    <string name="btn_more">More</string>
+    <string name="btn_more_on_browser">View More on Browser</string>
+    <string name="enable_notification_title">Enable service notification</string>
+    <string name="enable_service_notification_sub">Allow push notification when a new notice is posted.</string>
+    <string name="about_title">About</string>
+    <string name="about_version">Version</string>
+    <string name="about_oss">Open Source License</string>
+    <string name="version_code" translatable="false">1.3.3</string>
+    <string name="pref_notification_title">Notification</string>
+    <string name="title_preference">Preference</string>
+    <string name="new_notice">New Notice has been delivered!</string>
+    <string name="default_notification_channel_id" translatable="false">knutice_default_fcm_channel</string>
+    <string name="default_notification_channel_description" translatable="false">knutice default notification channel for FCM</string>
+    <string name="inapp_notification_channel_id" translatable="false">knutice_inapp_notification_channel</string>
+    <string name="inapp_notification_channel_description" translatable="false">knutice inapp notification channel</string>
+    <string name="inapp_notificaiton_channel_name">KNUTICE In-app Notice</string>
+    <string name="oss_notice">Open Source License</string>
+    <string name="permission_rationale_title">Don\'t miss new notices!</string>
+    <string name="permission_rationale_description">Allow KNUTICE to notify you when new notices are being posted.</string>
+    <string name="button_allow">Allow</string>
+    <string name="button_deny">Deny</string>
+    <string name="title_support">Support</string>
+    <string name="title_customer_service">Customer Service</string>
+    <string name="customer_service_subtitile_1">• Let us know any inconvenience you\'ve exeprienced.</string>
+    <string name="customer_service_subtitle_2">• It would be helpful if you provide circumstance as detailed as possible.</string>
+    <string name="btn_submit">Submit</string>
+    <string name="placeholder_customer_report">Write your report here.</string>
+    <string name="submission_completed_title">Submission Completed!</string>
+    <string name="submission_completed__subtitle">Your report has been submitted!</string>
+    <string name="btn_confirm">Confirm</string>
+    <string name="title_search">Search</string>
+    <string name="main_notification_channel_group_id" translatable="false">main_group</string>
+    <string name="main_notification_channel_group_name">KNUTICE Notice</string>
+    <string name="general_notificaiton_channel_id" translatable="false">notification_general</string>
+    <string name="scholarship_notification_channel_id" translatable="false">notification_scholar</string>
+    <string name="academic_notification_channel_id" translatable="false">notification_academic</string>
+    <string name="event_notification_channel_id" translatable="false">notification_event</string>
+    <string name="general_notificaiton_channel_name">General Notices</string>
+    <string name="scholarship_notification_channel_name">Scholarship Notices</string>
+    <string name="academic_notification_channel_name">Academic Notices</string>
+    <string name="event_notification_channel_name">Event Notices</string>
+    <string name="general_notification_channel_description">Get push notification when new general notice is being posted.</string>
+    <string name="scholarship_notification_channel_description">Get push notification when new scholarship notice is being posted.</string>
+    <string name="academic_notification_channel_description">Get push notification when new academic notice is being posted.</string>
+    <string name="event_notification_channel_description">Get push notification when new event notice is being posted.</string>
+    <string name="title_notification_pref">Notification Preference</string>
+    <string name="subtitle_set_reminder">Set Reminder</string>
+    <string name="title_edit_bookmark">Edit Bookmark</string>
+    <string name="subtitle_get_reminder">Get Reminder</string>
+    <string name="subtitle_notes">Notes</string>
+    <string name="placeholder_notes">Enter any notes for your bookmarked notice.</string>
+    <string name="btn_save">Save</string>
+    <string name="text_no_bookmark">No bookmarks to be shown</string>
+    <string name="btn_delete">delete</string>
+    <string name="bottom_bar_home">Home</string>
+    <string name="bottom_bar_bookmark">Bookmarks</string>
+    <string name="test_very_long_text" translatable="false">Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing. Very Long Text for testing.</string>
+    <string name="text_not_supported">Not yet supported.</string>
+    <string name="text_reminder_title">You have reminder to check out</string>
+    <string name="btn_go_to_settings">Go to settings</string>
+    <string name="title_alarm_and_reminder">Alarm and Reminder</string>
+    <string name="text_rationale_title">Please allow following permission</string>
+    <string name="text_rationale_description">Alarm and Reminder permission is required to send you a reminder regards bookmark you saved.</string>
+    <string name="title_langauge_model_download">Need translation?</string>
+    <string name="text_language">English</string>
+    <string name="description_language_model_download">Language model can be downloaded to use live translation</string>
+</resources>
