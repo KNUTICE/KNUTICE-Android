@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.model.Bookmark
+import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.presentation.component.DateTimePicker
 import com.doyoonkim.knutice.presentation.component.NotificationPreviewCard
 import com.doyoonkim.knutice.ui.theme.containerBackground
@@ -65,6 +66,7 @@ import java.util.TimeZone
 fun EditBookmark(
     modifier: Modifier = Modifier,
     viewModel: EditBookmarkViewModel = hiltViewModel(),
+    onDetailedNoticeRequested: (Notice) -> Unit,
     onSaveClicked: (Bookmark?) -> Unit = {  }
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -83,7 +85,10 @@ fun EditBookmark(
             modifier = Modifier.padding(5.dp),
             notificationTitle = uiState.targetNotice.title,
             notificationInfo = uiState.targetNotice.departName
-        )
+        ) {
+            // Request Full Content
+            onDetailedNoticeRequested(uiState.targetNotice)
+        }
 
         Spacer(Modifier.height(30.dp))
 
@@ -291,6 +296,6 @@ private fun Long.toFormattedDate(f: SimpleDateFormat): String {
 @Preview(showBackground = true)
 @Composable
 fun EditBookmark_Preview() {
-    EditBookmark(Modifier.fillMaxSize().padding(10.dp)) {  }
+//    EditBookmark(Modifier.fillMaxSize().padding(10.dp)) {  }
 }
 

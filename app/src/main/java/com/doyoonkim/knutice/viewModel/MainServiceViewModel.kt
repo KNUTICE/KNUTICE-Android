@@ -19,6 +19,7 @@ class MainServiceViewModel @Inject constructor() : ViewModel() {
         updatedCurrentLocation: Destination = _uiState.value.currentLocation,
         updatedCurrentScaffoldTitle: String = _uiState.value.currentScaffoldTitle,
         updatedBottomNavBarVisibility: Boolean = _uiState.value.isBottomNavBarVisible,
+        updatedFabVisibility: Boolean = _uiState.value.isFabVisible,
         updatedTempReservedNoticeForBookmark: Notice = _uiState.value.tempReserveNoticeForBookmark,
         updatedCurrentTargetBookmark: Bookmark = _uiState.value.currentTargetBookmark,
         updatedScheduleTriggered: Boolean = _uiState.value.scheduleTriggered
@@ -28,6 +29,7 @@ class MainServiceViewModel @Inject constructor() : ViewModel() {
                 currentLocation = updatedCurrentLocation,
                 currentScaffoldTitle = updatedCurrentScaffoldTitle,
                 isBottomNavBarVisible = updatedBottomNavBarVisibility,
+                isFabVisible = updatedFabVisibility,
                 tempReserveNoticeForBookmark = updatedTempReservedNoticeForBookmark,
                 currentTargetBookmark = updatedCurrentTargetBookmark,
                 scheduleTriggered = updatedScheduleTriggered
@@ -48,7 +50,8 @@ data class MainServiceState(
     val currentLocation: Destination = Destination.MAIN,
     val currentScaffoldTitle: String = "",
     val isBottomNavBarVisible: Boolean = false,
-    val tempReserveNoticeForBookmark: Notice = Notice(),     // ?
+    val isFabVisible: Boolean = true,
+    val tempReserveNoticeForBookmark: Notice = Notice(),     // For navigation to Edit Bookmark from DetailedContent (Since Detailed content requires FullContent to enter, while Edit Bookmark requires Notice to enter.
     val currentTargetBookmark: Bookmark = Bookmark(-1),
     val scheduleTriggered: Boolean = false,
     val languageModelDownloadResult: String = "YET_STARTED"

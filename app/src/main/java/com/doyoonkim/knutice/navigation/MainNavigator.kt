@@ -120,7 +120,16 @@ fun MainNavigator(
                 updatedCurrentLocation = Destination.EDIT_BOOKMARK,
                 updatedBottomNavBarVisibility = false
             )
-            EditBookmark(Modifier.padding(10.dp)) { bookmark ->
+            EditBookmark(
+                Modifier.padding(10.dp),
+                onDetailedNoticeRequested = {
+                    viewModel.updateState(
+                        updatedFabVisibility = false,
+                        updatedTempReservedNoticeForBookmark = it
+                    )
+                    navController.navigate(it.toFullContent())
+                }
+            ) { bookmark ->
                 Log.d("MainNavigator", "Bookmark instance received: ${bookmark ?: "null"}")
                 // onSavedClicked
                 if (bookmark != null) {

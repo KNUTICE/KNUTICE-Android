@@ -117,7 +117,9 @@ fun MainServiceScreen(
                         ) {
                             IconButton(
                                 onClick = {
-                                    navController.popBackStack()
+                                    navController.popBackStack().also {
+                                        viewModel.updateState(updatedFabVisibility = true)
+                                    }
                                 }
                             ) {
                                 Image(
@@ -199,7 +201,7 @@ fun MainServiceScreen(
             )
         },
         floatingActionButton = {
-            if (mainAppState.currentLocation == Destination.DETAILED) {
+            if (mainAppState.currentLocation == Destination.DETAILED && mainAppState.isFabVisible) {
                 FloatingActionButton(
                     onClick = {
                         if (mainAppState.tempReserveNoticeForBookmark.title.isNotBlank()) {
