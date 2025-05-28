@@ -50,7 +50,9 @@ import com.doyoonkim.knutice.model.Bookmark
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.NavDestination
 import com.doyoonkim.knutice.navigation.MainNavigator
+import com.doyoonkim.knutice.ui.theme.bottomNavContainer
 import com.doyoonkim.knutice.ui.theme.containerBackground
+import com.doyoonkim.knutice.ui.theme.containerBackgroundSolid
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.ui.theme.title
@@ -103,7 +105,7 @@ fun MainServiceScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.displayBackground),
+            .background(MaterialTheme.colorScheme.containerBackgroundSolid),
         topBar = {
             TopAppBar(
                 title = {
@@ -168,7 +170,7 @@ fun MainServiceScreen(
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     titleContentColor = MaterialTheme.colorScheme.title,
-                    containerColor = MaterialTheme.colorScheme.containerBackground
+                    containerColor = MaterialTheme.colorScheme.containerBackgroundSolid
                 ),
                 actions = {
                     if (mainAppState.currentLocation == Destination.MAIN) {
@@ -215,7 +217,8 @@ fun MainServiceScreen(
         },
         bottomBar = {
             AnimatedVisibility(
-                visible = mainAppState.isBottomNavBarVisible,
+                visible = mainAppState.currentLocation == Destination.MAIN
+                        || mainAppState.currentLocation == Destination.BOOKMARKS,
                 enter = slideInVertically(initialOffsetY = { it + (it * 1 / 2) }),
                 exit = slideOutVertically(targetOffsetY = { it + (it * 1 / 2) })
             ) {
@@ -264,7 +267,7 @@ fun MainServiceScreen(
                             unselectedContentColor = MaterialTheme.colorScheme.subTitle
                         )
                     },
-                    containerColor = MaterialTheme.colorScheme.containerBackground,
+                    containerColor = MaterialTheme.colorScheme.bottomNavContainer,
                     contentColor = MaterialTheme.colorScheme.title
                 )
             }
@@ -284,7 +287,7 @@ fun MainServiceScreen(
                         bottom = innerPadding.calculateBottomPadding()
                     )
                 )
-                .background(MaterialTheme.colorScheme.displayBackground)
+                .background(MaterialTheme.colorScheme.containerBackgroundSolid)
         )
 
         //TODO Live Translation Feature (TBD)
