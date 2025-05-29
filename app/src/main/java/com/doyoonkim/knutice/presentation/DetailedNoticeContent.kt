@@ -1,12 +1,20 @@
 package com.doyoonkim.knutice.presentation
 
+import android.app.DownloadManager
+import android.content.Context.DOWNLOAD_SERVICE
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
+import android.os.Environment
 import android.util.Log
 import android.view.View
+import android.webkit.CookieManager
+import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -25,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.viewModel.DetailedNoticeContentViewModel
+import okio.Path.Companion.toPath
 
 @Composable
 fun DetailedNoticeContent(
@@ -51,6 +61,7 @@ fun DetailedNoticeContent(
                     //Enable Javascript
                     // Security Alert: XSS Vulnerability
                     settings.javaScriptEnabled = true
+                    settings.defaultTextEncodingName = "UTF-8"
 
                     webViewClient = object : WebViewClient() {
                         override fun onPageFinished(view: WebView?, url: String?) {
@@ -92,6 +103,31 @@ fun DetailedNoticeContent(
                             // Update progress status
                             viewModel.updateLoadingStatus(newProgress)
                             super.onProgressChanged(view, newProgress)
+                        }
+                    }
+
+                    setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
+                        val request = DownloadManager.Request(Uri.parse(url))
+                        val filename = URLUtil.guessFileName(url, contentDisposition, mimetype).also { Log.d("DownloadManager", "Filename: $it") }
+                        // save session data before downloading the target file.
+                        val cookies = CookieManager.getInstance().getCookie(url)
+
+                        request.apply {
+                            setMimeType(mimetype)
+                            addRequestHeader("cookie", cookies)
+                            addRequestHeader("User-Agent", userAgent)
+                            setDescription("Downloading File")
+                            setTitle(filename)
+//                            allowScanningByMediaScanner()     Deprecated.
+                            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                        }
+                        val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+                        downloadManager.enqueue(request).also {
+                            Toast.makeText(context, "Start Downloading File to Download", Toast.LENGTH_LONG).show()
+
+                            // Guide user to the File application
+                            context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS))
                         }
                     }
 
