@@ -70,4 +70,5 @@
     <string name="title_langauge_model_download">Need translation?</string>
     <string name="text_language">English</string>
     <string name="description_language_model_download">Language model can be downloaded to use live translation</string>
+    <string name="text_download">Downloading the selected file to Downloads...</string>
 </resources>

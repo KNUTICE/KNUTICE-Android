@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.viewModel.DetailedNoticeContentViewModel
 import okio.Path.Companion.toPath
@@ -124,8 +125,7 @@ fun DetailedNoticeContent(
                         }
                         val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
                         downloadManager.enqueue(request).also {
-                            Toast.makeText(context, "Start Downloading File to Download", Toast.LENGTH_LONG).show()
-
+                            Toast.makeText(context, R.string.text_download, Toast.LENGTH_LONG).show()
                             // Guide user to the File application
                             context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS))
                         }

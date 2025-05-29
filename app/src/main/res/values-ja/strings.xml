@@ -60,4 +60,5 @@
     <string name="description_language_model_download">言語モデルをダウンロードして翻訳機能を使われます</string>
     <string name="btn_more">More</string>
     <string name="main_notification_channel_group_name">KNUTICE Notice</string>
+    <string name="text_download">選択したファイルをダウンロード フォルダーにダウンロードします。</string>
 </resources>
