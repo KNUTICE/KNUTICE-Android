@@ -59,7 +59,9 @@ fun NotificationPreferences(
     }
 
     Column(
-        modifier = Modifier.fillMaxSize().systemBarsPadding(),
+        modifier = Modifier.fillMaxSize()
+            .systemBarsPadding()
+            .padding(10.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

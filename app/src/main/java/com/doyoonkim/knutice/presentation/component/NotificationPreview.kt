@@ -64,7 +64,7 @@ fun NotificationPreview(
                     .padding(top = 7.dp, start = 5.dp, end = 5.dp),
                 text = notificationTitle,
                 textAlign = TextAlign.Start,
-                fontSize = 13.sp,
+                fontSize = 14.sp,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.title,
                 maxLines = 1,
@@ -72,10 +72,10 @@ fun NotificationPreview(
             )
             Text(
                 modifier = Modifier.fillMaxWidth()
-                    .padding(top = 1.dp, start = 5.dp, bottom = 5.dp, end = 5.dp),
+                    .padding(start = 5.dp, bottom = 5.dp, end = 5.dp),
                 text = notificationInfo,
                 textAlign = TextAlign.Start,
-                fontSize = 9.sp,
+                fontSize = 12.sp,
                 color = MaterialTheme.colorScheme.subTitle
             )
         }
