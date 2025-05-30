@@ -2,6 +2,7 @@ package com.doyoonkim.knutice.model
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
+import java.lang.Error
 
 
 data class Result(
@@ -30,6 +31,19 @@ data class TopThreeNotices(
         @SerializedName("latestThreeScholarshipNews") var latestThreeScholarshipNews: ArrayList<RawNoticeData> = arrayListOf(),
         @SerializedName("latestThreeEventNews") var latestThreeEventNews: ArrayList<RawNoticeData> = arrayListOf(),
         @SerializedName("latestThreeAcademicNews") var latestThreeAcademicNews: ArrayList<RawNoticeData> = arrayListOf()
+    )
+}
+
+data class TopicSubscriptionStatusDTO(
+    @SerializedName("result") var result: Result? = Result(),
+    @SerializedName("body") var body: Body? = Body()
+) {
+    data class Body(
+        @SerializedName("generalNewsTopic") var generalNewsTopic: Boolean = false,
+        @SerializedName("scholarshipNewsTopic") var scholarshipNewsTopic: Boolean = false,
+        @SerializedName("eventNewsTopic") var eventNewsTopic: Boolean = false,
+        @SerializedName("academicNewsTopic") var academicNewsTopic: Boolean = false,
+        @SerializedName("employmentNewsTopic") var employmentNewsTopic: Boolean = false
     )
 }
 
@@ -140,7 +154,9 @@ data class SearchNoticeState(
 data class NotificationPreferenceStatus(
     val isMainNotificationPermissionGranted: Boolean = false,
     //TODO: Consider change data type to MAP
-    val isEachChannelAllowed: List<Boolean> = listOf(true, true, true, true)
+    val isEachChannelAllowed: List<Boolean> = listOf(false, false, false, false),
+    val isSyncCompleted: Boolean = false,
+    val isError: Boolean = false
 )
 
 // BookmarkComposable

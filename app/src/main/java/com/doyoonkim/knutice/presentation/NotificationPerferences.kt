@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.presentation
 
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LifecycleEventEffect
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.model.NoticeCategory
@@ -52,6 +55,7 @@ fun NotificationPreferences(
 
     LaunchedEffect(Unit) {
         viewModel.checkMainNotificationPreferenceStatus()
+        viewModel.checkTopicSubscriptionStatus()
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {

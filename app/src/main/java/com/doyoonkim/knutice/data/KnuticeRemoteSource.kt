@@ -12,6 +12,7 @@ import com.doyoonkim.knutice.model.ApiReportRequest
 import com.doyoonkim.knutice.model.ApiTopicSubscriptionRequest
 import com.doyoonkim.knutice.model.ManageTopicRequest
 import com.doyoonkim.knutice.model.ReportRequest
+import com.doyoonkim.knutice.model.TopicSubscriptionStatusDTO
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -58,6 +60,12 @@ class KnuticeRemoteSource @Inject constructor() {
     suspend fun queryNoticesByKeyword(keyword: String): NoticesPerPage {
         Log.d("KnuticeRemoteSource", "Start retrofit service (Querying Notices...)")
         return knuticeService.create(KnuticeService::class.java).queryNoticeByKeyword(keyword)
+    }
+
+    suspend fun getTopicSubscriptionStatus(): Result<TopicSubscriptionStatusDTO> {
+        return runCatching {
+            knuticeService.create(KnuticeService::class.java).getTopicSubscriptionStatus(validatedToken)
+        }.onFailure { throw it }
     }
 
     suspend fun getFullNoticeContent(url: String): Deferred<String> =
@@ -175,4 +183,8 @@ interface KnuticeService {
         @Body requestBody: ApiTopicSubscriptionRequest
     ): ApiPostResult
 
+    @GET("/open-api/topic")
+    suspend fun getTopicSubscriptionStatus(
+        @Header("fcmToken") token: String
+    ): TopicSubscriptionStatusDTO
 }
