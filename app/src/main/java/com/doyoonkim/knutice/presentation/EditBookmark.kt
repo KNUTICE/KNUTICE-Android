@@ -12,13 +12,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -70,7 +84,7 @@ fun EditBookmark(
     onSaveClicked: (Bookmark?) -> Unit = {  }
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val localContext = LocalContext.current
+    val adjustImePadding = Modifier.consumeWindowInsets(WindowInsets.ime).imePadding()
 
     LaunchedEffect(uiState.isReminderRequested) {
         if (uiState.timeForRemind == 0L) {
@@ -171,11 +185,14 @@ fun EditBookmark(
         )
 
         Box(
-            modifier = Modifier.fillMaxWidth().weight(5f)
-                .padding(top = 5.dp, bottom = 25.dp)
+            modifier = Modifier.fillMaxWidth()
+                .fillMaxHeight()
+                .weight(1f)
+                .padding(top = 5.dp, bottom = 20.dp)
+                .then(adjustImePadding)
         ) {
             TextField(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().padding(bottom = 5.dp),
                 value = uiState.bookmarkNote,
                 placeholder = { Text(text = stringResource(R.string.placeholder_notes)) },
                 enabled = true,
@@ -212,7 +229,8 @@ fun EditBookmark(
         ) {
             val coroutineScope = rememberCoroutineScope()
             Button(
-                modifier = Modifier.wrapContentHeight().weight(1f),
+                modifier = Modifier.wrapContentHeight()
+                    .weight(1f),
                 enabled = true,
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
@@ -258,7 +276,7 @@ fun EditBookmark(
 
     // DateTimePicker
     AnimatedVisibility(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        modifier = Modifier.fillMaxWidth().wrapContentHeight().imePadding(),
         visible = uiState.datePickerVisible,
         enter = slideInVertically(initialOffsetY = { it + it / 2 }),
         exit = slideOutVertically(targetOffsetY = { it / 2 })

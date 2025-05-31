@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.alarm.NotificationAlarmScheduler
 import com.doyoonkim.knutice.presentation.component.PermissionRationaleComposable
@@ -44,6 +45,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //         applicationContext.deleteDatabase("Main Local Database")
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContent {
             KNUTICETheme {

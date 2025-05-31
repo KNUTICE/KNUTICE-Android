@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
@@ -49,6 +52,8 @@ fun CustomerService(
    onCloseRequested: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val adjustImePadding = Modifier.consumeWindowInsets(WindowInsets.ime).imePadding()
+
     Box(
         modifier = modifier.fillMaxSize()
             .windowInsetsPadding(WindowInsets.systemBars)
@@ -76,6 +81,7 @@ fun CustomerService(
             Box(
                 modifier = Modifier.fillMaxWidth().weight(5f)
                     .padding(top = 25.dp, bottom = 25.dp)
+                    .then(adjustImePadding)
             ) {
                 TextField(
                     modifier = Modifier.fillMaxSize(),
