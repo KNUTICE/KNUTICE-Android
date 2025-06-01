@@ -2,7 +2,6 @@ package com.doyoonkim.knutice.model
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable
-import java.lang.Error
 
 
 data class Result(
@@ -45,6 +44,33 @@ data class TopicSubscriptionStatusDTO(
         @SerializedName("academicNewsTopic") var academicNewsTopic: Boolean = false,
         @SerializedName("employmentNewsTopic") var employmentNewsTopic: Boolean = false
     )
+}
+
+data class SingleNotice(
+    @SerializedName("result") var result: Result? = Result(),
+    @SerializedName("body") var notice: NoticeDTO?
+) {
+    data class NoticeDTO(
+        @SerializedName("nttId") var nttId: Int,
+        @SerializedName("title") var title: String,
+        @SerializedName("contentUrl") var contentUrl: String,
+        @SerializedName("contentImage") var contentImage: String?,
+        @SerializedName("departmentName") var departmentName: String,
+        @SerializedName("registeredAt") var registeredAt: String,
+        @SerializedName("noticeName") var noticeName: String
+    ) {
+        fun toNotice(): Notice {
+            return Notice(
+                nttId = nttId,
+                title = title,
+                url = contentUrl,
+                imageUrl = contentImage ?: "",
+                departName = departmentName,
+                timestamp = registeredAt,
+                // noticeCategory = noticeName
+            )
+        }
+    }
 }
 
 data class NoticesPerPage(
@@ -106,7 +132,8 @@ data class Notice(
             title,
             "[$departName] $timestamp",
             url,
-            imageUrl
+            imageUrl,
+            nttId.toString()
         )
     }
 
@@ -125,6 +152,7 @@ data class Notice(
 
 // DetailedNoticeContent
 data class DetailedContentState(
+    val requestedNotice: Notice = Notice(),
     val url: String = "",
     val title: String = "",
     val info: String = "",

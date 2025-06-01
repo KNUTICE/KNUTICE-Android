@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -45,6 +46,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.model.Bookmark
@@ -56,6 +59,7 @@ import com.doyoonkim.knutice.ui.theme.containerBackground
 import com.doyoonkim.knutice.ui.theme.containerBackgroundSolid
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.ui.theme.subTitle
+import com.doyoonkim.knutice.ui.theme.textPurple
 import com.doyoonkim.knutice.ui.theme.title
 import com.doyoonkim.knutice.viewModel.MainServiceViewModel
 import kotlinx.coroutines.async
@@ -64,10 +68,11 @@ import kotlinx.coroutines.async
 @Composable
 fun MainServiceScreen(
     viewModel: MainServiceViewModel = hiltViewModel(),
-    onScheduleAlarmTriggered: (Bookmark) -> Unit,               // Should be refactored later
+    navController: NavHostController,
+    onScheduleAlarmTriggered: (Bookmark) -> Unit, // Should be refactored later
+    content: @Composable (PaddingValues) -> Unit
 ) {
     val mainAppState by viewModel.uiState.collectAsState()
-    val navController = rememberNavController()
 
 //    //TODO Live translation feature (TBD)
 //    var showLanguageDownloadRationale by remember { mutableStateOf(false) }
@@ -210,9 +215,18 @@ fun MainServiceScreen(
                         if (mainAppState.tempReserveNoticeForBookmark.title.isNotBlank()) {
                             navController.navigate(mainAppState.tempReserveNoticeForBookmark)
                         }
+                    },
+                    containerColor = if (mainAppState.tempReserveNoticeForBookmark.title.isNotBlank()) {
+                        MaterialTheme.colorScheme.textPurple
+                    } else {
+                        MaterialTheme.colorScheme.subTitle
                     }
                 ) {
-                    Icon(Icons.Filled.Add, "Floating Action Button")
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = "Floating Action Button",
+                        tint = Color.White
+                    )
                 }
             }
         },
@@ -278,18 +292,8 @@ fun MainServiceScreen(
         },
         containerColor = Color.Transparent
     ) { innerPadding ->
-        val adjustmentFactor = 10.dp
-        MainNavigator(
-            navController = navController, modifier = Modifier
-                .consumeWindowInsets(WindowInsets.systemBars)
-                .padding(
-                    PaddingValues(
-                        top = innerPadding.calculateTopPadding(),
-                        bottom = innerPadding.calculateBottomPadding()
-                    )
-                )
-                .background(MaterialTheme.colorScheme.containerBackgroundSolid)
-        )
+
+        content(innerPadding)
 
         //TODO Live Translation Feature (TBD)
 //        AnimatedVisibility(

@@ -1,20 +1,30 @@
 package com.doyoonkim.knutice.viewModel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.doyoonkim.knutice.data.KnuticeRemoteSource
+import com.doyoonkim.knutice.domain.FetchSingleNoticeImpl
 import com.doyoonkim.knutice.model.Bookmark
 import com.doyoonkim.knutice.model.Destination
 import com.doyoonkim.knutice.model.Notice
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainServiceViewModel @Inject constructor() : ViewModel() {
+class MainServiceViewModel @Inject constructor(
+    private val fetchSingleNotice: FetchSingleNoticeImpl
+) : ViewModel() {
     private var _uiState = MutableStateFlow(MainServiceState())
     val uiState = _uiState.asStateFlow()
 
+    // Targeted to be separated. (Causes multiple recomposition & state updates.)
     fun updateState(
         updatedCurrentLocation: Destination = _uiState.value.currentLocation,
         updatedCurrentScaffoldTitle: String = _uiState.value.currentScaffoldTitle,
@@ -42,6 +52,22 @@ class MainServiceViewModel @Inject constructor() : ViewModel() {
             it.copy(
                 languageModelDownloadResult = newStatus
             )
+        }
+    }
+
+    fun getReservedNotice(nttId: String) {
+        viewModelScope.launch {
+            Log.d("MainServiceViewModel", "Start request reserved notice")
+            val request = async {
+                fetchSingleNotice.getSingleNoticeById(nttId)
+            }.await()
+
+            _uiState.update {
+                it.copy(
+                    tempReserveNoticeForBookmark = request,
+                    currentScaffoldTitle = request.title
+                )
+            }
         }
     }
 }

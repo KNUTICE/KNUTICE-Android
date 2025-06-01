@@ -33,7 +33,7 @@ import com.doyoonkim.knutice.viewModel.MainServiceViewModel
 fun MainNavigator(
     modifier: Modifier = Modifier,
     viewModel: MainServiceViewModel = hiltViewModel(),
-    navController: NavHostController,
+    navController: NavHostController
 ) {
     // Navigation
     NavHost(
@@ -105,12 +105,22 @@ fun MainNavigator(
 
         composable<FullContent> { backStackEntry ->
             val requestedNotice = backStackEntry.toRoute<FullContent>()
-            val scaffoldTitle = requestedNotice.title
-            viewModel.updateState(
-                updatedCurrentLocation = Destination.DETAILED,
-                updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content",
-                updatedBottomNavBarVisibility = true
-            )
+
+            viewModel.run {
+                if (uiState.value.currentLocation != Destination.DETAILED) {
+                    // Need to find the reason for multiple request caused by multiple recomposition
+                    if (requestedNotice.nttId != null) {
+                        getReservedNotice(requestedNotice.nttId)
+                    }
+
+                    val scaffoldTitle = uiState.value.tempReserveNoticeForBookmark.title
+                    updateState(
+                        updatedCurrentLocation = Destination.DETAILED,
+                        updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content",
+                        updatedBottomNavBarVisibility = true
+                    )
+                }
+            }
             DetailedNoticeContent()
             Spacer(Modifier.height(20.dp))
         }
@@ -125,7 +135,6 @@ fun MainNavigator(
                 onDetailedNoticeRequested = {
                     viewModel.updateState(
                         updatedFabVisibility = false,
-                        updatedTempReservedNoticeForBookmark = it
                     )
                     navController.navigate(it.toFullContent())
                 }

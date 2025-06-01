@@ -2,14 +2,18 @@ package com.doyoonkim.knutice.fcm
 
 import android.Manifest
 import android.app.Notification
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
+import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.doyoonkim.knutice.data.KnuticeRemoteSource
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.presentation.MainActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -37,27 +41,48 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
         Log.d(TAG, "Message data payload: ${message.notification}")
 
         if (message.data.isNotEmpty()) {
-            Log.d(TAG, "Message Data Payload: ${message.data}")
-        }
+            Log.d(TAG, "Message Data Payload: ${message.data}")     // message.data: Map<String!, String!>
 
-        message.notification?.let {
-            Log.d(TAG, "Body: ${it.body}")
-            message.toPushNotification()
+            // Apply "Do not disturb" option. (Temporarily save the message and deliver after the core time is end.
+            // Use Local Database (Room?)
+            message.notification?.let {
+                Log.d(TAG, "Body: ${it.body}")
+                message.toPushNotification()
+            }
         }
     }
 
     private fun RemoteMessage.toPushNotification() {
+        // Create Pending Intent
+        val data = this.data
+        Log.d("PushNotificationHandler", data["contentTitle"]!!)
+        val intent = Intent(applicationContext, MainActivity::class.java).apply {
+            putExtra("nttId", data["nttId"]!!)
+            putExtra("title", data["contentTitle"]!!)
+            putExtra("info", "${data["noticeName"]!!} ${data["registeredAt"]!!}")
+            putExtra("url", data["contentUrl"]!!)
+            putExtra("contentImage", data["contentImage"] ?: "")
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE
+        )
+
         val notificationId = Random(System.currentTimeMillis().toInt()).nextInt()
         // Utilize channel already created by FCM as default
         val notificationBuilder = NotificationCompat.Builder(
             applicationContext, getString(R.string.inapp_notification_channel_id)
-        )
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
-            .setContentTitle(getString(R.string.new_notice))
-            .setContentText(this@toPushNotification.notification?.body ?: "No message body")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
+        ).apply {
+            setSmallIcon(R.mipmap.ic_launcher)
+            setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
+            setContentTitle(getString(R.string.new_notice))
+            setContentText(this@toPushNotification.notification?.body ?: "No message body.")
+            setContentIntent(pendingIntent)
+            setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            setAutoCancel(true)
+        }
+
 
         with(NotificationManagerCompat.from(applicationContext)) {
             if (ActivityCompat.checkSelfPermission(

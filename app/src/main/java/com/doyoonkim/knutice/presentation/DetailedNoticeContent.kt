@@ -25,6 +25,7 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.viewModel.DetailedNoticeContentViewModel
 import okio.Path.Companion.toPath
@@ -55,21 +57,23 @@ fun DetailedNoticeContent(
                 state.loadingStatue
             }
         )
-        AndroidView(
-            modifier = Modifier,
-            factory = { context ->
-                WebView(context).apply {
-                    //Enable Javascript
-                    // Security Alert: XSS Vulnerability
-                    settings.javaScriptEnabled = true
-                    settings.defaultTextEncodingName = "UTF-8"
 
-                    webViewClient = object : WebViewClient() {
-                        override fun onPageFinished(view: WebView?, url: String?) {
-                            val theme = context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)
+        if (state.requestedNotice.url != "Unknown") {
+            AndroidView(
+                modifier = Modifier,
+                factory = { context ->
+                    WebView(context).apply {
+                        //Enable Javascript
+                        // Security Alert: XSS Vulnerability
+                        settings.javaScriptEnabled = true
+                        settings.defaultTextEncodingName = "UTF-8"
 
-                            evaluateJavascript(
-                                """
+                        webViewClient = object : WebViewClient() {
+                            override fun onPageFinished(view: WebView?, url: String?) {
+                                val theme = context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)
+
+                                evaluateJavascript(
+                                    """
                                 let div_accessibility = document.getElementById('accessibility');
                                 let div_header = document.getElementById('header');
                                 let div_point = document.getElementById('point');
@@ -90,53 +94,54 @@ fun DetailedNoticeContent(
                                 p_board_butt[0].remove();
                                 
                             """.trimIndent(),
-                            ) { result ->
-                                Log.d("Android Web View Client", "RESULT: $result")
-                                visibility = View.VISIBLE
+                                ) { result ->
+                                    Log.d("Android Web View Client", "RESULT: $result")
+                                    visibility = View.VISIBLE
+                                }
+                                super.onPageFinished(view, url)
                             }
-                            super.onPageFinished(view, url)
                         }
-                    }
 
-                    // For Progress Indicator
-                    webChromeClient = object: WebChromeClient() {
-                        override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                            // Update progress status
-                            viewModel.updateLoadingStatus(newProgress)
-                            super.onProgressChanged(view, newProgress)
+                        // For Progress Indicator
+                        webChromeClient = object: WebChromeClient() {
+                            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                                // Update progress status
+                                viewModel.updateLoadingStatus(newProgress)
+                                super.onProgressChanged(view, newProgress)
+                            }
                         }
-                    }
 
-                    setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
-                        val request = DownloadManager.Request(Uri.parse(url))
-                        val filename = URLUtil.guessFileName(url, contentDisposition, mimetype).also { Log.d("DownloadManager", "Filename: $it") }
-                        // save session data before downloading the target file.
-                        val cookies = CookieManager.getInstance().getCookie(url)
+                        setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
+                            val request = DownloadManager.Request(Uri.parse(url))
+                            val filename = URLUtil.guessFileName(url, contentDisposition, mimetype).also { Log.d("DownloadManager", "Filename: $it") }
+                            // save session data before downloading the target file.
+                            val cookies = CookieManager.getInstance().getCookie(url)
 
-                        request.apply {
-                            setMimeType(mimetype)
-                            addRequestHeader("cookie", cookies)
-                            addRequestHeader("User-Agent", userAgent)
-                            setDescription("Downloading File")
-                            setTitle(filename)
+                            request.apply {
+                                setMimeType(mimetype)
+                                addRequestHeader("cookie", cookies)
+                                addRequestHeader("User-Agent", userAgent)
+                                setDescription("Downloading File")
+                                setTitle(filename)
 //                            allowScanningByMediaScanner()     Deprecated.
-                            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                            setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                            }
+                            val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+                            downloadManager.enqueue(request).also {
+                                Toast.makeText(context, R.string.text_download, Toast.LENGTH_LONG).show()
+                                // Guide user to the File application
+                                context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS))
+                            }
                         }
-                        val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-                        downloadManager.enqueue(request).also {
-                            Toast.makeText(context, R.string.text_download, Toast.LENGTH_LONG).show()
-                            // Guide user to the File application
-                            context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS))
-                        }
-                    }
 
-                    visibility = View.INVISIBLE
-                    settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                    loadUrl(state.url)
+                        visibility = View.INVISIBLE
+                        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        loadUrl(state.requestedNotice.url)
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
