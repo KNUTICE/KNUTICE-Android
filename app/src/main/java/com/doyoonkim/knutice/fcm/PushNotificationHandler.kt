@@ -55,6 +55,15 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
     }
 
     private fun RemoteMessage.toPushNotification() {
+        // Create Pending Intent (For access push notification while the app is in foreground)
+        val intent = Intent(applicationContext, MainActivity::class.java).apply {
+            this@toPushNotification.data.forEach {
+                putExtra(it.key, it.value)
+            }
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
         val notificationId = Random(System.currentTimeMillis().toInt()).nextInt()
         // Utilize channel already created by FCM as default
         val notificationBuilder = NotificationCompat.Builder(
@@ -64,6 +73,7 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
             setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
             setContentTitle(getString(R.string.new_notice))
             setContentText(this@toPushNotification.notification?.body ?: "No message body.")
+            setContentIntent(pendingIntent)
             setPriority(NotificationCompat.PRIORITY_DEFAULT)
             setAutoCancel(true)
         }
