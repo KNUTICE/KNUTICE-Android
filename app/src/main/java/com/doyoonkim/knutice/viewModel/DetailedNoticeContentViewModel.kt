@@ -37,6 +37,11 @@ class DetailedNoticeContentViewModel @Inject constructor(
     private val requested = savedStateHandle.toRoute<FullContent>()
 
     init {
+        _uiState.update {
+            it.copy(
+                url = requested.url
+            )
+        }
         requestNoticeById(requested.nttId!!)
     }
 

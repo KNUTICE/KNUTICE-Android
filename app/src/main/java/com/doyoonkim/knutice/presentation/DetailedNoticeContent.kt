@@ -58,7 +58,7 @@ fun DetailedNoticeContent(
             }
         )
 
-        if (state.requestedNotice.url != "Unknown") {
+        if (state.url.isNotBlank() || state.requestedNotice.url != "Unknown") {
             AndroidView(
                 modifier = Modifier,
                 factory = { context ->
@@ -137,7 +137,11 @@ fun DetailedNoticeContent(
 
                         visibility = View.INVISIBLE
                         settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                        loadUrl(state.requestedNotice.url)
+                        if (state.url != "Unknown") {
+                            loadUrl(state.url)
+                        } else {
+                            loadUrl(state.requestedNotice.url)
+                        }
                     }
                 }
             )

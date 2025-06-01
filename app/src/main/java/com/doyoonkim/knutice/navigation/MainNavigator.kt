@@ -105,20 +105,20 @@ fun MainNavigator(
 
         composable<FullContent> { backStackEntry ->
             val requestedNotice = backStackEntry.toRoute<FullContent>()
+            val scaffoldTitle = requestedNotice.title
 
             viewModel.run {
                 if (uiState.value.currentLocation != Destination.DETAILED) {
-                    // Need to find the reason for multiple request caused by multiple recomposition
-                    if (requestedNotice.nttId != null) {
-                        getReservedNotice(requestedNotice.nttId)
-                    }
-
-                    val scaffoldTitle = uiState.value.tempReserveNoticeForBookmark.title
                     updateState(
                         updatedCurrentLocation = Destination.DETAILED,
                         updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content",
                         updatedBottomNavBarVisibility = true
                     )
+
+                    // Need to find the reason for multiple request caused by multiple recomposition
+                    if (requestedNotice.nttId != null) {
+                        getReservedNotice(requestedNotice.nttId)
+                    }
                 }
             }
             DetailedNoticeContent()

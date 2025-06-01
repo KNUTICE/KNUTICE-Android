@@ -38,6 +38,8 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
+        // When the app is in background or killed, Data Payload would be delivered once the user
+        // clicks the system tray.
         Log.d(TAG, "Message data payload: ${message.notification}")
 
         if (message.data.isNotEmpty()) {
@@ -53,22 +55,6 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
     }
 
     private fun RemoteMessage.toPushNotification() {
-        // Create Pending Intent
-        val data = this.data
-        Log.d("PushNotificationHandler", data["contentTitle"]!!)
-        val intent = Intent(applicationContext, MainActivity::class.java).apply {
-            putExtra("nttId", data["nttId"]!!)
-            putExtra("title", data["contentTitle"]!!)
-            putExtra("info", "${data["noticeName"]!!} ${data["registeredAt"]!!}")
-            putExtra("url", data["contentUrl"]!!)
-            putExtra("contentImage", data["contentImage"] ?: "")
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        }
-
-        val pendingIntent = PendingIntent.getActivity(
-            applicationContext, 0, intent, PendingIntent.FLAG_IMMUTABLE
-        )
-
         val notificationId = Random(System.currentTimeMillis().toInt()).nextInt()
         // Utilize channel already created by FCM as default
         val notificationBuilder = NotificationCompat.Builder(
@@ -78,7 +64,6 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
             setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
             setContentTitle(getString(R.string.new_notice))
             setContentText(this@toPushNotification.notification?.body ?: "No message body.")
-            setContentIntent(pendingIntent)
             setPriority(NotificationCompat.PRIORITY_DEFAULT)
             setAutoCancel(true)
         }

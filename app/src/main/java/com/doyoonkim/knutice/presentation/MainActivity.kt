@@ -88,17 +88,20 @@ class MainActivity : ComponentActivity() {
                     // Handling Push Notification Click Action
                     // Check there's a extra or not.
                     val requestedIntent = this@MainActivity.intent
-//                    val requestedNoticeId = this@MainActivity.intent.getStringExtra("nttId")
                     if (requestedIntent.getStringExtra("nttId") != null) {
                         // Navigate to Detailed Notice
-                        val received = FullContent(
-                            requestedIntent.getStringExtra("title"),
-                            requestedIntent.getStringExtra("info"),
-                            requestedIntent.getStringExtra("url") ?: "",
+
+                        // When the app is in background or killed, Data Payload would be delivered once the user
+                        // clicks the system tray. (Data Payload will be delivered as Intent)
+                        FullContent(
+                            requestedIntent.getStringExtra("contentTitle"),
+                            requestedIntent.getStringExtra("noticeName"),
+                            requestedIntent.getStringExtra("contentUrl") ?: "",
                             requestedIntent.getStringExtra("contentImage") ?: "",
                             requestedIntent.getStringExtra("nttId")
-                        ).also { Log.d("MainActivity", it.toString()) }
-                        navController.navigate(received)
+                        ).run {
+                            navController.navigate(this)
+                        }
                     }
                 }
 
@@ -154,6 +157,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+
     }
 
     override fun onDestroy() {
