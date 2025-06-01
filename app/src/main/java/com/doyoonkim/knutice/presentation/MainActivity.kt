@@ -13,10 +13,16 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,10 +33,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
+import androidx.navigation.compose.rememberNavController
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.alarm.NotificationAlarmScheduler
+import com.doyoonkim.knutice.model.FullContent
+import com.doyoonkim.knutice.navigation.MainNavigator
 import com.doyoonkim.knutice.presentation.component.PermissionRationaleComposable
 import com.doyoonkim.knutice.ui.theme.KNUTICETheme
+import com.doyoonkim.knutice.ui.theme.containerBackgroundSolid
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
@@ -44,10 +55,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //         applicationContext.deleteDatabase("Main Local Database")
+        WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContent {
             KNUTICETheme {
                 val context = LocalContext.current
+                val navController = rememberNavController()
                 var showPermissionRationale by remember { mutableStateOf(false) }
 
                 // Permission Launcher
@@ -71,13 +84,47 @@ class MainActivity : ComponentActivity() {
                             Manifest.permission.SCHEDULE_EXACT_ALARM
                         )
                     )
+
+                    // Handling Push Notification Click Action
+                    // Check there's a extra or not.
+                    val requestedIntent = this@MainActivity.intent
+                    if (requestedIntent.getStringExtra("nttId") != null) {
+                        // Navigate to Detailed Notice
+
+                        // When the app is in background or killed, Data Payload would be delivered once the user
+                        // clicks the system tray. (Data Payload will be delivered as Intent)
+                        FullContent(
+                            requestedIntent.getStringExtra("contentTitle"),
+                            requestedIntent.getStringExtra("noticeName"),
+                            requestedIntent.getStringExtra("contentUrl") ?: "",
+                            requestedIntent.getStringExtra("contentImage") ?: "",
+                            requestedIntent.getStringExtra("nttId").toString()
+                        ).run {
+                            navController.navigate(this)
+                        }
+                    }
                 }
 
-                MainServiceScreen() { alarmTarget ->
-                    if (!alarmTarget.isScheduled) notificationAlarmScheduler.cancel(alarmTarget)
-                    else notificationAlarmScheduler.schedule(alarmTarget)
+                MainServiceScreen(
+                    navController = navController,
+                    onScheduleAlarmTriggered = {
+                            alarmTarget ->
+                        if (!alarmTarget.isScheduled) notificationAlarmScheduler.cancel(alarmTarget)
+                        else notificationAlarmScheduler.schedule(alarmTarget)
+                    }
+                ) { innerPadding ->
+                    MainNavigator(
+                        navController = navController, modifier = Modifier
+                            .consumeWindowInsets(WindowInsets.systemBars)
+                            .padding(
+                                PaddingValues(
+                                    top = innerPadding.calculateTopPadding(),
+                                    bottom = innerPadding.calculateBottomPadding()
+                                )
+                            )
+                            .background(MaterialTheme.colorScheme.containerBackgroundSolid)
+                    )
                 }
-
 
                 AnimatedVisibility(
                     visible = showPermissionRationale,
@@ -110,6 +157,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+
+
     }
 
     override fun onDestroy() {

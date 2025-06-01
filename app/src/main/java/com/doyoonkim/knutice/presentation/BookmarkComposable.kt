@@ -28,6 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.doyoonkim.knutice.R
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.presentation.component.NotificationPreviewCardMarked
+import com.doyoonkim.knutice.ui.theme.containerBackgroundSolid
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.viewModel.BookmarkViewModel
@@ -50,7 +51,7 @@ fun BookmarkComposable(
 //    }
 
     Box(
-        modifier = modifier.background(MaterialTheme.colorScheme.displayBackground)
+        modifier = modifier.background(MaterialTheme.colorScheme.containerBackgroundSolid)
             .systemBarsPadding()
     ) {
         if (uiState.bookmarks.isEmpty()) {

@@ -13,10 +13,13 @@ data class NavDestination(
     val arrived: Destination = Destination.Unspecified
 )
 
+
+// TODO: Change structure of FullContent (FullContent(notice: Notice, url: String))
 @Serializable
 data class FullContent(
     val title: String? = null,
     val info: String? = null,
     val url: String,
-    val imgUrl: String
+    val imgUrl: String,
+    val nttId: String,
 )

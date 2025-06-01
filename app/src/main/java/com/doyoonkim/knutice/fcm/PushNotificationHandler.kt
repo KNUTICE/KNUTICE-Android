@@ -2,14 +2,18 @@ package com.doyoonkim.knutice.fcm
 
 import android.Manifest
 import android.app.Notification
+import android.app.PendingIntent
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.drawable.Icon
+import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.doyoonkim.knutice.data.KnuticeRemoteSource
 import com.doyoonkim.knutice.R
+import com.doyoonkim.knutice.presentation.MainActivity
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -34,15 +38,19 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
+        // When the app is in background or killed, Data Payload would be delivered once the user
+        // clicks the system tray.
         Log.d(TAG, "Message data payload: ${message.notification}")
 
         if (message.data.isNotEmpty()) {
-            Log.d(TAG, "Message Data Payload: ${message.data}")
-        }
+            Log.d(TAG, "Message Data Payload: ${message.data}")     // message.data: Map<String!, String!>
 
-        message.notification?.let {
-            Log.d(TAG, "Body: ${it.body}")
-            message.toPushNotification()
+            // Apply "Do not disturb" option. (Temporarily save the message and deliver after the core time is end.
+            // Use Local Database (Room?)
+            message.notification?.let {
+                Log.d(TAG, "Body: ${it.body}")
+                message.toPushNotification()
+            }
         }
     }
 
@@ -51,13 +59,15 @@ class PushNotificationHandler @Inject constructor() : FirebaseMessagingService()
         // Utilize channel already created by FCM as default
         val notificationBuilder = NotificationCompat.Builder(
             applicationContext, getString(R.string.inapp_notification_channel_id)
-        )
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
-            .setContentTitle(getString(R.string.new_notice))
-            .setContentText(this@toPushNotification.notification?.body ?: "No message body")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true)
+        ).apply {
+            setSmallIcon(R.mipmap.ic_launcher)
+            setLargeIcon(Icon.createWithResource(applicationContext, R.mipmap.ic_launcher))
+            setContentTitle(getString(R.string.new_notice))
+            setContentText(this@toPushNotification.notification?.body ?: "No message body.")
+            setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            setAutoCancel(true)
+        }
+
 
         with(NotificationManagerCompat.from(applicationContext)) {
             if (ActivityCompat.checkSelfPermission(
