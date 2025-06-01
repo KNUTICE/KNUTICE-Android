@@ -5,12 +5,12 @@ import com.doyoonkim.knutice.model.ApiDeviceTokenRequest
 import com.doyoonkim.knutice.model.DeviceTokenRequest
 import com.doyoonkim.knutice.model.NoticeCategory
 import com.doyoonkim.knutice.model.NoticesPerPage
-import com.doyoonkim.knutice.model.TopThreeNotices
 import com.doyoonkim.knutice.model.ApiPostResult
 import com.doyoonkim.knutice.BuildConfig
 import com.doyoonkim.knutice.model.ApiReportRequest
 import com.doyoonkim.knutice.model.ApiTopicSubscriptionRequest
 import com.doyoonkim.knutice.model.ManageTopicRequest
+import com.doyoonkim.knutice.model.SingleNotice
 import com.doyoonkim.knutice.model.ReportRequest
 import com.doyoonkim.knutice.model.TopicSubscriptionStatusDTO
 import kotlinx.coroutines.CoroutineScope
@@ -25,6 +25,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -55,6 +56,14 @@ class KnuticeRemoteSource @Inject constructor() {
                 this.getNoticeListPerPage(category, lastNttId)
             }
         }
+    }
+
+    suspend fun getNoticeById(id: String): Result<SingleNotice> {
+        return runCatching {
+            knuticeService.create(KnuticeService::class.java).run {
+                this.getSingleNoticeById(id)
+            }
+        }.onFailure { throw it }
     }
 
     suspend fun queryNoticesByKeyword(keyword: String): NoticesPerPage {
@@ -143,47 +152,52 @@ class KnuticeRemoteSource @Inject constructor() {
 
 interface KnuticeService {
 
-    @GET("/open-api/notice/list")
+    @GET("open-api/notice/list")
     suspend fun getTopThreeNotice(
         @Query("noticeName") category: NoticeCategory,
         @Query("size") size: Int
     ): NoticesPerPage
 
-    @GET("/open-api/notice/list")
+    @GET("open-api/notice/list")
     suspend fun getNoticeListPerPage(
         @Query("noticeName") category: NoticeCategory,
         @Query("nttId") lastNttId: Int
     ): NoticesPerPage
 
-    @GET("/open-api/notice/list")
+    @GET("open-api/notice/list")
     suspend fun getFirstPageOfNotice(
         @Query("noticeName") category: NoticeCategory
     ): NoticesPerPage
 
-    @GET("/open-api/search")
+    @GET("open-api/notice/{nttId}")
+    suspend fun getSingleNoticeById(
+        @Path("nttId") nttId: String
+    ): SingleNotice
+
+    @GET("open-api/search")
     suspend fun queryNoticeByKeyword(
         @Query("keyword") keyword: String
     ): NoticesPerPage
 
     @Headers("Content-Type: application/json")
-    @POST("/open-api/fcm")
+    @POST("open-api/fcm")
     suspend fun validateToken(
         @Body requestBody: ApiDeviceTokenRequest
     ): ApiPostResult
 
     @Headers("Content-Type: application/json")
-    @POST("/open-api/report")
+    @POST("open-api/report")
     suspend fun submitUserReport(
         @Body requestBody: ApiReportRequest
     ): ApiPostResult
 
     @Headers("Content-Type: application/json")
-    @POST("/open-api/topic")
+    @POST("open-api/topic")
     suspend fun submitTopicSubscriptionPreference(
         @Body requestBody: ApiTopicSubscriptionRequest
     ): ApiPostResult
 
-    @GET("/open-api/topic")
+    @GET("open-api/topic")
     suspend fun getTopicSubscriptionStatus(
         @Header("fcmToken") token: String
     ): TopicSubscriptionStatusDTO
