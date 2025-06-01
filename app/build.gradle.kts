@@ -29,8 +29,8 @@ android {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 31
         targetSdk = 34
-        versionCode = 14
-        versionName = "1.3.4"
+        versionCode = 15
+        versionName = "1.4.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
