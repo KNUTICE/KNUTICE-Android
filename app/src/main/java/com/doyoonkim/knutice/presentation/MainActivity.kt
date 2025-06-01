@@ -98,7 +98,7 @@ class MainActivity : ComponentActivity() {
                             requestedIntent.getStringExtra("noticeName"),
                             requestedIntent.getStringExtra("contentUrl") ?: "",
                             requestedIntent.getStringExtra("contentImage") ?: "",
-                            requestedIntent.getStringExtra("nttId")
+                            requestedIntent.getStringExtra("nttId").toString()
                         ).run {
                             navController.navigate(this)
                         }

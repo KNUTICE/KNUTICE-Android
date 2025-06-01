@@ -116,7 +116,7 @@ fun MainNavigator(
                     )
 
                     // Need to find the reason for multiple request caused by multiple recomposition
-                    if (requestedNotice.nttId != null) {
+                    if (requestedNotice.nttId != uiState.value.tempReserveNoticeForBookmark.nttId.toString()) {
                         getReservedNotice(requestedNotice.nttId)
                     }
                 }

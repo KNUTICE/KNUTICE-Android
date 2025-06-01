@@ -21,5 +21,5 @@ data class FullContent(
     val info: String? = null,
     val url: String,
     val imgUrl: String,
-    val nttId: String? = null,
+    val nttId: String,
 )
