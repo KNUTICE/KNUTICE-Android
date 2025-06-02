@@ -8,6 +8,9 @@ plugins {
     // Dagger-Hilt for Dependency Injection
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+
+    // Keep this plugin in app module, since app module handles all related app information
+    // such as App ID , etc. for using firebase services.
     alias(libs.plugins.google.gms.google.services)
 
     alias(libs.plugins.kotlinSerialization)
@@ -83,7 +86,7 @@ dependencies {
     implementation(projects.core.network)
     implementation(projects.feature.main)
     implementation(projects.feature.bookmark)
-    implementation(projects.feature.common)
+    implementation(projects.common)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
