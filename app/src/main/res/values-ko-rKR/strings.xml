@@ -60,4 +60,5 @@
     <string name="title_langauge_model_download">번역이 필요하신가요?</string>
     <string name="text_language">한국어</string>
     <string name="description_language_model_download">번역 기능을 사용하려면 언어 모델을 다운로드 해야 합니다.</string>
+    <string name="text_download">선택한 파일을 다운로드 폴더에 받고 있어요.</string>
 </resources>

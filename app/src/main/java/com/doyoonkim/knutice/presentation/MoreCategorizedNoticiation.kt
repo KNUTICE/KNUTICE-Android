@@ -2,6 +2,7 @@ package com.doyoonkim.knutice.presentation
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.presentation.component.NotificationPreview
 import com.doyoonkim.knutice.ui.theme.containerBackground
+import com.doyoonkim.knutice.ui.theme.containerBackgroundSolid
 import com.doyoonkim.knutice.ui.theme.subTitle
 import com.doyoonkim.knutice.viewModel.MoreCategorizedNotificationViewModel
 
@@ -56,6 +58,7 @@ fun MoreCategorizedNotification(
 
     Box(
         modifier = modifier.fillMaxWidth()
+            .background(MaterialTheme.colorScheme.containerBackground)
             .pullRefresh(pullRefreshState)
     ) {
         LaunchedEffect(Unit) {
@@ -85,10 +88,11 @@ fun MoreCategorizedNotification(
                     viewModel.requestMoreNotices()
                 } else {
                     val notice = uiState.notices[index]
-                    if (!uiState.isLoading) {
+                    if (index != 0 || !uiState.isLoading) {
                         Divider(
                             Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
-                            color = MaterialTheme.colorScheme.containerBackground
+                            color = MaterialTheme.colorScheme.containerBackgroundSolid,
+                            thickness = 1.3.dp
                         )
                     }
                     Row(

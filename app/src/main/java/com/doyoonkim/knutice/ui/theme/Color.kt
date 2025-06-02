@@ -19,8 +19,13 @@ val Notification04 = Color(0xFF4294F7)
 val WhiteBackground = Color(0xFFFFFFFF)
 val DarkBackground = Color(0xFF262729)
 
-val ContainerWhite = Color(0xFFF3F3F3)
+val ContainerLight = Color(0xFFF3F3F3)
 val ContainerDark = Color(0xFF333437)
+val ContainerBlack = Color(0xFF000000)
+val ContainerWhite = Color(0xFFFFFFFF)
+
+val bottomNavBarWhite = Color(0xFFFFFFFF)
+val bottomNavBarBlack = Color(0xFF424448)
 
 val TitleBlack = Color(0xFF000000)
 val TitleWhite = Color(0xFFFFFFFF)

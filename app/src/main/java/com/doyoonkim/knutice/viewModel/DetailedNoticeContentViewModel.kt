@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
-import com.doyoonkim.knutice.data.NoticeLocalRepository
 import com.doyoonkim.knutice.domain.CrawlFullContentImpl
 import com.doyoonkim.knutice.model.DetailedContentState
 import com.doyoonkim.knutice.model.FullContent
@@ -23,8 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailedNoticeContentViewModel @Inject constructor(
-    private val crawlFullContentUseCase: CrawlFullContentImpl,
-    private val repository: NoticeLocalRepository,
+    private val fetchSingleNoticeImpl: FetchSingleNoticeImpl,
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -39,6 +37,7 @@ class DetailedNoticeContentViewModel @Inject constructor(
                 url = requested.url ?: "www.ut.ac.kr"
             )
         }
+        requestNoticeById(requested.nttId!!)
     }
 
     fun updateLoadingStatus(newStatus: Int) {
@@ -52,10 +51,15 @@ class DetailedNoticeContentViewModel @Inject constructor(
         }
     }
 
-    // Retrieve notice by nttid
-    fun getRequestedNotice(nttId: Int) {
+    private fun requestNoticeById(nttId: String) {
         viewModelScope.launch {
-            repository.getNoticeByNttId(nttId)
+            val requested = async { fetchSingleNoticeImpl.getSingleNoticeById(nttId) }
+
+            _uiState.update {
+                it.copy(
+                    requestedNotice = requested.await()
+                )
+            }
         }
     }
 }

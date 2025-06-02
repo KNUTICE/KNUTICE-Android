@@ -33,7 +33,7 @@ import com.doyoonkim.knutice.viewModel.MainServiceViewModel
 fun MainNavigator(
     modifier: Modifier = Modifier,
     viewModel: MainServiceViewModel = hiltViewModel(),
-    navController: NavHostController,
+    navController: NavHostController
 ) {
     // Navigation
     NavHost(
@@ -106,11 +106,21 @@ fun MainNavigator(
         composable<FullContent> { backStackEntry ->
             val requestedNotice = backStackEntry.toRoute<FullContent>()
             val scaffoldTitle = requestedNotice.title
-            viewModel.updateState(
-                updatedCurrentLocation = Destination.DETAILED,
-                updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content",
-                updatedBottomNavBarVisibility = true
-            )
+
+            viewModel.run {
+                if (uiState.value.currentLocation != Destination.DETAILED) {
+                    updateState(
+                        updatedCurrentLocation = Destination.DETAILED,
+                        updatedCurrentScaffoldTitle = scaffoldTitle ?: "Full Content",
+                        updatedBottomNavBarVisibility = true
+                    )
+
+                    // Need to find the reason for multiple request caused by multiple recomposition
+                    if (requestedNotice.nttId != uiState.value.tempReserveNoticeForBookmark.nttId.toString()) {
+                        getReservedNotice(requestedNotice.nttId)
+                    }
+                }
+            }
             DetailedNoticeContent()
             Spacer(Modifier.height(20.dp))
         }
@@ -126,7 +136,15 @@ fun MainNavigator(
                 updatedCurrentLocation = Destination.EDIT_BOOKMARK,
                 updatedBottomNavBarVisibility = false
             )
-            EditBookmark(Modifier.padding(10.dp)) { bookmark ->
+            EditBookmark(
+                Modifier.padding(10.dp),
+                onDetailedNoticeRequested = {
+                    viewModel.updateState(
+                        updatedFabVisibility = false,
+                    )
+                    navController.navigate(it.toFullContent())
+                }
+            ) { bookmark ->
                 Log.d("MainNavigator", "Bookmark instance received: ${bookmark ?: "null"}")
                 // onSavedClicked
                 if (bookmark != null) {

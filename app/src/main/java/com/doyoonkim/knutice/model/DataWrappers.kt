@@ -33,6 +33,46 @@ data class TopThreeNotices(
     )
 }
 
+data class TopicSubscriptionStatusDTO(
+    @SerializedName("result") var result: Result? = Result(),
+    @SerializedName("body") var body: Body? = Body()
+) {
+    data class Body(
+        @SerializedName("generalNewsTopic") var generalNewsTopic: Boolean = false,
+        @SerializedName("scholarshipNewsTopic") var scholarshipNewsTopic: Boolean = false,
+        @SerializedName("eventNewsTopic") var eventNewsTopic: Boolean = false,
+        @SerializedName("academicNewsTopic") var academicNewsTopic: Boolean = false,
+        @SerializedName("employmentNewsTopic") var employmentNewsTopic: Boolean = false
+    )
+}
+
+data class SingleNotice(
+    @SerializedName("result") var result: Result? = Result(),
+    @SerializedName("body") var notice: NoticeDTO?
+) {
+    data class NoticeDTO(
+        @SerializedName("nttId") var nttId: Int,
+        @SerializedName("title") var title: String,
+        @SerializedName("contentUrl") var contentUrl: String,
+        @SerializedName("contentImage") var contentImage: String?,
+        @SerializedName("departmentName") var departmentName: String,
+        @SerializedName("registeredAt") var registeredAt: String,
+        @SerializedName("noticeName") var noticeName: String
+    ) {
+        fun toNotice(): Notice {
+            return Notice(
+                nttId = nttId,
+                title = title,
+                url = contentUrl,
+                imageUrl = contentImage ?: "",
+                departName = departmentName,
+                timestamp = registeredAt,
+                // noticeCategory = noticeName
+            )
+        }
+    }
+}
+
 data class NoticesPerPage(
     @SerializedName("result") var result: Result? = Result(),
     @SerializedName("body") var body: ArrayList<RawNoticeData> = arrayListOf()
@@ -92,7 +132,8 @@ data class Notice(
             title,
             "[$departName] $timestamp",
             url,
-            imageUrl
+            imageUrl,
+            nttId.toString()
         )
     }
 
@@ -111,6 +152,7 @@ data class Notice(
 
 // DetailedNoticeContent
 data class DetailedContentState(
+    val requestedNotice: Notice = Notice(),
     val url: String = "",
     val title: String = "",
     val info: String = "",
@@ -140,7 +182,9 @@ data class SearchNoticeState(
 data class NotificationPreferenceStatus(
     val isMainNotificationPermissionGranted: Boolean = false,
     //TODO: Consider change data type to MAP
-    val isEachChannelAllowed: List<Boolean> = listOf(true, true, true, true)
+    val isEachChannelAllowed: List<Boolean> = listOf(false, false, false, false),
+    val isSyncCompleted: Boolean = false,
+    val isError: Boolean = false
 )
 
 // BookmarkComposable
