@@ -6,10 +6,10 @@ converterMoshi = "2.9.0"
 datastorePreferences = "1.1.1"
 firebaseMessagingDirectboot = "24.0.2"
 gson = "2.11.0"
-hiltAndroidCompiler = "2.51.1"
+hiltAndroidCompiler = "2.56.2"
 hiltNavigationCompose = "1.2.0"
 jsoup = "1.18.1"
-kotlin = "1.9.21"
+kotlin = "2.0.0"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -94,3 +94,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

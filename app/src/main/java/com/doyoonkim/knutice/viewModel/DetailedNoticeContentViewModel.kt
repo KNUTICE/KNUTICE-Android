@@ -6,11 +6,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.doyoonkim.knutice.domain.CrawlFullContentImpl
+import com.doyoonkim.knutice.domain.FetchSingleNoticeImpl
 import com.doyoonkim.knutice.model.DetailedContentState
 import com.doyoonkim.knutice.model.FullContent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch

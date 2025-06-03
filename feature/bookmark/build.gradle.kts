@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+
+    // Required from Kotlin 2.0.0 (Every module using Compose)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {

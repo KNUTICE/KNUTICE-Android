@@ -5,8 +5,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class NoticeVO(
     val nttId: Int = -1,
-    val title: String = "Unknown",
-    val url: String = "Unknown",
-    val imageUrl: String = "",
-    val info: String = "[Unknown] | 2025-05-15"
+    val title: String = "",
+    val url: String = "",
+    val imageUrl: String? = null,
+    val info: String = ""
 )

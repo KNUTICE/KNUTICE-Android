@@ -15,6 +15,9 @@ plugins {
 
     alias(libs.plugins.kotlinSerialization)
 
+    // Required from Kotlin 2.0.0 (Every module using Compose)
+    alias(libs.plugins.compose.compiler)
+
     // KSP Plugin for Room Database
 //    id("com.google.devtools.ksp")
 }
