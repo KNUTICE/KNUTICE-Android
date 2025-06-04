@@ -10,6 +10,7 @@ import model.NoticesByKeywordResult
 import model.NoticesPerPageResult
 import model.PostResult
 import model.TopThreeNoticeResults
+import model.TopicSubscriptionPreferencesResult
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -25,10 +26,7 @@ import retrofit2.http.Query
 
 interface KnuticeService {
     @GET("open-api/notice/list")
-    suspend fun getTopThreeNotices(
-        @Query("noticeName") category: NoticeCategory,
-        @Query("size") size: Int
-    ): TopThreeNoticeResults
+    suspend fun getTopThreeNotices(): TopThreeNoticeResults
 
     @GET("open-api/notice/list")
     suspend fun getNoticesPerPage(
@@ -49,7 +47,7 @@ interface KnuticeService {
     @GET("open-api/topic")
     suspend fun getTopicSubscriptionStatus(
         @Header("fcmToken") token: String
-    ): TopicSubscriptionPreferencesDTO
+    ): TopicSubscriptionPreferencesResult
 
     @Headers("Content-Type: application/json")
     @POST("open-api/fcm")

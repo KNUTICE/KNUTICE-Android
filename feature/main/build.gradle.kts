@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.doyoonkim.main"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 30
@@ -58,9 +58,9 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     // Dagger
-    implementation(libs.dagger)
-    implementation(libs.dagger.android)
-    implementation(libs.dagger.android.support)
-    implementation(libs.dagger.compiler)
-    implementation(libs.dagger.android.processor)
+//    implementation(libs.dagger)
+//    implementation(libs.dagger.android)
+//    implementation(libs.dagger.android.support)
+//    implementation(libs.dagger.compiler)
+//    implementation(libs.dagger.android.processor)
 }

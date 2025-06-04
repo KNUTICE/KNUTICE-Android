@@ -137,7 +137,7 @@ fun NotificationPreviewList(
         contents.forEach { content ->
             NotificationPreviewCard(
                 notificationTitle = content.title,
-                notificationInfo = content.info
+                notificationInfo = content.departName
             ) {
                 onNoticeClicked(content)
             }

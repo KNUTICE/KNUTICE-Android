@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.doyoonkim.model"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 30

@@ -1,30 +1,30 @@
 [versions]
-agp = "8.6.0"
+agp = "8.6.1"
 coilCompose = "2.4.0"
-converterGson = "2.3.0"
+converterGson = "2.11.0"
 converterMoshi = "2.9.0"
-datastorePreferences = "1.1.1"
+datastorePreferences = "1.1.7"
 firebaseMessagingDirectboot = "24.0.2"
 gson = "2.11.0"
 hiltAndroidCompiler = "2.56.2"
 hiltNavigationCompose = "1.2.0"
 jsoup = "1.18.1"
-kotlin = "2.0.0"
-coreKtx = "1.10.1"
+kotlin = "2.1.20"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
-kotlinxCoroutinesAndroid = "1.7.1"
+kotlinxCoroutinesAndroid = "1.7.3"
 kotlinxCoroutinesTest = "1.7.3"
-lifecycleRuntimeKtx = "2.6.1"
-activityCompose = "1.8.0"
-composeBom = "2024.04.01"
-lifecycleRuntimeKtxVersion = "2.8.6"
-navigationCompose = "2.8.1"
+lifecycleRuntimeKtx = "2.9.0"
+activityCompose = "1.10.1"
+composeBom = "2025.05.01"
+lifecycleRuntimeKtxVersion = "2.9.0"
+navigationCompose = "2.9.0"
 retrofit = "2.9.0"
-roomCompiler = "2.6.1"
-roomKtx = "2.6.1"
-roomRuntime = "2.6.1"
+roomCompiler = "2.7.1"
+roomKtx = "2.7.1"
+roomRuntime = "2.7.1"
 swiperefreshlayout = "1.1.0"
 googleGmsGoogleServices = "4.4.2"
 firebaseMessaging = "24.0.2"
@@ -34,7 +34,7 @@ protoliteWellKnownTypes = "18.0.0"
 translate = "17.0.3"
 appcompat = "1.7.0"
 material = "1.12.0"
-dagger = "2.56.2"
+#dagger = "2.56.2"
 splashScreen = "1.0.1"
 
 [libraries]
@@ -81,11 +81,11 @@ protolite-well-known-types = { group = "com.google.firebase", name = "protolite-
 translate = { module = "com.google.mlkit:translate", version.ref = "translate" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
-dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
-dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
-dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "dagger" }
-dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "dagger" }
-dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
+#dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
+#dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
+#dagger-android = { module = "com.google.dagger:dagger-android", version.ref = "dagger" }
+#dagger-android-support = { module = "com.google.dagger:dagger-android-support", version.ref = "dagger" }
+#dagger-android-processor = { module = "com.google.dagger:dagger-android-processor", version.ref = "dagger" }
 
 
 [plugins]

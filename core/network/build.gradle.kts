@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.doyoonkim.network"
-    compileSdk = 34
+    compileSdk = 35
 
     val properties = Properties().apply {
         load(FileInputStream("${rootDir}/local.properties"))
@@ -64,9 +64,9 @@ dependencies {
     implementation(libs.converter.gson)
 
     // Dagger
-    implementation(libs.dagger)
-    implementation(libs.dagger.android)
-    implementation(libs.dagger.android.support)
-    implementation(libs.dagger.compiler)
-    implementation(libs.dagger.android.processor)
+//    implementation(libs.dagger)
+//    implementation(libs.dagger.android)
+//    implementation(libs.dagger.android.support)
+//    implementation(libs.dagger.compiler)
+//    implementation(libs.dagger.android.processor)
 }

@@ -24,7 +24,7 @@ plugins {
 
 android {
     namespace = "com.doyoonkim.knutice"
-    compileSdk = 34
+    compileSdk = 35
 
     val properties = Properties().apply {
         load(FileInputStream("${rootDir}/local.properties"))
