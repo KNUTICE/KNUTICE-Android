@@ -1,5 +1,6 @@
 package com.doyoonkim.knutice.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -37,8 +38,10 @@ fun UserPreference(
     modifier: Modifier = Modifier,
     onNotificationPreferenceClicked: (Destination) -> Unit,
     onCustomerServiceClicked: (Destination) -> Unit,
-    onOssClicked: (Destination) -> Unit
+    onOssClicked: (Destination) -> Unit,
+    onBackPressed: () -> Unit,
 ) {
+    BackHandler { onBackPressed() }
 
     Column(
         modifier = modifier,

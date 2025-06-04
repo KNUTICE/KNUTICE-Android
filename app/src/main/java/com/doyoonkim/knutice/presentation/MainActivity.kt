@@ -52,6 +52,8 @@ class MainActivity : ComponentActivity() {
         NotificationAlarmScheduler(this)
     }
 
+    private val activity = this
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 //         applicationContext.deleteDatabase("Main Local Database")
@@ -123,7 +125,10 @@ class MainActivity : ComponentActivity() {
                                 )
                             )
                             .background(MaterialTheme.colorScheme.containerBackgroundSolid)
-                    )
+                    ) {
+                        // onExitAction
+                        activity.finish()
+                    }
                 }
 
                 AnimatedVisibility(
@@ -157,12 +162,6 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onNewIntent(intent: Intent?) {
-        super.onNewIntent(intent)
-
-
     }
 
     override fun onDestroy() {
