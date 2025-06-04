@@ -33,7 +33,8 @@ import com.doyoonkim.knutice.viewModel.MainServiceViewModel
 fun MainNavigator(
     modifier: Modifier = Modifier,
     viewModel: MainServiceViewModel = hiltViewModel(),
-    navController: NavHostController
+    navController: NavHostController,
+    onExitAction: (Boolean) -> Unit
 ) {
     // Navigation
     NavHost(
@@ -61,7 +62,9 @@ fun MainNavigator(
             when (destination.arrived) {
                 Destination.MAIN -> {
                     CategorizedNotification(
-                        onGoBackAction = { /* Disable Swipe-to-Back on Main Page of the App */ },
+                        onGoBackAction = { navController.popBackStack().also {
+                            if (!it) onExitAction(it)
+                        } },
                         onMoreNoticeRequested = { navController.navigate(NavDestination(arrived = it)) },
                         onFullContentRequested = {
                             viewModel.updateState(updatedTempReservedNoticeForBookmark = it)
@@ -72,13 +75,22 @@ fun MainNavigator(
                 Destination.SETTINGS -> UserPreference(
                     Modifier.padding(top = 20.dp, start = 10.dp, end = 10.dp).fillMaxSize(),
                     onCustomerServiceClicked = { navController.navigate(NavDestination(it))},
-                    onNotificationPreferenceClicked = { navController.navigate(NavDestination(it)) }) {
-                    navController.navigate(NavDestination(it))
-                }
+                    onNotificationPreferenceClicked = { navController.navigate(NavDestination(it)) },
+                    onOssClicked = { navController.navigate(NavDestination(it)) },
+                    onBackPressed = { navController.popBackStack().also {
+                        if (!it) navController.run {
+                            navController.navigate(NavDestination(Destination.MAIN))
+                        }
+                    } }
+                )
                 Destination.OSS -> OpenSourceLicenseNotice()
                 Destination.CS -> { CustomerService(Modifier.padding(15.dp)) }
                 Destination.SEARCH -> SearchNotice(
-                    onBackClicked = { navController.popBackStack() },
+                    onBackClicked = { navController.popBackStack().also {
+                        if (!it) navController.run {
+                            navController.navigate(NavDestination(Destination.MAIN))
+                        }
+                    } },
                     onNoticeClicked = {
                         viewModel.updateState(updatedTempReservedNoticeForBookmark = it)
                         navController.navigate(it.toFullContent())
@@ -91,10 +103,18 @@ fun MainNavigator(
                 Destination.BOOKMARKS -> BookmarkComposable(
                     modifier =Modifier.fillMaxSize(),
                     onEachItemClicked = { navController.navigate(it) },
-                    onBackPressed = { /* Disable swipe-to-back on BOOKMARKS composable of the app */ }
+                    onBackPressed = { navController.popBackStack().also {
+                        if (!it) navController.run {
+                            navController.navigate(NavDestination(Destination.MAIN))
+                        }
+                    } }
                 )
                 else -> MoreCategorizedNotification(
-                    backButtonHandler = { navController.popBackStack() },
+                    backButtonHandler = { navController.popBackStack().also {
+                        if (!it) navController.run {
+                            navController.navigate(NavDestination(Destination.MAIN))
+                        }
+                    } },
                     onNoticeSelected = {
                         viewModel.updateState(updatedTempReservedNoticeForBookmark = it)
                         navController.navigate(it.toFullContent())
@@ -121,7 +141,11 @@ fun MainNavigator(
                     }
                 }
             }
-            DetailedNoticeContent()
+            DetailedNoticeContent(
+                onBackPressed = { navController.popBackStack().also {
+                    if (!it) navController.run { navController.navigate(NavDestination(Destination.MAIN)) }
+                } }
+            )
             Spacer(Modifier.height(20.dp))
         }
 

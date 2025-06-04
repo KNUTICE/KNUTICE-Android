@@ -15,6 +15,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,12 +39,14 @@ import com.doyoonkim.knutice.model.Notice
 import com.doyoonkim.knutice.ui.theme.displayBackground
 import com.doyoonkim.knutice.viewModel.DetailedNoticeContentViewModel
 import okio.Path.Companion.toPath
+import androidx.core.net.toUri
 
 @Composable
 fun DetailedNoticeContent(
     modifier: Modifier = Modifier,
     requestedNttId: Int = -1,
-    viewModel: DetailedNoticeContentViewModel = hiltViewModel()
+    viewModel: DetailedNoticeContentViewModel = hiltViewModel(),
+    onBackPressed: () -> Unit
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     LaunchedEffect(Unit) {
@@ -51,6 +54,8 @@ fun DetailedNoticeContent(
 
         }
     }
+
+    BackHandler { onBackPressed() }
 
     Column(
         modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.displayBackground),
@@ -118,7 +123,7 @@ fun DetailedNoticeContent(
                         }
 
                         setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
-                            val request = DownloadManager.Request(Uri.parse(url))
+                            val request = DownloadManager.Request(url.toUri())
                             val filename = URLUtil.guessFileName(url, contentDisposition, mimetype).also { Log.d("DownloadManager", "Filename: $it") }
                             // save session data before downloading the target file.
                             val cookies = CookieManager.getInstance().getCookie(url)

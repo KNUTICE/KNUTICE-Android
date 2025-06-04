@@ -42,7 +42,7 @@ import com.doyoonkim.knutice.R
 fun CategorizedNotification(
     modifier: Modifier = Modifier,
     viewModel: CategorizedNotificationViewModel = hiltViewModel(),
-    onGoBackAction: () -> Unit,
+    onGoBackAction: () -> Boolean,
     onMoreNoticeRequested: (Destination) -> Unit,
     onFullContentRequested: (Notice) -> Unit
 ) {
