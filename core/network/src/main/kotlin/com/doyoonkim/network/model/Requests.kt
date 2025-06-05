@@ -1,5 +1,8 @@
 package com.doyoonkim.network.model
 
+import com.doyoonkim.model.requestBody.DeviceTokenBody
+import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
+import com.doyoonkim.model.requestBody.UserReportBody
 import model.NetworkResult
 
 /**
@@ -8,33 +11,15 @@ import model.NetworkResult
  */
 data class DeviceTokenRequest(
     val result: NetworkResult? = NetworkResult(),
-    val body: DeviceTokenRequestBody
-) {
-    data class DeviceTokenRequestBody(
-        val fcmToken: String
-    )
-}
+    val body: DeviceTokenBody
+)
 
 data class UserReportRequest(
     val result: NetworkResult? = NetworkResult(),
-    val body: UserReportRequestBody
-) {
-    data class UserReportRequestBody(
-        val fcmToken: String,
-        val content: String = "",
-        val clientType: String = "APP",
-        val deviceName: String = "",
-        val version: String = ""
-    )
-}
+    val body: UserReportBody
+)
 
 data class TopicSubscriptionPreferencesRequest(
     val result: NetworkResult? = NetworkResult(),
-    val body: TopicSubscriptionPreferencesRequestBody
-) {
-    data class TopicSubscriptionPreferencesRequestBody(
-        val fcmToken: String,
-        val noticeName: String = "",
-        val isSubscribed: Boolean = false
-    )
-}
+    val body: TopicSubscriptionPreferencesBody
+)
