@@ -18,6 +18,7 @@ import com.doyoonkim.common.theme.containerBackground
 @Composable
 fun NotificationPreviewCard(
     modifier: Modifier = Modifier,
+    isLoading: Boolean = true,
     notificationTitle: String = "Title goes here.",
     notificationInfo: String = "Notification info goes here.",
     onClick: () -> Unit = { /* Action should be defined. */ }
@@ -38,7 +39,8 @@ fun NotificationPreviewCard(
     ) {
         NotificationPreview(
             notificationTitle = notificationTitle,
-            notificationInfo = notificationInfo
+            notificationInfo = notificationInfo,
+            isLoading = isLoading
         )
     }
 }

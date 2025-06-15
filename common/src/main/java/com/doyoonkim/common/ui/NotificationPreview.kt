@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
@@ -28,8 +29,9 @@ import com.doyoonkim.common.theme.title
 @Composable
 fun NotificationPreview(
     modifier: Modifier = Modifier,
+    isLoading: Boolean = true,
     isImageContained: Boolean = false,
-    notificationTitle: String = "Title goes here.",
+    notificationTitle: String = "Unknown",
     notificationInfo: String = "Notification info goes here.",
     imageUrl: String = ""
 ) {
@@ -37,7 +39,7 @@ fun NotificationPreview(
         Modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp)
     ) {
-        if (notificationTitle == "Unknown") {
+        if (isLoading) {
             AnimatedGradient(Modifier.height(24.dp))
             AnimatedGradient(Modifier.height(14.dp))
         } else {
@@ -49,6 +51,8 @@ fun NotificationPreview(
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
                             .data(imageUrl)
+                            .diskCachePolicy(CachePolicy.DISABLED)
+                            .memoryCachePolicy(CachePolicy.READ_ONLY)
                             .crossfade(true)
                             .build(),
                         contentDescription = "Contained Image",

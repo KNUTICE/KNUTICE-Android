@@ -18,6 +18,7 @@ import com.doyoonkim.common.R
 @Composable
 fun NotificationPreviewCardMarked(
     modifier: Modifier = Modifier,
+    isLoading: Boolean = false,
     noticeTitle: String = "Title goes here",
     noticeSubtitle: String = "Subtitle goes here",
     onItemClicked: () -> Unit = {  },
@@ -28,6 +29,7 @@ fun NotificationPreviewCardMarked(
         contentAlignment = Alignment.TopEnd
     ) {
         NotificationPreviewCard(
+            isLoading = isLoading,
             notificationTitle = noticeTitle,
             notificationInfo = noticeSubtitle,
         ) {
