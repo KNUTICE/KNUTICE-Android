@@ -1,6 +1,7 @@
 package com.doyoonkim.main
 
 import android.net.Uri
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -169,7 +170,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         } ?: Triple(0, "", false)
 
         NoticeDetailScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.fillMaxSize(),
             viewModel = viewModel<NoticeDetailViewModel>(factory = viewModelFactory),
             noticeInfo = noticeInfo,
             onBookmarkCreate = { onBookmarkServiceRequested(BookmarkInfo(

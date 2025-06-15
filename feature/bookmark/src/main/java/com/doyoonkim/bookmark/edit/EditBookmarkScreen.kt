@@ -323,7 +323,7 @@ fun EditBookmarkScreen(
                 shape = MaterialTheme.shapes.large,
                 tonalElevation = AlertDialogDefaults.TonalElevation
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(modifier = Modifier.padding(30.dp)) {
                     Text(
                         text = if (uiState.isSuccessful) {
                             stringResource(R.string.text_save_successful)
