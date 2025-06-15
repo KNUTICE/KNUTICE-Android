@@ -15,4 +15,14 @@ data class NoticeDTO(
     @SerializedName("departmentName") var departName: String? = null,
     @SerializedName("registeredAt") var registeredAt: String? = null,
     @SerializedName("noticeName") var noticeCategory: String? = null
-)
+) {
+    fun toVO() =
+        NoticeVO(
+            nttId = this.nttId ?: -1,
+            title = this.title ?: "",
+            url = this.contentUrl ?: "",
+            imageUrl = this.contentImage,
+            departName = this.departName ?: "",
+            timestamp = this.registeredAt ?: ""
+        )
+}

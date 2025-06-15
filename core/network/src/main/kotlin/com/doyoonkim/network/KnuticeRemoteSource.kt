@@ -14,6 +14,9 @@ import model.TopThreeNoticeResults
 import model.TopicSubscriptionPreferencesResult
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Inject
+import javax.inject.Singleton
+
 //import javax.inject.Inject
 //import javax.inject.Singleton
 
@@ -23,23 +26,24 @@ import retrofit2.converter.gson.GsonConverterFactory
  */
 
 // This class should be provided/injected as Singleton Instance.
-//@Singleton
-class KnuticeRemoteSource constructor() {
+@Singleton
+class KnuticeRemoteSource @Inject constructor() {
     private val TAG = "KnuticeRemoteSource"
 
+    // Consider providing this instance via DI.
     private val knuticeService = Retrofit.Builder()
         .baseUrl(BuildConfig.API_LIVE)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     // Should be later migrated to DataStore.
-    private var validatedToken: String = ""
+    var validatedToken: String = ""
 
     suspend fun getTopThreeNotices() = runCatching {
             knuticeService.create(KnuticeService::class.java).getTopThreeNotices()
         }.onFailure { throw it }
 
-    suspend fun getNoticesPerPage(category: NoticeCategory, lastNttId: Int) = runCatching {
+    suspend fun getNoticesPerPage(category: NoticeCategory, lastNttId: Int?) = runCatching {
             knuticeService.create(KnuticeService::class.java).getNoticesPerPage(category, lastNttId)
         }.onFailure { throw it }
 
@@ -54,17 +58,18 @@ class KnuticeRemoteSource constructor() {
 
     suspend fun getTopicSubscriptionStatus() = runCatching {
             if (validatedToken.isBlank()) throw Exception("No validated token found")
-            else knuticeService.create(KnuticeService::class.java).getTopicSubscriptionStatus(validatedToken)
+            else {
+                knuticeService.create(KnuticeService::class.java).getTopicSubscriptionStatus(validatedToken)
+            }
         }.onFailure { throw it }
 
     suspend fun validateToken(request: DeviceTokenRequest) = runCatching {
             knuticeService.create(KnuticeService::class.java).validateToken(request)
         }.onFailure { throw it }
 
-    fun updateValidatedToken(fcmToken: String) = runCatching {
+    fun updateValidatedToken(fcmToken: String) {
         validatedToken = fcmToken
-        true
-    }.onFailure { throw it }
+    }
 
     suspend fun submitUserReport(request: UserReportRequest) = runCatching {
             knuticeService.create(KnuticeService::class.java).submitUserReport(request)

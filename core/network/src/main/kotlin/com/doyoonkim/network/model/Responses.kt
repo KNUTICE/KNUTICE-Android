@@ -37,7 +37,7 @@ data class NoticesByKeywordResult(
 
 data class TopicSubscriptionPreferencesResult(
     @SerializedName("reuslt") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: TopicSubscriptionPreferencesDTO = TopicSubscriptionPreferencesDTO()
+    @SerializedName("body") var body: TopicSubscriptionPreferencesDTO? = TopicSubscriptionPreferencesDTO()
 )
 
 data class PostResult(

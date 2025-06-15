@@ -25,13 +25,13 @@ import retrofit2.http.Query
  */
 
 interface KnuticeService {
-    @GET("open-api/notice/list")
+    @GET("open-api/notice")
     suspend fun getTopThreeNotices(): TopThreeNoticeResults
 
     @GET("open-api/notice/list")
     suspend fun getNoticesPerPage(
         @Query("noticeName") category: NoticeCategory,
-        @Query("nttId") lastNttId: Int
+        @Query("nttId") lastNttId: Int? = null
     ): NoticesPerPageResult
 
     @GET("open-api/notice/{nttId}")
