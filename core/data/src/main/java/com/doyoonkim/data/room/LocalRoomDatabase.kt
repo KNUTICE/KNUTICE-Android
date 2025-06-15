@@ -1,5 +1,6 @@
 package com.doyoonkim.data.room
 
+import android.app.Application
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
@@ -20,7 +21,7 @@ abstract class LocalDatabase : RoomDatabase() {
             if (INSTANCE == null) {
                 synchronized(LocalDatabase::class) {
                     INSTANCE = Room.databaseBuilder(
-                        context.applicationContext,
+                        context,
                         LocalDatabase::class.java,
                         "Main Local Database"
                     ).build()

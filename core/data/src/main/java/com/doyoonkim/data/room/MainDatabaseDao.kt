@@ -30,7 +30,7 @@ interface MainDatabaseDao {
     fun deleteNoticeEntity(target: NoticeEntity)
 
     @Query("SELECT * FROM NoticeEntity WHERE ntt_id=:nttId")
-    fun getNoticeByNttId(nttId: Int): NoticeEntity
+    fun getNoticeByNttId(nttId: Int): NoticeEntity?
 
     @Query("SELECT * FROM Bookmark WHERE target_ntt_id=:nttId")
     fun getBookmarkByNttId(nttId: Int): Bookmark?

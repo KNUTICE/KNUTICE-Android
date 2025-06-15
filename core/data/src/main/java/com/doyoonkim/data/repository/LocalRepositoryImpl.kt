@@ -3,30 +3,32 @@ package com.doyoonkim.data.repository
 import android.util.Log
 import com.doyoonkim.data.model.Bookmark
 import com.doyoonkim.data.model.NoticeEntity
-import com.doyoonkim.data.room.LocalDatabase
+import com.doyoonkim.data.room.MainDatabaseDao
+import com.doyoonkim.domain.LocalRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class LocalRepository constructor(
+class LocalRepositoryImpl @Inject constructor(
     // Inject Local Database from the app module (planned)
-    private val localSource: LocalDatabase
-) {
-    private val TAG = "LocalRepository"
+    private val localDao: MainDatabaseDao
+) : LocalRepository {
+    private val TAG = "LocalRepositoryImpl"
 
     // CRUD
-    fun createBookmark(bookmark: BookmarkVO) = flow {
+    override fun createBookmark(bookmark: BookmarkVO) = flow {
         runCatching {
-            localSource.getDao().createBookmark(bookmark.toBookmark())
+            localDao.createBookmark(bookmark.toBookmark())
         }.onFailure { throw it }.fold(
             onSuccess = { emit(true) },
             onFailure = { it.printLog().also { emit(false) } }
         )
     }
 
-    fun createBookmark(bookmark: BookmarkVO, targetNotice: NoticeVO) = flow {
+    override fun createBookmark(bookmark: BookmarkVO, targetNotice: NoticeVO) = flow {
         runCatching {
-            localSource.getDao().run {
+            localDao.run {
                 // Insert Notice Entity First
                 createNoticeEntity(targetNotice.toNoticeEntity())
                 // Insert Bookmark Entity next.
@@ -38,57 +40,63 @@ class LocalRepository constructor(
         )
     }
 
-    fun updateBookmark(bookmark: Bookmark) = flow {
+    override fun updateBookmark(bookmark: BookmarkVO) = flow {
         runCatching {
-            localSource.getDao().updateBookmark(bookmark)
+            localDao.updateBookmark(bookmark.toBookmark())
         }.onFailure { throw it }.fold(
             onSuccess = { emit(true) },
             onFailure = { it.printLog().also { emit(false) } }
         )
     }
 
-    fun queryAllBookmarks() = flow {
+    override fun queryAllBookmarks() = flow {
         runCatching {
-            localSource.getDao().getAllBookmarks()
+            localDao.getAllBookmarks()
         }.onFailure { throw it }.fold(
-            onSuccess = { emit(it.toListOfBookmarkVO()) },
-            onFailure = { it.printLog().also { emit(emptyList<BookmarkVO>()) } }
-        )
-    }
-
-    fun queryNoticeById(nttId: Int) = flow {
-        runCatching {
-            localSource.getDao().getNoticeByNttId(nttId)
-        }.onFailure { throw it }.fold(
-            onSuccess = { emit(it.toNoticeVO()) },
+            onSuccess = {
+                Log.d(TAG, "${it.size}")
+                it.toListOfBookmarkVO().forEach {
+                vo -> emit(vo).also { Log.d(TAG, vo.toString()) }
+            } },
             onFailure = { it.printLog().also { emit(null) } }
         )
     }
 
-    fun queryBookmarkByNttId(nttId: Int) = flow {
+    override fun queryNoticeById(nttId: Int) = flow {
         runCatching {
-            localSource.getDao().getBookmarkByNttId(nttId)
-                ?: throw NoSuchElementException("Bookmark Not Found")
+            localDao.getNoticeByNttId(nttId)
         }.onFailure { throw it }.fold(
             onSuccess = {
-                emit(it.toBookmarkVO())
+                if (it != null) emit(it.toNoticeVO())
+                else emit(null)
+            },
+            onFailure = { it.printLog().also { emit(null) } }
+        )
+    }
+
+    override fun queryBookmarkByNttId(nttId: Int) = flow {
+        runCatching {
+            localDao.getBookmarkByNttId(nttId)
+        }.onFailure { throw it }.fold(
+            onSuccess = {
+                emit(it?.toBookmarkVO())
             },
             onFailure = { emit(null) }
         )
     }
 
-    fun requestBookmarkDeletion(bookmark: BookmarkVO) = flow {
+    override fun requestBookmarkDeletion(bookmark: BookmarkVO) = flow {
         runCatching {
-            localSource.getDao().deleteBookmark(bookmark.toBookmark())
+            localDao.deleteBookmark(bookmark.toBookmark())
         }.onFailure { throw it }.fold(
             onSuccess = { emit(true) },
             onFailure = { emit(false) }
         )
     }
 
-    fun requestNoticeDeletion(notice: NoticeVO) = flow {
+    override fun requestNoticeDeletion(notice: NoticeVO) = flow {
         runCatching {
-            localSource.getDao().deleteNoticeEntity(notice.toNoticeEntity())
+            localDao.deleteNoticeEntity(notice.toNoticeEntity())
         }.onFailure { throw it }.fold(
             onSuccess = { emit(true) },
             onFailure = { emit(false) }
@@ -101,7 +109,6 @@ class LocalRepository constructor(
 
     private fun NoticeVO.toNoticeEntity() =
         NoticeEntity(
-            noticeEntityId = 0,
             nttId = this.nttId,
             title = this.title,
             url = this.url,

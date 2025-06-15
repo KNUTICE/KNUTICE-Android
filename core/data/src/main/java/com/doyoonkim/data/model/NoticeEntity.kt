@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class NoticeEntity(
-    @PrimaryKey(autoGenerate = true) val noticeEntityId: Int,
+    @PrimaryKey(autoGenerate = true) val noticeEntityId: Int = 0,
     @ColumnInfo("ntt_id") val nttId: Int = -1,
     @ColumnInfo("notice_title") val title: String,
     @ColumnInfo("notice_url") val url: String,
