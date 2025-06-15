@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+
+    // For Dagger
+    id("kotlin-kapt")
 }
 
 android {
@@ -33,7 +36,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.core.network)
+    implementation(projects.core.domain)
     implementation(projects.common)
     implementation(projects.core.model)
 
@@ -43,6 +46,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation(libs.dagger)
+    implementation(libs.dagger.android)
+    implementation(libs.dagger.android.support)
+    kapt(libs.dagger.compiler)
+    kapt(libs.dagger.android.processor)
 
     implementation(libs.firebase.messaging)
     implementation(libs.firebase.messaging.directboot)

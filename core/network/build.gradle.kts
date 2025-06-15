@@ -4,6 +4,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
 }
 
 android {
@@ -13,7 +14,7 @@ android {
     val properties = Properties().apply {
         load(FileInputStream("${rootDir}/local.properties"))
     }
-    val apiBaseLive = properties["api_live"] ?: ""
+    val apiBaseLive = properties["api_migrated"] ?: ""
 
     defaultConfig {
         minSdk = 30
@@ -64,9 +65,9 @@ dependencies {
     implementation(libs.converter.gson)
 
     // Dagger
-//    implementation(libs.dagger)
-//    implementation(libs.dagger.android)
-//    implementation(libs.dagger.android.support)
-//    implementation(libs.dagger.compiler)
-//    implementation(libs.dagger.android.processor)
+    implementation(libs.dagger)
+    implementation(libs.dagger.android)
+    implementation(libs.dagger.android.support)
+    kapt(libs.dagger.compiler)
+    kapt(libs.dagger.android.processor)
 }

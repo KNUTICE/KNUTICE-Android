@@ -7,7 +7,6 @@ plugins {
 
     // Dagger-Hilt for Dependency Injection
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
 
     // Keep this plugin in app module, since app module handles all related app information
     // such as App ID , etc. for using firebase services.
@@ -35,8 +34,8 @@ android {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 31
         targetSdk = 34
-        versionCode = 16
-        versionName = "1.4.1"
+        versionCode = 17
+        versionName = "1.4.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -87,6 +86,7 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.core.data)
     implementation(projects.core.network)
+    implementation(projects.core.notification)
     implementation(projects.feature.main)
     implementation(projects.feature.bookmark)
     implementation(projects.common)
@@ -113,35 +113,23 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Dagger
+    implementation(libs.dagger)
+    implementation(libs.dagger.android)
+    implementation(libs.dagger.android.support)
+    kapt(libs.dagger.compiler)
+    kapt(libs.dagger.android.processor)
+
     implementation(libs.kotlin.serialization)
 
     // Coroutine for Android
     implementation(libs.kotlinx.coroutines.android)
     // Navigation for Compose
     implementation(libs.androidx.navigation.compose)
-    // Coil
-    implementation(libs.coil.compose)
-
-    // Dagger Hilt for Dependency Injection
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)       // With Compose Navigation
-    kapt(libs.hilt.android.compiler)
-
-    // Retrofit 2
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-
-    // Jsoup HTML Parser Library
-    implementation(libs.jsoup)
 
     // DataStore
     implementation (libs.androidx.datastore.preferences)
 
-    // Room Database
-    implementation(libs.androidx.room.runtime)
-    kapt(libs.androidx.room.compiler)
-    // Room Database - Kotlin Extensions and Coroutine Support
-    implementation(libs.androidx.room.ktx)
 }
 
 // Allow references to generated code

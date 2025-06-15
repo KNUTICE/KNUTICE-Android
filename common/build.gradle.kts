@@ -1,9 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("kotlin-kapt")
 
     // Required from Kotlin 2.0.0 (Every module using Compose)
     alias(libs.plugins.compose.compiler)
+
+    alias(libs.plugins.kotlinSerialization)
 }
 
 android {
@@ -56,15 +59,17 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     // Dagger
-//    implementation(libs.dagger)
-//    implementation(libs.dagger.android)
-//    implementation(libs.dagger.android.support)
-//    implementation(libs.dagger.compiler)
-//    implementation(libs.dagger.android.processor)
+    implementation(libs.dagger)
+    implementation(libs.dagger.android)
+    implementation(libs.dagger.android.support)
+    kapt(libs.dagger.compiler)
+    kapt(libs.dagger.android.processor)
 
     // Coil
     implementation(libs.coil.compose)
 
     // Navigation For Compose
     implementation(libs.androidx.navigation.compose)
+
+    implementation(libs.kotlin.serialization)
 }
