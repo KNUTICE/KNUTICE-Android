@@ -10,14 +10,14 @@ abstract class Notifier(
     abstract val channelName: String
     abstract val notificationId: Int
 
-    fun showNotification(content: String) {
+    fun showNotification(content: String, uriString: String) {
         // Use existing notification channel: KNUTICE-IN-APP-Channel
-        val notification = buildNotification(content)
+        val notification = buildNotification(content, uriString)
         notificationManager.notify(
             notificationId,
             notification
         )
     }
 
-    abstract fun buildNotification(content: String): Notification
+    abstract fun buildNotification(content: String, uriString: String): Notification
 }

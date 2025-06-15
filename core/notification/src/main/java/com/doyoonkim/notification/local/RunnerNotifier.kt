@@ -2,8 +2,11 @@ package com.doyoonkim.notification.local
 
 import android.app.Notification
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
+import androidx.core.net.toUri
 import com.doyoonkim.common.R
 import kotlin.random.Random
 
@@ -18,12 +21,28 @@ class RunnerNotifier(
     override val notificationId: Int
         get() = Random(System.currentTimeMillis()).nextInt()
 
-    override fun buildNotification(content: String): Notification {
+    override fun buildNotification(content: String, uriString: String): Notification {
+        // Create Intent
+        val deeplinkIntent = Intent(
+            Intent.ACTION_VIEW,
+            uriString.toUri()
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }.run {
+            PendingIntent.getActivity(
+                context,
+                0,
+                this,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+
         // Custom-define notification builder.
         return NotificationCompat.Builder(context, channelId)
             .setContentTitle(context.getString(R.string.text_reminder_title))
             .setContentText(content)
             .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentIntent(deeplinkIntent)
             .build()
     }
 }

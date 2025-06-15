@@ -10,7 +10,10 @@ class AlarmReceiver : BroadcastReceiver() {
         context?.let {
             val notificationManager = it.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             RunnerNotifier(notificationManager, context).run {
-                showNotification(intent?.getStringExtra("content") ?: "")
+                showNotification(
+                    content = intent?.getStringExtra("content") ?: "",
+                    uriString = intent?.getStringExtra("uri_string") ?: ""
+                )
             }
         }
     }

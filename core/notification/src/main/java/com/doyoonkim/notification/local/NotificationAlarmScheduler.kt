@@ -8,32 +8,38 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresPermission
+import androidx.core.net.toUri
+import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.model.BookmarkVO
+import javax.inject.Inject
 
 /**
  * Local Push Notification (Bookmark Reminder)
  * Reference: https://medium.com/@tolgapirim25/send-notifications-at-a-specific-time-with-alarm-manager-on-android-13c7cc9d8e7a
  */
 interface AlarmScheduler {
-    fun createPendingIntent(target: BookmarkVO): PendingIntent
+    fun createPendingIntent(target: BookmarkVO, nav: BookmarkInfo): PendingIntent
 
-    fun schedule(target: BookmarkVO)
+    fun schedule(target: BookmarkVO, nav: BookmarkInfo)
 
-    fun cancel(target: BookmarkVO)
+    fun cancel(target: BookmarkVO, nav: BookmarkInfo)
 }
 
-class NotificationAlarmScheduler(
-    private val context: Context
+class NotificationAlarmScheduler @Inject constructor(
+    @ApplicationContext private val context: Context
 ) : AlarmScheduler {
     private val TAG = "NotificationAlarmScheduler"
     // AlarmManager Instance
     // Context: ApplicationContext
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    override fun createPendingIntent(target: BookmarkVO): PendingIntent {
+    override fun createPendingIntent(target: BookmarkVO, nav: BookmarkInfo): PendingIntent {
+        val uri = "knutice://service/bookmark/${nav.noticeId}/${nav.noticeTitle}/${nav.noticeInfo}"
         val intent = Intent(context, AlarmReceiver::class.java)
             .apply {
                 putExtra("content", target.bookmarkNote)
+                putExtra("uri_string", uri)
             }
 
         return PendingIntent.getBroadcast(
@@ -46,7 +52,7 @@ class NotificationAlarmScheduler(
 
     // Permission Declared and granted at the APP level entry point.
     @RequiresPermission(Manifest.permission.SCHEDULE_EXACT_ALARM)
-    override fun schedule(target: BookmarkVO) {
+    override fun schedule(target: BookmarkVO, nav: BookmarkInfo) {
         // Android Version Check
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             if (!alarmManager.canScheduleExactAlarms()) {
@@ -59,14 +65,18 @@ class NotificationAlarmScheduler(
         alarmManager.setExact(
             AlarmManager.RTC_WAKEUP,
             target.reminderSchedule,
-            createPendingIntent(target)
+            createPendingIntent(target, nav)
         ).also { Log.d(TAG, "Alarm Scheduled.") }
     }
 
-    override fun cancel(target: BookmarkVO) {
+    override fun cancel(target: BookmarkVO, nav: BookmarkInfo) {
         alarmManager.cancel(
-            createPendingIntent(target)
+            createPendingIntent(target, nav)
         )
+    }
+
+    fun canScheduleExactAlarms(): Boolean {
+        return alarmManager.canScheduleExactAlarms()
     }
 
 }
