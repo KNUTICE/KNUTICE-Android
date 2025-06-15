@@ -1,18 +1,21 @@
 package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.LocalRepository
+import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.model.requestBody.DeviceTokenBody
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import javax.inject.Inject
 
 
 interface ValidateDeviceToken {
-    fun requestTokenValidation(fcmToken: String)
+    operator fun invoke(requestBody: DeviceTokenBody): Flow<Boolean>
 }
 
-class ValidateDeviceTokenImpl constructor(
-    private val localRepository: LocalRepository
+class ValidateDeviceTokenImpl @Inject constructor(
+    private val remoteRepository: RemoteRepository
 ) : ValidateDeviceToken {
-    override fun requestTokenValidation(fcmToken: String) {
 
-    }
-
-    operator fun invoke(fcmToken: String) = requestTokenValidation(fcmToken)
+    override operator fun invoke(requestBody: DeviceTokenBody) =
+        remoteRepository.requestTokenValidation(requestBody)
 }
