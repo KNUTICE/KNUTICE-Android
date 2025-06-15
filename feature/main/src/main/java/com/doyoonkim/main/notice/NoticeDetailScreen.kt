@@ -59,10 +59,10 @@ fun NoticeDetailScreen(
 
     if (noticeInfo.second.isNotBlank()) {
         Box(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
         ) {
             AndroidView(
-                modifier = Modifier.fillMaxSize().padding(5.dp),
+                modifier = Modifier.fillMaxSize(),
                 factory = { context ->
                     WebView(context).apply {
                         //Enable Javascript
