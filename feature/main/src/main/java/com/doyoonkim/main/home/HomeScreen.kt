@@ -1,5 +1,6 @@
 package com.doyoonkim.main.home
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -39,14 +41,18 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     onGoBackAction: () -> Unit,
     onMoreNoticeRequested: (Destination) -> Unit,
-    onFullContentRequested: (NoticeVO) -> Unit
+    onFullContentRequested: (Int, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    // Back button/gesture actions TODO: Need to be tested.
-//    BackHandler {
-//        onGoBackAction()
-//    }
+    // Back button/gesture actions
+    BackHandler {
+        onGoBackAction()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getTopThreeNotices()
+    }
 
     Column(
         modifier = modifier.verticalScroll(
@@ -58,37 +64,41 @@ fun HomeScreen(
         NotificationPreviewList (
             listTitle = stringResource(R.string.general_news),
             titleColor = MaterialTheme.colorScheme.notificationType1,
+            isContentLoading = uiState.isLoading,
             contents = uiState.notificationGeneral,
             onMoreClicked = { onMoreNoticeRequested(Destination.MORE_GENERAL) }
         ) {
-            onFullContentRequested(it)
+            onFullContentRequested(it.nttId, it.url)
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.academic_news),
             titleColor = MaterialTheme.colorScheme.notificationType2,
+            isContentLoading = uiState.isLoading,
             contents = uiState.notificationAcademic,
             onMoreClicked = { onMoreNoticeRequested(Destination.MORE_ACADEMIC) }
         ) {
-            onFullContentRequested(it)
+            onFullContentRequested(it.nttId, it.url)
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.scholarship_news),
             titleColor = MaterialTheme.colorScheme.notificationType3,
+            isContentLoading = uiState.isLoading,
             contents = uiState.notificationScholarship,
             onMoreClicked = { onMoreNoticeRequested(Destination.MORE_SCHOLARSHIP) }
         ) {
-            onFullContentRequested(it)
+            onFullContentRequested(it.nttId, it.url)
         }
 
         NotificationPreviewList(
             listTitle = stringResource(R.string.event_news),
             titleColor = MaterialTheme.colorScheme.notificationType4,
+            isContentLoading = uiState.isLoading,
             contents = uiState.notificationEvent,
             onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
         ) {
-            onFullContentRequested(it)
+            onFullContentRequested(it.nttId, it.url)
         }
     }
 }
@@ -98,6 +108,7 @@ fun NotificationPreviewList(
     modifier: Modifier = Modifier,
     listTitle: String = "List Title goes here",
     titleColor: Color = Color.Unspecified,
+    isContentLoading: Boolean = false,
     contents: List<NoticeVO> = listOf(),
     onMoreClicked: () -> Unit = {  },
     onNoticeClicked: (NoticeVO) -> Unit
@@ -137,7 +148,8 @@ fun NotificationPreviewList(
         contents.forEach { content ->
             NotificationPreviewCard(
                 notificationTitle = content.title,
-                notificationInfo = content.departName
+                notificationInfo = "[${content.departName}] ${content.timestamp}",
+                isLoading = isContentLoading
             ) {
                 onNoticeClicked(content)
             }

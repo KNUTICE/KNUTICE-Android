@@ -1,6 +1,5 @@
-package com.doyoonkim.knutice.presentation
+package com.doyoonkim.main.notice
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,13 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,34 +24,39 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.doyoonkim.knutice.model.Notice
-import com.doyoonkim.knutice.presentation.component.NotificationPreview
-import com.doyoonkim.knutice.ui.theme.containerBackground
-import com.doyoonkim.knutice.ui.theme.containerBackgroundSolid
-import com.doyoonkim.knutice.ui.theme.subTitle
-import com.doyoonkim.knutice.viewModel.MoreCategorizedNotificationViewModel
+import com.doyoonkim.common.theme.containerBackground
+import com.doyoonkim.common.theme.containerBackgroundSolid
+import com.doyoonkim.common.theme.textPurple
+import com.doyoonkim.common.ui.NotificationPreview
+import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
+import com.doyoonkim.model.NoticeCategory
+import com.doyoonkim.model.NoticeVO
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MoreCategorizedNotification(
-    modifier: Modifier = Modifier,
-    viewModel: MoreCategorizedNotificationViewModel = hiltViewModel(),
-    backButtonHandler: () -> Unit = { },
-    onNoticeSelected: (Notice) -> Unit = {  }
+fun NoticesInCategoryScreen(
+    modifier: Modifier,
+    category: NoticeCategory = NoticeCategory.Unspecified,
+    viewModel: NoticesInCategoryViewModel,
+    onBackButtonPressed: () -> Unit = {  },
+    onNoticeSelected: (Int, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    // Back Handler
+    BackHandler { onBackButtonPressed() }
+
+     // Pull-to-Refresh
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isRefreshRequested,
-        onRefresh = {
-            viewModel.requestRefresh()
-        }
+        onRefresh = { viewModel.requestRefresh() }
     )
 
-    BackHandler {
-        backButtonHandler()
+    // Fetching notification on entry
+    LaunchedEffect(uiState.isNoticesRequested, uiState.isRefreshRequested) {
+        if (uiState.isRefreshRequested || uiState.isNoticesRequested)
+            viewModel.getNoticesPerPageInCategory(category)
     }
 
     Box(
@@ -61,12 +64,6 @@ fun MoreCategorizedNotification(
             .background(MaterialTheme.colorScheme.containerBackground)
             .pullRefresh(pullRefreshState)
     ) {
-        LaunchedEffect(Unit) {
-            Log.d("MoreCategorizedNotification", "Initialize Notice Category to be fetched")
-//            if (uiState.currentLastNttId == 0)
-//                viewModel.setNotificationCategory(category)
-            viewModel.fetchNotificationPerPage()
-        }
         LazyColumn(
             Modifier.fillMaxWidth().wrapContentHeight(),
             verticalArrangement = Arrangement.spacedBy(5.dp),
@@ -75,40 +72,38 @@ fun MoreCategorizedNotification(
             items(uiState.notices.size) { index ->
                 if (index == uiState.notices.size - 1) {
                     Row(
-                        modifier = Modifier.fillMaxWidth()
-                            .wrapContentHeight(),
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center
                     ) {
                         CircularProgressIndicator(
                             modifier = Modifier.wrapContentSize(),
-                            color = MaterialTheme.colorScheme.subTitle
+                            color = MaterialTheme.colorScheme.textPurple,
+                            trackColor = MaterialTheme.colorScheme.containerBackground
                         )
                     }
                     viewModel.requestMoreNotices()
                 } else {
-                    val notice = uiState.notices[index]
-                    if (index != 0 || !uiState.isLoading) {
-                        Divider(
-                            Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
-                            color = MaterialTheme.colorScheme.containerBackgroundSolid,
-                            thickness = 1.3.dp
+                    if (index != 0) {
+                        HorizontalDivider(
+                            Modifier.fillMaxWidth(),
+                            color =MaterialTheme.colorScheme.containerBackgroundSolid,
+                            thickness = 1.2.dp
                         )
                     }
+                    val notice = uiState.notices[index]
                     Row(
                         modifier = Modifier.wrapContentSize()
-                            .clickable {
-                                onNoticeSelected(notice)
-                            }
+                            .clickable { onNoticeSelected(notice.nttId, notice.url) }
                     ) {
                         NotificationPreview(
+                            isLoading = uiState.isLoading,
                             notificationTitle = notice.title,
                             notificationInfo = "[${notice.departName}] ${notice.timestamp}",
-                            isImageContained = notice.imageUrl != "Unknown",
-                            imageUrl = notice.imageUrl
+                            isImageContained = notice.imageUrl != null,
+                            imageUrl = notice.imageUrl ?: ""
                         )
                     }
-
                 }
             }
         }
@@ -120,4 +115,3 @@ fun MoreCategorizedNotification(
         )
     }
 }
-
