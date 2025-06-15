@@ -1,15 +1,11 @@
 package com.doyoonkim.bookmark.viewmodel
 
-import android.util.Log
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.navigation.BookmarkInfo
-import com.doyoonkim.domain.usecases.FetchNoticeById
 import com.doyoonkim.domain.usecases.FetchNoticeByIdFromLocal
-import com.doyoonkim.domain.usecases.FetchNoticeByIdFromLocalImpl
 import com.doyoonkim.domain.usecases.ModifyBookmark
-import com.doyoonkim.domain.usecases.ModifyBookmarkImpl
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.notification.local.NotificationAlarmScheduler

@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.os.Build
 import com.doyoonkim.common.di.AppInjector
 import com.doyoonkim.common.di.AppInjectorProvider
+import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.AppComponent
 import com.doyoonkim.knutice.di.DaggerAppComponent
 import com.doyoonkim.notification.fcm.PushNotificationService

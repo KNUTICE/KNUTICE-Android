@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
-import com.doyoonkim.domain.usecases.FetchAllBookmarksImpl
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.Dispatchers

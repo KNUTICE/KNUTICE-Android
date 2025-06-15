@@ -2,7 +2,6 @@ package com.doyoonkim.notification.fcm
 
 import android.Manifest
 import android.app.PendingIntent
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -16,14 +15,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.doyoonkim.common.R
 import com.doyoonkim.domain.usecases.ValidateDeviceToken
-import com.doyoonkim.model.requestBody.DeviceTokenBody
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.RemoteMessage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 

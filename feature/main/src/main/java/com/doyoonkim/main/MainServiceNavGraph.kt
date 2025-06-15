@@ -10,7 +10,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.common.navigation.NavRoutes

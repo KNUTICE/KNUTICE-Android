@@ -1,7 +1,5 @@
 package com.doyoonkim.domain.di
 
-import com.doyoonkim.domain.LocalRepository
-import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
 import com.doyoonkim.domain.usecases.FetchAllBookmarksImpl
 import com.doyoonkim.domain.usecases.FetchNoticeById
@@ -26,7 +24,6 @@ import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.doyoonkim.domain.usecases.ValidateDeviceTokenImpl
 import dagger.Binds
 import dagger.Module
-import dagger.Provides
 
 @Module
 abstract class DomainModule {

@@ -9,7 +9,6 @@ import com.doyoonkim.knutice.MainApplication
 import com.doyoonkim.main.di.MainModule
 import com.doyoonkim.notification.di.NotificationModule
 import com.doyoonkim.notification.fcm.PushNotificationService
-import com.google.firebase.messaging.FirebaseMessagingService
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton

@@ -9,7 +9,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
 import com.doyoonkim.bookmark.edit.EditBookmarkScreen
 import com.doyoonkim.bookmark.list.BookmarkListScreen
 import com.doyoonkim.bookmark.viewmodel.BookmarkListViewModel

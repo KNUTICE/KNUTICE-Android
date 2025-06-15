@@ -1,10 +1,8 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.LocalRepository
 import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 

@@ -38,10 +38,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.common.R
-import com.doyoonkim.common.theme.containerBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.textPurple
-import com.doyoonkim.common.theme.title
 
 @Composable
 fun NoticeDetailScreen(

@@ -8,7 +8,6 @@ import android.content.Intent
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import androidx.core.net.toUri
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.model.BookmarkVO

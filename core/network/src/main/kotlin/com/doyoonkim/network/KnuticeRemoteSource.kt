@@ -1,24 +1,14 @@
 package com.doyoonkim.network
 
-import android.util.Log
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.network.model.DeviceTokenRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
 import com.doyoonkim.network.retrofit.KnuticeService
-import model.NoticeByIdResult
-import model.NoticesByKeywordResult
-import model.NoticesPerPageResult
-import model.PostResult
-import model.TopThreeNoticeResults
-import model.TopicSubscriptionPreferencesResult
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 import javax.inject.Singleton
-
-//import javax.inject.Inject
-//import javax.inject.Singleton
 
 /**
  * @author kimdoyoon

@@ -4,7 +4,6 @@ import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.network.model.DeviceTokenRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
-import com.doyoonkim.network.model.dto.TopicSubscriptionPreferencesDTO
 import model.NoticeByIdResult
 import model.NoticesByKeywordResult
 import model.NoticesPerPageResult

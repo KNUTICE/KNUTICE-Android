@@ -1,8 +1,5 @@
 package com.doyoonkim.model
 
-import kotlinx.serialization.Serializable
-
-//@Serializable
 data class NoticeVO(
     val entityId: Int? = null,      // Later migrated and removed.
     val nttId: Int = -1,

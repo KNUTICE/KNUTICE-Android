@@ -31,7 +31,6 @@ import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.model.NoticeCategory
-import com.doyoonkim.model.NoticeVO
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
