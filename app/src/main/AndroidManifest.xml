@@ -25,23 +25,33 @@
             android:value="@string/default_notification_channel_id"/>
 
         <activity
-            android:name="com.doyoonkim.knutice.presentation.MainActivity"
+            android:name="com.doyoonkim.knutice.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.KNUTICE">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <!-- Intent filter for handling Deeplink -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:scheme="knutice"
+                    android:host="service" />
+            </intent-filter>
         </activity>
-        <service android:name="com.doyoonkim.knutice.fcm.PushNotificationHandler"
+        <service android:name="com.doyoonkim.notification.fcm.PushNotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <receiver android:name=".alarm.AlarmReceiver" />
+        <receiver android:name="com.doyoonkim.notification.local.AlarmReceiver" />
     </application>
 
 </manifest>
