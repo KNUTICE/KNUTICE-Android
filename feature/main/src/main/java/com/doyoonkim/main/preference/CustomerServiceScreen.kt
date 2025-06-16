@@ -60,7 +60,7 @@ fun CustomerServiceScreen(
     }
 
     Box(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(

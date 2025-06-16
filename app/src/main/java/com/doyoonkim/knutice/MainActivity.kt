@@ -18,6 +18,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -262,10 +263,14 @@ class MainActivity : ComponentActivity() {
                     },
                     containerColor = MaterialTheme.colorScheme.containerBackgroundSolid,
                 ) { contentPadding ->
-                    val paddingValue = contentPadding
 
                     AppNavHost(
-                        modifier = Modifier.padding(contentPadding),
+                        modifier = Modifier.padding(
+                            PaddingValues(
+                                top = contentPadding.calculateTopPadding(),
+                                bottom = contentPadding.calculateBottomPadding()
+                            )
+                        ),
                         navController = navController,
                         viewModelFactory = viewModelFactory
                     )

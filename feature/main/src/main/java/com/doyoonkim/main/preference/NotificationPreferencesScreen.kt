@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Text
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -67,7 +68,7 @@ fun NotificationPreferencesScreen(
     }
 
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
             .systemBarsPadding(),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
@@ -91,7 +92,7 @@ fun NotificationPreferencesScreen(
                 .wrapContentSize()
                 .padding(top = 15.dp, bottom = 15.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically
