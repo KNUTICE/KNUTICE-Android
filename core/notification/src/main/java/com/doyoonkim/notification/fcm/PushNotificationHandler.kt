@@ -12,19 +12,24 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.graphics.BitmapCompat
 import androidx.core.net.toUri
+import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.R
 import com.doyoonkim.domain.ImageRepository
-import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 import kotlin.random.Random
 
 
 class PushNotificationHandler @Inject constructor(
-    private val validateDeviceToken: ValidateDeviceToken,
     private val imageRepository: ImageRepository,
+    private val bitMapHandler: BitmapHandler,
     private val context: Context
 ) {
     private val TAG = "PushNotificationHandler"
@@ -48,10 +53,12 @@ class PushNotificationHandler @Inject constructor(
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun RemoteMessage.toPushNotification() {
+
         // Create Pending Intent (For access push notification while the app is in foreground)
         // TODO: Migrate to Deep Link.
         val nttId = this@toPushNotification.data["nttId"]
         val url = this@toPushNotification.data["contentUrl"]
+        val imageUrl = this@toPushNotification.data["contentImage"]
         val fabVisible = true
 
         // Deeplink featured by Jetpack Navigation won't work because notification payload consumes custom-defined deeplink intent using ACTION_VIEW
@@ -78,9 +85,6 @@ class PushNotificationHandler @Inject constructor(
             setLargeIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
             setContentTitle(context.getString(R.string.new_notice))
             setContentText(this@toPushNotification.data["contentTitle"] ?: "No message body.")
-            setStyle(NotificationCompat.BigPictureStyle()
-
-            )
             setContentIntent(pendingIntent)
             setPriority(NotificationCompat.PRIORITY_DEFAULT)
             setAutoCancel(true)
@@ -103,8 +107,43 @@ class PushNotificationHandler @Inject constructor(
                 // for ActivityCompat#requestPermissions for more details.
                 return
             }
-            notify(notificationId, notificationBuilder.build())
+
+            // HardCoded CoroutineScope for Testing
+            val completionMarker = Job()     // Variable for manual Cancellation
+            imageUrl?.let { url ->
+                CoroutineScope(Dispatchers.IO + completionMarker).launch {
+                    val bitmapImage = async {
+                        runCatching {
+                            withTimeout(5000L) {
+                                imageRepository.getImageByteArrayFromUrl(url)?.let { b ->
+                                    bitMapHandler.decodeByteArray(b)
+                                }
+                            }
+                        }.onFailure {
+                            Log.d(TAG, "Unable to retrieve bitmap image\nREASON: ${it.stackTrace}")
+                        }
+                    }
+
+                    bitmapImage.await().fold(
+                        onSuccess = { result ->
+                            result?.let {
+                                notificationBuilder.apply {
+                                    setStyle(
+                                        NotificationCompat.BigPictureStyle()
+                                            .bigPicture(it)
+                                    )
+                                }
+                            }
+                        },
+                        onFailure = {
+                            Log.d(TAG, "No Bitmap Image to be added\nREASON: ${it.stackTrace}")
+                        }
+                    ).also {
+                        notify(notificationId, notificationBuilder.build())
+                        completionMarker.complete()
+                    }
+                }
+            }
         }
     }
-
 }
