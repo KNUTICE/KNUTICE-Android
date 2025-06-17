@@ -1,6 +1,8 @@
 package com.doyoonkim.knutice
 
 import android.net.Uri
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModelProvider
@@ -13,17 +15,24 @@ import com.doyoonkim.main.mainServiceNavGraph
 @Composable
 fun AppNavHost(
     modifier: Modifier = Modifier,
+    contentPadding: PaddingValues,
     navController: NavHostController,
     viewModelFactory: ViewModelProvider.Factory
 ) {
     NavHost(
-        modifier = modifier,
+        modifier = modifier.padding(
+            PaddingValues(
+                top = contentPadding.calculateTopPadding(),
+//                bottom = contentPadding.calculateBottomPadding()
+            )
+        ),
         navController = navController,
         startDestination = NavRoutes.Home.route
     ) {
         mainServiceNavGraph(
             navController = navController,
             viewModelFactory = viewModelFactory,
+            contentPadding = contentPadding,
             onNoticeDetailRequested = { target ->
                 navController.navigate("noticeDetail/${target.nttId}/${Uri.encode(target.contentUrl)}/${target.isFabVisible}")
             },
@@ -35,6 +44,7 @@ fun AppNavHost(
         bookmarkServiceGraph(
             navController = navController,
             viewModelFactory = viewModelFactory,
+            contentPadding = contentPadding,
             onNoticeDetailRequested = { target ->
                 navController.navigate("noticeDetail/${target.nttId}/${Uri.encode(target.contentUrl)}/${target.isFabVisible}")
             }

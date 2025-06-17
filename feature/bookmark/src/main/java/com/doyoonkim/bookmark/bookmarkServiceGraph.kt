@@ -1,5 +1,6 @@
 package com.doyoonkim.bookmark
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,6 +21,7 @@ import com.doyoonkim.common.navigation.NoticeDetail
 fun NavGraphBuilder.bookmarkServiceGraph(
     navController: NavController,
     viewModelFactory: ViewModelProvider.Factory,
+    contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit
 ) {
 
@@ -27,6 +29,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         BookmarkListScreen(
             modifier = Modifier.padding(5.dp),
             viewModel = viewModel<BookmarkListViewModel>(factory = viewModelFactory),
+            bottomPadding = contentPadding.calculateBottomPadding(),
             onBookmarkSelected = {
                 navController.navigate("bookmark/${it.noticeId}/${it.noticeTitle}/${it.noticeInfo}")
             },

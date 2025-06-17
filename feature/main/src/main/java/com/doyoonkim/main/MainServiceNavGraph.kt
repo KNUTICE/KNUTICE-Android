@@ -1,6 +1,7 @@
 package com.doyoonkim.main
 
 import android.net.Uri
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.ui.Modifier
@@ -34,6 +35,7 @@ import com.doyoonkim.model.NoticeCategory
 fun NavGraphBuilder.mainServiceNavGraph(
     navController: NavController,
     viewModelFactory: ViewModelProvider.Factory,
+    contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkServiceRequested: (BookmarkInfo) -> Unit
 ) {
@@ -42,6 +44,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         HomeScreen(
             modifier = Modifier.padding(5.dp),
             viewModel = viewModel<HomeViewModel>(factory = viewModelFactory),
+            bottomPadding = contentPadding.calculateBottomPadding(),
             onGoBackAction = { navController.popBackStack() },
             onMoreNoticeRequested = { dest ->
                 navController.run {
