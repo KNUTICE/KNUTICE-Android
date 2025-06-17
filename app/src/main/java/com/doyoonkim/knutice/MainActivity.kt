@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -87,7 +88,6 @@ class MainActivity : ComponentActivity() {
 
         val launchedIntent = this.intent
 
-//         applicationContext.deleteDatabase("Main Local Database")
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
         setContent {
@@ -97,13 +97,13 @@ class MainActivity : ComponentActivity() {
                 navController = rememberNavController()
 
                 // Bottom Bar Handling
-                var isBottomBarVisible = true
+                var bottomBarState = Triple(true, false, false)
                 val backStackEntryState by navController.currentBackStackEntryAsState()
                 backStackEntryState?.destination?.route.let { route ->
-                    isBottomBarVisible = when(route) {
-                        NavRoutes.Home.route -> true
-                        NavRoutes.Bookmark.route -> true
-                        else -> false
+                    bottomBarState = when(route) {
+                        NavRoutes.Home.route -> Triple(true, true, false)
+                        NavRoutes.Bookmark.route -> Triple(true, false, true)
+                        else -> Triple(false, false, false)
                     }
                 }
 
@@ -131,7 +131,8 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Scaffold(
-                    modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.containerBackgroundSolid),
+                    modifier = Modifier.fillMaxSize()
+                        .background(MaterialTheme.colorScheme.containerBackgroundSolid),
                     topBar = {
                         TopAppBar(
                             title = {
@@ -140,7 +141,7 @@ class MainActivity : ComponentActivity() {
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    if (!isBottomBarVisible) {
+                                    if (!bottomBarState.first) {
                                         IconButton(
                                             onClick = {
                                                 navController.popBackStack()
@@ -168,7 +169,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             actions = {
-                                if (isBottomBarVisible) {
+                                if (bottomBarState.first) {
                                     IconButton(
                                         onClick = {
                                             navController.navigate(NavRoutes.NoticeSearch.route)
@@ -202,7 +203,7 @@ class MainActivity : ComponentActivity() {
                         )
                     },
                     bottomBar = {
-                        if (isBottomBarVisible) {
+                        if (bottomBarState.first) {
                             BottomAppBar(
                                 modifier = Modifier
                                     .wrapContentSize()
@@ -211,15 +212,17 @@ class MainActivity : ComponentActivity() {
                                 actions = {
                                     // https://developer.android.com/develop/ui/compose/navigation#bottom-nav
                                     BottomNavigationItem(
-                                        selected = backStackEntryState?.destination?.route == NavRoutes.Home.route,
+                                        selected = bottomBarState.second,
                                         enabled = true,
                                         onClick = {
-                                            navController.navigate(NavRoutes.Home.route) {
-                                                popUpTo(navController.graph.startDestinationId) {
-                                                    saveState = true
+                                            if (!bottomBarState.second) {
+                                                navController.navigate(NavRoutes.Home.route) {
+                                                    popUpTo(navController.graph.startDestinationId) {
+                                                        saveState = true
+                                                    }
+                                                    launchSingleTop = true
+                                                    restoreState = true
                                                 }
-                                                launchSingleTop = true
-                                                restoreState = true
                                             }
                                         },
                                         icon = {
@@ -236,15 +239,17 @@ class MainActivity : ComponentActivity() {
                                         unselectedContentColor = MaterialTheme.colorScheme.subTitle
                                     )
                                     BottomNavigationItem(
-                                        selected = backStackEntryState?.destination?.route == NavRoutes.Bookmark.route,
+                                        selected = bottomBarState.third,
                                         enabled = true,
                                         onClick = {
-                                            navController.navigate(NavRoutes.Bookmark.route) {
-                                                popUpTo(navController.graph.startDestinationId) {
-                                                    saveState = true
+                                            if (!bottomBarState.third) {
+                                                navController.navigate(NavRoutes.Bookmark.route) {
+                                                    popUpTo(navController.graph.startDestinationId) {
+                                                        saveState = true
+                                                    }
+                                                    launchSingleTop = true
+                                                    restoreState = true
                                                 }
-                                                launchSingleTop = true
-                                                restoreState = true
                                             }
                                         },
                                         icon = {
