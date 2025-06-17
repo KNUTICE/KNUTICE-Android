@@ -2,6 +2,7 @@ package com.doyoonkim.knutice.di
 
 import android.app.Application
 import com.doyoonkim.bookmark.di.BookmarkModule
+import com.doyoonkim.common.di.CommonModule
 import com.doyoonkim.data.di.DataModule
 import com.doyoonkim.domain.di.DomainModule
 import com.doyoonkim.knutice.MainActivity
@@ -17,6 +18,7 @@ import javax.inject.Singleton
 @Component(
     modules = [
         AppModule::class,
+        CommonModule::class,
         DataModule::class,
         DomainModule::class,
         NotificationModule::class,
