@@ -12,8 +12,10 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.BitmapCompat
 import androidx.core.net.toUri
 import com.doyoonkim.common.R
+import com.doyoonkim.domain.ImageRepository
 import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.google.firebase.messaging.RemoteMessage
 import javax.inject.Inject
@@ -22,6 +24,7 @@ import kotlin.random.Random
 
 class PushNotificationHandler @Inject constructor(
     private val validateDeviceToken: ValidateDeviceToken,
+    private val imageRepository: ImageRepository,
     private val context: Context
 ) {
     private val TAG = "PushNotificationHandler"
@@ -74,7 +77,10 @@ class PushNotificationHandler @Inject constructor(
             setSmallIcon(R.mipmap.ic_launcher)
             setLargeIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
             setContentTitle(context.getString(R.string.new_notice))
-            setContentText(this@toPushNotification.notification?.body ?: "No message body.")
+            setContentText(this@toPushNotification.data["contentTitle"] ?: "No message body.")
+            setStyle(NotificationCompat.BigPictureStyle()
+
+            )
             setContentIntent(pendingIntent)
             setPriority(NotificationCompat.PRIORITY_DEFAULT)
             setAutoCancel(true)

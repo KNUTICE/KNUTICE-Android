@@ -23,7 +23,6 @@ class PushNotificationService : FirebaseMessagingService() {
         Log.d(TAG, "Called")
     }
 
-
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         // POST request to send FCM Token to the Server.

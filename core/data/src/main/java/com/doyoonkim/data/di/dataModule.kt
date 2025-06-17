@@ -4,12 +4,15 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.data.repository.ImageRepositoryImpl
 import com.doyoonkim.data.repository.LocalRepositoryImpl
 import com.doyoonkim.data.repository.RemoteRepositoryImpl
 import com.doyoonkim.data.room.LocalDatabase
 import com.doyoonkim.data.room.MainDatabaseDao
+import com.doyoonkim.domain.ImageRepository
 import com.doyoonkim.domain.LocalRepository
 import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.network.ImageRemoteSource
 import com.doyoonkim.network.KnuticeRemoteSource
 import dagger.Module
 import dagger.Provides
@@ -54,6 +57,13 @@ object DataModule {
         remoteSource: KnuticeRemoteSource
     ): RemoteRepository {
         return RemoteRepositoryImpl(remoteSource)
+    }
+
+    @Provides
+    fun providesImageRepository(
+        imageRemoteSource: ImageRemoteSource
+    ): ImageRepository {
+        return ImageRepositoryImpl(imageRemoteSource)
     }
 
 }

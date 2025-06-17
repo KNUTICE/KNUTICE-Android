@@ -27,7 +27,9 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         BookmarkListScreen(
             modifier = Modifier.padding(5.dp),
             viewModel = viewModel<BookmarkListViewModel>(factory = viewModelFactory),
-            onBookmarkSelected = { navController.navigate(it) },
+            onBookmarkSelected = {
+                navController.navigate("bookmark/${it.noticeId}/${it.noticeTitle}/${it.noticeInfo}")
+            },
             onBackPressed = { navController.popBackStack() }
         )
     }
