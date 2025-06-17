@@ -14,18 +14,18 @@ import javax.inject.Inject
 class ImageRepositoryImpl @Inject constructor(
     private val remoteSource: ImageRemoteSource
 ) : ImageRepository {
-    override fun getImageByteArrayFromUrl(url: String): Flow<ByteArray?> = flow {
+    override suspend fun getImageByteArrayFromUrl(url: String): ByteArray? {
         remoteSource.getByteArrayFromImageUrl(url)
             .fold(
                 onSuccess = {
-                    emit(it)
+                    return it
                 },
                 onFailure = {
                     Log.d(
                         "ImageRepositoryImpl",
-                        "Unable to get ByteArray\nREASON: ${it.stackTrace}"
+                        "Unable to get ByteArray from the given url\nREASON: ${it.stackTrace}"
                     )
-                    emit(null)
+                    return null
                 }
             )
     }

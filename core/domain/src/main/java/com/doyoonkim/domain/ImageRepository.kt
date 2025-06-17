@@ -7,5 +7,5 @@ import kotlinx.coroutines.flow.Flow
  * Created 6/17/25 at 12:40 AM
  */
 interface ImageRepository {
-    fun getImageByteArrayFromUrl(url: String): Flow<ByteArray?>
+    suspend fun getImageByteArrayFromUrl(url: String): ByteArray?
 }
