@@ -6,7 +6,9 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Paint.Align
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,11 +22,13 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,6 +40,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.common.R
+import com.doyoonkim.common.theme.buttonPurple
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.LabeledToggleSwitch
@@ -68,10 +73,9 @@ fun NotificationPreferencesScreen(
     }
 
     Column(
-        modifier = modifier
-            .systemBarsPadding(),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             modifier = Modifier.fillMaxWidth().wrapContentHeight(),
@@ -88,8 +92,7 @@ fun NotificationPreferencesScreen(
         )
 
         Column(
-            modifier = Modifier.fillMaxWidth()
-                .wrapContentSize()
+            modifier = Modifier.wrapContentHeight()
                 .padding(top = 15.dp, bottom = 15.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
@@ -122,6 +125,10 @@ fun NotificationPreferencesScreen(
 
                 Switch(
                     checked = uiStatus.isMainNotificationPermissionGranted,
+                    colors = SwitchDefaults.colors().copy(
+                        checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                        checkedThumbColor = Color.White
+                    ),
                     onCheckedChange = {
                         val settingIntent = Intent(
                             "android.settings.APP_NOTIFICATION_SETTINGS"

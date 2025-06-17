@@ -16,8 +16,13 @@ import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -147,6 +152,7 @@ fun NoticeDetailScreen(
             if (noticeInfo.third) {
                 FloatingActionButton(
                     modifier = Modifier.wrapContentSize()
+                        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
                         .padding(end = 10.dp, bottom = 30.dp)
                         .align(Alignment.BottomEnd),
                     onClick = {

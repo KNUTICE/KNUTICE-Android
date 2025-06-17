@@ -8,18 +8,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,6 +43,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.common.R
+import com.doyoonkim.common.theme.buttonContainer
+import com.doyoonkim.common.theme.buttonPurple
 import com.doyoonkim.common.theme.containerBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.textPurple
@@ -60,8 +67,8 @@ fun CustomerServiceScreen(
     }
 
     Box(
-        modifier = modifier
-            .windowInsetsPadding(WindowInsets.systemBars)
+        modifier = modifier.fillMaxSize()
+            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
     ) {
         Column(
             verticalArrangement = Arrangement.Top,
@@ -120,9 +127,17 @@ fun CustomerServiceScreen(
             }
 
             Button(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(start = 3.dp, end = 3.dp)
+                ,
                 enabled = !uiState.isSubmissionCompleted && uiState.exceedMinCharacters,
                 shape = RoundedCornerShape(10.dp),
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = MaterialTheme.colorScheme.buttonPurple,
+                    contentColor = Color.White,
+                ),
                 onClick = { viewModel.submitUserReport(versionInfo) }
             ) {
                 Text(

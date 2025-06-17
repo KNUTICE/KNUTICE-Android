@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +22,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -29,6 +33,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -58,6 +63,7 @@ import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.common.ui.DateTimePicker
 import com.doyoonkim.common.R
+import com.doyoonkim.common.theme.buttonPurple
 import com.doyoonkim.common.theme.containerBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
@@ -102,6 +108,7 @@ fun EditBookmarkScreen(
 
     Column(
         modifier = modifier.fillMaxSize()
+            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
     ) {
         NotificationPreviewCard(
             modifier = Modifier.padding(5.dp),
@@ -242,6 +249,10 @@ fun EditBookmarkScreen(
                 modifier = Modifier.wrapContentHeight()
                     .weight(1f),
                 enabled = true,
+                colors = ButtonDefaults.buttonColors().copy(
+                    containerColor = MaterialTheme.colorScheme.buttonPurple,
+                    contentColor = Color.White,
+                ),
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
                     viewModel.submitBookmark()
@@ -260,10 +271,14 @@ fun EditBookmarkScreen(
             }
 
             if (!uiState.requireCreation) {
-                OutlinedButton(
+                Button(
                     modifier = Modifier.wrapContentHeight().weight(1f),
                     enabled = true,
                     shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors().copy(
+                        containerColor = MaterialTheme.colorScheme.subTitle,
+                        contentColor = Color.White
+                    ),
                     onClick = {
                         viewModel.removeBookmark()
 //                        onSaveClicked(null)
