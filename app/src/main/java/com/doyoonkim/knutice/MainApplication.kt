@@ -4,16 +4,38 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import com.doyoonkim.knutice.fcm.PushNotificationHandler
-import dagger.hilt.android.HiltAndroidApp
+import com.doyoonkim.common.di.AppInjector
+import com.doyoonkim.common.di.AppInjectorProvider
+import com.doyoonkim.common.R
+import com.doyoonkim.knutice.di.AppComponent
+import com.doyoonkim.knutice.di.DaggerAppComponent
+import com.doyoonkim.notification.fcm.PushNotificationService
+import com.doyoonkim.notification.fcm.TokenHandler
 import javax.inject.Inject
 
-@HiltAndroidApp
-class MainApplication() : Application() {
-    @Inject lateinit var notificationHandler: PushNotificationHandler
+class MainApplication() : Application(), AppInjectorProvider {
+
+    val appComponent: AppComponent by lazy {
+        DaggerAppComponent.factory().create(this)
+    }
+
+    override val appInjector: AppInjector = object : AppInjector {
+        override fun inject(target: Any) {
+            when(target) {
+                is PushNotificationService -> appComponent.inject(target)
+                else -> error("Unsupported Target $target")
+            }
+        }
+
+    }
+
+    @Inject lateinit var tokenHandler: TokenHandler
 
     override fun onCreate() {
         super.onCreate()
+        // Application-Level injection
+        appComponent.inject(this)
+
         // Create channel group
         (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).run {
             createNotificationChannel(
@@ -22,7 +44,7 @@ class MainApplication() : Application() {
                 getString(R.string.inapp_notification_channel_description)
             )
         }
-        notificationHandler.requestCurrentToken()
+        tokenHandler.handleCurrentTokenRequest()
     }
 
     override fun onTerminate() {

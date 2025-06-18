@@ -19,5 +19,15 @@ dependencyResolutionManagement {
     }
 }
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 rootProject.name = "KNUTICE"
 include(":app")
+include(":core:network")
+include(":core:data")
+include(":feature:main")
+include(":feature:bookmark")
+include(":common")
+include(":core:notification")
+include(":core:domain")
+include(":core:model")
