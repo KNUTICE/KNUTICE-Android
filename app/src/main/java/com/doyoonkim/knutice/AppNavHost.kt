@@ -17,7 +17,8 @@ fun AppNavHost(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues,
     navController: NavHostController,
-    viewModelFactory: ViewModelProvider.Factory
+    viewModelFactory: ViewModelProvider.Factory,
+    onExit: () -> Unit = { /* ON EXIT HANDLING */ }
 ) {
     NavHost(
         modifier = modifier.padding(
@@ -38,7 +39,8 @@ fun AppNavHost(
             },
             onBookmarkServiceRequested = {
                 navController.navigate("bookmark/${it.noticeId}/${it.noticeTitle}/${it.noticeInfo}")
-            }
+            },
+            onExit = onExit
         )
 
         bookmarkServiceGraph(
@@ -47,7 +49,8 @@ fun AppNavHost(
             contentPadding = contentPadding,
             onNoticeDetailRequested = { target ->
                 navController.navigate("noticeDetail/${target.nttId}/${Uri.encode(target.contentUrl)}/${target.isFabVisible}")
-            }
+            },
+            onExit = onExit
         )
     }
 }

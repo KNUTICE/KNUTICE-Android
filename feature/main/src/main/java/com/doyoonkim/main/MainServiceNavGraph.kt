@@ -38,7 +38,8 @@ fun NavGraphBuilder.mainServiceNavGraph(
     viewModelFactory: ViewModelProvider.Factory,
     contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
-    onBookmarkServiceRequested: (BookmarkInfo) -> Unit
+    onBookmarkServiceRequested: (BookmarkInfo) -> Unit,
+    onExit: () -> Unit = {  }
 ) {
     // ViewModels will be injected via ViewModelFactory
     composable(NavRoutes.Home.route) {
@@ -46,7 +47,9 @@ fun NavGraphBuilder.mainServiceNavGraph(
             modifier = Modifier.padding(5.dp),
             viewModel = viewModel<HomeViewModel>(factory = viewModelFactory),
             bottomPadding = contentPadding.calculateBottomPadding(),
-            onGoBackAction = { navController.popBackStack() },
+            onGoBackAction = {
+                navController.popBackStack().also { if (!it) onExit() }
+            },
             onMoreNoticeRequested = { dest ->
                 navController.run {
                     when(dest) {
