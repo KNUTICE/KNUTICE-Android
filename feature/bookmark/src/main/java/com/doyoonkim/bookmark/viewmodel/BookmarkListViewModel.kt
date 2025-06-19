@@ -7,6 +7,7 @@ import com.doyoonkim.domain.usecases.FetchAllBookmarks
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -23,8 +24,8 @@ class BookmarkListViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     fun getAllBookmarks() {
-        updateFetchingStatus(false)
         viewModelScope.launch {
+            updateFetchingStatus(false).also { delay(200L) }
             fetchAllBookmarks()
                 .flowOn(Dispatchers.IO)
                 .collectLatest { result ->
