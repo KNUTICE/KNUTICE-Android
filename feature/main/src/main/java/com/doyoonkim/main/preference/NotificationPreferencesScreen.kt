@@ -7,6 +7,7 @@ import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Paint.Align
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -72,122 +74,133 @@ fun NotificationPreferencesScreen(
         )
     }
 
-    Column(
-        modifier = modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-            text = stringResource(R.string.pref_notification_title),
-            color = MaterialTheme.colorScheme.title,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Start
-        )
-
-        HorizontalDivider(
-            Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.subTitle
-        )
-
         Column(
-            modifier = Modifier.wrapContentHeight()
-                .padding(top = 15.dp, bottom = 15.dp),
+            modifier = modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(
-                    modifier = Modifier.wrapContentHeight().weight(5f),
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
-                ) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                        text = stringResource(R.string.enable_notification_title),
-                        color = MaterialTheme.colorScheme.title,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start
-                    )
+            Text(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                text = stringResource(R.string.pref_notification_title),
+                color = MaterialTheme.colorScheme.title,
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Start
+            )
 
-                    Text(
-                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                        text = stringResource(R.string.enable_service_notification_sub),
-                        color = MaterialTheme.colorScheme.subTitle,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 12.sp,
-                        textAlign = TextAlign.Start
+            HorizontalDivider(
+                Modifier.fillMaxWidth(),
+                color = MaterialTheme.colorScheme.subTitle
+            )
+
+            Column(
+                modifier = Modifier.wrapContentHeight()
+                    .padding(top = 15.dp, bottom = 15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Top
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(
+                        modifier = Modifier.wrapContentHeight().weight(5f),
+                        verticalArrangement = Arrangement.spacedBy(5.dp)
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                            text = stringResource(R.string.enable_notification_title),
+                            color = MaterialTheme.colorScheme.title,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 18.sp,
+                            textAlign = TextAlign.Start
+                        )
+
+                        Text(
+                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                            text = stringResource(R.string.enable_service_notification_sub),
+                            color = MaterialTheme.colorScheme.subTitle,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+
+                    Switch(
+                        checked = uiStatus.isMainNotificationPermissionGranted,
+                        colors = SwitchDefaults.colors().copy(
+                            checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                            checkedThumbColor = Color.White
+                        ),
+                        onCheckedChange = {
+                            val settingIntent = Intent(
+                                "android.settings.APP_NOTIFICATION_SETTINGS"
+                            ).apply {
+                                this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                this.putExtra(
+                                    "android.provider.extra.APP_PACKAGE",
+                                    context.packageName
+                                )
+                            }
+                            context.startActivity(settingIntent)
+                        },
+                        enabled = true
                     )
                 }
+            }
 
-                Switch(
-                    checked = uiStatus.isMainNotificationPermissionGranted,
-                    colors = SwitchDefaults.colors().copy(
-                        checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
-                        checkedThumbColor = Color.White
-                    ),
-                    onCheckedChange = {
-                        val settingIntent = Intent(
-                            "android.settings.APP_NOTIFICATION_SETTINGS"
-                        ).apply {
-                            this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            this.putExtra(
-                                "android.provider.extra.APP_PACKAGE",
-                                context.packageName
-                            )
-                        }
-                        context.startActivity(settingIntent)
-                    },
-                    enabled = true
-                )
+            LabeledToggleSwitch(
+                modifier = Modifier.padding(start = 10.dp),
+                titleText = stringResource(R.string.general_notificaiton_channel_name),
+                subTitleText = stringResource(R.string.general_notification_channel_description),
+                isChecked = uiStatus.isEachChannelAllowed[0],
+                isEnabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+            ) {
+                viewModel.updateChannelPreferenceState(0, it)
+            }
+
+            LabeledToggleSwitch(
+                modifier = Modifier.padding(start = 10.dp),
+                titleText = stringResource(R.string.academic_notification_channel_name),
+                subTitleText = stringResource(R.string.academic_notification_channel_description),
+                isChecked = uiStatus.isEachChannelAllowed[1],
+                isEnabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+            ) {
+                viewModel.updateChannelPreferenceState(1, it)
+            }
+
+            LabeledToggleSwitch(
+                modifier = Modifier.padding(start = 10.dp),
+                titleText = stringResource(R.string.scholarship_notification_channel_name),
+                subTitleText = stringResource(R.string.scholarship_notification_channel_description),
+                isChecked = uiStatus.isEachChannelAllowed[2],
+                isEnabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+            ) {
+                viewModel.updateChannelPreferenceState(2, it)
+            }
+
+            LabeledToggleSwitch(
+                modifier = Modifier.padding(start = 10.dp),
+                titleText = stringResource(R.string.event_notification_channel_name),
+                subTitleText = stringResource(R.string.event_notification_channel_description),
+                isChecked = uiStatus.isEachChannelAllowed[3],
+                isEnabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+            ) {
+                viewModel.updateChannelPreferenceState(3, it)
             }
         }
 
-        LabeledToggleSwitch(
-            modifier = Modifier.padding(start = 10.dp),
-            titleText = stringResource(R.string.general_notificaiton_channel_name),
-            subTitleText = stringResource(R.string.general_notification_channel_description),
-            isChecked = uiStatus.isEachChannelAllowed[0],
-            isEnabled = uiStatus.isMainNotificationPermissionGranted
-        ) {
-            viewModel.updateChannelPreferenceState(0, it)
+        if (!uiStatus.isSyncCompleted) {
+            Box(
+                modifier = Modifier.matchParentSize()
+                    .background(Color.Gray.copy(alpha = 0.5f))
+            ) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
-
-        LabeledToggleSwitch(
-            modifier = Modifier.padding(start = 10.dp),
-            titleText = stringResource(R.string.academic_notification_channel_name),
-            subTitleText = stringResource(R.string.academic_notification_channel_description),
-            isChecked = uiStatus.isEachChannelAllowed[1],
-            isEnabled = uiStatus.isMainNotificationPermissionGranted
-        ) {
-            viewModel.updateChannelPreferenceState(1, it)
-        }
-
-        LabeledToggleSwitch(
-            modifier = Modifier.padding(start = 10.dp),
-            titleText = stringResource(R.string.scholarship_notification_channel_name),
-            subTitleText = stringResource(R.string.scholarship_notification_channel_description),
-            isChecked = uiStatus.isEachChannelAllowed[2],
-            isEnabled = uiStatus.isMainNotificationPermissionGranted
-        ) {
-            viewModel.updateChannelPreferenceState(2, it)
-        }
-
-        LabeledToggleSwitch(
-            modifier = Modifier.padding(start = 10.dp),
-            titleText = stringResource(R.string.event_notification_channel_name),
-            subTitleText = stringResource(R.string.event_notification_channel_description),
-            isChecked = uiStatus.isEachChannelAllowed[3],
-            isEnabled = uiStatus.isMainNotificationPermissionGranted
-        ) {
-            viewModel.updateChannelPreferenceState(3, it)
-        }
-
     }
-
 }
 
 fun isMainNotificationPermissionGranted(
