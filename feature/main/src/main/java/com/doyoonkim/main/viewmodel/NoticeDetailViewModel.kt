@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.doyoonkim.domain.usecases.FetchNoticeByIdImpl
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -41,6 +42,15 @@ class NoticeDetailViewModel @Inject constructor(
                     loadingStatus = (newStatus / 100).toFloat()
                 )
             }
+
+            if (newStatus == 100) {
+                delay(1000L)
+                _uiState.update {
+                    it.copy(
+                        isLoadingCompleted = true
+                    )
+                }
+            }
         }
     }
 
@@ -49,5 +59,6 @@ class NoticeDetailViewModel @Inject constructor(
 data class NoticeDetailState(
     val receivedNotice: NoticeVO? = null,
     val isReceived: Boolean = false,
-    val loadingStatus: Float = 0.0f
+    val loadingStatus: Float = 0.0f,
+    val isLoadingCompleted: Boolean = false
 )

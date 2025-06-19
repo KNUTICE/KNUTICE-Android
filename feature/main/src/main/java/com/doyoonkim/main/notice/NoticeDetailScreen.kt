@@ -15,19 +15,24 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,26 +67,39 @@ fun NoticeDetailScreen(
         if (!uiState.isReceived) viewModel.getTargetNoticeById(noticeInfo.first)
     }
 
-    if (noticeInfo.second.isNotBlank()) {
-        Box(
-            modifier = modifier
-                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
-        ) {
-            AndroidView(
-                modifier = Modifier.fillMaxSize(),
-                factory = { context ->
-                    WebView(context).apply {
-                        //Enable Javascript
-                        // Security Alert: XSS Vulnerability
-                        settings.javaScriptEnabled = true
-                        settings.defaultTextEncodingName = "UTF-8"
+    Column(
+        modifier = modifier
+            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom)),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (noticeInfo.second.isNotBlank()) {
+            if (!uiState.isLoadingCompleted) {
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    progress = {
+                        uiState.loadingStatus
+                    }
+                )
+            }
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                AndroidView(
+                    modifier = Modifier.fillMaxSize(),
+                    factory = { context ->
+                        WebView(context).apply {
+                            //Enable Javascript
+                            // Security Alert: XSS Vulnerability
+                            settings.javaScriptEnabled = true
+                            settings.defaultTextEncodingName = "UTF-8"
 
-                        webViewClient = object : WebViewClient() {
-                            override fun onPageFinished(view: WebView?, url: String?) {
-                                val theme = context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)
+                            webViewClient = object : WebViewClient() {
+                                override fun onPageFinished(view: WebView?, url: String?) {
+                                    val theme = context.resources.configuration.uiMode.and(Configuration.UI_MODE_NIGHT_MASK)
 
-                                evaluateJavascript(
-                                    """
+                                    evaluateJavascript(
+                                        """
                                 let div_accessibility = document.getElementById('accessibility');
                                 let div_header = document.getElementById('header');
                                 let div_point = document.getElementById('point');
@@ -102,74 +120,75 @@ fun NoticeDetailScreen(
                                 p_board_butt[0].remove();
                                 
                             """.trimIndent(),
-                                ) { result ->
-                                    Log.d("Android Web View Client", "RESULT: $result")
-                                    visibility = View.VISIBLE
+                                    ) { result ->
+                                        Log.d("Android Web View Client", "RESULT: $result")
+                                        visibility = View.VISIBLE
+                                    }
+                                    super.onPageFinished(view, url)
                                 }
-                                super.onPageFinished(view, url)
                             }
-                        }
 
-                        // For Progress Indicator
-                        webChromeClient = object: WebChromeClient() {
-                            override fun onProgressChanged(view: WebView?, newProgress: Int) {
-                                // Update progress status
-                                viewModel.updateLoadingStatus(newProgress)
-                                super.onProgressChanged(view, newProgress)
+                            // For Progress Indicator
+                            webChromeClient = object: WebChromeClient() {
+                                override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                                    // Update progress status
+                                    viewModel.updateLoadingStatus(newProgress)
+                                    super.onProgressChanged(view, newProgress)
+                                }
                             }
-                        }
 
-                        setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
-                            val request = DownloadManager.Request(url.toUri())
-                            val filename = URLUtil.guessFileName(url, contentDisposition, mimetype).also { Log.d("DownloadManager", "Filename: $it") }
-                            // save session data before downloading the target file.
-                            val cookies = CookieManager.getInstance().getCookie(url)
+                            setDownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
+                                val request = DownloadManager.Request(url.toUri())
+                                val filename = URLUtil.guessFileName(url, contentDisposition, mimetype).also { Log.d("DownloadManager", "Filename: $it") }
+                                // save session data before downloading the target file.
+                                val cookies = CookieManager.getInstance().getCookie(url)
 
-                            request.apply {
-                                setMimeType(mimetype)
-                                addRequestHeader("cookie", cookies)
-                                addRequestHeader("User-Agent", userAgent)
-                                setDescription("Downloading File")
-                                setTitle(filename)
+                                request.apply {
+                                    setMimeType(mimetype)
+                                    addRequestHeader("cookie", cookies)
+                                    addRequestHeader("User-Agent", userAgent)
+                                    setDescription("Downloading File")
+                                    setTitle(filename)
 //                            allowScanningByMediaScanner()     Deprecated.
-                                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                                    setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                                    setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                                }
+                                val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+                                downloadManager.enqueue(request).also {
+                                    Toast.makeText(context, R.string.text_download, Toast.LENGTH_LONG).show()
+                                    // Guide user to the File application
+                                    context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS))
+                                }
                             }
-                            val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-                            downloadManager.enqueue(request).also {
-                                Toast.makeText(context, R.string.text_download, Toast.LENGTH_LONG).show()
-                                // Guide user to the File application
-                                context.startActivity(Intent(DownloadManager.ACTION_VIEW_DOWNLOADS))
-                            }
+
+                            visibility = View.INVISIBLE
+                            settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                            loadUrl(noticeInfo.second)
                         }
-
-                        visibility = View.INVISIBLE
-                        settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                        loadUrl(noticeInfo.second)
                     }
-                }
-            )
+                )
 
-            if (noticeInfo.third) {
-                FloatingActionButton(
-                    modifier = Modifier.wrapContentSize()
-                        .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
-                        .padding(end = 10.dp, bottom = 30.dp)
-                        .align(Alignment.BottomEnd),
-                    onClick = {
-                        if (uiState.isReceived) uiState.receivedNotice?.let(onBookmarkCreate)
-                    },
-                    containerColor = if (uiState.isReceived) {
-                        MaterialTheme.colorScheme.textPurple
-                    } else {
-                        MaterialTheme.colorScheme.subTitle
+                if (noticeInfo.third) {
+                    FloatingActionButton(
+                        modifier = Modifier.wrapContentSize()
+                            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
+                            .padding(end = 10.dp, bottom = 30.dp)
+                            .align(Alignment.BottomEnd),
+                        onClick = {
+                            if (uiState.isReceived) uiState.receivedNotice?.let(onBookmarkCreate)
+                        },
+                        containerColor = if (uiState.isReceived) {
+                            MaterialTheme.colorScheme.textPurple
+                        } else {
+                            MaterialTheme.colorScheme.subTitle
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add to bookmark",
+                            tint = Color.White
+                        )
                     }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add to bookmark",
-                        tint = Color.White
-                    )
                 }
             }
         }
