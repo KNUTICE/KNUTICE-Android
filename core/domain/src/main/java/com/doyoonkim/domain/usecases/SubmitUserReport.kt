@@ -3,6 +3,7 @@ package com.doyoonkim.domain.usecases
 import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.model.requestBody.UserReportBody
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
 
 interface SubmitUserReport {
@@ -15,5 +16,8 @@ class SubmitUserReportImpl @Inject constructor(
 
     override operator fun invoke(body: UserReportBody) =
         remoteRepository.requestUserReportSubmission(body)
+            .catch {
+                /* Internal Error. Consume values, and never emit values. */
+            }
 
 }

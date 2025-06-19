@@ -4,6 +4,7 @@ import com.doyoonkim.domain.LocalRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
@@ -24,6 +25,8 @@ class FetchAllBookmarksImpl @Inject constructor(
                     nullable?.let { vo-> emit(Pair(bookmarkVO, vo)) }
                 })
             }
+        }.catch {
+            /* Internal Error. Consume values, and never emit values. */
         }
 
 }
