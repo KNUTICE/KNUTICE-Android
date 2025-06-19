@@ -3,6 +3,7 @@ package com.doyoonkim.domain.usecases
 import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import javax.inject.Inject
 
 
@@ -16,4 +17,8 @@ class ValidateDeviceTokenImpl @Inject constructor(
 
     override operator fun invoke(requestBody: DeviceTokenBody) =
         remoteRepository.requestTokenValidation(requestBody)
+            .catch {
+                /* Internal Error. Consume values, and never emit values. */
+                emit(false)
+            }
 }
