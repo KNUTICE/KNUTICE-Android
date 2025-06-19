@@ -22,7 +22,8 @@ fun NavGraphBuilder.bookmarkServiceGraph(
     navController: NavController,
     viewModelFactory: ViewModelProvider.Factory,
     contentPadding: PaddingValues,
-    onNoticeDetailRequested: (NoticeDetail) -> Unit
+    onNoticeDetailRequested: (NoticeDetail) -> Unit,
+    onExit: () -> Unit = {  }
 ) {
 
     composable(NavRoutes.Bookmark.route) {
@@ -33,7 +34,9 @@ fun NavGraphBuilder.bookmarkServiceGraph(
             onBookmarkSelected = {
                 navController.navigate("bookmark/${it.noticeId}/${it.noticeTitle}/${it.noticeInfo}")
             },
-            onBackPressed = { navController.popBackStack() }
+            onBackPressed = {
+                navController.popBackStack().also { if (!it) onExit() }
+            }
         )
     }
 

@@ -10,7 +10,9 @@ import com.doyoonkim.network.KnuticeRemoteSource
 import com.doyoonkim.network.model.DeviceTokenRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import model.NetworkResult
 import javax.inject.Inject
 
@@ -30,7 +32,7 @@ class RemoteRepositoryImpl @Inject constructor(
                 emit(null)
             }
         )
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun queryNoticesPerPage(category: NoticeCategory, lastNttId: Int?) = flow {
         remoteSource.getNoticesPerPage(category, lastNttId).fold(

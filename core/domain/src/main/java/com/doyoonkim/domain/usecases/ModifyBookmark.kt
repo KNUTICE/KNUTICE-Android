@@ -5,6 +5,7 @@ import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
@@ -26,6 +27,8 @@ class ModifyBookmarkImpl @Inject constructor(
     override fun query(nttId: Int): Flow<BookmarkVO> =
         localRepository.queryBookmarkByNttId(nttId).transform { result ->
             result?.let { emit(it) }
+        }.catch {
+            /* Internal Error. Consume values, and never emit values. */
         }
 
     // TODO: Need to be revised later. (Is NoticeVO really required)
@@ -35,9 +38,14 @@ class ModifyBookmarkImpl @Inject constructor(
             remoteRepository.queryNoticeById(bookmark.targetNoticeNttId).transform { result ->
                 if (result != null) emitAll(localRepository.createBookmark(bookmark, result))
                 else emit(false)
+            }.catch {
+                /* Internal Error. Consume values, and never emit values. */
             }
         } else {
             localRepository.updateBookmark(bookmark)
+                .catch {
+                    /* Internal Error. Consume values, and never emit values. */
+                }
         }
     }
 
@@ -45,6 +53,8 @@ class ModifyBookmarkImpl @Inject constructor(
         localRepository.requestBookmarkDeletion(bookmark).transform { result ->
             if (result) emitAll(localRepository.requestNoticeDeletion(notice))
             else emit(false)
+        }.catch {
+            /* Internal Error. Consume values, and never emit values. */
         }
 
 }

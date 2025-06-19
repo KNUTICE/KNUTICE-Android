@@ -1,5 +1,6 @@
 package com.doyoonkim.main.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatusImpl
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 class NotificationPreferencesViewModel @Inject constructor(
@@ -43,7 +45,7 @@ class NotificationPreferencesViewModel @Inject constructor(
     fun updateChannelPreferenceState(index: Int, state: Boolean) {
         _uiState.update {
             it.copy(
-                isEachChannelAllowed = it.isEachChannelAllowed.updateValueByIndex(index, state)
+                isSyncCompleted = false
             )
         }
 
@@ -59,8 +61,16 @@ class NotificationPreferencesViewModel @Inject constructor(
                     if (!result) {
                         _uiState.update {
                             it.copy(
-                                isEachChannelAllowed = it.isEachChannelAllowed.updateValueByIndex(index, !state),
+                                isSyncCompleted = true,
                                 isError = true
+                            )
+                        }
+                    } else {
+                        _uiState.update {
+                            it.copy(
+                                isEachChannelAllowed = it.isEachChannelAllowed.updateValueByIndex(index, state),
+                                isSyncCompleted = true,
+                                isError = false
                             )
                         }
                     }
@@ -73,20 +83,33 @@ class NotificationPreferencesViewModel @Inject constructor(
 
     fun getTopicSubscriptionStatus() =
         viewModelScope.launch {
-            fetchTopicSubscriptionStatus()
-                .flowOn(Dispatchers.IO)
-                .collectLatest { status ->
-                    _uiState.update {
-                        it.copy(
-                            isEachChannelAllowed = listOf(
-                                status.general,
-                                status.academic,
-                                status.scholarship,
-                                status.event
+            withTimeout(5000L) {
+                fetchTopicSubscriptionStatus()
+                    .flowOn(Dispatchers.IO)
+                    .collectLatest { status ->
+                        _uiState.update {
+                            it.copy(
+                                isEachChannelAllowed = listOf(
+                                    status.general,
+                                    status.academic,
+                                    status.scholarship,
+                                    status.event
+                                ),
+                                isSyncCompleted = true,
+                                isError = false
                             )
-                        )
+                        }
                     }
+            }.runCatching {
+                /* DO NOTHING (SYNC COMPLETED ON TIME. */
+            }.onFailure {
+                _uiState.update {
+                    it.copy(
+                        isSyncCompleted = true,
+                        isError = true
+                    )
                 }
+            }
         }
 
     private fun List<Boolean>.updateValueByIndex(index: Int, value: Boolean) =

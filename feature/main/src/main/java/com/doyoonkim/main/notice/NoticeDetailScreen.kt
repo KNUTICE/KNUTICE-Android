@@ -65,6 +65,7 @@ fun NoticeDetailScreen(
     if (noticeInfo.second.isNotBlank()) {
         Box(
             modifier = modifier
+                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
         ) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),

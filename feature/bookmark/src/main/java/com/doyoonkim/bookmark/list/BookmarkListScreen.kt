@@ -35,6 +35,7 @@ import com.doyoonkim.common.theme.containerBackgroundSolid
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
+import kotlinx.coroutines.delay
 
 @Composable
 fun BookmarkListScreen(

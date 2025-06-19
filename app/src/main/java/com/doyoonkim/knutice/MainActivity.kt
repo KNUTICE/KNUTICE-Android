@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,6 +66,7 @@ import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
+import kotlinx.coroutines.delay
 import javax.inject.Inject
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -121,6 +121,7 @@ class MainActivity : ComponentActivity() {
                 }
 
                 LaunchedEffect(Unit) {
+                    delay(200L)     // Reduce workload on MainThread on its first initialization.
                     // Permission check
                     requestPermissionLauncher.launch(
                         arrayOf(
@@ -216,13 +217,7 @@ class MainActivity : ComponentActivity() {
                                         enabled = true,
                                         onClick = {
                                             if (!bottomBarState.second) {
-                                                navController.navigate(NavRoutes.Home.route) {
-                                                    popUpTo(navController.graph.startDestinationId) {
-                                                        saveState = true
-                                                    }
-                                                    launchSingleTop = true
-                                                    restoreState = true
-                                                }
+                                                navController.navigate(NavRoutes.Home.route)
                                             }
                                         },
                                         icon = {
@@ -243,13 +238,7 @@ class MainActivity : ComponentActivity() {
                                         enabled = true,
                                         onClick = {
                                             if (!bottomBarState.third) {
-                                                navController.navigate(NavRoutes.Bookmark.route) {
-                                                    popUpTo(navController.graph.startDestinationId) {
-                                                        saveState = true
-                                                    }
-                                                    launchSingleTop = true
-                                                    restoreState = true
-                                                }
+                                                navController.navigate(NavRoutes.Bookmark.route)
                                             }
                                         },
                                         icon = {
@@ -276,7 +265,8 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier,
                         contentPadding = contentPadding,
                         navController = navController,
-                        viewModelFactory = viewModelFactory
+                        viewModelFactory = viewModelFactory,
+                        onExit = { activity.finish() }
                     )
 
                     LaunchedEffect(Unit) {

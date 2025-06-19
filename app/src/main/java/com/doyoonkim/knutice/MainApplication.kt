@@ -11,6 +11,7 @@ import com.doyoonkim.knutice.di.AppComponent
 import com.doyoonkim.knutice.di.DaggerAppComponent
 import com.doyoonkim.notification.fcm.PushNotificationService
 import com.doyoonkim.notification.fcm.TokenHandler
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class MainApplication() : Application(), AppInjectorProvider {
