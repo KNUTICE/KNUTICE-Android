@@ -63,4 +63,6 @@
     <string name="text_download">選択したファイルをダウンロード フォルダーにダウンロードします。</string>
     <string name="text_save_successful">確認完了</string>
     <string name="text_save_unsuccessful">確認不可能</string>
+    <string name="text_schedule_alarm_unavailable_title">リマインダーを設定することは出来ません</string>
+    <string name="text_schedule_alarm_unavailable_content">スマホ設定の「アラームとリマインダー」を確認してください</string>
 </resources>

@@ -63,4 +63,6 @@
     <string name="text_download">선택한 파일을 다운로드 폴더에 받고 있어요.</string>
     <string name="text_save_successful">저장이 완료되었어요.</string>
     <string name="text_save_unsuccessful">저장하는 중 문제가 생겼어요.</string>
+    <string name="text_schedule_alarm_unavailable_title">현재 리마인더를 설정할 수 없어요.</string>
+    <string name="text_schedule_alarm_unavailable_content">설정의 알람 및 리마인더 메뉴에서 권한을 확인 해 주세요.</string>
 </resources>

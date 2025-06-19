@@ -1,5 +1,6 @@
 package com.doyoonkim.bookmark.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,13 +11,13 @@ import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.withTimeout
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
@@ -30,6 +31,17 @@ class EditBookmarkViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     private var bookmarkNav: BookmarkInfo? = null
+
+    // Functions should be called during initialization
+    init {
+        // By following normal user interaction, Alarm Permission should be granted at this point.
+        if (!alarmScheduler.canScheduleExactAlarms())
+            _uiState.update {
+                it.copy(
+                    alarmPermissionStatus = false
+                )
+            }
+    }
 
     fun getBookmarkByNoticeId(nttId: Int) =
         viewModelScope.launch {
@@ -125,7 +137,7 @@ class EditBookmarkViewModel @Inject constructor(
         }
     }
 
-    @RequiresPermission("android.permission.SCHEDULE_EXACT_ALARM")
+    @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     fun submitBookmark() =
         viewModelScope.launch {
             // Bookmark creation requires getting Notice Instance.
@@ -169,7 +181,7 @@ class EditBookmarkViewModel @Inject constructor(
                 }
         }
 
-    @RequiresPermission("android.permission.SCHEDULE_EXACT_ALARM")
+    @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     fun removeBookmark() {
         viewModelScope.launch {
             val bookmark = uiState.value.run {
@@ -225,5 +237,6 @@ data class EditBookmarkState(
     val targetNotice: NoticeVO? = null,
     val datePickerVisible: Boolean = false,
     val isSuccessful: Boolean = false,
-    val isCompleted: Boolean = false
+    val isCompleted: Boolean = false,
+    val alarmPermissionStatus: Boolean = true
 )
