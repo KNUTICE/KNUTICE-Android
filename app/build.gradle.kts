@@ -34,7 +34,7 @@ android {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 31
         targetSdk = 34
-        versionCode = 17
+        versionCode = 18
         versionName = "1.4.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
