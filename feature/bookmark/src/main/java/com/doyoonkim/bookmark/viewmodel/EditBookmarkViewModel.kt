@@ -1,5 +1,6 @@
 package com.doyoonkim.bookmark.viewmodel
 
+import android.annotation.SuppressLint
 import androidx.annotation.RequiresPermission
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,12 +11,14 @@ import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 class EditBookmarkViewModel @Inject constructor(
@@ -29,22 +32,43 @@ class EditBookmarkViewModel @Inject constructor(
 
     private var bookmarkNav: BookmarkInfo? = null
 
+    // Functions should be called during initialization
+    init {
+        // By following normal user interaction, Alarm Permission should be granted at this point.
+        if (!alarmScheduler.canScheduleExactAlarms())
+            _uiState.update {
+                it.copy(
+                    alarmPermissionStatus = false
+                )
+            }
+    }
+
     fun getBookmarkByNoticeId(nttId: Int) =
         viewModelScope.launch {
-            modifyBookmark.query(nttId)
-                .flowOn(Dispatchers.IO)
-                .collectLatest { result ->
-                    _uiState.update {
-                        it.copy(
-                            bookmarkId = result.bookmarkId,
-                            isReminderRequested = result.isScheduled,
-                            timeForRemind = result.reminderSchedule,
-                            bookmarkNote = result.bookmarkNote,
-                            requireCreation = false,
-                            bookmarkInstances = result
-                        )
+            withTimeout(3000L) {
+                modifyBookmark.query(nttId)
+                    .flowOn(Dispatchers.IO)
+                    .collectLatest { result ->
+                        _uiState.update {
+                            it.copy(
+                                bookmarkId = result.bookmarkId,
+                                isReminderRequested = result.isScheduled,
+                                timeForRemind = result.reminderSchedule,
+                                bookmarkNote = result.bookmarkNote,
+                                requireCreation = false,
+                                bookmarkInstances = result
+                            )
+                        }
                     }
+            }.runCatching {
+                /* DO NOTHING (PROCESS COMPLETED ON TIME) */
+            }.onFailure {
+                _uiState.update {
+                    it.copy(
+                        requireCreation = true
+                    )
                 }
+            }
         }
 
     fun getNoticeById(nttId: Int) {
@@ -55,15 +79,26 @@ class EditBookmarkViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            fetchNoticeByIdLocal(nttId)
-                .flowOn(Dispatchers.IO)
-                .collectLatest { notice ->
-                    _uiState.update {
-                        it.copy(
-                            targetNotice = notice
-                        )
+            withTimeout(2000L) {
+                fetchNoticeByIdLocal(nttId)
+                    .flowOn(Dispatchers.IO)
+                    .collectLatest { notice ->
+                        _uiState.update {
+                            it.copy(
+                                targetNotice = notice,
+                                requireCreation = false
+                            )
+                        }
                     }
+            }.runCatching {
+                /* DO NOTHING (PROCESS COMPLETED ON TIME) */
+            }.onFailure {
+                _uiState.update {
+                    it.copy(
+                        requireCreation = true
+                    )
                 }
+            }
         }
     }
 
@@ -102,23 +137,23 @@ class EditBookmarkViewModel @Inject constructor(
         }
     }
 
-    @RequiresPermission("android.permission.SCHEDULE_EXACT_ALARM")
+    @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     fun submitBookmark() =
         viewModelScope.launch {
             // Bookmark creation requires getting Notice Instance.
             val bookmark = uiState.value.run {
-                if (this.targetNotice != null) {
-                    // Update
+                if (this.requireCreation) {
+                    // Creation
                     BookmarkVO(
-                        bookmarkId = bookmarkId,
                         targetNoticeNttId = targetNoticeId,
                         isScheduled = isReminderRequested,
                         reminderSchedule = timeForRemind,
                         bookmarkNote = bookmarkNote
                     )
                 } else {
-                    // Creation
+                    // Update
                     BookmarkVO(
+                        bookmarkId = bookmarkId,
                         targetNoticeNttId = targetNoticeId,
                         isScheduled = isReminderRequested,
                         reminderSchedule = timeForRemind,
@@ -146,7 +181,7 @@ class EditBookmarkViewModel @Inject constructor(
                 }
         }
 
-    @RequiresPermission("android.permission.SCHEDULE_EXACT_ALARM")
+    @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     fun removeBookmark() {
         viewModelScope.launch {
             val bookmark = uiState.value.run {
@@ -173,8 +208,8 @@ class EditBookmarkViewModel @Inject constructor(
                         if (result) {
                             // Access AlarmScheduler to set local alarm
                             bookmarkNav?.let {
-                                if (bookmark.isScheduled) alarmScheduler.schedule(bookmark, it)
-                                else alarmScheduler.cancel(bookmark, it)
+                                // Cancel Alarm Anyways
+                                alarmScheduler.cancel(bookmark, it)
                             }
                         }
                         _uiState.update {
@@ -202,5 +237,6 @@ data class EditBookmarkState(
     val targetNotice: NoticeVO? = null,
     val datePickerVisible: Boolean = false,
     val isSuccessful: Boolean = false,
-    val isCompleted: Boolean = false
+    val isCompleted: Boolean = false,
+    val alarmPermissionStatus: Boolean = true
 )

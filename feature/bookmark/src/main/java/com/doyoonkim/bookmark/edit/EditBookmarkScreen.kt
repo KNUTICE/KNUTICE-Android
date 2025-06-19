@@ -155,39 +155,53 @@ fun EditBookmarkScreen(
                 )
 
                 Switch(
-                    checked = uiState.isReminderRequested,
+                    checked = uiState.isReminderRequested && uiState.alarmPermissionStatus,
                     enabled = true,
                     modifier = Modifier.padding(10.dp).weight(1f),
                     onCheckedChange = { viewModel.updateReminderOptions(requested = !uiState.isReminderRequested) }
                 )
             }
+
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 visible = uiState.isReminderRequested,
                 enter = slideInVertically(),
                 exit = slideOutVertically()
             ) {
-                Surface(
-                    modifier = Modifier.wrapContentSize()
-                        .border(
-                            2.dp, MaterialTheme.colorScheme.containerBackground, RoundedCornerShape(10.dp)
-                        )
-                        .background(Color.Transparent),
-                    color = Color.Transparent
-                ) {
+                if (!uiState.alarmPermissionStatus) {
                     Text(
-                        modifier = Modifier.fillMaxWidth().padding(20.dp)
-                            .clickable { viewModel.updateReminderOptions(
-                                isDatePickerVisible = !uiState.datePickerVisible
-                            ) },
-                        text = uiState.timeForRemind.toFormattedDate(
-                            SimpleDateFormat("yyyy/MM/dd a HH:mm", Locale.getDefault())
-                        ),
+                        modifier = Modifier.fillMaxWidth()
+                            .wrapContentHeight(),
+                        text = stringResource(R.string.text_schedule_alarm_unavailable_title)
+                                + "\n"
+                                + stringResource(R.string.text_schedule_alarm_unavailable_content),
                         textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.title
+                        fontSize = 12.sp,
+                        color = Color.Red
                     )
+                } else {
+                    Surface(
+                        modifier = Modifier.wrapContentSize()
+                            .border(
+                                2.dp, MaterialTheme.colorScheme.containerBackground, RoundedCornerShape(10.dp)
+                            )
+                            .background(Color.Transparent),
+                        color = Color.Transparent
+                    ) {
+                        Text(
+                            modifier = Modifier.fillMaxWidth().padding(20.dp)
+                                .clickable { viewModel.updateReminderOptions(
+                                    isDatePickerVisible = !uiState.datePickerVisible
+                                ) },
+                            text = uiState.timeForRemind.toFormattedDate(
+                                SimpleDateFormat("yyyy/MM/dd a HH:mm", Locale.getDefault())
+                            ),
+                            textAlign = TextAlign.Start,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.title
+                        )
+                    }
                 }
             }
         }

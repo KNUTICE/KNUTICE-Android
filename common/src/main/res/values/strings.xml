@@ -73,4 +73,6 @@
     <string name="text_download">Downloading the selected file to Downloads...</string>
     <string name="text_save_successful">Successfully saved.</string>
     <string name="text_save_unsuccessful">Unable to save.</string>
+    <string name="text_schedule_alarm_unavailable_title">Reminder is not available at this time.</string>
+    <string name="text_schedule_alarm_unavailable_content">Please check permission status under Alarm and Reminder at Settings</string>
 </resources>

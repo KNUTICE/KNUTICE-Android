@@ -10,9 +10,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -73,10 +70,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-
-    private val notificationAlarmScheduler by lazy {
-        NotificationAlarmScheduler(this)
-    }
+    @Inject lateinit var notificationAlarmScheduler: NotificationAlarmScheduler
 
     // NavController
     private lateinit var navController: NavHostController
@@ -276,14 +270,10 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                AnimatedVisibility(
-                    visible = showPermissionRationale,
-                    enter = scaleIn(),
-                    exit = scaleOut()
-                ) {
+                if (showPermissionRationale) {
                     Box(
                         modifier = Modifier.fillMaxSize()
-                            .clickable { showPermissionRationale = false }
+                            .clickable { /* CLICK TO DISMISS NOT ALLOWED */ }
                     ) {
                         PermissionRationaleComposable(
                             modifier = Modifier.align(Alignment.Center).padding(start = 20.dp, end = 20.dp),

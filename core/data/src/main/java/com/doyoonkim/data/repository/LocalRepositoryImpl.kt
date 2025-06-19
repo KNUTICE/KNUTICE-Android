@@ -115,7 +115,13 @@ class LocalRepositoryImpl @Inject constructor(
             imageUrl = this.imageUrl ?: "",
             departName = this.departName,
             timestamp = this.timestamp
-        )
+        ).run {
+            this@toNoticeEntity.entityId?.let { id ->
+                this.copy(
+                    noticeEntityId = id
+                )
+            } ?: this
+        }
 
     private fun NoticeEntity.toNoticeVO() =
         NoticeVO(
