@@ -71,7 +71,7 @@ class NotificationAlarmScheduler @Inject constructor(
     override fun cancel(target: BookmarkVO, nav: BookmarkInfo) {
         alarmManager.cancel(
             createPendingIntent(target, nav)
-        )
+        ).also { Log.d("NotificationAlarmScheduler", "Cancellation Completed") }
     }
 
     fun canScheduleExactAlarms(): Boolean {
