@@ -82,7 +82,6 @@ class PushNotificationHandler @Inject constructor(
             context, context.getString(R.string.inapp_notification_channel_id)
         ).apply {
             setSmallIcon(R.mipmap.ic_launcher)
-            setLargeIcon(Icon.createWithResource(context, R.mipmap.ic_launcher))
             setContentTitle(context.getString(R.string.new_notice))
             setContentText(this@toPushNotification.data["contentTitle"] ?: "No message body.")
             setContentIntent(pendingIntent)
