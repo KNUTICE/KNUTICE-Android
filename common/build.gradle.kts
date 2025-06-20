@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.dagger)
     implementation(libs.dagger.android)
     implementation(libs.dagger.android.support)
+    debugImplementation(libs.ui.tooling)
     kapt(libs.dagger.compiler)
     kapt(libs.dagger.android.processor)
 
