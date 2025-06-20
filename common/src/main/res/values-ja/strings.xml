@@ -65,4 +65,7 @@
     <string name="text_save_unsuccessful">確認不可能</string>
     <string name="text_schedule_alarm_unavailable_title">リマインダーを設定することは出来ません</string>
     <string name="text_schedule_alarm_unavailable_content">スマホ設定の「アラームとリマインダー」を確認してください</string>
+    <string name="push_title_new">新しい</string>
+    <string name="push_title_arrived">お知らせがあります</string>
+    <string name="job_news">就職</string>
 </resources>

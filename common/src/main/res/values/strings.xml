@@ -75,4 +75,7 @@
     <string name="text_save_unsuccessful">Unable to save.</string>
     <string name="text_schedule_alarm_unavailable_title">Reminder is not available at this time.</string>
     <string name="text_schedule_alarm_unavailable_content">Please check permission status under Alarm and Reminder at Settings</string>
+    <string name="push_title_new">New</string>
+    <string name="push_title_arrived">notice has been delivered</string>
+    <string name="job_news">Career</string>
 </resources>
