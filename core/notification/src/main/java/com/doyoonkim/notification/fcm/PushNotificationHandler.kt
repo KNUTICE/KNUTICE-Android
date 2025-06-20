@@ -16,6 +16,7 @@ import androidx.core.net.toUri
 import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.R
 import com.doyoonkim.domain.ImageRepository
+import com.doyoonkim.model.NoticeCategory
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -55,11 +56,13 @@ class PushNotificationHandler @Inject constructor(
     private fun RemoteMessage.toPushNotification() {
 
         // Create Pending Intent (For access push notification while the app is in foreground)
-        // TODO: Migrate to Deep Link.
         val nttId = this@toPushNotification.data["nttId"]
         val url = this@toPushNotification.data["contentUrl"]
         val imageUrl = this@toPushNotification.data["contentImage"]
         val fabVisible = true
+
+        val noticeCategory = this@toPushNotification.data["noticeName"] ?: ""
+        val contentText = this@toPushNotification.data["contentTitle"] ?: "No title found."
 
         // Deeplink featured by Jetpack Navigation won't work because notification payload consumes custom-defined deeplink intent using ACTION_VIEW
         val deeplinkIntent = Intent(
@@ -82,8 +85,8 @@ class PushNotificationHandler @Inject constructor(
             context, context.getString(R.string.inapp_notification_channel_id)
         ).apply {
             setSmallIcon(R.mipmap.ic_launcher)
-            setContentTitle(context.getString(R.string.new_notice))
-            setContentText(this@toPushNotification.data["contentTitle"] ?: "No message body.")
+            setContentTitle(localizedTitle(noticeCategory))
+            setContentText(contentText)
             setContentIntent(pendingIntent)
             setPriority(NotificationCompat.PRIORITY_DEFAULT)
             setAutoCancel(true)
@@ -143,6 +146,22 @@ class PushNotificationHandler @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private fun localizedTitle(noticeCategory: String): String {
+        return with(context) {
+            when (noticeCategory) {
+                NoticeCategory.GENERAL_NEWS.name -> getString(R.string.general_news)
+                NoticeCategory.ACADEMIC_NEWS.name -> getString(R.string.academic_news)
+                NoticeCategory.SCHOLARSHIP_NEWS.name -> getString(R.string.scholarship_news)
+                NoticeCategory.EVENT_NEWS.name -> getString(R.string.event_news)
+                NoticeCategory.JOB_NEWS.name -> getString(R.string.job_news)
+                else -> null
+            }?.let {
+                "${getString(R.string.push_title_new)} " +
+                        "$it ${getString(R.string.push_title_arrived)}"
+            } ?: "${getString(R.string.push_title_new)} ${getString(R.string.push_title_arrived)}"
         }
     }
 }
