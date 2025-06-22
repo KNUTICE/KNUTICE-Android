@@ -2,24 +2,17 @@ package com.doyoonkim.common.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -33,23 +26,24 @@ fun RoundedCornerColumnItemWithExtraOnRight(
     modifier: Modifier = Modifier,
     verticalPadding: Dp = 0.dp,
     titleText: String,
-    subTitleText: String,
-    titleColor: Color = Color.Black,
-    subTitleColor: Color = Color.Gray,
+    subTitleText: String? = "Subtitle",
+    primaryColor: Color = Color.Black,
+    secondaryColor: Color = Color.Gray,
     hasBottomDivider: Boolean = true,
-    extraOnRight: @Composable() () -> Unit
+    extraOnRight: @Composable () -> Unit
 ) {
     Row(
-        modifier = Modifier.wrapContentWidth(),
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        RoundedCornerColumnItem(
+        RoundedCornerColumnTextItem(
             modifier = modifier.weight(4f),
             verticalPadding = verticalPadding,
             titleText = titleText,
             subTitleText = subTitleText,
-            titleColor = titleColor,
-            subTitleColor = subTitleColor,
+            primaryColor = primaryColor,
+            secondaryColor = secondaryColor,
             hasBottomDivider = hasBottomDivider
         )
         extraOnRight()
@@ -57,19 +51,60 @@ fun RoundedCornerColumnItemWithExtraOnRight(
 }
 
 @Composable
-fun RoundedCornerColumnItem(
+fun RoundedCornerColumnTextItem(
     modifier: Modifier = Modifier,
     verticalPadding: Dp = 0.dp,
     titleText: String,
-    subTitleText: String,
-    titleColor: Color = Color.Black,
-    subTitleColor: Color = Color.Gray,
+    subTitleText: String? = "Subtitle",
+    primaryColor: Color = Color.Black,
+    secondaryColor: Color = Color.Gray,
     hasBottomDivider: Boolean = true
 ) {
+    val extra = if (subTitleText == null) 10.dp else 0.dp
+
+    RoundedCornerColumnItem(
+        modifier = modifier,
+        verticalPadding = verticalPadding,
+        extra = extra,
+        hasBottomDivider = hasBottomDivider,
+        dividerColor = secondaryColor
+    ) {
+        Text(
+            text = titleText,
+            color = primaryColor,
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 18.sp,
+            textAlign = TextAlign.Start,
+            modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
+        )
+
+        subTitleText?.let {
+            Text(
+                text = it,
+                color = secondaryColor,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                textAlign = TextAlign.Start,
+                modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun RoundedCornerColumnItem(
+    modifier: Modifier = Modifier,
+    verticalPadding: Dp = 0.dp,
+    extra: Dp = 0.dp,
+    hasBottomDivider: Boolean = true,
+    dividerColor: Color = Color.Gray,
+    content: @Composable (ColumnScope.() -> Unit)
+) {
+
     val columnPadding = if (hasBottomDivider) {
-        PaddingValues(top = verticalPadding)
+        PaddingValues(top = verticalPadding + extra)
     } else {
-        PaddingValues(vertical = verticalPadding)
+        PaddingValues(vertical = verticalPadding + extra)
     }
 
     Column(
@@ -78,30 +113,14 @@ fun RoundedCornerColumnItem(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = titleText,
-            color = titleColor,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
-        )
 
-        Text(
-            text = subTitleText,
-            color = subTitleColor,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Start,
-            modifier = Modifier.fillMaxWidth()
-        )
+        content()
 
         if (hasBottomDivider) {
             HorizontalDivider(
-                Modifier.padding(top = verticalPadding),
-                color = subTitleColor
+                Modifier.padding(top = verticalPadding + extra),
+                color = dividerColor
             )
         }
     }
-
 }
