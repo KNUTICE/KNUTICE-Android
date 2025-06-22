@@ -68,4 +68,6 @@
     <string name="push_title_new">새로운</string>
     <string name="push_title_arrived">알림이 도착했어요</string>
     <string name="job_news">취업</string>
+    <string name="text_select_time">시간 선택</string>
+    <string name="text_set_reminder_date_time">알림 시간</string>
 </resources>

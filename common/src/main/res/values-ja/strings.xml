@@ -68,4 +68,6 @@
     <string name="push_title_new">新しい</string>
     <string name="push_title_arrived">お知らせがあります</string>
     <string name="job_news">就職</string>
+    <string name="text_select_time">時間設定</string>
+    <string name="text_set_reminder_date_time">時間設定</string>
 </resources>

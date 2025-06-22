@@ -78,4 +78,6 @@
     <string name="push_title_new">New</string>
     <string name="push_title_arrived">notice has been delivered</string>
     <string name="job_news">Career</string>
+    <string name="text_select_time">Select Time</string>
+    <string name="text_set_reminder_date_time">Select time for reminder</string>
 </resources>
