@@ -65,4 +65,9 @@
     <string name="text_save_unsuccessful">저장하는 중 문제가 생겼어요.</string>
     <string name="text_schedule_alarm_unavailable_title">현재 리마인더를 설정할 수 없어요.</string>
     <string name="text_schedule_alarm_unavailable_content">설정의 알람 및 리마인더 메뉴에서 권한을 확인 해 주세요.</string>
+    <string name="push_title_new">새로운</string>
+    <string name="push_title_arrived">알림이 도착했어요</string>
+    <string name="job_news">취업</string>
+    <string name="text_select_time">시간 선택</string>
+    <string name="text_set_reminder_date_time">알림 시간</string>
 </resources>

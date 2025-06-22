@@ -49,7 +49,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(platform(libs.androidx.compose.bom))
-
+    debugImplementation(libs.ui.tooling)
 
     testImplementation(libs.junit)
 
@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.dagger)
     implementation(libs.dagger.android)
     implementation(libs.dagger.android.support)
+    debugImplementation(libs.ui.tooling)
     kapt(libs.dagger.compiler)
     kapt(libs.dagger.android.processor)
 

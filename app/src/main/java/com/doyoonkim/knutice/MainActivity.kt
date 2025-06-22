@@ -50,6 +50,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
@@ -271,12 +272,11 @@ class MainActivity : ComponentActivity() {
                 }
 
                 if (showPermissionRationale) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                            .clickable { /* CLICK TO DISMISS NOT ALLOWED */ }
+                    Dialog(
+                        onDismissRequest = { /* DO NOTHING. PERMISSION IS MANDATORY */ }
                     ) {
                         PermissionRationaleComposable(
-                            modifier = Modifier.align(Alignment.Center).padding(start = 20.dp, end = 20.dp),
+                            modifier = Modifier,
                             permissionName = stringResource(R.string.title_alarm_and_reminder),
                             rationaleTitle = stringResource(R.string.text_rationale_title),
                             description = stringResource(R.string.text_rationale_description)

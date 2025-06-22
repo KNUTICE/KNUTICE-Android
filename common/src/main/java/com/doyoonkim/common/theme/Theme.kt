@@ -63,6 +63,10 @@ val ColorScheme.containerBackgroundSolid: Color
     @Composable
     get() = if(isSystemInDarkTheme()) ContainerBlack else ContainerLight
 
+val ColorScheme.containerGray: Color
+    @Composable
+    get() = if(isSystemInDarkTheme()) Color.Gray else Color.LightGray
+
 val ColorScheme.bottomNavContainer: Color
     @Composable
     get() = if(isSystemInDarkTheme()) bottomNavBarBlack else bottomNavBarWhite

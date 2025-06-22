@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -35,7 +34,6 @@ import com.doyoonkim.common.theme.containerBackgroundSolid
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
-import kotlinx.coroutines.delay
 
 @Composable
 fun BookmarkListScreen(
@@ -56,7 +54,6 @@ fun BookmarkListScreen(
     Box(
         modifier = modifier.fillMaxSize()
             .background(MaterialTheme.colorScheme.containerBackgroundSolid)
-            .systemBarsPadding()
     ) {
         if (uiState.bookmarks.isEmpty()) {
             Column(

@@ -1,16 +1,15 @@
 package com.doyoonkim.bookmark.edit
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -35,10 +34,11 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -50,7 +50,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -61,20 +60,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NoticeDetail
-import com.doyoonkim.common.ui.DateTimePicker
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.buttonPurple
 import com.doyoonkim.common.theme.containerBackground
+import com.doyoonkim.common.theme.containerGray
 import com.doyoonkim.common.theme.subTitle
+import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.theme.title
+import com.doyoonkim.common.ui.DatePickerDialog
 import com.doyoonkim.common.ui.NotificationPreviewCard
+import com.doyoonkim.common.ui.TimePickerDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.time.ZoneId
-import java.util.Date
-import java.util.Locale
-import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,11 +96,6 @@ fun EditBookmarkScreen(
             getBookmarkByNoticeId(bookmarkInfo.noticeId)
             getNoticeById(bookmarkInfo.noticeId)
         }
-    }
-
-    LaunchedEffect(uiState.isReminderRequested) {
-        if (uiState.timeForRemind == 0L)
-            viewModel.updateReminderOptions(timeForRemind = System.currentTimeMillis())
     }
 
     Column(
@@ -131,17 +123,15 @@ fun EditBookmarkScreen(
 
         Column(
             modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                .background(Color.Transparent),
+                .background(Color.Transparent)
+                .clip(RoundedCornerShape(10.dp))
+                .border(2.dp, MaterialTheme.colorScheme.containerBackground)
+                .padding(start = 10.dp, end = 10.dp),
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Row(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                    .background(Color.Transparent)
-                    .clip(RoundedCornerShape(10.dp))
-                    .border(2.dp, MaterialTheme.colorScheme.containerBackground)
-                    .padding(start = 10.dp, end = 10.dp),
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
@@ -158,7 +148,20 @@ fun EditBookmarkScreen(
                     checked = uiState.isReminderRequested && uiState.alarmPermissionStatus,
                     enabled = true,
                     modifier = Modifier.padding(10.dp).weight(1f),
+                    colors = SwitchDefaults.colors().copy(
+                        checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                        checkedThumbColor = Color.White
+                    ),
                     onCheckedChange = { viewModel.updateReminderOptions(requested = !uiState.isReminderRequested) }
+                )
+            }
+
+            if (uiState.isReminderRequested) {
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(PaddingValues(horizontal = 5.dp)),
+                    color = MaterialTheme.colorScheme.containerGray
                 )
             }
 
@@ -168,39 +171,33 @@ fun EditBookmarkScreen(
                 enter = slideInVertically(),
                 exit = slideOutVertically()
             ) {
-                if (!uiState.alarmPermissionStatus) {
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(PaddingValues(vertical = 15.dp)),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                ) {
                     Text(
-                        modifier = Modifier.fillMaxWidth()
-                            .wrapContentHeight(),
-                        text = stringResource(R.string.text_schedule_alarm_unavailable_title)
-                                + "\n"
-                                + stringResource(R.string.text_schedule_alarm_unavailable_content),
+                        text = stringResource(R.string.text_set_reminder_date_time),
                         textAlign = TextAlign.Start,
-                        fontSize = 12.sp,
-                        color = Color.Red
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.title,
+                        modifier = Modifier.padding(10.dp).weight(2f)
                     )
-                } else {
-                    Surface(
-                        modifier = Modifier.wrapContentSize()
-                            .border(
-                                2.dp, MaterialTheme.colorScheme.containerBackground, RoundedCornerShape(10.dp)
-                            )
-                            .background(Color.Transparent),
-                        color = Color.Transparent
-                    ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth().padding(20.dp)
-                                .clickable { viewModel.updateReminderOptions(
-                                    isDatePickerVisible = !uiState.datePickerVisible
-                                ) },
-                            text = uiState.timeForRemind.toFormattedDate(
-                                SimpleDateFormat("yyyy/MM/dd a HH:mm", Locale.getDefault())
-                            ),
-                            textAlign = TextAlign.Start,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 15.sp,
-                            color = MaterialTheme.colorScheme.title
-                        )
+
+                    DatePickerDialog(
+                        initialTime = uiState.timeForRemind
+                    ) { year, month, day ->
+                        viewModel.updateDateInfo(year, month, day)
+                    }
+                    TimePickerDialog(
+                        initialTime = uiState.timeForRemind
+                    ) { hour, min ->
+                        viewModel.updateTimeInfo(hour, min)
                     }
                 }
             }
@@ -309,35 +306,6 @@ fun EditBookmarkScreen(
         }
     }
 
-    // DateTimePicker
-    AnimatedVisibility(
-        modifier = Modifier.fillMaxWidth().wrapContentHeight().imePadding(),
-        visible = uiState.datePickerVisible,
-        enter = slideInVertically(initialOffsetY = { it + it / 2 }),
-        exit = slideOutVertically(targetOffsetY = { it / 2 })
-    ) {
-        Box(
-            modifier = Modifier.fillMaxSize().padding(start = 5.dp, end = 5.dp)
-                .clickable { viewModel.updateReminderOptions(
-                    isDatePickerVisible = !uiState.datePickerVisible)
-                }
-        ) {
-            DateTimePicker(
-                modifier = Modifier.padding(5.dp)
-                    .shadow(5.dp)
-                    .align(Alignment.BottomCenter)
-            ) {
-                if (it != null) {
-                    Log.d("EditBookmark", "${it}")
-                    viewModel.updateReminderOptions(
-                        timeForRemind = it,
-                        isDatePickerVisible = !uiState.datePickerVisible
-                    )
-                }
-            }
-        }
-    }
-
     if (uiState.isCompleted) {
         BasicAlertDialog(
             onDismissRequest = {
@@ -350,7 +318,8 @@ fun EditBookmarkScreen(
             Surface(
                 modifier = Modifier.wrapContentWidth().wrapContentHeight(),
                 shape = MaterialTheme.shapes.large,
-                tonalElevation = AlertDialogDefaults.TonalElevation
+                tonalElevation = AlertDialogDefaults.TonalElevation,
+                color = MaterialTheme.colorScheme.containerBackground
             ) {
                 Column(modifier = Modifier.padding(30.dp)) {
                     Text(
@@ -368,14 +337,13 @@ fun EditBookmarkScreen(
                         },
                         modifier = Modifier.align(Alignment.End)
                     ) {
-                        Text(stringResource(R.string.btn_confirm))
+                        Text(
+                            stringResource(R.string.btn_confirm),
+                            color = MaterialTheme.colorScheme.textPurple
+                        )
                     }
                 }
             }
         }
     }
-}
-
-private fun Long.toFormattedDate(f: SimpleDateFormat): String {
-    return f.apply { timeZone = TimeZone.getTimeZone(ZoneId.systemDefault()) }.format(Date(this))
 }
