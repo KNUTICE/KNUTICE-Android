@@ -1,36 +1,26 @@
 package com.doyoonkim.common.ui
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -53,13 +42,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.containerBackground
+import com.doyoonkim.common.theme.containerGray
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.theme.title
 import kotlinx.coroutines.flow.filter
+import java.util.Calendar
 
 /**
  * @author kimdoyoon
@@ -67,59 +57,108 @@ import kotlinx.coroutines.flow.filter
  */
 
 @Composable
-fun TimePickerWheel(
-    modifier: Modifier,
-    initialHourSelected: Int,
-    initialMinuteSelected: Int,
-    onSelected: (String) -> Unit
+fun TimePickerDialog(
+    modifier: Modifier = Modifier,
+    initialTime: Long? = null,
+    onDismissed: (Int, Int) -> Unit
 ) {
+    val calendar = Calendar.getInstance()
+        .apply { initialTime?.let { timeInMillis = it } }
+
     val hours = (0..23).map { if (it < 10) "0$it" else it.toString() }.toList()
     val minutes = (0..59).map { if (it< 10) "0$it" else it.toString() }.toList()
-    var hourSelected by remember { mutableIntStateOf(initialHourSelected.coerceIn(0, 23)) }
-    var minuteSelected by remember { mutableIntStateOf(initialMinuteSelected.coerceIn(0, 59)) }
+    var hourSelected by remember {
+        mutableIntStateOf(calendar[Calendar.HOUR_OF_DAY])
+    }
+    var minuteSelected by remember {
+        mutableIntStateOf(calendar[Calendar.MINUTE])
+    }
 
-    Surface(
-        modifier = modifier
-            .clip(RoundedCornerShape(10.dp))
-            .background(Color.Transparent),
-        color = MaterialTheme.colorScheme.containerBackground
+    var pickerVisible by remember { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier.wrapContentSize()
     ) {
-        Column(
+        Surface(
             modifier = Modifier.wrapContentSize()
-                .padding(10.dp)
+                .background(Color.Transparent)
+                .clip(RoundedCornerShape(10.dp))
+                .clickable { pickerVisible = !pickerVisible },
+            color = MaterialTheme.colorScheme.containerGray
         ) {
-            Row(
-                modifier = Modifier.wrapContentWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                WheelPicker(
-                    modifier = Modifier.background(Color.Transparent)
-                        .padding(start = 35.dp, end = 35.dp),
-                    elements = hours,
-                    initialItemIndex = initialHourSelected,
-                ) {
+            Text(
+                text = "${hours[hourSelected]}:${minutes[minuteSelected]}",
+                fontSize = 15.sp,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.title,
+                modifier = Modifier.padding(PaddingValues(
+                    horizontal = 20.dp,
+                    vertical = 10.dp
+                ))
+            )
+        }
 
+        if (pickerVisible) {
+            Dialog(
+                onDismissRequest = {
+                    onDismissed(hourSelected, minuteSelected)
+                    pickerVisible = !pickerVisible
                 }
-
-                Text(
-                    text = ":",
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 23.sp,
-                    color = MaterialTheme.colorScheme.title,
-                    modifier = Modifier.wrapContentHeight(Alignment.CenterVertically)
-                )
-
-                WheelPicker(
-                    modifier = Modifier.background(Color.Transparent)
-                        .padding(start = 35.dp, end = 35.dp),
-                    elements = minutes,
-                    initialItemIndex = initialMinuteSelected
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(10.dp))
+                        .background(Color.Transparent),
+                    color = MaterialTheme.colorScheme.containerBackground
                 ) {
+                    Column(
+                        modifier = Modifier.wrapContentSize()
+                            .padding(10.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.text_select_time),
+                            fontSize = 15.sp,
+                            fontWeight = FontWeight.Normal,
+                            textAlign = TextAlign.Start,
+                            modifier = Modifier.padding(15.dp)
+                        )
+                        Row(
+                            modifier = Modifier.wrapContentWidth(),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            WheelPicker(
+                                modifier = Modifier.background(Color.Transparent)
+                                    .padding(start = 35.dp, end = 35.dp),
+                                elements = hours,
+                                initialItemIndex = hourSelected,
+                            ) {
+                                hourSelected = it
+                            }
 
+                            Text(
+                                text = ":",
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 23.sp,
+                                color = MaterialTheme.colorScheme.title,
+                                modifier = Modifier.wrapContentHeight(Alignment.CenterVertically)
+                            )
+
+                            WheelPicker(
+                                modifier = Modifier.background(Color.Transparent)
+                                    .padding(start = 35.dp, end = 35.dp),
+                                elements = minutes,
+                                initialItemIndex = minuteSelected
+                            ) {
+                                minuteSelected = it
+                            }
+                        }
+                    }
                 }
             }
+
         }
     }
 }
@@ -130,7 +169,7 @@ internal fun WheelPicker(
     elements: List<String>,
     initialItemIndex: Int = 0,
     numberOfVisibleItem: Int = 3,
-    onSelected: (String) -> Unit
+    onSelected: (Int) -> Unit
 ) {
     // List State
     val listState = rememberLazyListState(
@@ -166,7 +205,7 @@ internal fun WheelPicker(
 
     LaunchedEffect(selectedItem) {
         listState.animateScrollToItem(selectedItem)
-        onSelected(elements[selectedItem])
+        onSelected(selectedItem)
     }
 
     LaunchedEffect(initialItemIndex) {
@@ -217,76 +256,11 @@ internal fun WheelPickerItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Preview(showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
 fun TimePickerWheel_Preview() {
-    /*
-    var state by remember { mutableStateOf(false) }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.End
-    ) {
-        Column(
-            modifier = Modifier.wrapContentHeight()
-                .padding(end = 20.dp),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Date",
-                modifier = Modifier.clickable {
-                    state = !state
-                }
-            )
-
-            if (state) {
-                DatePickerDialog(
-                    onDismissRequest = {  },
-                    confirmButton = {
-                        TextButton(
-                            onClick = {  }
-                        ) {
-                            Text("Confirm")
-                        }
-                    }
-                ) {
-
-
-                    DatePicker(state = rememberDatePickerState())
-                }
-            }
-        }
-    }
-     */
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        val density = LocalDensity.current
-        val window = LocalWindowInfo.current
-
-        val height = with(window) { this.containerSize / 7 }.height
-        val width = with(window) { this.containerSize / 3 }.width
-
-        Dialog(
-            onDismissRequest = {  },
-            properties = DialogProperties(
-                usePlatformDefaultWidth = true
-            )
-        ) {
-            TimePickerWheel(
-                modifier = Modifier.width(width.dp).height(height.dp),
-                initialHourSelected = 13,
-                initialMinuteSelected = 20
-            ) { }
-        }
-    }
-
-
-
 
 }
