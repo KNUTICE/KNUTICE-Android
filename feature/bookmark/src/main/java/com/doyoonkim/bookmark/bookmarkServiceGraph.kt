@@ -61,11 +61,18 @@ fun NavGraphBuilder.bookmarkServiceGraph(
             viewModel = viewModel<EditBookmarkViewModel>(factory = viewModelFactory),
             bookmarkInfo = bookmarkInfo,
             onNoticeSelected = { onNoticeDetailRequested(it) },
-            onBackPressed = { navController.navigate(NavRoutes.Bookmark.route) {
-                popUpTo(navController.graph.startDestinationId) {
-                    inclusive = true
+            onCompleted = {
+                navController.navigate(NavRoutes.Bookmark.route) {
+                    popUpTo(navController.graph.startDestinationId) {
+                        inclusive = true
+                    }
                 }
-            } }
+            },
+            onBackPressed = {
+                navController.popBackStack().also {
+                    if (!it) navController.navigate(NavRoutes.Bookmark.route)
+                }
+            }
         )
     }
 

@@ -80,6 +80,7 @@ fun EditBookmarkScreen(
     viewModel: EditBookmarkViewModel,
     bookmarkInfo: BookmarkInfo,
     onNoticeSelected: (NoticeDetail) -> Unit,
+    onCompleted: () -> Unit,
     onBackPressed: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -255,7 +256,6 @@ fun EditBookmarkScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(5.dp)
         ) {
-            val coroutineScope = rememberCoroutineScope()
             Button(
                 modifier = Modifier.wrapContentHeight()
                     .weight(1f),
@@ -267,10 +267,6 @@ fun EditBookmarkScreen(
                 shape = RoundedCornerShape(10.dp),
                 onClick = {
                     viewModel.submitBookmark()
-                    coroutineScope.launch {
-                        delay(500L)
-//                        onSaveClicked(uiState.bookmarkInstance)
-                    }
                 }
             ) {
                 Text(
@@ -292,7 +288,6 @@ fun EditBookmarkScreen(
                     ),
                     onClick = {
                         viewModel.removeBookmark()
-//                        onSaveClicked(null)
                     }
                 ) {
                     Text(
@@ -327,18 +322,24 @@ fun EditBookmarkScreen(
                             stringResource(R.string.text_save_successful)
                         } else {
                             stringResource(R.string.text_save_unsuccessful)
-                        }
+                        },
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.title
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     TextButton(
                         onClick = {
-                            viewModel.updateCompletionStatus(false)
-                            if (uiState.isSuccessful) onBackPressed()
+                            if (uiState.isSuccessful) onCompleted()
+                            viewModel.updateCompletionStatus(false)     // Set false for completion status for marking a new transaction is ready to start.
                         },
                         modifier = Modifier.align(Alignment.End)
                     ) {
                         Text(
-                            stringResource(R.string.btn_confirm),
+                            text = stringResource(R.string.btn_confirm),
+                            textAlign = TextAlign.Center,
+                            fontWeight = FontWeight.Normal,
                             color = MaterialTheme.colorScheme.textPurple
                         )
                     }
