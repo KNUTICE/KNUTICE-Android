@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -155,6 +156,7 @@ fun TimePickerDialog(
                                 minuteSelected = it
                             }
                         }
+                        Spacer(Modifier.height(30.dp))
                     }
                 }
             }
@@ -221,7 +223,7 @@ internal fun WheelPicker(
     ) {
         // Spacers to be inserted to top and bottom, to make very first and very last element
         // possible to be shown on center.
-        items(spacerCount) { Spacer(Modifier.height(30.dp)) }
+        items(spacerCount) { Spacer(Modifier.height(40.dp)) }
 
         itemsIndexed(elements) { index, item ->
             WheelPickerItem(
@@ -230,7 +232,7 @@ internal fun WheelPicker(
             )
         }
 
-        items(spacerCount) { Spacer(Modifier.height(30.dp)) }
+        items(spacerCount) { Spacer(Modifier.height(40.dp)) }
     }
 }
 
