@@ -6,7 +6,7 @@ import android.content.Context
 import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Paint.Align
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,15 +19,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
@@ -35,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -48,7 +48,9 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.buttonPurple
+import com.doyoonkim.common.theme.containerBackground
 import com.doyoonkim.common.theme.subTitle
+import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.LabeledToggleSwitch
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
@@ -62,6 +64,10 @@ fun NotificationPreferencesScreen(
     // Context for main status checking
     val context = LocalContext.current
     val uiStatus by viewModel.uiState.collectAsStateWithLifecycle()
+
+    BackHandler {
+        if (uiStatus.isSyncCompleted) onBackPressed()
+    }
 
     LaunchedEffect(Unit) {
         isMainNotificationPermissionGranted(
@@ -153,7 +159,7 @@ fun NotificationPreferencesScreen(
                             }
                             context.startActivity(settingIntent)
                         },
-                        enabled = true
+                        enabled = uiStatus.isSyncCompleted
                     )
                 }
             }
@@ -202,9 +208,20 @@ fun NotificationPreferencesScreen(
         if (!uiStatus.isSyncCompleted) {
             Box(
                 modifier = Modifier.matchParentSize()
-                    .background(Color.Gray.copy(alpha = 0.5f))
+                    .background(Color.Transparent)
             ) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                Surface(
+                    modifier = Modifier.align(Alignment.Center)
+                        .background(Color.Transparent)
+                        .clip(RoundedCornerShape(20.dp)),
+                    color = MaterialTheme.colorScheme.containerBackground
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                            .padding(25.dp),
+                        color = MaterialTheme.colorScheme.textPurple
+                    )
+                }
             }
         }
     }
