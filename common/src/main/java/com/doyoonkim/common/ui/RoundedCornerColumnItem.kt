@@ -20,13 +20,15 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+enum class TextSize { Large, Medium, Small }
 
 @Composable
-fun RoundedCornerColumnItemWithExtraOnRight(
+fun RoundedCornerColumnTextItemWithExtraOnRight(
     modifier: Modifier = Modifier,
     verticalPadding: Dp = 0.dp,
     titleText: String,
     subTitleText: String? = "Subtitle",
+    fontSize: TextSize = TextSize.Medium,
     primaryColor: Color = Color.Black,
     secondaryColor: Color = Color.Gray,
     hasBottomDivider: Boolean = true,
@@ -42,6 +44,7 @@ fun RoundedCornerColumnItemWithExtraOnRight(
             verticalPadding = verticalPadding,
             titleText = titleText,
             subTitleText = subTitleText,
+            textSize = fontSize,
             primaryColor = primaryColor,
             secondaryColor = secondaryColor,
             hasBottomDivider = hasBottomDivider
@@ -56,11 +59,17 @@ fun RoundedCornerColumnTextItem(
     verticalPadding: Dp = 0.dp,
     titleText: String,
     subTitleText: String? = "Subtitle",
+    textSize: TextSize = TextSize.Medium,
     primaryColor: Color = Color.Black,
     secondaryColor: Color = Color.Gray,
     hasBottomDivider: Boolean = true
 ) {
     val extra = if (subTitleText == null) 10.dp else 0.dp
+    val fontSize = when (textSize) {
+        TextSize.Large -> Pair(24, 20)
+        TextSize.Medium -> Pair(18, 14)
+        TextSize.Small -> Pair(14, 10)
+    }
 
     RoundedCornerColumnItem(
         modifier = modifier,
@@ -73,7 +82,7 @@ fun RoundedCornerColumnTextItem(
             text = titleText,
             color = primaryColor,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 18.sp,
+            fontSize = fontSize.first.sp,
             textAlign = TextAlign.Start,
             modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
         )
@@ -83,7 +92,7 @@ fun RoundedCornerColumnTextItem(
                 text = it,
                 color = secondaryColor,
                 fontWeight = FontWeight.Normal,
-                fontSize = 14.sp,
+                fontSize = fontSize.second.sp,
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth().padding(start = 10.dp)
             )
