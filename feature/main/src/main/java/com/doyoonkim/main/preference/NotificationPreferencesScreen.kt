@@ -8,23 +8,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -38,10 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -52,7 +38,8 @@ import com.doyoonkim.common.theme.containerBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.theme.title
-import com.doyoonkim.common.ui.LabeledToggleSwitch
+import com.doyoonkim.common.ui.RoundedCornerColumn
+import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
 
 @Composable
@@ -85,143 +72,145 @@ fun NotificationPreferencesScreen(
         )
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
+    RoundedCornerColumn(
+        modifier = Modifier.fillMaxWidth().padding(10.dp),
+        backgroundColor = MaterialTheme.colorScheme.containerBackground
     ) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Top
+        RoundedCornerColumnTextItemWithExtraOnRight(
+            verticalPadding = 15.dp,
+            titleText = stringResource(R.string.enable_notification_title),
+            subTitleText = stringResource(R.string.enable_service_notification_sub),
+            primaryColor = MaterialTheme.colorScheme.title,
+            secondaryColor = MaterialTheme.colorScheme.subTitle,
+            hasBottomDivider = true
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                text = stringResource(R.string.pref_notification_title),
-                color = MaterialTheme.colorScheme.title,
-                fontWeight = FontWeight.SemiBold,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Start
-            )
-
-            HorizontalDivider(
-                Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.subTitle
-            )
-
-            Column(
-                modifier = Modifier.wrapContentHeight()
-                    .padding(top = 15.dp, bottom = 15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(
-                        modifier = Modifier.wrapContentHeight().weight(5f),
-                        verticalArrangement = Arrangement.spacedBy(5.dp)
-                    ) {
-                        Text(
-                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                            text = stringResource(R.string.enable_notification_title),
-                            color = MaterialTheme.colorScheme.title,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 18.sp,
-                            textAlign = TextAlign.Start
-                        )
-
-                        Text(
-                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                            text = stringResource(R.string.enable_service_notification_sub),
-                            color = MaterialTheme.colorScheme.subTitle,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 12.sp,
-                            textAlign = TextAlign.Start
+            Switch(
+                checked = uiStatus.isMainNotificationPermissionGranted,
+                colors = SwitchDefaults.colors().copy(
+                    checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                    checkedThumbColor = Color.White
+                ),
+                onCheckedChange = {
+                    val settingIntent = Intent(
+                        "android.settings.APP_NOTIFICATION_SETTINGS"
+                    ).apply {
+                        this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        this.putExtra(
+                            "android.provider.extra.APP_PACKAGE",
+                            context.packageName
                         )
                     }
-
-                    Switch(
-                        checked = uiStatus.isMainNotificationPermissionGranted,
-                        colors = SwitchDefaults.colors().copy(
-                            checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
-                            checkedThumbColor = Color.White
-                        ),
-                        onCheckedChange = {
-                            val settingIntent = Intent(
-                                "android.settings.APP_NOTIFICATION_SETTINGS"
-                            ).apply {
-                                this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                this.putExtra(
-                                    "android.provider.extra.APP_PACKAGE",
-                                    context.packageName
-                                )
-                            }
-                            context.startActivity(settingIntent)
-                        },
-                        enabled = uiStatus.isSyncCompleted
-                    )
-                }
-            }
-
-            LabeledToggleSwitch(
-                modifier = Modifier.padding(start = 10.dp),
-                titleText = stringResource(R.string.general_notificaiton_channel_name),
-                subTitleText = stringResource(R.string.general_notification_channel_description),
-                isChecked = uiStatus.isEachChannelAllowed[0],
-                isEnabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
-            ) {
-                viewModel.updateChannelPreferenceState(0, it)
-            }
-
-            LabeledToggleSwitch(
-                modifier = Modifier.padding(start = 10.dp),
-                titleText = stringResource(R.string.academic_notification_channel_name),
-                subTitleText = stringResource(R.string.academic_notification_channel_description),
-                isChecked = uiStatus.isEachChannelAllowed[1],
-                isEnabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
-            ) {
-                viewModel.updateChannelPreferenceState(1, it)
-            }
-
-            LabeledToggleSwitch(
-                modifier = Modifier.padding(start = 10.dp),
-                titleText = stringResource(R.string.scholarship_notification_channel_name),
-                subTitleText = stringResource(R.string.scholarship_notification_channel_description),
-                isChecked = uiStatus.isEachChannelAllowed[2],
-                isEnabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
-            ) {
-                viewModel.updateChannelPreferenceState(2, it)
-            }
-
-            LabeledToggleSwitch(
-                modifier = Modifier.padding(start = 10.dp),
-                titleText = stringResource(R.string.event_notification_channel_name),
-                subTitleText = stringResource(R.string.event_notification_channel_description),
-                isChecked = uiStatus.isEachChannelAllowed[3],
-                isEnabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
-            ) {
-                viewModel.updateChannelPreferenceState(3, it)
-            }
+                    context.startActivity(settingIntent)
+                },
+                enabled = uiStatus.isSyncCompleted
+            )
         }
 
-        if (!uiStatus.isSyncCompleted) {
-            Box(
-                modifier = Modifier.matchParentSize()
+        RoundedCornerColumnTextItemWithExtraOnRight(
+            modifier = Modifier.padding(start = 10.dp),
+            verticalPadding = 15.dp,
+            titleText = stringResource(R.string.general_notificaiton_channel_name),
+            subTitleText = stringResource(R.string.general_notification_channel_description),
+            primaryColor = MaterialTheme.colorScheme.title,
+            secondaryColor = MaterialTheme.colorScheme.subTitle,
+            hasBottomDivider = true
+        ) {
+            Switch(
+                checked = uiStatus.isEachChannelAllowed[0],
+                colors = SwitchDefaults.colors().copy(
+                    checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                    checkedThumbColor = Color.White
+                ),
+                onCheckedChange = {
+                    viewModel.updateChannelPreferenceState(0, it)
+                },
+                enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+            )
+        }
+
+        RoundedCornerColumnTextItemWithExtraOnRight(
+            modifier = Modifier.padding(start = 10.dp),
+            verticalPadding = 15.dp,
+            titleText = stringResource(R.string.academic_notification_channel_name),
+            subTitleText = stringResource(R.string.academic_notification_channel_description),
+            primaryColor = MaterialTheme.colorScheme.title,
+            secondaryColor = MaterialTheme.colorScheme.subTitle,
+            hasBottomDivider = true
+        ) {
+            Switch(
+                checked = uiStatus.isEachChannelAllowed[1],
+                colors = SwitchDefaults.colors().copy(
+                    checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                    checkedThumbColor = Color.White
+                ),
+                onCheckedChange = {
+                    viewModel.updateChannelPreferenceState(1, it)
+                },
+                enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+            )
+        }
+
+        RoundedCornerColumnTextItemWithExtraOnRight(
+            modifier = Modifier.padding(start = 10.dp),
+            verticalPadding = 15.dp,
+            titleText = stringResource(R.string.scholarship_notification_channel_name),
+            subTitleText = stringResource(R.string.scholarship_notification_channel_description),
+            primaryColor = MaterialTheme.colorScheme.title,
+            secondaryColor = MaterialTheme.colorScheme.subTitle,
+            hasBottomDivider = true
+        ) {
+            Switch(
+                checked = uiStatus.isEachChannelAllowed[2],
+                colors = SwitchDefaults.colors().copy(
+                    checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                    checkedThumbColor = Color.White
+                ),
+                onCheckedChange = {
+                    viewModel.updateChannelPreferenceState(2, it)
+                },
+                enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+            )
+        }
+
+        RoundedCornerColumnTextItemWithExtraOnRight(
+            modifier = Modifier.padding(start = 10.dp),
+            verticalPadding = 15.dp,
+            titleText = stringResource(R.string.event_notification_channel_name),
+            subTitleText = stringResource(R.string.event_notification_channel_description),
+            primaryColor = MaterialTheme.colorScheme.title,
+            secondaryColor = MaterialTheme.colorScheme.subTitle,
+            hasBottomDivider = false
+        ) {
+            Switch(
+                checked = uiStatus.isEachChannelAllowed[3],
+                colors = SwitchDefaults.colors().copy(
+                    checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                    checkedThumbColor = Color.White
+                ),
+                onCheckedChange = {
+                    viewModel.updateChannelPreferenceState(3, it)
+                },
+                enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+            )
+        }
+    }
+
+    if (!uiStatus.isSyncCompleted) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .background(Color.Transparent)
+        ) {
+            Surface(
+                modifier = Modifier.align(Alignment.Center)
                     .background(Color.Transparent)
+                    .clip(RoundedCornerShape(20.dp)),
+                color = MaterialTheme.colorScheme.containerBackground
             ) {
-                Surface(
+                CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center)
-                        .background(Color.Transparent)
-                        .clip(RoundedCornerShape(20.dp)),
-                    color = MaterialTheme.colorScheme.containerBackground
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.align(Alignment.Center)
-                            .padding(25.dp),
-                        color = MaterialTheme.colorScheme.textPurple
-                    )
-                }
+                        .padding(25.dp),
+                    color = MaterialTheme.colorScheme.textPurple
+                )
             }
         }
     }

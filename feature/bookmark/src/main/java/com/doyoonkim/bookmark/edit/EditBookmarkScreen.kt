@@ -4,12 +4,9 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -34,7 +31,6 @@ import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -46,10 +42,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,15 +57,16 @@ import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.buttonPurple
 import com.doyoonkim.common.theme.containerBackground
-import com.doyoonkim.common.theme.containerGray
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.DatePickerDialog
 import com.doyoonkim.common.ui.NotificationPreviewCard
+import com.doyoonkim.common.ui.RoundedCornerColumn
+import com.doyoonkim.common.ui.RoundedCornerColumnItem
+import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
+import com.doyoonkim.common.ui.TextSize
 import com.doyoonkim.common.ui.TimePickerDialog
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,36 +110,18 @@ fun EditBookmarkScreen(
 
         Spacer(Modifier.height(30.dp))
 
-        Text(
-            text = stringResource(R.string.subtitle_set_reminder),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.title
-        )
-
-        Column(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight()
-                .background(Color.Transparent)
-                .clip(RoundedCornerShape(10.dp))
-                .border(2.dp, MaterialTheme.colorScheme.containerBackground)
-                .padding(start = 10.dp, end = 10.dp),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+        RoundedCornerColumn(
+            backgroundColor = MaterialTheme.colorScheme.containerBackground
+        ) { 
+            RoundedCornerColumnTextItemWithExtraOnRight(
+                verticalPadding = 12.dp,
+                titleText = stringResource(R.string.subtitle_get_reminder),
+                subTitleText = null,
+                fontSize = TextSize.Small,
+                primaryColor = MaterialTheme.colorScheme.title,
+                secondaryColor = MaterialTheme.colorScheme.subTitle,
+                hasBottomDivider = uiState.isReminderRequested
             ) {
-                Text(
-                    text = stringResource(R.string.subtitle_get_reminder),
-                    textAlign = TextAlign.Start,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.title,
-                    modifier = Modifier.padding(10.dp).weight(5f)
-                )
-
                 Switch(
                     checked = uiState.isReminderRequested && uiState.alarmPermissionStatus,
                     enabled = true,
@@ -157,48 +134,42 @@ fun EditBookmarkScreen(
                 )
             }
 
-            if (uiState.isReminderRequested) {
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(PaddingValues(horizontal = 5.dp)),
-                    color = MaterialTheme.colorScheme.containerGray
-                )
-            }
-
             AnimatedVisibility(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 visible = uiState.isReminderRequested,
                 enter = slideInVertically(),
                 exit = slideOutVertically()
             ) {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(PaddingValues(vertical = 15.dp)),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(3.dp)
+                RoundedCornerColumnItem(
+                    verticalPadding = 12.dp,
+                    hasBottomDivider = false,
                 ) {
-                    Text(
-                        text = stringResource(R.string.text_set_reminder_date_time),
-                        textAlign = TextAlign.Start,
-                        fontSize = 15.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.title,
-                        modifier = Modifier.padding(10.dp).weight(2f)
-                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.text_set_reminder_date_time),
+                            textAlign = TextAlign.Start,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            color = MaterialTheme.colorScheme.title,
+                            modifier = Modifier.padding(10.dp).weight(2f)
+                        )
 
-                    DatePickerDialog(
-                        initialTime = uiState.timeForRemind
-                    ) { year, month, day ->
-                        viewModel.updateDateInfo(year, month, day)
-                    }
-                    TimePickerDialog(
-                        initialTime = uiState.timeForRemind
-                    ) { hour, min ->
-                        viewModel.updateTimeInfo(hour, min)
+                        DatePickerDialog(
+                            initialTime = uiState.timeForRemind
+                        ) { year, month, day ->
+                            viewModel.updateDateInfo(year, month, day)
+                        }
+                        TimePickerDialog(
+                            initialTime = uiState.timeForRemind
+                        ) { hour, min ->
+                            viewModel.updateTimeInfo(hour, min)
+                        }
                     }
                 }
             }
@@ -210,7 +181,8 @@ fun EditBookmarkScreen(
             text = stringResource(R.string.subtitle_notes),
             fontSize = 16.sp,
             fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.title
+            color = MaterialTheme.colorScheme.title,
+            modifier = Modifier.padding(10.dp)
         )
 
         Box(
