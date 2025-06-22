@@ -152,10 +152,10 @@ class PushNotificationHandler @Inject constructor(
     private fun localizedTitle(noticeCategory: String): String {
         return with(context) {
             when (noticeCategory) {
-                NoticeCategory.GENERAL_NEWS.name -> getString(R.string.general_news)
-                NoticeCategory.ACADEMIC_NEWS.name -> getString(R.string.academic_news)
-                NoticeCategory.SCHOLARSHIP_NEWS.name -> getString(R.string.scholarship_news)
-                NoticeCategory.EVENT_NEWS.name -> getString(R.string.event_news)
+                "일반소식" -> getString(R.string.general_news)
+                "학사공지사항" -> getString(R.string.academic_news)
+                "장학안내" -> getString(R.string.scholarship_news)
+                "행사안내" -> getString(R.string.event_news)
                 NoticeCategory.JOB_NEWS.name -> getString(R.string.job_news)
                 else -> null
             }?.let {
