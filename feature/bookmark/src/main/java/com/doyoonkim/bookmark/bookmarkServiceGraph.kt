@@ -35,9 +35,10 @@ fun NavGraphBuilder.bookmarkServiceGraph(
 
     composable(NavRoutes.Bookmark.route) {
         BookmarkListScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<BookmarkListViewModel>(factory = viewModelFactory),
             bottomPadding = contentPadding.calculateBottomPadding(),
+            onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onBookmarkSelected = {
                 navController.navigate("bookmark/${it.noticeId}/${it.noticeTitle}/${it.noticeInfo}")
             },
@@ -76,7 +77,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         } ?: BookmarkInfo(0, "", "")
 
         EditBookmarkScreen(
-            modifier = Modifier,
+            modifier = Modifier.padding(horizontal = 10.dp),
             viewModel = viewModel<EditBookmarkViewModel>(factory = viewModelFactory),
             bookmarkInfo = bookmarkInfo,
             onNoticeSelected = { onNoticeDetailRequested(it) },

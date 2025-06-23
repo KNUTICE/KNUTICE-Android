@@ -52,9 +52,11 @@ fun NavGraphBuilder.mainServiceNavGraph(
     // ViewModels will be injected via ViewModelFactory
     composable(NavRoutes.Home.route) {
         HomeScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<HomeViewModel>(factory = viewModelFactory),
             bottomPadding = contentPadding.calculateBottomPadding(),
+            onSearchRequested = { navController.navigate(NavRoutes.NoticeSearch.route) },
+            onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onGoBackAction = {
                 navController.popBackStack().also { if (!it) onExit() }
             },
@@ -220,7 +222,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         UserPreferenceScreen(
-            modifier = Modifier,
+            modifier = Modifier.padding(horizontal = 10.dp),
             onNotificationPreferenceClicked = { navController.navigate(NavRoutes.NotificationPreferences.route) },
             onCustomerServiceClicked = { navController.navigate(NavRoutes.CustomerService.route) },
             onOssClicked = { navController.navigate(NavRoutes.OpenSource.route) },
@@ -244,7 +246,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         NotificationPreferencesScreen(
-            modifier = Modifier,
+            modifier = Modifier.padding(horizontal = 10.dp),
             viewModel = viewModel<NotificationPreferencesViewModel>(factory = viewModelFactory),
             onBackPressed = { navController.popBackStack() }
         )
@@ -266,7 +268,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         CustomerServiceScreen(
-            modifier = Modifier,
+            modifier = Modifier.padding(horizontal = 10.dp),
             viewModel = viewModel<CustomerServiceViewModel>(factory = viewModelFactory),
             onBackPressed = { navController.popBackStack() }
         )
@@ -288,7 +290,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         OssNoticeScreen(
-            modifier = Modifier,
+            modifier = Modifier.padding(horizontal = 10.dp),
             onBackPressed = { navController.popBackStack() }
         )
     }
