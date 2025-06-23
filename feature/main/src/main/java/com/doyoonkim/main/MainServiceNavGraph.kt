@@ -1,6 +1,12 @@
 package com.doyoonkim.main
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedContentScope
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -41,6 +48,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
     onBookmarkServiceRequested: (BookmarkInfo) -> Unit,
     onExit: () -> Unit = {  }
 ) {
+
     // ViewModels will be injected via ViewModelFactory
     composable(NavRoutes.Home.route) {
         HomeScreen(
@@ -66,7 +74,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
-    composable(NavRoutes.NoticeSearch.route) {
+    composable(
+        route = NavRoutes.NoticeSearch.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Up
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.Down
+            )
+        }
+    ) {
         NoticeSearchScreen(
             modifier = Modifier.padding(5.dp),
             viewModel = viewModel<NoticeSearchViewModel>(factory = viewModelFactory),
@@ -77,7 +99,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
-    composable(NavRoutes.GeneralNotices.route) {
+    composable(
+        route = NavRoutes.GeneralNotices.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
         NoticesInCategoryScreen(
             modifier = Modifier.padding(5.dp),
             category = NoticeCategory.GENERAL_NEWS,
@@ -89,7 +125,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
-    composable(NavRoutes.AcademicNotices.route) {
+    composable(
+        route = NavRoutes.AcademicNotices.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
         NoticesInCategoryScreen(
             modifier = Modifier.padding(5.dp),
             category = NoticeCategory.ACADEMIC_NEWS,
@@ -101,7 +151,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
-    composable(NavRoutes.ScholarshipNotices.route) {
+    composable(
+        route = NavRoutes.ScholarshipNotices.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
         NoticesInCategoryScreen(
             modifier = Modifier.padding(5.dp),
             category = NoticeCategory.SCHOLARSHIP_NEWS,
@@ -113,7 +177,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
-    composable(NavRoutes.EventNotices.route) {
+    composable(
+        route = NavRoutes.EventNotices.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
         NoticesInCategoryScreen(
             modifier = Modifier.padding(5.dp),
             category = NoticeCategory.EVENT_NEWS,
@@ -126,7 +204,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
     }
 
     // preferences
-    composable(NavRoutes.Settings.route) {
+    composable(
+        route = NavRoutes.Settings.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
         UserPreferenceScreen(
             modifier = Modifier.padding(5.dp),
             onNotificationPreferenceClicked = { navController.navigate(NavRoutes.NotificationPreferences.route) },
@@ -136,7 +228,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
-    composable(NavRoutes.NotificationPreferences.route) {
+    composable(
+        route = NavRoutes.NotificationPreferences.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
         NotificationPreferencesScreen(
             modifier = Modifier.padding(5.dp),
             viewModel = viewModel<NotificationPreferencesViewModel>(factory = viewModelFactory),
@@ -144,7 +250,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
-    composable(NavRoutes.CustomerService.route) {
+    composable(
+        route = NavRoutes.CustomerService.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
         CustomerServiceScreen(
             modifier = Modifier.padding(5.dp),
             viewModel = viewModel<CustomerServiceViewModel>(factory = viewModelFactory),
@@ -152,7 +272,21 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
-    composable(NavRoutes.OpenSource.route) {
+    composable(
+        route = NavRoutes.OpenSource.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
         OssNoticeScreen(
             modifier = Modifier.padding(5.dp),
             onBackPressed = { navController.popBackStack() }
@@ -166,7 +300,19 @@ fun NavGraphBuilder.mainServiceNavGraph(
             navDeepLink {
                 uriPattern = "knutice://service/noticeDetail/{nttId}/{contentUrl}/{isFabVisible}"
             }
-    )
+        ),
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
     ) { backStackEntry ->
         val noticeInfo = backStackEntry.arguments?.let {
             Triple(

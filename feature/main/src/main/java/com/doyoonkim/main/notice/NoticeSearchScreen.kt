@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +35,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -44,6 +47,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.NotificationPreview
+import kotlin.math.sin
 
 @Composable
 fun NoticeSearchScreen(
@@ -53,6 +57,7 @@ fun NoticeSearchScreen(
     onNoticeSelected: (Int, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val localFocusManager = LocalFocusManager.current
 
     BackHandler { onBackPressed() }
 
@@ -65,6 +70,11 @@ fun NoticeSearchScreen(
             .fillMaxWidth()
             .wrapContentHeight()
             .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onTap = { localFocusManager.clearFocus() }
+                )
+            }
     ) {
         Row(
             modifier = Modifier
@@ -90,7 +100,9 @@ fun NoticeSearchScreen(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
                 ),
-                shape = RoundedCornerShape(15.dp)
+                shape = RoundedCornerShape(15.dp),
+                singleLine = true,
+
             )
         }
 
