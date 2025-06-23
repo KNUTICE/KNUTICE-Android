@@ -182,7 +182,6 @@ fun NoticeDetailScreen(
                     if (noticeInfo.third) {
                         FloatingActionButton(
                             modifier = Modifier.wrapContentSize()
-                                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
                                 .padding(end = 10.dp, bottom = 30.dp)
                                 .align(Alignment.BottomEnd),
                             onClick = {
