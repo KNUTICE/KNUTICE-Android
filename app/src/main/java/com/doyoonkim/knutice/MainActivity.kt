@@ -10,6 +10,10 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.Ease
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -63,6 +67,8 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
+import com.doyoonkim.common.theme.containerBackground
+import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -92,13 +98,23 @@ class MainActivity : ComponentActivity() {
                 navController = rememberNavController()
 
                 // Bottom Bar Handling
-                var bottomBarState = Triple(true, false, false)
+                var bottomBarState: Pair<Boolean, Boolean>
+                var isBackgroundSolid by remember { mutableStateOf(true) }
                 val backStackEntryState by navController.currentBackStackEntryAsState()
                 backStackEntryState?.destination?.route.let { route ->
-                    bottomBarState = when(route) {
-                        NavRoutes.Home.route -> Triple(true, true, false)
-                        NavRoutes.Bookmark.route -> Triple(true, false, true)
-                        else -> Triple(false, false, false)
+                    when(route) {
+                        NavRoutes.Home.route -> {
+                            bottomBarState = Pair(true, false)
+                            isBackgroundSolid = true
+                        }
+                        NavRoutes.Bookmark.route -> {
+                            bottomBarState = Pair(false, true)
+                            isBackgroundSolid = true
+                        }
+                        else -> {
+                            bottomBarState = Pair(false, false)
+                            isBackgroundSolid = false
+                        }
                     }
                 }
 
@@ -126,9 +142,18 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                // Animated Background Color
+                val animatedBackgroundColor by animateColorAsState(
+                    targetValue = if (isBackgroundSolid){
+                        MaterialTheme.colorScheme.containerBackgroundSolid
+                    } else {
+                        MaterialTheme.colorScheme.displayBackground
+                    },
+                    animationSpec = tween(50)
+                )
+
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                        .background(MaterialTheme.colorScheme.containerBackgroundSolid),
+                    modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopAppBar(
                             title = {
@@ -137,7 +162,7 @@ class MainActivity : ComponentActivity() {
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    if (!bottomBarState.first) {
+                                    if (!bottomBarState.first && !bottomBarState.second) {
                                         IconButton(
                                             onClick = {
                                                 navController.popBackStack()
@@ -165,7 +190,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             actions = {
-                                if (bottomBarState.first) {
+                                if (bottomBarState.first || bottomBarState.second) {
                                     IconButton(
                                         onClick = {
                                             navController.navigate(NavRoutes.NoticeSearch.route)
@@ -193,13 +218,13 @@ class MainActivity : ComponentActivity() {
                                 }
                             },
                             colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.containerBackgroundSolid,
+                                containerColor = animatedBackgroundColor,
                                 titleContentColor = MaterialTheme.colorScheme.title
                             )
                         )
                     },
                     bottomBar = {
-                        if (bottomBarState.first) {
+                        if (bottomBarState.first || bottomBarState.second) {
                             BottomAppBar(
                                 modifier = Modifier
                                     .wrapContentSize()
@@ -208,10 +233,10 @@ class MainActivity : ComponentActivity() {
                                 actions = {
                                     // https://developer.android.com/develop/ui/compose/navigation#bottom-nav
                                     BottomNavigationItem(
-                                        selected = bottomBarState.second,
+                                        selected = bottomBarState.first,
                                         enabled = true,
                                         onClick = {
-                                            if (!bottomBarState.second) {
+                                            if (!bottomBarState.first) {
                                                 navController.navigate(NavRoutes.Home.route)
                                             }
                                         },
@@ -229,10 +254,10 @@ class MainActivity : ComponentActivity() {
                                         unselectedContentColor = MaterialTheme.colorScheme.subTitle
                                     )
                                     BottomNavigationItem(
-                                        selected = bottomBarState.third,
+                                        selected = bottomBarState.second,
                                         enabled = true,
                                         onClick = {
-                                            if (!bottomBarState.third) {
+                                            if (!bottomBarState.second) {
                                                 navController.navigate(NavRoutes.Bookmark.route)
                                             }
                                         },
@@ -253,11 +278,13 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     },
-                    containerColor = MaterialTheme.colorScheme.containerBackgroundSolid,
+                    containerColor = animatedBackgroundColor
                 ) { contentPadding ->
 
                     AppNavHost(
-                        modifier = Modifier,
+                        modifier = Modifier.background(
+                            animatedBackgroundColor
+                        ),
                         contentPadding = contentPadding,
                         navController = navController,
                         viewModelFactory = viewModelFactory,
