@@ -10,46 +10,30 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
@@ -58,16 +42,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.theme.KNUTICETheme
-import com.doyoonkim.common.theme.containerBackgroundSolid
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
+import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
-@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -91,11 +75,11 @@ class MainActivity : ComponentActivity() {
                 var showPermissionRationale by remember { mutableStateOf(false) }
                 navController = rememberNavController()
 
-                // Bottom Bar Handling
-                var bottomBarState = Triple(true, false, false)
+                // SharedScaffoldHandling
+                var sharedScaffoldState: Triple<Boolean, Boolean, Boolean>
                 val backStackEntryState by navController.currentBackStackEntryAsState()
-                backStackEntryState?.destination?.route.let { route ->
-                    bottomBarState = when(route) {
+                backStackEntryState?.destination?.route.let {
+                    sharedScaffoldState = when(it) {
                         NavRoutes.Home.route -> Triple(true, true, false)
                         NavRoutes.Bookmark.route -> Triple(true, false, true)
                         else -> Triple(false, false, false)
@@ -127,79 +111,9 @@ class MainActivity : ComponentActivity() {
                 }
 
                 Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                        .background(MaterialTheme.colorScheme.containerBackgroundSolid),
-                    topBar = {
-                        TopAppBar(
-                            title = {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    if (!bottomBarState.first) {
-                                        IconButton(
-                                            onClick = {
-                                                navController.popBackStack()
-                                            }
-                                        ) {
-                                            Image(
-                                                painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
-                                                contentDescription = "back",
-                                                modifier = Modifier.wrapContentSize(),
-                                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
-                                            )
-                                        }
-                                    }
-
-                                    Text(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        text = stringResource(R.string.app_name),
-                                        textAlign = TextAlign.Left,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        color = MaterialTheme.colorScheme.title
-                                    )
-                                }
-                            },
-                            actions = {
-                                if (bottomBarState.first) {
-                                    IconButton(
-                                        onClick = {
-                                            navController.navigate(NavRoutes.NoticeSearch.route)
-                                        }
-                                    ) {
-                                        Image(
-                                            painter = painterResource(R.drawable.baseline_search_24),
-                                            contentDescription = "Search",
-                                            modifier = Modifier.wrapContentSize(),
-                                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
-                                        )
-                                    }
-                                    IconButton(
-                                        onClick = {
-                                            navController.navigate(NavRoutes.Settings.route)
-                                        }
-                                    ) {
-                                        Image(
-                                            painter = painterResource(R.drawable.baseline_settings_24),
-                                            contentDescription = "Settings",
-                                            modifier = Modifier.wrapContentSize(),
-                                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
-                                        )
-                                    }
-                                }
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.containerBackgroundSolid,
-                                titleContentColor = MaterialTheme.colorScheme.title
-                            )
-                        )
-                    },
+                    modifier = Modifier.fillMaxSize(),
                     bottomBar = {
-                        if (bottomBarState.first) {
+                        if (sharedScaffoldState.first) {
                             BottomAppBar(
                                 modifier = Modifier
                                     .wrapContentSize()
@@ -208,10 +122,10 @@ class MainActivity : ComponentActivity() {
                                 actions = {
                                     // https://developer.android.com/develop/ui/compose/navigation#bottom-nav
                                     BottomNavigationItem(
-                                        selected = bottomBarState.second,
+                                        selected = sharedScaffoldState.second,
                                         enabled = true,
                                         onClick = {
-                                            if (!bottomBarState.second) {
+                                            if (!sharedScaffoldState.second) {
                                                 navController.navigate(NavRoutes.Home.route)
                                             }
                                         },
@@ -229,10 +143,10 @@ class MainActivity : ComponentActivity() {
                                         unselectedContentColor = MaterialTheme.colorScheme.subTitle
                                     )
                                     BottomNavigationItem(
-                                        selected = bottomBarState.third,
+                                        selected = sharedScaffoldState.third,
                                         enabled = true,
                                         onClick = {
-                                            if (!bottomBarState.third) {
+                                            if (!sharedScaffoldState.third) {
                                                 navController.navigate(NavRoutes.Bookmark.route)
                                             }
                                         },
@@ -249,13 +163,13 @@ class MainActivity : ComponentActivity() {
                                         selectedContentColor = MaterialTheme.colorScheme.title,
                                         unselectedContentColor = MaterialTheme.colorScheme.subTitle
                                     )
-                                }
+                                },
+                                containerColor = MaterialTheme.colorScheme.onAnyBackground
                             )
                         }
                     },
-                    containerColor = MaterialTheme.colorScheme.containerBackgroundSolid,
+                    containerColor = MaterialTheme.colorScheme.displayBackground
                 ) { contentPadding ->
-
                     AppNavHost(
                         modifier = Modifier,
                         contentPadding = contentPadding,
@@ -263,7 +177,6 @@ class MainActivity : ComponentActivity() {
                         viewModelFactory = viewModelFactory,
                         onExit = { activity.finish() }
                     )
-
                     LaunchedEffect(Unit) {
                         // Intent handling (access application via onCreate call; click push notification when app is closed.)
                         Log.d("MainActivity", "Intent received: ${launchedIntent?.data}")

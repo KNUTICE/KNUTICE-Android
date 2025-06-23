@@ -12,20 +12,18 @@ val Pink40 = Color(0xFF7D5260)
 
 // Color Scheme
 val Notification01 = Color(0xFFE65C19)
-val Notification02 = Color(0xFFFFC55A)
+val Notification02 = Color(0xFFF59E0B)
 val Notification03 = Color(0xFF7FD099)
 val Notification04 = Color(0xFF4294F7)
+val Notification05 = Color(0xFF8B5CF6)
 
-val WhiteBackground = Color(0xFFFFFFFF)
-val DarkBackground = Color(0xFF262729)
+val WhiteBackground = Color(0xFFF3F4F6)
+val DarkBackground = Color(0xFF000000)
 
-val ContainerLight = Color(0xFFF3F3F3)
-val ContainerDark = Color(0xFF333437)
-val ContainerBlack = Color(0xFF000000)
-val ContainerWhite = Color(0xFFFFFFFF)
+val SecondaryLight = Color(0xFFFFFFFF)
+val SecondaryDark = Color(0xFF1B1C20)
 
-val bottomNavBarWhite = Color(0xFFFFFFFF)
-val bottomNavBarBlack = Color(0xFF424448)
+val VariantPurple = Color(0xFF6b79fc)
 
 val TitleBlack = Color(0xFF000000)
 val TitleWhite = Color(0xFFFFFFFF)
@@ -35,11 +33,14 @@ val SubtitleAny = Color(0xFF787879)
 val ButtonDark = Color(0xFF3C3C3C)
 val ButtonLight = Color(0xFFF3F3F3)
 
-val GradientStartDark = Color(0xFF4F4F4F)
+val OnBackgroundDark = Color(0xFF2F2F2F)
+val OnBackgroundLight = Color(0xFFECECEC)
+
+val GradientStartDark = Color(0xFF1E1E1E)
 val GradientStartLight = Color(0xFFA1A1A1)
 
-val GradientIntermediateDark = Color(0xFF5C5C5C)
+val GradientIntermediateDark = Color(0xFF383838)
 val GradientIntermediateLight = Color(0xFFD2D2D2)
 
-val GradientEndDark = Color(0xFF848484)
+val GradientEndDark = Color(0xFF444444)
 val GradientEndLight = Color(0xFFE5E5E5)

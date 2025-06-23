@@ -1,7 +1,13 @@
 package com.doyoonkim.bookmark
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -17,6 +23,7 @@ import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.navigation.NoticeDetail
+import com.doyoonkim.common.theme.displayBackground
 
 fun NavGraphBuilder.bookmarkServiceGraph(
     navController: NavController,
@@ -28,9 +35,10 @@ fun NavGraphBuilder.bookmarkServiceGraph(
 
     composable(NavRoutes.Bookmark.route) {
         BookmarkListScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<BookmarkListViewModel>(factory = viewModelFactory),
             bottomPadding = contentPadding.calculateBottomPadding(),
+            onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onBookmarkSelected = {
                 navController.navigate("bookmark/${it.noticeId}/${it.noticeTitle}/${it.noticeInfo}")
             },
@@ -46,7 +54,19 @@ fun NavGraphBuilder.bookmarkServiceGraph(
             navDeepLink {
                 uriPattern = "knutice://service/bookmark/{id}/{title}/{info}"
             }
-        )
+        ),
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Up
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.Down
+            )
+        },
     ) { backStackEntry ->
         val bookmarkInfo = backStackEntry.arguments?.let {
             BookmarkInfo(
@@ -57,7 +77,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         } ?: BookmarkInfo(0, "", "")
 
         EditBookmarkScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier.padding(horizontal = 10.dp),
             viewModel = viewModel<EditBookmarkViewModel>(factory = viewModelFactory),
             bookmarkInfo = bookmarkInfo,
             onNoticeSelected = { onNoticeDetailRequested(it) },

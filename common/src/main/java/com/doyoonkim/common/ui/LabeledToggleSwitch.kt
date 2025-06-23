@@ -19,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.doyoonkim.common.theme.buttonPurple
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
+import com.doyoonkim.common.theme.variantPurple
 
 @Composable
 fun LabeledToggleSwitch(
@@ -67,7 +67,7 @@ fun LabeledToggleSwitch(
             Switch(
                 checked = isChecked,
                 colors = SwitchDefaults.colors().copy(
-                    checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
+                    checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
                     checkedThumbColor = Color.White
                 ),
                 onCheckedChange = {

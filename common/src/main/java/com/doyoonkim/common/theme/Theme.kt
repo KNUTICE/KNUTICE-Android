@@ -55,21 +55,17 @@ val ColorScheme.displayBackground: Color
     @Composable
     get() = if(isSystemInDarkTheme()) DarkBackground else WhiteBackground
 
-val ColorScheme.containerBackground: Color
+val ColorScheme.secondaryBackground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) ContainerDark else ContainerWhite
-
-val ColorScheme.containerBackgroundSolid: Color
-    @Composable
-    get() = if(isSystemInDarkTheme()) ContainerBlack else ContainerLight
+    get() = if(isSystemInDarkTheme()) SecondaryDark else SecondaryLight
 
 val ColorScheme.containerGray: Color
     @Composable
     get() = if(isSystemInDarkTheme()) Color.Gray else Color.LightGray
 
-val ColorScheme.bottomNavContainer: Color
+val ColorScheme.onAnyBackground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) bottomNavBarBlack else bottomNavBarWhite
+    get() = if(isSystemInDarkTheme()) OnBackgroundDark else OnBackgroundLight
 
 val ColorScheme.title: Color
     @Composable
@@ -79,17 +75,13 @@ val ColorScheme.subTitle: Color
     @Composable
     get() = SubtitleAny
 
-val ColorScheme.buttonContainer: Color
+val ColorScheme.variantPurple: Color
+    @Composable
+    get() = VariantPurple
+
+val ColorScheme.buttonOnBackground: Color
     @Composable
     get() = if(isSystemInDarkTheme()) ButtonDark else ButtonLight
-
-val ColorScheme.buttonPurple: Color
-    @Composable
-    get() = Purple40
-
-val ColorScheme.textPurple: Color
-    @Composable
-    get() = if(isSystemInDarkTheme()) Purple80 else Purple40
 
 val ColorScheme.animationGradientStart: Color
     @Composable

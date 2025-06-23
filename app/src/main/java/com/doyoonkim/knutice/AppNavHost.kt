@@ -2,9 +2,12 @@ package com.doyoonkim.knutice
 
 import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -23,8 +26,8 @@ fun AppNavHost(
     NavHost(
         modifier = modifier.padding(
             PaddingValues(
-                top = contentPadding.calculateTopPadding(),
-//                bottom = contentPadding.calculateBottomPadding()
+                start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+                end = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
             )
         ),
         navController = navController,

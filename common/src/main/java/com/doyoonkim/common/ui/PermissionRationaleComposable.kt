@@ -26,7 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doyoonkim.common.R
-import com.doyoonkim.common.theme.buttonPurple
+import com.doyoonkim.common.theme.variantPurple
 
 @Composable
 fun PermissionRationaleComposable(
@@ -73,7 +73,7 @@ fun PermissionRationaleComposable(
             Button(
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.buttonPurple,
+                    containerColor = MaterialTheme.colorScheme.variantPurple,
                     contentColor = Color.White,
                 ),
                 onClick = onPermissionDecided

@@ -43,11 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.doyoonkim.common.R
-import com.doyoonkim.common.theme.containerBackground
+import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.containerGray
+import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.subTitle
-import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.theme.title
+import com.doyoonkim.common.theme.variantPurple
 import kotlinx.coroutines.flow.filter
 import java.util.Calendar
 
@@ -84,7 +85,7 @@ fun TimePickerDialog(
                 .background(Color.Transparent)
                 .clip(RoundedCornerShape(10.dp))
                 .clickable { pickerVisible = !pickerVisible },
-            color = MaterialTheme.colorScheme.containerGray
+            color = MaterialTheme.colorScheme.onAnyBackground
         ) {
             Text(
                 text = "${hours[hourSelected]}:${minutes[minuteSelected]}",
@@ -110,7 +111,7 @@ fun TimePickerDialog(
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.Transparent),
-                    color = MaterialTheme.colorScheme.containerBackground
+                    color = MaterialTheme.colorScheme.secondaryBackground
                 ) {
                     Column(
                         modifier = Modifier.wrapContentSize()
@@ -248,7 +249,7 @@ internal fun WheelPickerItem(
         fontSize = 25.sp,
         textAlign = TextAlign.Center,
         color = if (isHighlighted) {
-            MaterialTheme.colorScheme.textPurple
+            MaterialTheme.colorScheme.variantPurple
         } else {
             MaterialTheme.colorScheme.subTitle
         },
