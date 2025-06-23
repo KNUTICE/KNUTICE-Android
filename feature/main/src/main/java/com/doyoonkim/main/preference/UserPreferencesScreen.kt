@@ -15,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.buttonContainer
 import com.doyoonkim.common.theme.containerBackground
+import com.doyoonkim.common.theme.containerBackgroundSolid
+import com.doyoonkim.common.theme.containerGray
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.CircleGoButton
@@ -39,7 +41,7 @@ fun UserPreferenceScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         RoundedCornerColumn(
-            backgroundColor = MaterialTheme.colorScheme.containerBackground
+            backgroundColor = MaterialTheme.colorScheme.containerBackgroundSolid
         ) {
             RoundedCornerColumnTextItemWithExtraOnRight(
                 verticalPadding = 10.dp,
@@ -51,7 +53,7 @@ fun UserPreferenceScreen(
             ) {
                 CircleGoButton(
                     modifier = Modifier.weight(1f),
-                    containerColor = MaterialTheme.colorScheme.buttonContainer,
+                    containerColor = MaterialTheme.colorScheme.containerGray,
                     contentColor = MaterialTheme.colorScheme.subTitle,
                     onClick = onNotificationPreferenceClicked
                 )

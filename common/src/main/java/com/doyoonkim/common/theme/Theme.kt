@@ -57,11 +57,11 @@ val ColorScheme.displayBackground: Color
 
 val ColorScheme.containerBackground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) ContainerDark else ContainerLight
+    get() = if(isSystemInDarkTheme()) ContainerDark else ContainerWhite
 
 val ColorScheme.containerBackgroundSolid: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) ContainerBlack else ContainerWhite
+    get() = if(isSystemInDarkTheme()) ContainerBlack else ContainerLight
 
 val ColorScheme.containerGray: Color
     @Composable
