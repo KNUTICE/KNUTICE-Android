@@ -28,7 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.doyoonkim.common.theme.containerGray
+import com.doyoonkim.common.theme.onAnyBackground
+import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.title
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -66,7 +67,7 @@ fun DatePickerDialog(
                 .background(Color.Transparent)
                 .clip(RoundedCornerShape(10.dp))
                 .clickable { pickerVisible = !pickerVisible },
-            color = MaterialTheme.colorScheme.containerGray
+            color = MaterialTheme.colorScheme.onAnyBackground
         ) {
             Text(
                 text = datePickerState.selectedDateMillis!!.toFormattedString(),

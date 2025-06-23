@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.doyoonkim.common.theme.containerBackground
+import com.doyoonkim.common.theme.secondaryBackground
 
 @Composable
 fun NotificationPreviewCard(
@@ -30,7 +30,7 @@ fun NotificationPreviewCard(
                 onClick()
             },
         colors = CardColors(
-            containerColor = MaterialTheme.colorScheme.containerBackground,
+            containerColor = MaterialTheme.colorScheme.secondaryBackground,
             contentColor = Color.Unspecified,
             disabledContainerColor = Color.Unspecified,
             disabledContentColor = Color.Unspecified
