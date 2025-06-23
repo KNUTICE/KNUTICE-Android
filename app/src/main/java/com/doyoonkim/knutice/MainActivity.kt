@@ -274,7 +274,8 @@ class MainActivity : ComponentActivity() {
                                         selectedContentColor = MaterialTheme.colorScheme.title,
                                         unselectedContentColor = MaterialTheme.colorScheme.subTitle
                                     )
-                                }
+                                },
+                                containerColor = MaterialTheme.colorScheme.displayBackground
                             )
                         }
                     },
