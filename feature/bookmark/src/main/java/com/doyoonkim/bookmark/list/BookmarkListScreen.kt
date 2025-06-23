@@ -30,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.bookmark.viewmodel.BookmarkListViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
-import com.doyoonkim.common.theme.containerBackgroundSolid
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
@@ -53,7 +52,6 @@ fun BookmarkListScreen(
 
     Box(
         modifier = modifier.fillMaxSize()
-            .background(MaterialTheme.colorScheme.containerBackgroundSolid)
     ) {
         if (uiState.bookmarks.isEmpty()) {
             Column(

@@ -23,7 +23,6 @@ import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.navigation.NoticeDetail
-import com.doyoonkim.common.theme.containerBackground
 import com.doyoonkim.common.theme.displayBackground
 
 fun NavGraphBuilder.bookmarkServiceGraph(
@@ -77,7 +76,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         } ?: BookmarkInfo(0, "", "")
 
         EditBookmarkScreen(
-            modifier = Modifier.padding(5.dp).background(MaterialTheme.colorScheme.displayBackground),
+            modifier = Modifier,
             viewModel = viewModel<EditBookmarkViewModel>(factory = viewModelFactory),
             bookmarkInfo = bookmarkInfo,
             onNoticeSelected = { onNoticeDetailRequested(it) },

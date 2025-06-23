@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -45,6 +47,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -55,11 +59,11 @@ import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.common.R
-import com.doyoonkim.common.theme.buttonPurple
-import com.doyoonkim.common.theme.containerBackground
+import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
-import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.theme.title
+import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.DatePickerDialog
 import com.doyoonkim.common.ui.NotificationPreviewCard
 import com.doyoonkim.common.ui.RoundedCornerColumn
@@ -67,6 +71,7 @@ import com.doyoonkim.common.ui.RoundedCornerColumnItem
 import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
 import com.doyoonkim.common.ui.TextSize
 import com.doyoonkim.common.ui.TimePickerDialog
+import com.doyoonkim.common.ui.TopAppBarWithBackButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,6 +85,7 @@ fun EditBookmarkScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val adjustImePadding = Modifier.consumeWindowInsets(WindowInsets.ime).imePadding()
+    val localFocusManager = LocalFocusManager.current
 
     BackHandler {
         onBackPressed()
@@ -94,226 +100,241 @@ fun EditBookmarkScreen(
         }
     }
 
-    Column(
-        modifier = modifier.fillMaxSize()
-            .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
-    ) {
-        NotificationPreviewCard(
-            modifier = Modifier.padding(5.dp),
-            isLoading = false,
-            notificationTitle = bookmarkInfo.noticeTitle,
-            notificationInfo = bookmarkInfo.noticeInfo
+    Scaffold(
+        topBar = {
+            TopAppBarWithBackButton(
+                titleText = stringResource(R.string.title_edit_bookmark),
+                onBackPressed = onBackPressed
+            )
+        },
+        containerColor = MaterialTheme.colorScheme.displayBackground
+    ) { innerPadding ->
+        Column(
+            modifier = modifier.fillMaxSize()
+                .padding(innerPadding)
+                .pointerInput(Unit) {
+                    detectTapGestures(
+                        onTap = { localFocusManager.clearFocus() }
+                    )
+                }
         ) {
-            // Request Full Content
-            uiState.targetNotice?.let { onNoticeSelected(NoticeDetail(it.nttId, it.url, false)) }
-        }
-
-        Spacer(Modifier.height(30.dp))
-
-        RoundedCornerColumn(
-            backgroundColor = MaterialTheme.colorScheme.containerBackground
-        ) { 
-            RoundedCornerColumnTextItemWithExtraOnRight(
-                verticalPadding = 12.dp,
-                titleText = stringResource(R.string.subtitle_get_reminder),
-                subTitleText = null,
-                fontSize = TextSize.Small,
-                primaryColor = MaterialTheme.colorScheme.title,
-                secondaryColor = MaterialTheme.colorScheme.subTitle,
-                hasBottomDivider = uiState.isReminderRequested
+            NotificationPreviewCard(
+                modifier = Modifier.padding(5.dp),
+                isLoading = false,
+                notificationTitle = bookmarkInfo.noticeTitle,
+                notificationInfo = bookmarkInfo.noticeInfo
             ) {
-                Switch(
-                    checked = uiState.isReminderRequested && uiState.alarmPermissionStatus,
-                    enabled = true,
-                    modifier = Modifier.padding(10.dp).weight(1f),
-                    colors = SwitchDefaults.colors().copy(
-                        checkedTrackColor = MaterialTheme.colorScheme.buttonPurple,
-                        checkedThumbColor = Color.White
-                    ),
-                    onCheckedChange = { viewModel.updateReminderOptions(requested = !uiState.isReminderRequested) }
-                )
+                // Request Full Content
+                uiState.targetNotice?.let { onNoticeSelected(NoticeDetail(it.nttId, it.url, false)) }
             }
 
-            AnimatedVisibility(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                visible = uiState.isReminderRequested,
-                enter = slideInVertically(),
-                exit = slideOutVertically()
-            ) {
-                RoundedCornerColumnItem(
-                    verticalPadding = 12.dp,
-                    hasBottomDivider = false,
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .wrapContentHeight(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(3.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.text_set_reminder_date_time),
-                            textAlign = TextAlign.Start,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.title,
-                            modifier = Modifier.padding(10.dp).weight(2f)
-                        )
+            Spacer(Modifier.height(30.dp))
 
-                        DatePickerDialog(
-                            initialTime = uiState.timeForRemind
-                        ) { year, month, day ->
-                            viewModel.updateDateInfo(year, month, day)
-                        }
-                        TimePickerDialog(
-                            initialTime = uiState.timeForRemind
-                        ) { hour, min ->
-                            viewModel.updateTimeInfo(hour, min)
+            RoundedCornerColumn(
+                backgroundColor = MaterialTheme.colorScheme.secondaryBackground
+            ) {
+                RoundedCornerColumnTextItemWithExtraOnRight(
+                    verticalPadding = 12.dp,
+                    titleText = stringResource(R.string.subtitle_get_reminder),
+                    subTitleText = null,
+                    fontSize = TextSize.Small,
+                    primaryColor = MaterialTheme.colorScheme.title,
+                    secondaryColor = MaterialTheme.colorScheme.subTitle,
+                    hasBottomDivider = uiState.isReminderRequested
+                ) {
+                    Switch(
+                        checked = uiState.isReminderRequested && uiState.alarmPermissionStatus,
+                        enabled = true,
+                        modifier = Modifier.padding(10.dp).weight(1f),
+                        colors = SwitchDefaults.colors().copy(
+                            checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
+                            checkedThumbColor = Color.White
+                        ),
+                        onCheckedChange = { viewModel.updateReminderOptions(requested = !uiState.isReminderRequested) }
+                    )
+                }
+
+                AnimatedVisibility(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    visible = uiState.isReminderRequested,
+                    enter = slideInVertically(),
+                    exit = slideOutVertically()
+                ) {
+                    RoundedCornerColumnItem(
+                        verticalPadding = 12.dp,
+                        hasBottomDivider = false,
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(3.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.text_set_reminder_date_time),
+                                textAlign = TextAlign.Start,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.title,
+                                modifier = Modifier.padding(10.dp).weight(2f)
+                            )
+
+                            DatePickerDialog(
+                                initialTime = uiState.timeForRemind
+                            ) { year, month, day ->
+                                viewModel.updateDateInfo(year, month, day)
+                            }
+                            TimePickerDialog(
+                                initialTime = uiState.timeForRemind
+                            ) { hour, min ->
+                                viewModel.updateTimeInfo(hour, min)
+                            }
                         }
                     }
                 }
             }
-        }
 
-        Spacer(Modifier.height(15.dp))
-
-        Text(
-            text = stringResource(R.string.subtitle_notes),
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Normal,
-            color = MaterialTheme.colorScheme.title,
-            modifier = Modifier.padding(10.dp)
-        )
-
-        Box(
-            modifier = Modifier.fillMaxWidth()
-                .fillMaxHeight()
-                .weight(1f)
-                .padding(top = 5.dp, bottom = 20.dp)
-                .then(adjustImePadding)
-        ) {
-            TextField(
-                modifier = Modifier.fillMaxSize().padding(bottom = 5.dp),
-                value = uiState.bookmarkNote,
-                placeholder = { Text(text = stringResource(R.string.placeholder_notes)) },
-                enabled = true,
-                onValueChange = {
-                    viewModel.updateBookmarkNotes(it)
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = MaterialTheme.colorScheme.title,
-                    unfocusedTextColor = MaterialTheme.colorScheme.subTitle,
-                    focusedContainerColor = MaterialTheme.colorScheme.containerBackground,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.containerBackground,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
-                ),
-                shape = RoundedCornerShape(15.dp)
-            )
+            Spacer(Modifier.height(15.dp))
 
             Text(
-                text = "${uiState.bookmarkNote.length}/500",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.subTitle,
-                modifier = Modifier.wrapContentSize()
-                    .padding(15.dp)
-                    .align(Alignment.BottomEnd)
+                text = stringResource(R.string.subtitle_notes),
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Normal,
+                color = MaterialTheme.colorScheme.title,
+                modifier = Modifier.padding(10.dp)
             )
-        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            Button(
-                modifier = Modifier.wrapContentHeight()
-                    .weight(1f),
-                enabled = true,
-                colors = ButtonDefaults.buttonColors().copy(
-                    containerColor = MaterialTheme.colorScheme.buttonPurple,
-                    contentColor = Color.White,
-                ),
-                shape = RoundedCornerShape(10.dp),
-                onClick = {
-                    viewModel.submitBookmark()
-                }
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .fillMaxHeight()
+                    .weight(1f)
+                    .padding(top = 5.dp, bottom = 20.dp)
+                    .then(adjustImePadding)
             ) {
+                TextField(
+                    modifier = Modifier.fillMaxSize().padding(bottom = 5.dp),
+                    value = uiState.bookmarkNote,
+                    placeholder = { Text(text = stringResource(R.string.placeholder_notes)) },
+                    enabled = true,
+                    onValueChange = {
+                        viewModel.updateBookmarkNotes(it)
+                    },
+                    colors = TextFieldDefaults.colors(
+                        focusedTextColor = MaterialTheme.colorScheme.title,
+                        unfocusedTextColor = MaterialTheme.colorScheme.subTitle,
+                        focusedContainerColor = MaterialTheme.colorScheme.secondaryBackground,
+                        unfocusedContainerColor = MaterialTheme.colorScheme.secondaryBackground,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    shape = RoundedCornerShape(15.dp)
+                )
+
                 Text(
-                    text = stringResource(R.string.btn_save),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(10.dp)
+                    text = "${uiState.bookmarkNote.length}/500",
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = MaterialTheme.colorScheme.subTitle,
+                    modifier = Modifier.wrapContentSize()
+                        .padding(15.dp)
+                        .align(Alignment.BottomEnd)
                 )
             }
 
-            if (!uiState.requireCreation) {
+            Row(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
+            ) {
                 Button(
-                    modifier = Modifier.wrapContentHeight().weight(1f),
+                    modifier = Modifier.wrapContentHeight()
+                        .weight(1f),
                     enabled = true,
-                    shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors().copy(
-                        containerColor = MaterialTheme.colorScheme.subTitle,
-                        contentColor = Color.White
+                        containerColor = MaterialTheme.colorScheme.variantPurple,
+                        contentColor = Color.White,
                     ),
+                    shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        viewModel.removeBookmark()
+                        viewModel.submitBookmark()
                     }
                 ) {
                     Text(
-                        text = stringResource(R.string.btn_delete),
+                        text = stringResource(R.string.btn_save),
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(10.dp)
                     )
                 }
-            }
-        }
-    }
 
-    if (uiState.isCompleted) {
-        BasicAlertDialog(
-            onDismissRequest = {
-                // Dismiss the dialog when the user clicks outside the dialog or on the back
-                // button. If you want to disable that functionality, simply use an empty
-                // onDismissRequest.
-
-            }
-        ) {
-            Surface(
-                modifier = Modifier.wrapContentWidth().wrapContentHeight(),
-                shape = MaterialTheme.shapes.large,
-                tonalElevation = AlertDialogDefaults.TonalElevation,
-                color = MaterialTheme.colorScheme.containerBackground
-            ) {
-                Column(modifier = Modifier.padding(30.dp)) {
-                    Text(
-                        text = if (uiState.isSuccessful) {
-                            stringResource(R.string.text_save_successful)
-                        } else {
-                            stringResource(R.string.text_save_unsuccessful)
-                        },
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.SemiBold,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colorScheme.title
-                    )
-                    Spacer(modifier = Modifier.height(24.dp))
-                    TextButton(
+                if (!uiState.requireCreation) {
+                    Button(
+                        modifier = Modifier.wrapContentHeight().weight(1f),
+                        enabled = true,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors().copy(
+                            containerColor = MaterialTheme.colorScheme.subTitle,
+                            contentColor = Color.White
+                        ),
                         onClick = {
-                            if (uiState.isSuccessful) onCompleted()
-                            viewModel.updateCompletionStatus(false)     // Set false for completion status for marking a new transaction is ready to start.
-                        },
-                        modifier = Modifier.align(Alignment.End)
+                            viewModel.removeBookmark()
+                        }
                     ) {
                         Text(
-                            text = stringResource(R.string.btn_confirm),
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Normal,
-                            color = MaterialTheme.colorScheme.textPurple
+                            text = stringResource(R.string.btn_delete),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(10.dp)
                         )
+                    }
+                }
+            }
+        }
+
+        if (uiState.isCompleted) {
+            BasicAlertDialog(
+                onDismissRequest = {
+                    // Dismiss the dialog when the user clicks outside the dialog or on the back
+                    // button. If you want to disable that functionality, simply use an empty
+                    // onDismissRequest.
+
+                }
+            ) {
+                Surface(
+                    modifier = Modifier.wrapContentWidth().wrapContentHeight(),
+                    shape = MaterialTheme.shapes.large,
+                    tonalElevation = AlertDialogDefaults.TonalElevation,
+                    color = MaterialTheme.colorScheme.secondaryBackground
+                ) {
+                    Column(modifier = Modifier.padding(30.dp)) {
+                        Text(
+                            text = if (uiState.isSuccessful) {
+                                stringResource(R.string.text_save_successful)
+                            } else {
+                                stringResource(R.string.text_save_unsuccessful)
+                            },
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.SemiBold,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.title
+                        )
+                        Spacer(modifier = Modifier.height(24.dp))
+                        TextButton(
+                            onClick = {
+                                if (uiState.isSuccessful) onCompleted()
+                                viewModel.updateCompletionStatus(false)     // Set false for completion status for marking a new transaction is ready to start.
+                            },
+                            modifier = Modifier.align(Alignment.End)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.btn_confirm),
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.Normal,
+                                color = MaterialTheme.colorScheme.variantPurple
+                            )
+                        }
                     }
                 }
             }

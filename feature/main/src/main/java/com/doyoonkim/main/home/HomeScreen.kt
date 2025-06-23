@@ -135,7 +135,7 @@ fun NotificationPreviewList(
                 text = listTitle,
                 color = titleColor,
                 fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.ExtraBold
             )
 
             TextButton(

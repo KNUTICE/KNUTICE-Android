@@ -90,7 +90,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         NoticeSearchScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             viewModel = viewModel<NoticeSearchViewModel>(factory = viewModelFactory),
             onBackPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
@@ -115,7 +115,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         NoticesInCategoryScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             category = NoticeCategory.GENERAL_NEWS,
             viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
             onBackButtonPressed = { navController.popBackStack() },
@@ -141,7 +141,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         NoticesInCategoryScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             category = NoticeCategory.ACADEMIC_NEWS,
             viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
             onBackButtonPressed = { navController.popBackStack() },
@@ -167,7 +167,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         NoticesInCategoryScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             category = NoticeCategory.SCHOLARSHIP_NEWS,
             viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
             onBackButtonPressed = { navController.popBackStack() },
@@ -193,7 +193,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         NoticesInCategoryScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             category = NoticeCategory.EVENT_NEWS,
             viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
             onBackButtonPressed = { navController.popBackStack() },
@@ -220,7 +220,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         UserPreferenceScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             onNotificationPreferenceClicked = { navController.navigate(NavRoutes.NotificationPreferences.route) },
             onCustomerServiceClicked = { navController.navigate(NavRoutes.CustomerService.route) },
             onOssClicked = { navController.navigate(NavRoutes.OpenSource.route) },
@@ -244,7 +244,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         NotificationPreferencesScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             viewModel = viewModel<NotificationPreferencesViewModel>(factory = viewModelFactory),
             onBackPressed = { navController.popBackStack() }
         )
@@ -266,7 +266,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         CustomerServiceScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             viewModel = viewModel<CustomerServiceViewModel>(factory = viewModelFactory),
             onBackPressed = { navController.popBackStack() }
         )
@@ -288,7 +288,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         OssNoticeScreen(
-            modifier = Modifier.padding(5.dp),
+            modifier = Modifier,
             onBackPressed = { navController.popBackStack() }
         )
     }

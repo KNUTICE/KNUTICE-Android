@@ -10,15 +10,9 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.Ease
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -62,13 +56,12 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.theme.KNUTICETheme
-import com.doyoonkim.common.theme.containerBackgroundSolid
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
-import com.doyoonkim.common.theme.containerBackground
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
 import kotlinx.coroutines.delay
 import javax.inject.Inject
@@ -97,24 +90,14 @@ class MainActivity : ComponentActivity() {
                 var showPermissionRationale by remember { mutableStateOf(false) }
                 navController = rememberNavController()
 
-                // Bottom Bar Handling
-                var bottomBarState: Pair<Boolean, Boolean>
-                var isBackgroundSolid by remember { mutableStateOf(true) }
+                // SharedScaffoldHandling
+                var sharedScaffoldState: Triple<Boolean, Boolean, Boolean>
                 val backStackEntryState by navController.currentBackStackEntryAsState()
-                backStackEntryState?.destination?.route.let { route ->
-                    when(route) {
-                        NavRoutes.Home.route -> {
-                            bottomBarState = Pair(true, false)
-                            isBackgroundSolid = true
-                        }
-                        NavRoutes.Bookmark.route -> {
-                            bottomBarState = Pair(false, true)
-                            isBackgroundSolid = true
-                        }
-                        else -> {
-                            bottomBarState = Pair(false, false)
-                            isBackgroundSolid = false
-                        }
+                backStackEntryState?.destination?.route.let {
+                    sharedScaffoldState = when(it) {
+                        NavRoutes.Home.route -> Triple(true, true, false)
+                        NavRoutes.Bookmark.route -> Triple(true, false, true)
+                        else -> Triple(false, false, false)
                     }
                 }
 
@@ -142,55 +125,29 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                // Animated Background Color
-                val animatedBackgroundColor by animateColorAsState(
-                    targetValue = if (isBackgroundSolid){
-                        MaterialTheme.colorScheme.containerBackgroundSolid
-                    } else {
-                        MaterialTheme.colorScheme.displayBackground
-                    },
-                    animationSpec = tween(50)
-                )
-
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
-                        TopAppBar(
-                            title = {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    if (!bottomBarState.first && !bottomBarState.second) {
-                                        IconButton(
-                                            onClick = {
-                                                navController.popBackStack()
-                                            }
-                                        ) {
-                                            Image(
-                                                painter = painterResource(R.drawable.baseline_arrow_back_ios_new_24),
-                                                contentDescription = "back",
-                                                modifier = Modifier.wrapContentSize(),
-                                                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
-                                            )
-                                        }
+                        if (sharedScaffoldState.first) {
+                            TopAppBar(
+                                title = {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Text(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            text = stringResource(R.string.app_name),
+                                            textAlign = TextAlign.Left,
+                                            fontSize = 20.sp,
+                                            fontWeight = FontWeight.W900,
+                                            maxLines = 1,
+                                            color = MaterialTheme.colorScheme.title
+                                        )
                                     }
-
-                                    Text(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        text = stringResource(R.string.app_name),
-                                        textAlign = TextAlign.Left,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.ExtraBold,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        color = MaterialTheme.colorScheme.title
-                                    )
-                                }
-                            },
-                            actions = {
-                                if (bottomBarState.first || bottomBarState.second) {
+                                },
+                                actions = {
                                     IconButton(
                                         onClick = {
                                             navController.navigate(NavRoutes.NoticeSearch.route)
@@ -215,16 +172,16 @@ class MainActivity : ComponentActivity() {
                                             colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
                                         )
                                     }
-                                }
-                            },
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = animatedBackgroundColor,
-                                titleContentColor = MaterialTheme.colorScheme.title
+                                },
+                                colors = TopAppBarDefaults.topAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.displayBackground,
+                                    titleContentColor = MaterialTheme.colorScheme.title
+                                )
                             )
-                        )
+                        }
                     },
                     bottomBar = {
-                        if (bottomBarState.first || bottomBarState.second) {
+                        if (sharedScaffoldState.first) {
                             BottomAppBar(
                                 modifier = Modifier
                                     .wrapContentSize()
@@ -233,10 +190,10 @@ class MainActivity : ComponentActivity() {
                                 actions = {
                                     // https://developer.android.com/develop/ui/compose/navigation#bottom-nav
                                     BottomNavigationItem(
-                                        selected = bottomBarState.first,
+                                        selected = sharedScaffoldState.second,
                                         enabled = true,
                                         onClick = {
-                                            if (!bottomBarState.first) {
+                                            if (!sharedScaffoldState.second) {
                                                 navController.navigate(NavRoutes.Home.route)
                                             }
                                         },
@@ -254,10 +211,10 @@ class MainActivity : ComponentActivity() {
                                         unselectedContentColor = MaterialTheme.colorScheme.subTitle
                                     )
                                     BottomNavigationItem(
-                                        selected = bottomBarState.second,
+                                        selected = sharedScaffoldState.third,
                                         enabled = true,
                                         onClick = {
-                                            if (!bottomBarState.second) {
+                                            if (!sharedScaffoldState.third) {
                                                 navController.navigate(NavRoutes.Bookmark.route)
                                             }
                                         },
@@ -275,17 +232,15 @@ class MainActivity : ComponentActivity() {
                                         unselectedContentColor = MaterialTheme.colorScheme.subTitle
                                     )
                                 },
-                                containerColor = MaterialTheme.colorScheme.displayBackground
+                                containerColor = MaterialTheme.colorScheme.onAnyBackground
                             )
                         }
                     },
-                    containerColor = animatedBackgroundColor
+                    containerColor = MaterialTheme.colorScheme.displayBackground
                 ) { contentPadding ->
 
                     AppNavHost(
-                        modifier = Modifier.background(
-                            animatedBackgroundColor
-                        ),
+                        modifier = Modifier,
                         contentPadding = contentPadding,
                         navController = navController,
                         viewModelFactory = viewModelFactory,
