@@ -69,6 +69,7 @@ fun NoticeSearchScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
+                modifier = Modifier.padding(top = 5.dp),
                 title = {
                     TextField(
                         modifier = Modifier
