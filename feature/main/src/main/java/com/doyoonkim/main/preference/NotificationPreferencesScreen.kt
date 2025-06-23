@@ -86,7 +86,7 @@ fun NotificationPreferencesScreen(
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
         RoundedCornerColumn(
-            modifier = Modifier.fillMaxWidth().padding(innerPadding),
+            modifier = modifier.fillMaxWidth().padding(innerPadding),
             backgroundColor = MaterialTheme.colorScheme.secondaryBackground
         ) {
             RoundedCornerColumnTextItemWithExtraOnRight(
