@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.common.theme.containerBackground
-import com.doyoonkim.common.theme.containerBackgroundSolid
+import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.textPurple
 import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
@@ -65,7 +65,6 @@ fun NoticesInCategoryScreen(
 
     Box(
         modifier = modifier.fillMaxWidth()
-            .background(MaterialTheme.colorScheme.containerBackground)
             .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
             .pullRefresh(pullRefreshState)
     ) {
@@ -84,7 +83,7 @@ fun NoticesInCategoryScreen(
                         CircularProgressIndicator(
                             modifier = Modifier.wrapContentSize(),
                             color = MaterialTheme.colorScheme.textPurple,
-                            trackColor = MaterialTheme.colorScheme.containerBackground
+                            trackColor = MaterialTheme.colorScheme.displayBackground
                         )
                     }
                     viewModel.requestMoreNotices()
@@ -92,7 +91,7 @@ fun NoticesInCategoryScreen(
                     if (index != 0) {
                         HorizontalDivider(
                             Modifier.fillMaxWidth(),
-                            color =MaterialTheme.colorScheme.containerBackgroundSolid,
+                            color =MaterialTheme.colorScheme.containerBackground,
                             thickness = 1.2.dp
                         )
                     }
