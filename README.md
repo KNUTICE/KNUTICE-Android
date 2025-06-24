@@ -33,12 +33,12 @@
 
 # 📱 Preview
 <div style="display: flex; overflow-x: auto; justify-content: center; margin-bottom: 10px;">
-  <img width="145" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/0ff78e0a-1f5c-49fb-a055-ab0eadae7170">
-  <img width="145" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/ef4b72f6-87d0-4b4e-829f-4aff8dce438f">
-  <img width="145" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/bb921b96-6438-4896-b0aa-0c937997b8ca">
-  <img width="145" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/f6cdfe51-50d2-4b47-a977-8d5d6b488287">
-  <img width="145" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/29e3c455-ca07-4aae-bb44-30bab2379418">
-  <img width="145" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/5c02cb75-0658-4a7b-85ed-4177f0231e12">  
+  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/0ff78e0a-1f5c-49fb-a055-ab0eadae7170">
+  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/ef4b72f6-87d0-4b4e-829f-4aff8dce438f">
+  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/bb921b96-6438-4896-b0aa-0c937997b8ca">
+  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/f6cdfe51-50d2-4b47-a977-8d5d6b488287">
+  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/29e3c455-ca07-4aae-bb44-30bab2379418">
+  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/5c02cb75-0658-4a7b-85ed-4177f0231e12">  
 </div>
 
 <br>
