@@ -41,7 +41,7 @@ fun AppNavHost(
                 navController.navigate("noticeDetail/${target.nttId}/${Uri.encode(target.contentUrl)}/${target.isFabVisible}")
             },
             onBookmarkServiceRequested = {
-                navController.navigate("bookmark/${it.noticeId}/${it.noticeTitle}/${it.noticeInfo}")
+                navController.navigate("bookmark/${it.noticeId}/${Uri.encode(it.noticeTitle)}/${Uri.encode(it.noticeInfo)}")
             },
             onExit = onExit
         )
@@ -52,6 +52,9 @@ fun AppNavHost(
             contentPadding = contentPadding,
             onNoticeDetailRequested = { target ->
                 navController.navigate("noticeDetail/${target.nttId}/${Uri.encode(target.contentUrl)}/${target.isFabVisible}")
+            },
+            onBookmarkRequested = {
+                navController.navigate("bookmark/${it.noticeId}/${Uri.encode(it.noticeTitle)}/${Uri.encode(it.noticeInfo)}")
             },
             onExit = onExit
         )
