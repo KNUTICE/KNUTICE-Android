@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,11 +24,25 @@ class BookmarkListViewModel @Inject constructor(
     private var _uiState = MutableStateFlow(BookmarkListState())
     val uiState = _uiState.asStateFlow()
 
-    fun getAllBookmarks() {
+    fun requestBookmarks(
+        size: Int = 20,
+        pageNumber: Int = 0
+    ) {
         viewModelScope.launch {
             updateFetchingStatus(false).also { delay(200L) }
-            fetchAllBookmarks()
+            fetchAllBookmarks(size = size, pageNumber = pageNumber)
                 .flowOn(Dispatchers.IO)
+                .onCompletion { e ->
+                    if (e == null) {
+                        updateStateOnFetchComplete(
+                            pageNumber = pageNumber,
+                            isReachEnd = uiState.value.bookmarks.size % size != 0
+                        )
+                    } else {
+                        Log.d("BookmarkListViewModel", "Completed with error")
+                        updateFetchingStatus(true)
+                    }
+                }
                 .collectLatest { result ->
                     Log.d("BookmarkListViewModel", "${result}")
                     _uiState.update {
@@ -38,21 +53,38 @@ class BookmarkListViewModel @Inject constructor(
                         )
                     }
                 }
-        }.run { if (this.isCompleted) updateFetchingStatus(true) }
+        }
     }
 
-    fun updateFetchingStatus(status: Boolean) =
+    private fun updateFetchingStatus(status: Boolean) =
         _uiState.update {
             it.copy(
                 isFetchingCompleted = status
             )
         }
 
+    private fun updateStateOnFetchComplete(pageNumber: Int, isReachEnd: Boolean) =
+        _uiState.update {
+            it.copy(
+                isFetchingCompleted = true,
+                pageNumber = pageNumber,
+                isReachEnd = isReachEnd
+            )
+        }
+
+    fun updateSortOption(option: SortOption) {
+
+    }
 
 }
+
+enum class SortOption { DES_CREATION, ASC_CREATION, DES_REMINDER, ASC_REMINDER }
 
 data class BookmarkListState(
     val bookmarks: List<Pair<BookmarkVO, NoticeVO>> = emptyList(),
     val isRefreshing: Boolean = false,
     val isFetchingCompleted: Boolean = true,
+    val sortOption: SortOption = SortOption.ASC_CREATION,
+    val pageNumber: Int = 0,
+    val isReachEnd: Boolean = false
 )
