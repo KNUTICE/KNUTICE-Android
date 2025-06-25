@@ -39,7 +39,7 @@ object DataModule {
                 Log.d("SQL", "Query: $sqlQuery SQLArgs: $bindArgs")
             },
             Dispatchers.IO.asExecutor()
-        ).build()
+        ).addMigrations(LocalDatabase.MIGRATION_1_2).build()
     }
 
     @Provides
