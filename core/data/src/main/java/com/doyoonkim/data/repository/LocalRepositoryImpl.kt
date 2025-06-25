@@ -49,9 +49,9 @@ class LocalRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun queryAllBookmarks() = flow {
+    override fun queryAllBookmarks(size: Int, pageNumber: Int) = flow {
         runCatching {
-            localDao.getAllBookmarks()
+            localDao.getBookmarksByPage(size, pageNumber)
         }.onFailure { throw it }.fold(
             onSuccess = {
                 Log.d(TAG, "${it.size}")

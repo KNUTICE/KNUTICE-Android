@@ -13,15 +13,17 @@ import javax.inject.Inject
 
 
 interface FetchAllBookmarks {
-    operator fun invoke(): Flow<Pair<BookmarkVO, NoticeVO>>
+    operator fun invoke(size: Int, pageNumber: Int): Flow<Pair<BookmarkVO, NoticeVO>>
 }
 
 class FetchAllBookmarksImpl @Inject constructor(
     private val localRepository: LocalRepository
 ) : FetchAllBookmarks {
 
-    override operator fun invoke(): Flow<Pair<BookmarkVO, NoticeVO>> =
-        localRepository.queryAllBookmarks().transform { bookmarkVO ->
+    override operator fun invoke(size: Int, pageNumber: Int): Flow<Pair<BookmarkVO, NoticeVO>> =
+        localRepository.queryAllBookmarks(
+            size, pageNumber
+        ).transform { bookmarkVO ->
             bookmarkVO?.let {
                 emitAll(localRepository.queryNoticeById(it.targetNoticeNttId).transform { nullable ->
                     nullable?.let { vo->

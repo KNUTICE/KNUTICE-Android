@@ -12,7 +12,7 @@ interface LocalRepository {
 
     fun updateBookmark(bookmark: BookmarkVO): Flow<Boolean>
 
-    fun queryAllBookmarks(): Flow<BookmarkVO?>
+    fun queryAllBookmarks(size: Int, pageNumber: Int): Flow<BookmarkVO?>
 
     fun queryNoticeById(nttId: Int): Flow<NoticeVO?>
 

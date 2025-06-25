@@ -14,6 +14,9 @@ interface MainDatabaseDao {
     @Query("SELECT * FROM Bookmark")
     fun getAllBookmarks(): List<Bookmark>
 
+    @Query("SELECT * FROM Bookmark LIMIT :size OFFSET :pageNumber * :size")
+    fun getBookmarksByPage(size: Int, pageNumber: Int): List<Bookmark>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun createBookmark(entity: Bookmark)
 
