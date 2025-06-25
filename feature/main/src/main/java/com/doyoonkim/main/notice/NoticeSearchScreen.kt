@@ -1,6 +1,7 @@
 package com.doyoonkim.main.notice
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
@@ -45,6 +46,7 @@ import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
@@ -123,37 +125,41 @@ fun NoticeSearchScreen(
                     )
                 }
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .align(Alignment.TopCenter),
-                contentPadding = PaddingValues(3.dp)
-            ) {
-                items(uiState.fetchResult) { notice ->
-                    HorizontalDivider(
-                        Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
-                        color = MaterialTheme.colorScheme.secondaryBackground
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { onNoticeSelected(notice.nttId, notice.url) }
-                    ) {
-                        NotificationPreview(
-                            modifier = Modifier.fillMaxWidth(),
-                            isLoading = uiState.isFetching,
-                            isImageContained = notice.imageUrl != null,
-                            notificationTitle = notice.title,
-                            notificationInfo = "[${notice.departName}] ${notice.timestamp}",
-                            imageUrl = notice.imageUrl ?: ""
+            if (uiState.fetchResult.isEmpty()) {
+                /* TODO Add image for empty list. */
+            } else {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .align(Alignment.TopCenter),
+                    contentPadding = PaddingValues(3.dp)
+                ) {
+                    items(uiState.fetchResult) { notice ->
+                        HorizontalDivider(
+                            Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
+                            color = MaterialTheme.colorScheme.onAnyBackground
                         )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { onNoticeSelected(notice.nttId, notice.url) }
+                        ) {
+                            NotificationPreview(
+                                modifier = Modifier.fillMaxWidth(),
+                                isLoading = uiState.isFetching,
+                                isImageContained = notice.imageUrl != null,
+                                notificationTitle = notice.title,
+                                notificationInfo = "[${notice.departName}] ${notice.timestamp}",
+                                imageUrl = notice.imageUrl ?: ""
+                            )
+                        }
                     }
                 }
             }
 
-            androidx.compose.animation.AnimatedVisibility(
+            AnimatedVisibility(
                 visible = uiState.isFetching,
                 modifier = Modifier.wrapContentSize().align(Alignment.Center),
                 enter = scaleIn(),
