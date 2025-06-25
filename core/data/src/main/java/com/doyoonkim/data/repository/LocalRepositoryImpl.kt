@@ -149,7 +149,8 @@ class LocalRepositoryImpl @Inject constructor(
             targetNoticeNttId = this.nttId,
             isScheduled = this.isScheduled,
             reminderSchedule = this.reminderSchedule,
-            bookmarkNote = this.note
+            bookmarkNote = this.note,
+            createdAt = this.createdAt
         )
 
     private fun List<Bookmark>.toListOfBookmarkVO() =
