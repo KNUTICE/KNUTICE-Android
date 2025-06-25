@@ -1,5 +1,6 @@
 package com.doyoonkim.bookmark
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -30,6 +31,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
     viewModelFactory: ViewModelProvider.Factory,
     contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
+    onBookmarkRequested: (BookmarkInfo) -> Unit,
     onExit: () -> Unit = {  }
 ) {
 
@@ -40,7 +42,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
             bottomPadding = contentPadding.calculateBottomPadding(),
             onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onBookmarkSelected = {
-                navController.navigate("bookmark/${it.noticeId}/${it.noticeTitle}/${it.noticeInfo}")
+                onBookmarkRequested(it)
             },
             onBackPressed = {
                 navController.popBackStack().also { if (!it) onExit() }
@@ -71,8 +73,8 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         val bookmarkInfo = backStackEntry.arguments?.let {
             BookmarkInfo(
                 it.getString("id")?.toInt() ?: 0,
-                it.getString("title") ?: "",
-                it.getString("info") ?: ""
+                Uri.decode(it.getString("title")) ?: "",
+                Uri.decode(it.getString("info")) ?: ""
             )
         } ?: BookmarkInfo(0, "", "")
 
