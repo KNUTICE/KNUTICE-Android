@@ -1,5 +1,6 @@
 package com.doyoonkim.network.model.dto
 
+import androidx.annotation.Keep
 import com.doyoonkim.model.TopicSubscriptionPreferencesVO
 import com.google.gson.annotations.SerializedName
 
@@ -7,6 +8,7 @@ import com.google.gson.annotations.SerializedName
  * @author kimdoyoon
  * Created 6/3/25 at 12:23 AM
  */
+@Keep
 data class TopicSubscriptionPreferencesDTO(
     @SerializedName("generalNewsTopic") var generalNewsTopic: Boolean = false,
     @SerializedName("scholarshipNewsTopic") var scholarshipNewsTopic: Boolean = false,
