@@ -80,4 +80,6 @@
     <string name="job_news">Career</string>
     <string name="text_select_time">Select Time</string>
     <string name="text_set_reminder_date_time">Select time for reminder</string>
+    <string name="text_newest">Newest</string>
+    <string name="text_oldest">Oldest</string>
 </resources>

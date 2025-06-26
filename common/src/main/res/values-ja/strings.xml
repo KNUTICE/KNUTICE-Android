@@ -70,4 +70,6 @@
     <string name="job_news">就職</string>
     <string name="text_select_time">時間設定</string>
     <string name="text_set_reminder_date_time">時間設定</string>
+    <string name="text_newest">最新順</string>
+    <string name="text_oldest">古い順</string>
 </resources>
