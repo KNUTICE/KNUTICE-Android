@@ -38,4 +38,10 @@ interface MainDatabaseDao {
     @Query("SELECT * FROM Bookmark WHERE target_ntt_id=:nttId")
     fun getBookmarkByNttId(nttId: Int): Bookmark?
 
+    @Query("SELECT * FROM Bookmark ORDER BY bookmarkId DESC LIMIT :size OFFSET :pageNumber * :size")
+    fun getBookmarkSortedNewest(size: Int, pageNumber: Int): List<Bookmark>
+
+    @Query("SELECT * FROM Bookmark ORDER BY bookmarkId ASC LIMIT :size OFFSET :pageNumber * :size")
+    fun getBookmarkSortedOldest(size: Int, pageNumber: Int): List<Bookmark>
+
 }

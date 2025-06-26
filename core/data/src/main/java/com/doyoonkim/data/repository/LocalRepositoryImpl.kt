@@ -5,6 +5,7 @@ import com.doyoonkim.data.model.Bookmark
 import com.doyoonkim.data.model.NoticeEntity
 import com.doyoonkim.data.room.MainDatabaseDao
 import com.doyoonkim.domain.LocalRepository
+import com.doyoonkim.domain.SortOption
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.flow
@@ -58,6 +59,21 @@ class LocalRepositoryImpl @Inject constructor(
                 it.toListOfBookmarkVO().forEach {
                 vo -> emit(vo).also { Log.d(TAG, vo.toString()) }
             } },
+            onFailure = { it.printLog().also { emit(null) } }
+        )
+    }
+
+    override fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption) = flow {
+        runCatching {
+            when (option) {
+                SortOption.ASC_CREATION -> localDao.getBookmarkSortedOldest(size, pageNumber)
+                SortOption.DES_CREATION -> localDao.getBookmarkSortedNewest(size, pageNumber)
+            }
+        }.onFailure { throw it }.fold(
+            onSuccess = {
+                Log.d(TAG, "${it.size}")
+                it.toListOfBookmarkVO().forEach { vo -> emit(vo).also { Log.d(TAG, vo.toString()) } }
+            },
             onFailure = { it.printLog().also { emit(null) } }
         )
     }

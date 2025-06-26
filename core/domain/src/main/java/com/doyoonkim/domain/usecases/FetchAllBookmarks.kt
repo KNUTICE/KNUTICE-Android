@@ -1,6 +1,7 @@
 package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.LocalRepository
+import com.doyoonkim.domain.SortOption
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.Flow
@@ -13,16 +14,16 @@ import javax.inject.Inject
 
 
 interface FetchAllBookmarks {
-    operator fun invoke(size: Int, pageNumber: Int): Flow<Pair<BookmarkVO, NoticeVO>>
+    operator fun invoke(size: Int, pageNumber: Int, option: SortOption): Flow<Pair<BookmarkVO, NoticeVO>>
 }
 
 class FetchAllBookmarksImpl @Inject constructor(
     private val localRepository: LocalRepository
 ) : FetchAllBookmarks {
 
-    override operator fun invoke(size: Int, pageNumber: Int): Flow<Pair<BookmarkVO, NoticeVO>> =
-        localRepository.queryAllBookmarks(
-            size, pageNumber
+    override operator fun invoke(size: Int, pageNumber: Int, option: SortOption): Flow<Pair<BookmarkVO, NoticeVO>> =
+        localRepository.queryBookmarkSorted(
+            size, pageNumber, option
         ).transform { bookmarkVO ->
             bookmarkVO?.let {
                 emitAll(localRepository.queryNoticeById(it.targetNoticeNttId).transform { nullable ->

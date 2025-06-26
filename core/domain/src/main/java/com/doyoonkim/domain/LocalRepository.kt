@@ -14,6 +14,8 @@ interface LocalRepository {
 
     fun queryAllBookmarks(size: Int, pageNumber: Int): Flow<BookmarkVO?>
 
+    fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption): Flow<BookmarkVO?>
+
     fun queryNoticeById(nttId: Int): Flow<NoticeVO?>
 
     fun queryBookmarkByNttId(nttId: Int): Flow<BookmarkVO?>
