@@ -1,5 +1,6 @@
 package com.doyoonkim.bookmark.viewmodel
 
+import com.doyoonkim.domain.SortOption
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,14 +31,33 @@ class BookmarkListViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             updateFetchingStatus(false).also { delay(200L) }
-            fetchAllBookmarks(size = size, pageNumber = pageNumber)
+
+            val preSize = uiState.value.bookmarks.size
+            val receivedPage = mutableListOf<Pair<BookmarkVO, NoticeVO>>()
+
+            fetchAllBookmarks(size = size, pageNumber = pageNumber, option = uiState.value.sortOption)
                 .flowOn(Dispatchers.IO)
                 .onCompletion { e ->
                     if (e == null) {
-                        updateStateOnFetchComplete(
-                            pageNumber = pageNumber,
-                            isReachEnd = uiState.value.bookmarks.size % size != 0
-                        )
+                        if (receivedPage.size == 0) {
+                            _uiState.update {
+                                it.copy(
+                                    isRequested = false,
+                                    isReachEnd = true
+                                )
+                            }
+                        } else {
+                            _uiState.update {
+                                it.copy(
+                                    bookmarks = it.bookmarks.toMutableList().apply {
+                                        this.addAll(receivedPage)
+                                    }.distinctBy { e -> e.first.bookmarkId }.toList(),
+                                    pageNumber = it.pageNumber + 1,
+                                    isRequested = false,
+                                    isReachEnd = receivedPage.size % size != 0
+                                )
+                            }
+                        }
                     } else {
                         Log.d("BookmarkListViewModel", "Completed with error")
                         updateFetchingStatus(true)
@@ -45,16 +65,18 @@ class BookmarkListViewModel @Inject constructor(
                 }
                 .collectLatest { result ->
                     Log.d("BookmarkListViewModel", "${result}")
-                    _uiState.update {
-                        it.copy(
-                            bookmarks = it.bookmarks.toMutableList().apply {
-                                this.add(result)
-                            }.distinctBy { e -> e.first.bookmarkId }.toList()
-                        )
-                    }
+                    receivedPage.add(result)
                 }
         }
     }
+
+    fun updateBookmarkRequestStatus(status: Boolean) =
+        _uiState.update {
+            it.copy(
+                isRequested = status
+            )
+        }
+
 
     private fun updateFetchingStatus(status: Boolean) =
         _uiState.update {
@@ -68,23 +90,31 @@ class BookmarkListViewModel @Inject constructor(
             it.copy(
                 isFetchingCompleted = true,
                 pageNumber = pageNumber,
-                isReachEnd = isReachEnd
+                isReachEnd = isReachEnd,
+                isRequested = false
             )
         }
 
-    fun updateSortOption(option: SortOption) {
-
+    fun updateSortOption(index: Int) {
+        // When sort option is changed -> Fetch bookmark again from page 0.
+        _uiState.update {
+            it.copy(
+                sortOption = SortOption.entries[index],
+                bookmarks = emptyList(),
+                isRequested = true,
+                pageNumber = 0
+            )
+        }
     }
 
 }
 
-enum class SortOption { DES_CREATION, ASC_CREATION, DES_REMINDER, ASC_REMINDER }
-
 data class BookmarkListState(
     val bookmarks: List<Pair<BookmarkVO, NoticeVO>> = emptyList(),
     val isRefreshing: Boolean = false,
+    val isRequested: Boolean = true,
     val isFetchingCompleted: Boolean = true,
-    val sortOption: SortOption = SortOption.ASC_CREATION,
+    val sortOption: SortOption = SortOption.DES_CREATION,
     val pageNumber: Int = 0,
     val isReachEnd: Boolean = false
 )
