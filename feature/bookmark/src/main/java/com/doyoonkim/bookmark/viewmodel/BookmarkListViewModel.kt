@@ -5,8 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
-import com.doyoonkim.model.BookmarkVO
-import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.BookmarkAsListElementVO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +30,7 @@ class BookmarkListViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             updateFetchingStatus(false).also { delay(200L) }
-            val receivedPage = mutableListOf<Pair<BookmarkVO, NoticeVO>>()
+            val receivedPage = mutableListOf<BookmarkAsListElementVO>()
 
             fetchAllBookmarks(size = size, pageNumber = pageNumber, option = uiState.value.sortOption)
                 .flowOn(Dispatchers.IO)
@@ -49,7 +48,7 @@ class BookmarkListViewModel @Inject constructor(
                                 it.copy(
                                     bookmarks = it.bookmarks.toMutableList().apply {
                                         this.addAll(receivedPage)
-                                    }.distinctBy { e -> e.first.bookmarkId }.toList(),
+                                    }.distinctBy { e -> e.bookmarkId }.toList(),
                                     pageNumber = it.pageNumber + 1,
                                     isRequested = false,
                                     isReachEnd = receivedPage.size % size != 0
@@ -105,7 +104,7 @@ class BookmarkListViewModel @Inject constructor(
 }
 
 data class BookmarkListState(
-    val bookmarks: List<Pair<BookmarkVO, NoticeVO>> = emptyList(),
+    val bookmarks: List<BookmarkAsListElementVO> = emptyList(),
     val isRefreshing: Boolean = false,
     val isRequested: Boolean = true,
     val isFetchingCompleted: Boolean = true,

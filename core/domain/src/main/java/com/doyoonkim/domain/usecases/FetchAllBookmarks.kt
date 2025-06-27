@@ -3,6 +3,7 @@ package com.doyoonkim.domain.usecases
 import com.doyoonkim.domain.LocalRepository
 import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.domain.SortOption
+import com.doyoonkim.model.BookmarkAsListElementVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +18,7 @@ import javax.inject.Inject
 
 
 interface FetchAllBookmarks {
-    operator fun invoke(size: Int, pageNumber: Int, option: SortOption): Flow<Pair<BookmarkVO, NoticeVO>>
+    operator fun invoke(size: Int, pageNumber: Int, option: SortOption): Flow<BookmarkAsListElementVO>
 }
 
 class FetchAllBookmarksImpl @Inject constructor(
@@ -25,26 +26,12 @@ class FetchAllBookmarksImpl @Inject constructor(
     private val syncDataWithUpdatedDatabase: SyncDataWithUpdateDatabase
 ) : FetchAllBookmarks {
 
-    override operator fun invoke(size: Int, pageNumber: Int, option: SortOption): Flow<Pair<BookmarkVO, NoticeVO>> =
+    override operator fun invoke(size: Int, pageNumber: Int, option: SortOption) =
         localRepository.queryBookmarkSorted(
             size, pageNumber, option
-        ).transform { bookmarkVO ->
-            bookmarkVO?.let {
-                emitAll(localRepository.queryNoticeById(it.targetNoticeNttId).transform { nullable ->
-                    nullable?.let { vo->
-                        println("Local Notice: ${vo.toString()}")
-                        emitAll(syncDataWithUpdatedDatabase.syncNotice(vo)
-                            .flowOn(Dispatchers.IO).transform { synced ->
-                            emit(
-                                Pair(
-                                    if (it.createdAt > 0) it
-                                    else it.copy(createdAt = synced.timestamp.toLong()),
-                                    synced
-                                )
-                            )
-                        })
-                    }
-                })
+        ).transform { element ->
+            element?.let {
+                emit(it)
             }
         }.catch {
             /* Internal Error. Consume values, and never emit values. */

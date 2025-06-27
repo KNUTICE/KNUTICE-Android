@@ -2,10 +2,12 @@ package com.doyoonkim.data.repository
 
 import android.util.Log
 import com.doyoonkim.data.model.Bookmark
+import com.doyoonkim.data.model.BookmarkAsListElement
 import com.doyoonkim.data.model.NoticeEntity
 import com.doyoonkim.data.room.MainDatabaseDao
 import com.doyoonkim.domain.LocalRepository
 import com.doyoonkim.domain.SortOption
+import com.doyoonkim.model.BookmarkAsListElementVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.flow
@@ -66,13 +68,13 @@ class LocalRepositoryImpl @Inject constructor(
     override fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption) = flow {
         runCatching {
             when (option) {
-                SortOption.ASC_CREATION -> localDao.getBookmarkSortedOldest(size, pageNumber)
-                SortOption.DES_CREATION -> localDao.getBookmarkSortedNewest(size, pageNumber)
+                SortOption.ASC_CREATION -> localDao.getBookmarkListSortedNewest(size, pageNumber)
+                SortOption.DES_CREATION -> localDao.getBookmarkListSortedOldest(size, pageNumber)
             }
         }.onFailure { throw it }.fold(
             onSuccess = {
                 Log.d(TAG, "${it.size}")
-                it.toListOfBookmarkVO().forEach { vo -> emit(vo).also { Log.d(TAG, vo.toString()) } }
+                it.forEach { dto -> emit(dto.toVO()).also { Log.d(TAG, dto.toString()) } }
             },
             onFailure = { it.printLog().also { emit(null) } }
         )
@@ -171,7 +173,18 @@ class LocalRepositoryImpl @Inject constructor(
             reminderSchedule = this.reminderSchedule,
             bookmarkNote = this.note,
             createdAt = this.createdAt,
-            updatedAt = if (this.updatedAt == 0L) this.createdAt else this.updatedAt
+            updatedAt = this.updatedAt
+        )
+
+    private fun BookmarkAsListElement.toVO() =
+        BookmarkAsListElementVO(
+            bookmarkId = this.bookmarkId,
+            noticeId = this.noticeId,
+            noticeTitle = this.noticeTitle,
+            noticeCategory = this.noticeCategory,
+            isReminderSet = this.isReminderSet,
+            createdAt = this.createdAt,
+            updatedAt = this.updatedAt
         )
 
     private fun List<Bookmark>.toListOfBookmarkVO() =

@@ -159,15 +159,15 @@ fun BookmarkListScreen(
                     Log.d("BookmarkComposable", "Index: $index Element: $item")
 
                     NotificationPreviewCardMarked(
-                        noticeTitle = item.second.title,
-                        noticeSubtitle = "[${item.second.departName}] ${item.second.timestamp}",
+                        noticeTitle = item.noticeTitle,
+                        noticeSubtitle = "${item.updatedAt}",
                         onItemClicked = {
                             onBookmarkSelected(
-                                item.second.run {
+                                item.run {
                                     BookmarkInfo(
-                                        noticeId = this.nttId,
-                                        noticeTitle = this.title,
-                                        noticeInfo = "[${this.departName}] ${this.timestamp}"
+                                        noticeId = this.noticeId,
+                                        noticeTitle = this.noticeTitle,
+                                        noticeInfo = this.noticeCategory
                                     )
                                 }
                             )

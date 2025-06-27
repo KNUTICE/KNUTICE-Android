@@ -1,5 +1,6 @@
 package com.doyoonkim.domain
 
+import com.doyoonkim.model.BookmarkAsListElementVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +15,7 @@ interface LocalRepository {
 
     fun queryAllBookmarks(size: Int, pageNumber: Int): Flow<BookmarkVO?>
 
-    fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption): Flow<BookmarkVO?>
+    fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption): Flow<BookmarkAsListElementVO?>
 
     fun queryNoticeById(nttId: Int): Flow<NoticeVO?>
 
