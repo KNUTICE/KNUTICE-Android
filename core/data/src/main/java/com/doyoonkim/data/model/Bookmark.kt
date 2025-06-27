@@ -14,8 +14,3 @@ data class Bookmark(
     @ColumnInfo("created_at") val createdAt: Long = 0,
     @ColumnInfo("updated_at") val updatedAt: Long = 0
 )
-
-
-/*
-
- */

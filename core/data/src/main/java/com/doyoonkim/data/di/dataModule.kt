@@ -40,8 +40,7 @@ object DataModule {
             },
             Dispatchers.IO.asExecutor()
         ).addMigrations(
-            LocalDatabase.MIGRATION_1_2,
-            LocalDatabase.MIGRATION_2_3
+            LocalDatabase.MIGRATION_1_2
         ).build()
     }
 
