@@ -11,5 +11,11 @@ data class Bookmark(
     @ColumnInfo("remind_schedule") val reminderSchedule: Long = 0,
     @ColumnInfo("bookmark_note") val note: String = "",
     @ColumnInfo("target_ntt_id") val nttId: Int = -1,
-    @ColumnInfo("created_at") val createdAt: Long = 0
+    @ColumnInfo("created_at") val createdAt: Long = 0,
+    @ColumnInfo("updated_at") val updatedAt: Long = 0
 )
+
+
+/*
+
+ */

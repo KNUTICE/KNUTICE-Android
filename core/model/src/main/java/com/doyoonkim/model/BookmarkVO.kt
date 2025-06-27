@@ -7,5 +7,6 @@ data class BookmarkVO(
     val isScheduled: Boolean,
     val reminderSchedule: Long,
     val bookmarkNote: String,
-    val createdAt: Long
+    val createdAt: Long,
+    val updatedAt: Long
 )

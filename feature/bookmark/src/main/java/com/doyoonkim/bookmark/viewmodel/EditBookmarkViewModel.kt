@@ -56,6 +56,7 @@ class EditBookmarkViewModel @Inject constructor(
                                 timeForRemind = result.reminderSchedule,
                                 bookmarkNote = result.bookmarkNote,
                                 createdAt = result.createdAt,
+                                updatedAt = result.updatedAt,
                                 requireCreation = false,
                                 bookmarkInstances = result
                             )
@@ -169,7 +170,9 @@ class EditBookmarkViewModel @Inject constructor(
                         isScheduled = isReminderRequested,
                         reminderSchedule = calendar.timeInMillis,
                         bookmarkNote = bookmarkNote,
-                        createdAt = createdAt
+                        createdAt = createdAt,
+                        updatedAt = createdAt
+
                     )
                 } else {
                     // Update
@@ -179,7 +182,8 @@ class EditBookmarkViewModel @Inject constructor(
                         isScheduled = isReminderRequested,
                         reminderSchedule = calendar.timeInMillis,
                         bookmarkNote = bookmarkNote,
-                        createdAt = createdAt
+                        createdAt = createdAt,
+                        updatedAt = System.currentTimeMillis()
                     )
                 }
             }
@@ -213,7 +217,8 @@ class EditBookmarkViewModel @Inject constructor(
                     isScheduled = isReminderRequested,
                     reminderSchedule = timeForRemind ?: calendar.timeInMillis,
                     bookmarkNote = bookmarkNote,
-                    createdAt = createdAt
+                    createdAt = createdAt,
+                    updatedAt = updatedAt
                 )
             }
 
@@ -256,6 +261,7 @@ data class EditBookmarkState(
     val timeForRemind: Long? = null,
     val bookmarkNote: String = "",
     val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = 0,
     val requireCreation: Boolean = true,
     val bookmarkInstances: BookmarkVO? = null,
     val targetNotice: NoticeVO? = null,
