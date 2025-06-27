@@ -50,6 +50,7 @@ class RemoteRepositoryImpl @Inject constructor(
     override fun queryNoticeById(nttId: Int) = flow {
         remoteSource.getNoticeById(nttId).fold(
             onSuccess = {
+                Log.d(TAG, "Received Result: ${it.toString()}")
                 if (it.result?.resultCode == 200) emit(it.body?.toVO())
                 else it.result.printLog().also { emit(null) }
             },

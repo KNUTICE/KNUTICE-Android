@@ -12,5 +12,6 @@ data class NoticeEntity(
     @ColumnInfo("notice_url") val url: String,
     @ColumnInfo("notice_image") val imageUrl: String,
     @ColumnInfo("info_dept") val departName: String,
-    @ColumnInfo("info_timestamp") val timestamp: String
+    @ColumnInfo("info_timestamp") val timestamp: String,
+    @ColumnInfo("notice_category") val noticeCategory: String
 )

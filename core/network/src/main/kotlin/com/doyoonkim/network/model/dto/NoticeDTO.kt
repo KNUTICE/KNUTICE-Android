@@ -23,6 +23,7 @@ data class NoticeDTO(
             url = this.contentUrl ?: "",
             imageUrl = this.contentImage,
             departName = this.departName ?: "",
-            timestamp = this.registeredAt ?: ""
+            timestamp = this.registeredAt ?: "",
+            noticeName = this.noticeCategory ?: ""
         )
 }

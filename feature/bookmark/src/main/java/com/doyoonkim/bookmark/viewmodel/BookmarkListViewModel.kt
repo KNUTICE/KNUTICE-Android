@@ -31,8 +31,6 @@ class BookmarkListViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             updateFetchingStatus(false).also { delay(200L) }
-
-            val preSize = uiState.value.bookmarks.size
             val receivedPage = mutableListOf<Pair<BookmarkVO, NoticeVO>>()
 
             fetchAllBookmarks(size = size, pageNumber = pageNumber, option = uiState.value.sortOption)
@@ -63,10 +61,7 @@ class BookmarkListViewModel @Inject constructor(
                         updateFetchingStatus(true)
                     }
                 }
-                .collectLatest { result ->
-                    Log.d("BookmarkListViewModel", "${result}")
-                    receivedPage.add(result)
-                }
+                .collectLatest { result -> receivedPage.add(result) }
         }
     }
 

@@ -20,6 +20,8 @@ import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferencesImpl
 import com.doyoonkim.domain.usecases.SubmitUserReport
 import com.doyoonkim.domain.usecases.SubmitUserReportImpl
+import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
+import com.doyoonkim.domain.usecases.SyncDataWithUpdatedDatabaseImpl
 import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.doyoonkim.domain.usecases.ValidateDeviceTokenImpl
 import dagger.Binds
@@ -82,5 +84,10 @@ abstract class DomainModule {
    abstract fun bindsValidateDeviceToken(
        impl: ValidateDeviceTokenImpl
    ): ValidateDeviceToken
+
+   @Binds
+   abstract fun bindsSyncDataWithUpdatedDatabase(
+       impl: SyncDataWithUpdatedDatabaseImpl
+   ): SyncDataWithUpdateDatabase
 
 }

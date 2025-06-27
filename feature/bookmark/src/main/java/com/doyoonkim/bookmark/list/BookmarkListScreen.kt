@@ -69,7 +69,7 @@ fun BookmarkListScreen(
     BackHandler { onBackPressed() }
 
     LaunchedEffect(uiState.isRequested) {
-        if (uiState.isRequested) viewModel.requestBookmarks(pageNumber = uiState.pageNumber).also { Log.d("BookmarkListScreen", "Called") }
+        if (uiState.isRequested) viewModel.requestBookmarks(pageNumber = uiState.pageNumber)
     }
 
     Scaffold(
@@ -187,7 +187,6 @@ fun BookmarkListScreen(
                                 trackColor = MaterialTheme.colorScheme.displayBackground
                             )
                         }
-//                        viewModel.requestBookmarks(pageNumber = uiState.pageNumber + 1)
                         viewModel.updateBookmarkRequestStatus(true)
                     }
 

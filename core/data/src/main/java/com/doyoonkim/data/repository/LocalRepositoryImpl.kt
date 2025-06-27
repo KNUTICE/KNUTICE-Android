@@ -130,7 +130,8 @@ class LocalRepositoryImpl @Inject constructor(
             url = this.url,
             imageUrl = this.imageUrl ?: "",
             departName = this.departName,
-            timestamp = this.timestamp
+            timestamp = this.timestamp,
+            noticeCategory = this.noticeName
         ).run {
             this@toNoticeEntity.entityId?.let { id ->
                 this.copy(
@@ -147,7 +148,8 @@ class LocalRepositoryImpl @Inject constructor(
             url = this.url,
             imageUrl = this.imageUrl,
             departName = this.departName,
-            timestamp = this.timestamp
+            timestamp = this.timestamp,
+            noticeName = this.noticeCategory
         )
 
     private fun BookmarkVO.toBookmark() =
