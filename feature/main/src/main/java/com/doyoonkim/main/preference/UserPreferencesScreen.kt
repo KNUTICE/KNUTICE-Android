@@ -155,8 +155,8 @@ fun UserPreferenceScreen(
 
                     RoundedCornerColumnTextItemWithExtraOnRight(
                         verticalPadding = 10.dp,
-                        titleText = "Manual Database Sync",
-                        subTitleText = "You can manually initiate database sync for data integrity",
+                        titleText = stringResource(R.string.text_manual_sync),
+                        subTitleText = stringResource(R.string.text_manual_sync_description),
                         primaryColor = MaterialTheme.colorScheme.title,
                         secondaryColor = MaterialTheme.colorScheme.subTitle,
                         hasBottomDivider = false
@@ -201,7 +201,7 @@ fun UserPreferenceScreen(
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Text(
-                                text = "Manual Database Synchronization",
+                                text = stringResource(R.string.text_manual_sync),
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp,
@@ -210,8 +210,8 @@ fun UserPreferenceScreen(
 
                             Text(
                                 text = if(uiState.databaseSyncResult.completed) {
-                                    "Result: ${uiState.databaseSyncResult.targetCounts} / ${uiState.databaseSyncResult.failureCounts}"
-                                } else { "Database Sync In Progress" },
+                                    stringResource(R.string.text_sync_result) + " ${uiState.databaseSyncResult.targetCounts} / ${uiState.databaseSyncResult.failureCounts}"
+                                } else { stringResource(R.string.text_sync_in_progress) },
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 12.sp,

@@ -83,4 +83,8 @@
     <string name="text_newest">Newest</string>
     <string name="text_oldest">Oldest</string>
     <string name="text_sync_warning">Some data is not been synced. It may cause failure in sorting and filtering\nPlease go to Settings > Manual Sync to perform sync.</string>
+    <string name="text_manual_sync">Sync Database</string>
+    <string name="text_manual_sync_description">Sync database manually for data integrity</string>
+    <string name="text_sync_in_progress">Sync in progress</string>
+    <string name="text_sync_result">Result (Success/Failure):</string>
 </resources>
