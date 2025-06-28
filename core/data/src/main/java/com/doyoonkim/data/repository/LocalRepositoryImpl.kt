@@ -10,6 +10,7 @@ import com.doyoonkim.domain.SortOption
 import com.doyoonkim.model.BookmarkAsListElementVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -52,15 +53,23 @@ class LocalRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun queryAllBookmarks(size: Int, pageNumber: Int) = flow {
+    override fun updateNoticeEntity(notice: NoticeVO) = flow {
         runCatching {
-            localDao.getBookmarksByPage(size, pageNumber)
+            localDao.updateNoticeEntity(notice.toNoticeEntity())
+        }.onFailure { throw it }.fold(
+            onSuccess = { emit(true) },
+            onFailure = { it.printLog().also { emit(false) } }
+        )
+    }
+
+    override fun queryAllBookmarks() = flow {
+        runCatching {
+            localDao.getAllBookmarks()
         }.onFailure { throw it }.fold(
             onSuccess = {
                 Log.d(TAG, "${it.size}")
-                it.toListOfBookmarkVO().forEach {
-                vo -> emit(vo).also { Log.d(TAG, vo.toString()) }
-            } },
+                emit(it.toListOfBookmarkVO())
+            },
             onFailure = { it.printLog().also { emit(null) } }
         )
     }
