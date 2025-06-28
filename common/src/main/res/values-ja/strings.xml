@@ -73,4 +73,8 @@
     <string name="text_newest">最新順</string>
     <string name="text_oldest">古い順</string>
     <string name="text_sync_warning">一部のデータが同期されていません。並べ替えやフィルタリングに失敗する可能性があります。\n同期を実行するには、「設定」>「手動同期」に移動してください。</string>
+    <string name="text_manual_sync">データベース更新</string>
+    <string name="text_manual_sync_description">データベース情報を更新をします。</string>
+    <string name="text_sync_in_progress">更新しています</string>
+    <string name="text_sync_result">結果 (成功/失敗):</string>
 </resources>
