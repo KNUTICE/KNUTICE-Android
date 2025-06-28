@@ -64,8 +64,6 @@ class MainActivity : ComponentActivity() {
     private val activity = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Splash Screen is being introduced.
-        installSplashScreen()
         (applicationContext as MainApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
 
