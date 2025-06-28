@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,7 +32,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,17 +61,17 @@ fun UserPreferenceScreen(
     onNotificationPreferenceClicked: () -> Unit,
     onCustomerServiceClicked: () -> Unit,
     onOssClicked: () -> Unit,
-    onBackPressed: () -> Unit,
+    onBackPressed: (Boolean) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    BackHandler { onBackPressed() }
+    BackHandler { onBackPressed(uiState.databaseSyncResult.completed) }
 
     Scaffold(
         topBar = {
             TopAppBarWithBackButton(
                 titleText = stringResource(R.string.title_preference),
-                onBackPressed = onBackPressed
+                onBackPressed = { onBackPressed(uiState.databaseSyncResult.completed) }
             )
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
@@ -193,10 +190,12 @@ fun UserPreferenceScreen(
                     Surface(
                         modifier = Modifier.wrapContentSize()
                             .background(Color.Transparent),
-                        color = MaterialTheme.colorScheme.onAnyBackground
+                        color = MaterialTheme.colorScheme.onAnyBackground,
+                        shape = RoundedCornerShape(15.dp)
                     ) {
                         Column(
                             modifier = Modifier.fillMaxWidth()
+                                .padding(20.dp)
                                 .wrapContentHeight(),
                             verticalArrangement = Arrangement.spacedBy(10.dp),
                             horizontalAlignment = Alignment.CenterHorizontally

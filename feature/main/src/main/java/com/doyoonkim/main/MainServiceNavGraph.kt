@@ -1,24 +1,18 @@
 package com.doyoonkim.main
 
 import android.net.Uri
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -36,7 +30,6 @@ import com.doyoonkim.main.preference.NotificationPreferencesScreen
 import com.doyoonkim.main.preference.OssNoticeScreen
 import com.doyoonkim.main.preference.UserPreferenceScreen
 import com.doyoonkim.main.splash.KnuticeSplashScreen
-import com.doyoonkim.main.splash.KnuticeSplashScreen_Preview
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.main.viewmodel.HomeViewModel
 import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
@@ -259,7 +252,13 @@ fun NavGraphBuilder.mainServiceNavGraph(
             onNotificationPreferenceClicked = { navController.navigate(NavRoutes.NotificationPreferences.route) },
             onCustomerServiceClicked = { navController.navigate(NavRoutes.CustomerService.route) },
             onOssClicked = { navController.navigate(NavRoutes.OpenSource.route) },
-            onBackPressed = { navController.popBackStack() }
+            onBackPressed = { syncPerformed ->
+                if (syncPerformed) {
+                    navController.popBackStack(NavRoutes.Home.route, inclusive = true)
+                    navController.navigate(NavRoutes.Bookmark.route)
+                }
+                else navController.popBackStack()
+            }
         )
     }
 
