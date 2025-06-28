@@ -107,12 +107,13 @@ fun BookmarkListScreen(
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
 
-        if (uiState.bookmarks.isEmpty()) {
-            Column(
-                modifier = modifier.fillMaxSize().padding(innerPadding),
-                verticalArrangement = Arrangement.spacedBy(3.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
+        Column(
+            modifier = modifier.fillMaxSize().padding(innerPadding),
+            verticalArrangement = Arrangement.spacedBy(3.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+
+            if (uiState.bookmarks.isEmpty()) {
                 Box(
                     modifier = Modifier.wrapContentSize()
                         .weight(1f)
@@ -143,58 +144,80 @@ fun BookmarkListScreen(
                         )
                     }
                 }
-                Spacer(Modifier.height(bottomPadding))
-            }
-        } else {
-            LazyColumn(
-                modifier = modifier.wrapContentHeight()
-                    .fillMaxWidth()
-                    .padding(top = innerPadding.calculateTopPadding() + 12.dp)
-                    .background(Color.Transparent),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                items(uiState.bookmarks.size) { index ->
-                    val item = uiState.bookmarks[index]
-                    Log.d("BookmarkComposable", "Index: $index Element: $item")
-
-                    NotificationPreviewCardMarked(
-                        noticeTitle = item.noticeTitle,
-                        noticeSubtitle = "${item.updatedAt}",
-                        onItemClicked = {
-                            onBookmarkSelected(
-                                item.run {
-                                    BookmarkInfo(
-                                        noticeId = this.noticeId,
-                                        noticeTitle = this.noticeTitle,
-                                        noticeInfo = this.noticeCategory
-                                    )
-                                }
-                            )
-                        }
-                    )
-
-                    if (index == uiState.bookmarks.size - 1 && !uiState.isReachEnd) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth()
-                                .wrapContentHeight(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.wrapContentSize(),
-                                color = MaterialTheme.colorScheme.variantPurple,
-                                trackColor = MaterialTheme.colorScheme.displayBackground
-                            )
-                        }
-                        viewModel.updateBookmarkRequestStatus(true)
+            } else {
+                if (uiState.isSyncRequired) {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 5.dp)
+                            .background(Color.Transparent),
+                        color = MaterialTheme.colorScheme.onAnyBackground,
+                        shape = RoundedCornerShape(15.dp)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.text_sync_warning),
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp,
+                            textAlign = TextAlign.Start,
+                            color = Color.Red,
+                            modifier = Modifier.padding(5.dp)
+                        )
                     }
-
                 }
-                item {
-                    Spacer(Modifier.height(bottomPadding))
+                LazyColumn(
+                    modifier = modifier.wrapContentHeight()
+                        .fillMaxWidth()
+                        .padding(top = 12.dp)
+                        .background(Color.Transparent),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+
+                    items(uiState.bookmarks.size) { index ->
+                        val item = uiState.bookmarks[index]
+                        Log.d("BookmarkComposable", "Index: $index Element: $item")
+
+                        NotificationPreviewCardMarked(
+                            noticeTitle = item.noticeTitle,
+                            noticeSubtitle = "${item.updatedAt}",
+                            onItemClicked = {
+                                onBookmarkSelected(
+                                    item.run {
+                                        BookmarkInfo(
+                                            noticeId = this.noticeId,
+                                            noticeTitle = this.noticeTitle,
+                                            noticeInfo = this.noticeCategory
+                                        )
+                                    }
+                                )
+                            }
+                        )
+
+                        if (index == uiState.bookmarks.size - 1 && !uiState.isReachEnd) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth()
+                                    .wrapContentHeight(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.wrapContentSize(),
+                                    color = MaterialTheme.colorScheme.variantPurple,
+                                    trackColor = MaterialTheme.colorScheme.displayBackground
+                                )
+                            }
+                            viewModel.updateBookmarkRequestStatus(true)
+                        }
+
+                    }
+                    item {
+                        Spacer(Modifier.height(bottomPadding))
+                    }
                 }
             }
+
+            Spacer(Modifier.height(bottomPadding))
         }
+
+
     }
 }

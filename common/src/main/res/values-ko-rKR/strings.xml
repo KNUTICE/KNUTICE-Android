@@ -72,4 +72,5 @@
     <string name="text_set_reminder_date_time">알림 시간</string>
     <string name="text_newest">최신순</string>
     <string name="text_oldest">오래된 순</string>
+    <string name="text_sync_warning">일부 데이터가 업데이트 되지 않았어요. 정렬과 필터링이 동작하지 않을 수 있어요.\n오른쪽 위의 설정 메뉴에서 수동으로 업데이트를 진행해 주세요.</string>
 </resources>

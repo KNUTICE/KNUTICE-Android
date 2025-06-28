@@ -72,4 +72,5 @@
     <string name="text_set_reminder_date_time">時間設定</string>
     <string name="text_newest">最新順</string>
     <string name="text_oldest">古い順</string>
+    <string name="text_sync_warning">一部のデータが同期されていません。並べ替えやフィルタリングに失敗する可能性があります。\n同期を実行するには、「設定」>「手動同期」に移動してください。</string>
 </resources>

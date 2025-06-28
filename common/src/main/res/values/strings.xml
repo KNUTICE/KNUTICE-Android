@@ -82,4 +82,5 @@
     <string name="text_set_reminder_date_time">Select time for reminder</string>
     <string name="text_newest">Newest</string>
     <string name="text_oldest">Oldest</string>
+    <string name="text_sync_warning">Some data is not been synced. It may cause failure in sorting and filtering\nPlease go to Settings > Manual Sync to perform sync.</string>
 </resources>
