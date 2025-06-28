@@ -22,8 +22,7 @@ interface FetchAllBookmarks {
 }
 
 class FetchAllBookmarksImpl @Inject constructor(
-    private val localRepository: LocalRepository,
-    private val syncDataWithUpdatedDatabase: SyncDataWithUpdateDatabase
+    private val localRepository: LocalRepository
 ) : FetchAllBookmarks {
 
     override operator fun invoke(size: Int, pageNumber: Int, option: SortOption) =
@@ -36,10 +35,5 @@ class FetchAllBookmarksImpl @Inject constructor(
         }.catch {
             /* Internal Error. Consume values, and never emit values. */
         }
-
-    private fun String.toLong(): Long {
-        val timestamps = this.split(" ")
-        return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(timestamps[0]).time
-    }
 
 }
