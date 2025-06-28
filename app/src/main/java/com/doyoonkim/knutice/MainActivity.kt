@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -35,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
@@ -46,6 +46,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
@@ -56,16 +57,22 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
     @Inject lateinit var notificationAlarmScheduler: NotificationAlarmScheduler
+    @Inject lateinit var appPreferences: AppPreferences
 
     // NavController
     private lateinit var navController: NavHostController
     private val activity = this
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // Splash Screen is being introduced.
+        installSplashScreen()
         (applicationContext as MainApplication).appComponent.inject(this)
         super.onCreate(savedInstanceState)
 
-        val launchedIntent = this.intent
+        var startDestination = NavRoutes.Splash.route
+        val launchedIntent = this.intent.also {
+            if (it.data != null && appPreferences.isDatabaseSyncCompleted()) NavRoutes.Home.route
+        }
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
@@ -175,6 +182,7 @@ class MainActivity : ComponentActivity() {
                         contentPadding = contentPadding,
                         navController = navController,
                         viewModelFactory = viewModelFactory,
+                        startDestination = startDestination,
                         onExit = { activity.finish() }
                     )
                     LaunchedEffect(Unit) {
