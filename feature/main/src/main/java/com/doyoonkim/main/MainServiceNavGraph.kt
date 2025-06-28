@@ -7,6 +7,9 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -32,12 +35,16 @@ import com.doyoonkim.main.preference.CustomerServiceScreen
 import com.doyoonkim.main.preference.NotificationPreferencesScreen
 import com.doyoonkim.main.preference.OssNoticeScreen
 import com.doyoonkim.main.preference.UserPreferenceScreen
+import com.doyoonkim.main.splash.KnuticeSplashScreen
+import com.doyoonkim.main.splash.KnuticeSplashScreen_Preview
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.main.viewmodel.HomeViewModel
 import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
 import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
+import com.doyoonkim.main.viewmodel.SettingsViewModel
+import com.doyoonkim.main.viewmodel.SplashViewModel
 import com.doyoonkim.model.NoticeCategory
 
 fun NavGraphBuilder.mainServiceNavGraph(
@@ -50,6 +57,31 @@ fun NavGraphBuilder.mainServiceNavGraph(
 ) {
 
     // ViewModels will be injected via ViewModelFactory
+    // Splash Screen
+    composable(
+        route = NavRoutes.Splash.route,
+        exitTransition = {
+            fadeOut(
+                animationSpec = tween(200)
+            )
+        }
+    ) {
+        KnuticeSplashScreen(
+            modifier = Modifier.fillMaxSize(),
+            viewModel = viewModel<SplashViewModel>(factory = viewModelFactory)
+        ) { result ->
+            if (result) {
+                navController.navigate(NavRoutes.Home.route) {
+                    popUpTo(NavRoutes.Splash.route) {
+                        inclusive = true
+                    }
+                }
+            } else {
+                onExit()
+            }
+        }
+    }
+
     composable(NavRoutes.Home.route) {
         HomeScreen(
             modifier = Modifier.padding(horizontal = 5.dp),
@@ -223,6 +255,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
     ) {
         UserPreferenceScreen(
             modifier = Modifier.padding(horizontal = 10.dp),
+            viewModel = viewModel<SettingsViewModel>(factory = viewModelFactory),
             onNotificationPreferenceClicked = { navController.navigate(NavRoutes.NotificationPreferences.route) },
             onCustomerServiceClicked = { navController.navigate(NavRoutes.CustomerService.route) },
             onOssClicked = { navController.navigate(NavRoutes.OpenSource.route) },

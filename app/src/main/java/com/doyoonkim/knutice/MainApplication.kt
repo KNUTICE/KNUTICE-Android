@@ -10,7 +10,6 @@ import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.AppComponent
 import com.doyoonkim.knutice.di.DaggerAppComponent
 import com.doyoonkim.notification.fcm.PushNotificationService
-import com.doyoonkim.notification.fcm.TokenHandler
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
@@ -30,8 +29,6 @@ class MainApplication() : Application(), AppInjectorProvider {
 
     }
 
-    @Inject lateinit var tokenHandler: TokenHandler
-
     override fun onCreate() {
         super.onCreate()
         // Application-Level injection
@@ -45,7 +42,6 @@ class MainApplication() : Application(), AppInjectorProvider {
                 getString(R.string.inapp_notification_channel_description)
             )
         }
-        tokenHandler.handleCurrentTokenRequest()
     }
 
     override fun onTerminate() {
