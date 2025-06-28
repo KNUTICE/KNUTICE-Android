@@ -117,7 +117,8 @@ fun KnuticeSplashScreen(
 
                         LinearProgressIndicator(
                             modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 10.dp)
+                                .padding(horizontal = 10.dp),
+                            color = MaterialTheme.colorScheme.variantPurple
                         )
                     }
                 } else {
