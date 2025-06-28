@@ -4,6 +4,7 @@ import com.doyoonkim.domain.SortOption
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
 import com.doyoonkim.model.BookmarkAsListElementVO
 import kotlinx.coroutines.Dispatchers
@@ -18,11 +19,23 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BookmarkListViewModel @Inject constructor(
+    private val appPreferences: AppPreferences,
     private val fetchAllBookmarks: FetchAllBookmarks
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(BookmarkListState())
     val uiState = _uiState.asStateFlow()
+
+    init {
+        if (appPreferences.isPartialFailedDuringDatabaseSync()) {
+            _uiState.update {
+                it.copy(
+                    isSyncRequired = true
+                )
+            }
+        }
+    }
+
 
     fun requestBookmarks(
         size: Int = 20,
@@ -110,5 +123,6 @@ data class BookmarkListState(
     val isFetchingCompleted: Boolean = true,
     val sortOption: SortOption = SortOption.DES_CREATION,
     val pageNumber: Int = 0,
-    val isReachEnd: Boolean = false
+    val isReachEnd: Boolean = false,
+    val isSyncRequired: Boolean = false
 )
