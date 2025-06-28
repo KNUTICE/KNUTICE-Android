@@ -58,6 +58,7 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
 
         var failureCounts = 0
         for (bookmark in bookmarks) {
+            println("BookmarkVO: ${bookmark.toString()}")
             try {
                 val noticeLocal = localRepository.queryNoticeById(bookmark.targetNoticeNttId)
                     .firstOrNull()
@@ -65,6 +66,8 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                     failureCounts++
                     continue
                 }
+
+                println("NoticeLocalVO: ${noticeLocal.toString()}")
 
                 // Check whether the values are already synced or not.
                 if (!bookmark.isSynced()) {
@@ -74,7 +77,7 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                             if (bookmark.updatedAt > 0) bookmark.updatedAt
                             else noticeLocal.timestamp.toLong()
                     ).also { println("Synced Bookmark: ${it.toString()}") }
-                    localRepository.updateBookmark(syncedBookmark)
+                    localRepository.updateBookmark(syncedBookmark).firstOrNull()
                 }
 
                 if (!noticeLocal.isSynced()) {
@@ -89,9 +92,9 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                     }
 
                     val syncedNotice = noticeLocal.copy(
-                        noticeName = noticeLocal.noticeName
+                        noticeName = noticeRemote.noticeName
                     ).also { println("Synced Notice: ${it.toString()}") }
-                    localRepository.updateNoticeEntity(syncedNotice)
+                    localRepository.updateNoticeEntity(syncedNotice).firstOrNull()
                 }
             } catch (e: Exception) {
                 // Error occurred during synchronization
@@ -138,13 +141,13 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                 val syncedBookmark = bookmark.copy(
                     createdAt = noticeRemote.timestamp.toLong(),
                     updatedAt = noticeRemote.timestamp.toLong()
-                )
+                ).also{ println("Synced Bookmark: ${it.toString()}") }
                 val syncedNotice = noticeLocal.copy(
                     noticeName = noticeRemote.noticeName
-                )
+                ).also{ println("Synced Notice: ${it.toString()}") }
 
-                localRepository.updateBookmark(syncedBookmark)
-                localRepository.updateNoticeEntity(syncedNotice)
+                localRepository.updateBookmark(syncedBookmark).firstOrNull()
+                localRepository.updateNoticeEntity(syncedNotice).firstOrNull()
             } catch (e: Exception) {
                 // Unable to process sync. Skip sync of this elements
                 println("Unable to process sync. ${e.printStackTrace()}")
