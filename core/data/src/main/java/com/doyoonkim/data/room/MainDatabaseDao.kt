@@ -27,6 +27,9 @@ interface MainDatabaseDao {
     @Update
     fun updateBookmark(updated: Bookmark)
 
+    @Update
+    fun updateNoticeEntity(updated: NoticeEntity)
+
     @Delete
     fun deleteBookmark(target: Bookmark)
 
