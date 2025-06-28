@@ -44,6 +44,7 @@ class SettingsViewModel @Inject constructor(
 
         syncDataWithUpdateDatabase.initiateManualSync()
             .collectLatest { syncResult ->
+                if (syncResult.withError) appPreferences.setDatabaseSyncPartialFailedStatus(true)
                 _uiState.update {
                     it.copy(
                         isSyncRequested = false,
