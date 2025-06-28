@@ -1,6 +1,7 @@
 package com.doyoonkim.notification.fcm
 
 import android.util.Log
+import com.doyoonkim.common.di.TokenHandler
 import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import com.google.android.gms.tasks.OnCompleteListener
@@ -10,22 +11,22 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TokenHandler @Inject constructor(
+class TokenHandlerImpl @Inject constructor(
     private val validateDeviceToken: ValidateDeviceToken
-) {
+) : TokenHandler {
     private val TAG = this.javaClass.name
 
-    fun handleCurrentTokenRequest() {
-        val completeMarker = Job()
-        CoroutineScope(Dispatchers.IO + completeMarker).launch {
+    override fun handleCurrentTokenRequest() = flow {
+        runCatching {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Log.d(TAG, "Incomplete task: ${task.exception}")
-                    return@OnCompleteListener
+                    throw Exception(task.exception?.message)
                 }
 
                 // Get new FCM registration token
@@ -36,16 +37,18 @@ class TokenHandler @Inject constructor(
                 CoroutineScope(Dispatchers.IO).launch {
                     Log.d(TAG, "Start validating Token")
                     validateDeviceToken(DeviceTokenBody(fcmToken = registrationToken))
-                        .flowOn(Dispatchers.IO)
                         .collectLatest { result ->
                             if (result) Log.d(TAG, "Validation Successful")
-                            else Log.d(TAG, "Unable to validate")
+                            else throw Exception("Unable to validate")
                         }
-                    completeMarker.complete()
                 }
             })
-            delay(5000L)
-            if (!completeMarker.isCompleted) completeMarker.complete()
-        }
+        }.fold(
+            onSuccess = { emit(true) },
+            onFailure = {
+                println("Unable to validate: ${it.message}")
+                emit(false)
+            }
+        )
     }
 }
