@@ -3,6 +3,7 @@ package com.doyoonkim.common.navigation
 
 sealed class NavRoutes(val route: String) {
 
+    data object Splash: NavRoutes(Destination.SPLASH.name)
     data object Home : NavRoutes(Destination.HOME.name)
     data object Bookmark: NavRoutes(Destination.BOOKMARKS.name)
 
@@ -19,5 +20,5 @@ sealed class NavRoutes(val route: String) {
     data object NoticeSearch: NavRoutes(Destination.SEARCH.name)
 }
 
-enum class Destination { HOME, MORE_GENERAL, MORE_ACADEMIC, MORE_SCHOLARSHIP, MORE_EVENT, DETAILED,
+enum class Destination { SPLASH, HOME, MORE_GENERAL, MORE_ACADEMIC, MORE_SCHOLARSHIP, MORE_EVENT, DETAILED,
     SETTINGS, OSS, CS, SEARCH, NOTIFICATION, BOOKMARKS, EDIT_BOOKMARK, Unspecified }
