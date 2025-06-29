@@ -10,6 +10,7 @@ import com.doyoonkim.common.di.TokenHandler
 import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.update
@@ -64,6 +65,7 @@ class SplashViewModel @Inject constructor(
     // Should be performed very last.
     private suspend fun requestTokenValidation() {
         tokenHandler.handleCurrentTokenRequest()
+            .catch { Log.d("SplashScreenViewModel", "Error: ${it.message}") }
             .collectLatest { result ->
                 _uiState.update {
                     it.copy(
