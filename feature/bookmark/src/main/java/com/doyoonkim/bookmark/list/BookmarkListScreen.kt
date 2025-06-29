@@ -53,6 +53,10 @@ import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
 import com.doyoonkim.common.ui.TopAppBarDropdownMenu
 import com.doyoonkim.common.ui.TopAppBarWithActions
+import com.doyoonkim.model.BookmarkVO
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -108,19 +112,23 @@ fun BookmarkListScreen(
     ) { innerPadding ->
 
         Column(
-            modifier = modifier.fillMaxSize().padding(innerPadding),
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             verticalArrangement = Arrangement.spacedBy(3.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             if (uiState.bookmarks.isEmpty()) {
                 Box(
-                    modifier = Modifier.wrapContentSize()
+                    modifier = Modifier
+                        .wrapContentSize()
                         .weight(1f)
                 ) {
                     if (uiState.isRequested) {
                         Surface(
-                            modifier = Modifier.wrapContentSize()
+                            modifier = Modifier
+                                .wrapContentSize()
                                 .align(Alignment.Center)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(Color.Transparent),
@@ -139,7 +147,8 @@ fun BookmarkListScreen(
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colorScheme.subTitle,
-                            modifier = Modifier.wrapContentSize()
+                            modifier = Modifier
+                                .wrapContentSize()
                                 .align(Alignment.Center)
                         )
                     }
@@ -147,7 +156,8 @@ fun BookmarkListScreen(
             } else {
                 if (uiState.isSyncRequired) {
                     Surface(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .padding(horizontal = 5.dp)
                             .background(Color.Transparent),
                         color = MaterialTheme.colorScheme.onAnyBackground,
@@ -164,7 +174,8 @@ fun BookmarkListScreen(
                     }
                 }
                 LazyColumn(
-                    modifier = modifier.wrapContentHeight()
+                    modifier = modifier
+                        .wrapContentHeight()
                         .fillMaxWidth()
                         .padding(top = 12.dp)
                         .background(Color.Transparent),
@@ -178,7 +189,15 @@ fun BookmarkListScreen(
 
                         NotificationPreviewCardMarked(
                             noticeTitle = item.noticeTitle,
-                            noticeSubtitle = "${item.updatedAt}",
+                            noticeSubtitle = with(item) {
+                                if (updatedAt > createdAt) {
+                                    stringResource(R.string.text_updated_at) +
+                                            " ${updatedAt.toFormattedDate()}"
+                                } else {
+                                    stringResource(R.string.text_created_at) + 
+                                            " ${createdAt.toFormattedDate()}"
+                                }
+                            },
                             onItemClicked = {
                                 onBookmarkSelected(
                                     item.run {
@@ -194,7 +213,8 @@ fun BookmarkListScreen(
 
                         if (index == uiState.bookmarks.size - 1 && !uiState.isReachEnd) {
                             Row(
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier
+                                    .fillMaxWidth()
                                     .wrapContentHeight(),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
@@ -217,7 +237,8 @@ fun BookmarkListScreen(
 
             Spacer(Modifier.height(bottomPadding))
         }
-
-
     }
 }
+
+fun Long.toFormattedDate() =
+    SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date(this))
