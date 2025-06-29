@@ -86,5 +86,5 @@
     <string name="text_manual_sync">Sync Database</string>
     <string name="text_manual_sync_description">Sync database manually for data integrity</string>
     <string name="text_sync_in_progress">Sync in progress</string>
-    <string name="text_sync_result">Result (Success/Failure):</string>
+    <string name="text_sync_result">Result (Total / Failure):</string>
 </resources>

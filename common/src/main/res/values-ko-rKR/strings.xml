@@ -76,5 +76,5 @@
     <string name="text_manual_sync">데이터베이스 업데이트</string>
     <string name="text_manual_sync_description">데이터베이스 정보를 수동으로 갱신 할  수 있어요.</string>
     <string name="text_sync_in_progress">데이터베이스를 갱신중입니다.</string>
-    <string name="text_sync_result">결과 (성공/실패):</string>
+    <string name="text_sync_result">결과 (전체 / 실패):</string>
 </resources>
