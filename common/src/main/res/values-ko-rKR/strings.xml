@@ -77,4 +77,6 @@
     <string name="text_manual_sync_description">데이터베이스 정보를 수동으로 갱신 할  수 있어요.</string>
     <string name="text_sync_in_progress">데이터베이스를 갱신중입니다.</string>
     <string name="text_sync_result">결과 (전체 / 실패):</string>
+    <string name="text_created_at">생성일자</string>
+    <string name="text_updated_at">수정일자</string>
 </resources>

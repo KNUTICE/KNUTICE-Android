@@ -87,4 +87,6 @@
     <string name="text_manual_sync_description">Sync database manually for data integrity</string>
     <string name="text_sync_in_progress">Sync in progress</string>
     <string name="text_sync_result">Result (Total / Failure):</string>
+    <string name="text_created_at">Created at</string>
+    <string name="text_updated_at">Updated at</string>
 </resources>
