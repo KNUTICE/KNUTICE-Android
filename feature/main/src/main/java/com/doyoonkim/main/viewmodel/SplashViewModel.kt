@@ -33,13 +33,13 @@ class SplashViewModel @Inject constructor(
                         syncStatus = SyncStatus.PROCESSING
                     )
                 }
-                syncDataWithUpdateDatabase()
+                syncDataWithUpdateDatabase.entrySync()
                     .collectLatest { result ->
                         // result: Pair<Boolean, Boolean> (SyncCompleted, PartialFailed)
-                        appPreferences.setDatabaseSyncStatus(result.first)
-                        appPreferences.setDatabaseSyncPartialFailedStatus(result.second)
+                        appPreferences.setSyncStatus_1_2(result.completed)
+                        appPreferences.setDatabaseSyncPartialFailedStatus(result.withError)
 
-                        if (result.first) {
+                        if (result.completed) {
                             _uiState.update {
                                 it.copy(
                                     syncStatus = SyncStatus.COMPLETED
