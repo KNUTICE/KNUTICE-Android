@@ -1,5 +1,6 @@
 package com.doyoonkim.main.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.di.AppPreferences
@@ -44,7 +45,7 @@ class SettingsViewModel @Inject constructor(
 
         syncDataWithUpdateDatabase.manualSync()
             .collectLatest { syncResult ->
-                if (syncResult.withError) appPreferences.setDatabaseSyncPartialFailedStatus(true)
+                appPreferences.setDatabaseSyncPartialFailedStatus(syncResult.withError)
                 _uiState.update {
                     it.copy(
                         isSyncRequested = false,
