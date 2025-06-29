@@ -65,7 +65,6 @@ class SplashViewModel @Inject constructor(
     // Should be performed very last.
     private suspend fun requestTokenValidation() {
         tokenHandler.handleCurrentTokenRequest()
-            .catch { Log.d("SplashScreenViewModel", "Error: ${it.message}") }
             .collectLatest { result ->
                 _uiState.update {
                     it.copy(
@@ -80,7 +79,8 @@ class SplashViewModel @Inject constructor(
             _uiState.update {
                 it.copy(
                     splashStage = if (
-                        syncStatus == SyncStatus.COMPLETED && tokenValidationResult
+                        // DO NOT INCLUDE tokenValidationStatus. App should be accessed without Token Validation.
+                        syncStatus == SyncStatus.COMPLETED
                     ) {
                         SplashStage.DISMISS
                     } else {
