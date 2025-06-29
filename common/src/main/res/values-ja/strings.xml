@@ -76,5 +76,5 @@
     <string name="text_manual_sync">データベース更新</string>
     <string name="text_manual_sync_description">データベース情報を更新をします。</string>
     <string name="text_sync_in_progress">更新しています</string>
-    <string name="text_sync_result">結果 (成功/失敗):</string>
+    <string name="text_sync_result">結果 (合計 / 失敗):</string>
 </resources>
