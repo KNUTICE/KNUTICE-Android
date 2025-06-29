@@ -124,7 +124,9 @@ fun KnuticeSplashScreen(
                 } else {
                     Surface(
                         modifier = Modifier.wrapContentSize()
-                            .background(Color.Transparent),
+                            .background(Color.Transparent)
+                            .align(Alignment.Center),
+                        shape = RoundedCornerShape(15.dp),
                         color = MaterialTheme.colorScheme.onAnyBackground
                     ) {
                         CircularProgressIndicator(
