@@ -107,7 +107,7 @@ fun KnuticeSplashScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Database Sync is in progress.\nThis could take several minutes.",
+                            text = stringResource(R.string.text_sync_in_progress),
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
