@@ -53,7 +53,6 @@ import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
 import com.doyoonkim.common.ui.TopAppBarDropdownMenu
 import com.doyoonkim.common.ui.TopAppBarWithActions
-import com.doyoonkim.model.BookmarkVO
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -194,7 +193,7 @@ fun BookmarkListScreen(
                                     stringResource(R.string.text_updated_at) +
                                             " ${updatedAt.toFormattedDate()}"
                                 } else {
-                                    stringResource(R.string.text_created_at) + 
+                                    stringResource(R.string.text_created_at) +
                                             " ${createdAt.toFormattedDate()}"
                                 }
                             },
