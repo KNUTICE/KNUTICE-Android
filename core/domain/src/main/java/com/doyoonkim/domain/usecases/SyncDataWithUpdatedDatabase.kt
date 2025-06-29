@@ -31,9 +31,9 @@ data class DatabaseSyncResult(
 
 interface SyncDataWithUpdateDatabase {
 
-    fun initiateManualSync(): Flow<DatabaseSyncResult>
+    fun manualSync(): Flow<DatabaseSyncResult>
 
-    operator fun invoke(): Flow<Pair<Boolean, Boolean>>
+    fun entrySync(): Flow<DatabaseSyncResult>
 
 }
 
@@ -42,7 +42,15 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
     private val remoteRepository: RemoteRepository
 ) : SyncDataWithUpdateDatabase {
 
-    override fun initiateManualSync() = flow {
+    override fun manualSync(): Flow<DatabaseSyncResult> = flow {
+        emitAll(databaseSync_1_2())
+    }
+
+    override fun entrySync(): Flow<DatabaseSyncResult> = flow {
+        emitAll(databaseSync_1_2())
+    }
+
+    private fun databaseSync_1_2() = flow {
         val bookmarks = localRepository.queryAllBookmarks()
             .firstOrNull()
 
@@ -114,49 +122,6 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
 
     }.catch { /* OVERALL ERROR */ }.flowOn(Dispatchers.IO)
 
-    override fun invoke() = flow<Pair<Boolean, Boolean>> {
-        var isSyncFailedOccurred = false
-        // Fetch all bookmark first.
-        val bookmarks = localRepository.queryAllBookmarks()
-            .firstOrNull()
-
-        if (bookmarks.isNullOrEmpty()) {
-            // No bookmarks to be synced.
-            emit(Pair(true, false))
-            return@flow
-        }
-
-        for (bookmark in bookmarks) {
-            try {
-                // if noticeLocal is null, skip the sync
-                val noticeLocal = localRepository.queryNoticeById(bookmark.targetNoticeNttId)
-                    .firstOrNull() ?: continue
-
-                // if noticeRemote is null, skip the sync
-                val noticeRemote = withTimeout(5000L) {
-                    remoteRepository.queryNoticeById(noticeLocal.nttId)
-                        .firstOrNull()
-                } ?: continue
-
-                val syncedBookmark = bookmark.copy(
-                    createdAt = noticeRemote.timestamp.toLong(),
-                    updatedAt = noticeRemote.timestamp.toLong()
-                ).also{ println("Synced Bookmark: ${it.toString()}") }
-                val syncedNotice = noticeLocal.copy(
-                    noticeName = noticeRemote.noticeName
-                ).also{ println("Synced Notice: ${it.toString()}") }
-
-                localRepository.updateBookmark(syncedBookmark).firstOrNull()
-                localRepository.updateNoticeEntity(syncedNotice).firstOrNull()
-            } catch (e: Exception) {
-                // Unable to process sync. Skip sync of this elements
-                println("Unable to process sync. ${e.printStackTrace()}")
-                isSyncFailedOccurred = true
-                continue
-            }
-        }
-        emit(Pair(true, isSyncFailedOccurred))
-    }.flowOn(Dispatchers.IO)
 
     private fun BookmarkVO.isSynced(): Boolean {
         return this.createdAt > 0 && this.updatedAt > 0
