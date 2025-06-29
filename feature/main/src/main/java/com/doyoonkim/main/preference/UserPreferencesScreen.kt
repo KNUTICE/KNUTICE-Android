@@ -210,7 +210,8 @@ fun UserPreferenceScreen(
 
                             Text(
                                 text = if(uiState.databaseSyncResult.completed) {
-                                    stringResource(R.string.text_sync_result) + " ${uiState.databaseSyncResult.targetCounts} / ${uiState.databaseSyncResult.failureCounts}"
+                                    stringResource(R.string.text_sync_result) +
+                                            " ${uiState.databaseSyncResult.targetCounts} / ${uiState.databaseSyncResult.failureCounts}"
                                 } else { stringResource(R.string.text_sync_in_progress) },
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Normal,
