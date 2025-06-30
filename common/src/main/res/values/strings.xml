@@ -89,4 +89,5 @@
     <string name="text_sync_result">Result (Total / Failure):</string>
     <string name="text_created_at">Created at</string>
     <string name="text_updated_at">Updated at</string>
+    <string name="text_category_not_found" translatable="false">Category Not Found</string>
 </resources>
