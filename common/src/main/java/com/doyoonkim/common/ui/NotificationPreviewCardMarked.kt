@@ -8,12 +8,13 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.R
+import com.doyoonkim.model.NoticeCategory
 
 @Composable
 fun NotificationPreviewCardMarked(
@@ -21,14 +22,16 @@ fun NotificationPreviewCardMarked(
     isLoading: Boolean = false,
     noticeTitle: String = "Title goes here",
     noticeSubtitle: String = "Subtitle goes here",
-    onItemClicked: () -> Unit = {  },
-    onBackPressed: () -> Unit = {  }
+    noticeCategory: String = NoticeCategory.Unspecified.name,
+    onItemClicked: () -> Unit = {  }
 ) {
+    val iconTint = NoticeResources.getColorResourceByCategory(noticeCategory)
     Box(
         modifier = modifier.wrapContentSize(),
         contentAlignment = Alignment.TopEnd
     ) {
         NotificationPreviewCard(
+            modifier = Modifier.padding(end = 10.dp),
             isLoading = isLoading,
             notificationTitle = noticeTitle,
             notificationInfo = noticeSubtitle,
@@ -38,7 +41,7 @@ fun NotificationPreviewCardMarked(
         Image(
             painter = painterResource(R.drawable.baseline_bookmarks_24),
             contentDescription = "Bookmark Image",
-            colorFilter = ColorFilter.tint(Color.Red),
+            colorFilter = ColorFilter.tint(iconTint),
             modifier = Modifier.padding(end = 10.dp)
         )
     }
@@ -49,5 +52,5 @@ fun NotificationPreviewCardMarked(
 )
 @Composable
 fun NotificationPreviewCardMarked_Preview() {
-    NotificationPreviewCardMarked()
+
 }
