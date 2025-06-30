@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,10 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -56,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
+import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.common.R
@@ -122,7 +119,9 @@ fun EditBookmarkScreen(
                 modifier = Modifier.padding(5.dp),
                 isLoading = false,
                 notificationTitle = bookmarkInfo.noticeTitle,
-                notificationInfo = bookmarkInfo.noticeInfo
+                notificationInfo = stringResource(
+                    NoticeResources.getStringResourcesByCategory(bookmarkInfo.noticeInfo)
+                )
             ) {
                 // Request Full Content
                 uiState.targetNotice?.let { onNoticeSelected(NoticeDetail(it.nttId, it.url, false)) }
