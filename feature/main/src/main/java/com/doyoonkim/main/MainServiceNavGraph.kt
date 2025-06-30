@@ -363,7 +363,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
             onBookmarkCreate = { onBookmarkServiceRequested(BookmarkInfo(
                 noticeId = it.nttId,
                 noticeTitle = it.title,
-                noticeInfo = "[${it.departName}] ${it.timestamp}"
+                noticeInfo = it.noticeName
             )) },
             onBackPressed = { navController.popBackStack() }
         )
