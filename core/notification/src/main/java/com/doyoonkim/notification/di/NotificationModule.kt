@@ -4,6 +4,7 @@ import android.content.Context
 import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.domain.ImageRepository
+import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.doyoonkim.notification.fcm.PushNotificationHandler
 import dagger.Module
@@ -16,11 +17,13 @@ object NotificationModule {
     @Provides
     @Singleton
     fun providesPushNotificationHandler(
+        remoteRepository: RemoteRepository,
         imageRepository: ImageRepository,
         bitmapHandler: BitmapHandler,
         @ApplicationContext context: Context
     ) =
         PushNotificationHandler(
+            remoteRepository,
             imageRepository,
             bitmapHandler,
             context
