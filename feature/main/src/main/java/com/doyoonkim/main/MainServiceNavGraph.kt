@@ -24,6 +24,7 @@ import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.navigation.NoticeDetail
+import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.main.home.HomeScreen
 import com.doyoonkim.main.notice.NoticeDetailScreen
 import com.doyoonkim.main.notice.NoticeSearchScreen
@@ -32,6 +33,7 @@ import com.doyoonkim.main.preference.CustomerServiceScreen
 import com.doyoonkim.main.preference.NotificationPreferencesScreen
 import com.doyoonkim.main.preference.OssNoticeScreen
 import com.doyoonkim.main.preference.UserPreferenceScreen
+import com.doyoonkim.main.tip.TipDetailScreen
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.main.viewmodel.HomeViewModel
 import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
@@ -72,7 +74,11 @@ fun NavGraphBuilder.mainServiceNavGraph(
                 }
             },
             onFullContentRequested = { id, url ->
-                onNoticeDetailRequested(NoticeDetail(id, url)) }
+                onNoticeDetailRequested(NoticeDetail(id, url))
+            },
+            onTipClicked = { category, url ->
+                navController.navigate("tipDetail/${category.name}/${Uri.encode(url)}")
+            }
         )
     }
 
@@ -335,5 +341,41 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )) },
             onBackPressed = { navController.popBackStack() }
         )
+    }
+
+    composable(
+        route = "tipDetail/{category}/{contentUrl}",
+        deepLinks = listOf(
+            navDeepLink {
+                uriPattern = "knutice://service/tipDetail/{category}/{contentUrl}"
+            }
+        ),
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) { backStackEntry ->
+        val tipDetail = backStackEntry.arguments?.let {
+            Pair(
+                it.getString("category") ?: TipCategory.GENERAL_TIP.name,
+                Uri.decode(it.getString("contentUrl") ?: "")
+            )
+        } ?: Pair("", "")
+
+        TipDetailScreen(
+            modifier = Modifier.fillMaxSize(),
+            tipCategory = tipDetail.first,
+            contentUrl = tipDetail.second
+        ) {
+            navController.popBackStack()
+        }
     }
 }
