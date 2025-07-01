@@ -71,4 +71,7 @@
     <string name="text_select_time">時間設定</string>
     <string name="text_set_reminder_date_time">時間設定</string>
     <string name="text_push_to_notice">タップして通知を確認してください</string>
+    <string name="text_tip_updates">アップデート</string>
+    <string name="text_tip_sys_notice">システム通知</string>
+    <string name="text_tip_general">ヒント</string>
 </resources>

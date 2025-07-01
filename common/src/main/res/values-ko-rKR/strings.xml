@@ -71,4 +71,7 @@
     <string name="text_select_time">시간 선택</string>
     <string name="text_set_reminder_date_time">알림 시간</string>
     <string name="text_push_to_notice">탭하여 공지를 확인해주세요.</string>
+    <string name="text_tip_updates">업데이트</string>
+    <string name="text_tip_sys_notice">시스템 공지</string>
+    <string name="text_tip_general">힌트</string>
 </resources>
