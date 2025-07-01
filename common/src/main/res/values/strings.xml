@@ -11,7 +11,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code" translatable="false">1.4.2.1</string>
+    <string name="version_code" translatable="false">1.4.2.2</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -80,4 +80,5 @@
     <string name="job_news">Career</string>
     <string name="text_select_time">Select Time</string>
     <string name="text_set_reminder_date_time">Select time for reminder</string>
+    <string name="text_push_to_notice">Tap notification to check arrived notice.</string>
 </resources>

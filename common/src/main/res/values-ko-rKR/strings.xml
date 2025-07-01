@@ -70,4 +70,5 @@
     <string name="job_news">취업</string>
     <string name="text_select_time">시간 선택</string>
     <string name="text_set_reminder_date_time">알림 시간</string>
+    <string name="text_push_to_notice">탭하여 공지를 확인해주세요.</string>
 </resources>
