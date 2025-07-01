@@ -1,5 +1,6 @@
 package model.dto
 
+import androidx.annotation.Keep
 import com.doyoonkim.model.TopThreeNoticeVO
 import com.google.gson.annotations.SerializedName
 
@@ -7,6 +8,7 @@ import com.google.gson.annotations.SerializedName
  * @author kimdoyoon
  * Created 6/2/25 at 11:01 PM
  */
+@Keep
 data class TopThreeNoticeDTO(
     @SerializedName("latestThreeGeneralNews") var generalNotices: ArrayList<NoticeDTO> = arrayListOf(),
     @SerializedName("latestThreeScholarshipNews") var scholarshipNotices: ArrayList<NoticeDTO> = arrayListOf(),

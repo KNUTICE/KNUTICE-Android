@@ -49,4 +49,9 @@ class PushNotificationService : FirebaseMessagingService() {
         super.onMessageReceived(message)
         handlerProvider.get().handleReceivedMessage(message)
     }
+
+    override fun onDestroy() {
+        handlerProvider.get().inactivateCoroutineScope()
+        super.onDestroy()
+    }
 }

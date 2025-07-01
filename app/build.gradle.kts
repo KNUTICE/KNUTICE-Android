@@ -34,8 +34,8 @@ android {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 31
         targetSdk = 34
-        versionCode = 22
-        versionName = "1.4.2"
+        versionCode = 23
+        versionName = "1.4.2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -129,9 +129,6 @@ dependencies {
 
     // DataStore
     implementation (libs.androidx.datastore.preferences)
-
-    // SplashScreen
-    implementation(libs.androidx.core.splashscreen)
 
 }
 

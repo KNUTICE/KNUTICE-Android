@@ -1,5 +1,6 @@
 package model.dto
 
+import androidx.annotation.Keep
 import com.doyoonkim.model.NoticeVO
 import com.google.gson.annotations.SerializedName
 
@@ -7,6 +8,7 @@ import com.google.gson.annotations.SerializedName
  * @author kimdoyoon
  * Created 6/2/25 at 11:08 PM
  */
+@Keep
 data class NoticeDTO(
     @SerializedName("nttId") var nttId: Int? = null,
     @SerializedName("title") var title: String? = null,

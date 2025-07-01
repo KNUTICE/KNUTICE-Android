@@ -11,7 +11,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code" translatable="false">1.4.2</string>
+    <string name="version_code" translatable="false">1.4.2.2</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -80,6 +80,10 @@
     <string name="job_news">Career</string>
     <string name="text_select_time">Select Time</string>
     <string name="text_set_reminder_date_time">Select time for reminder</string>
+    <string name="text_push_to_notice">Tap notification to check arrived notice.</string>
+    <string name="text_tip_updates">Updates</string>
+    <string name="text_tip_sys_notice">System Notice</string>
+    <string name="text_tip_general">Hint</string>
     <string name="text_newest">Newest</string>
     <string name="text_oldest">Oldest</string>
     <string name="text_sync_warning">Some data is not been synced. It may cause failure in sorting and filtering\nPlease go to Settings > Manual Sync to perform sync.</string>

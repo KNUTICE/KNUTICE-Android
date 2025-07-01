@@ -19,6 +19,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -47,8 +48,11 @@ import com.doyoonkim.common.R
 import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.NotificationPreviewCard
+import com.doyoonkim.common.ui.TipCategory
+import com.doyoonkim.common.ui.TipContainer
 import com.doyoonkim.common.ui.TopAppBarWithActions
 import com.doyoonkim.main.viewmodel.HomeViewModel
 import com.doyoonkim.model.NoticeVO
@@ -63,7 +67,8 @@ fun HomeScreen(
     onSettingsRequested: () -> Unit,
     onGoBackAction: () -> Unit,
     onMoreNoticeRequested: (Destination) -> Unit,
-    onFullContentRequested: (Int, String) -> Unit
+    onFullContentRequested: (Int, String) -> Unit,
+    onTipClicked: (TipCategory, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -113,7 +118,17 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
+            TipContainer(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                tipCategory = TipCategory.SYS_NOTICE,
+                containerColor = MaterialTheme.colorScheme.onAnyBackground,
+                tipText = "[사과문] 알림 기능 오류에 대해 진심으로 사과드립니다.",
+            ) {
+                onTipClicked(
+                    TipCategory.SYS_NOTICE,
+                    "https://knutice.github.io/KNUTICE-OpenSourceLicense/Android/apologies/knutice_apology_notice.html"
+                )
+            }
 
             NotificationPreviewList (
                 listTitle = stringResource(R.string.general_news),
