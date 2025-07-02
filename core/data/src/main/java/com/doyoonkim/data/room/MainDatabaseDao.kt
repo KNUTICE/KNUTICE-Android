@@ -59,7 +59,7 @@ interface MainDatabaseDao {
             b.updated_at AS updatedAt
         FROM Bookmark b
         INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
-        ORDER BY b.bookmarkId DESC LIMIT :size OFFSET :pageNumber * :size
+        ORDER BY b.bookmarkId ASC LIMIT :size OFFSET :pageNumber * :size
     """)
     fun getBookmarkListSortedNewest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
 
@@ -74,7 +74,7 @@ interface MainDatabaseDao {
             b.updated_at AS updatedAt
         FROM Bookmark b
         INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
-        ORDER BY b.bookmarkId ASC LIMIT :size OFFSET :pageNumber * :size
+        ORDER BY b.bookmarkId DESC LIMIT :size OFFSET :pageNumber * :size
     """)
     fun getBookmarkListSortedOldest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
 
