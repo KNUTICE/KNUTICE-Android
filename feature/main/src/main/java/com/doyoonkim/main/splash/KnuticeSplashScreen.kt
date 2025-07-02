@@ -37,6 +37,7 @@ import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.subTitle
+import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.main.viewmodel.SplashStage
 import com.doyoonkim.main.viewmodel.SplashViewModel
@@ -77,12 +78,11 @@ fun KnuticeSplashScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(R.drawable.app_icon),
+                painter = painterResource(R.drawable.knutice_icon_splash),
                 contentDescription = "App Icon",
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .size(128.dp)
-                    .clip(RoundedCornerShape(15.dp))
             )
 
             Text(
@@ -111,6 +111,7 @@ fun KnuticeSplashScreen(
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             textAlign = TextAlign.Center,
+                            color = MaterialTheme.colorScheme.title,
                             modifier = Modifier.fillMaxWidth()
                                 .wrapContentHeight()
                         )
