@@ -3,7 +3,6 @@ package com.doyoonkim.common.navigation
 
 sealed class NavRoutes(val route: String) {
 
-    data object Splash: NavRoutes(Destination.SPLASH.name)
     data object Home : NavRoutes(Destination.HOME.name)
     data object Bookmark: NavRoutes(Destination.BOOKMARKS.name)
 

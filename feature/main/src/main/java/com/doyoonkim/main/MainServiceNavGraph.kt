@@ -56,31 +56,6 @@ fun NavGraphBuilder.mainServiceNavGraph(
 ) {
 
     // ViewModels will be injected via ViewModelFactory
-    // Splash Screen
-    composable(
-        route = NavRoutes.Splash.route,
-        exitTransition = {
-            fadeOut(
-                animationSpec = tween(200)
-            )
-        }
-    ) {
-        KnuticeSplashScreen(
-            modifier = Modifier.fillMaxSize(),
-            viewModel = viewModel<SplashViewModel>(factory = viewModelFactory)
-        ) { result ->
-            if (result) {
-                navController.navigate(NavRoutes.Home.route) {
-                    popUpTo(NavRoutes.Splash.route) {
-                        inclusive = true
-                    }
-                }
-            } else {
-                onExit()
-            }
-        }
-    }
-
     composable(NavRoutes.Home.route) {
         HomeScreen(
             modifier = Modifier.padding(horizontal = 5.dp),

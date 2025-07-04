@@ -21,7 +21,6 @@ fun AppNavHost(
     contentPadding: PaddingValues,
     navController: NavHostController,
     viewModelFactory: ViewModelProvider.Factory,
-    startDestination: String,
     onExit: () -> Unit = { /* ON EXIT HANDLING */ }
 ) {
     NavHost(
@@ -32,7 +31,7 @@ fun AppNavHost(
             )
         ),
         navController = navController,
-        startDestination = startDestination
+        startDestination = NavRoutes.Home.route
     ) {
         mainServiceNavGraph(
             navController = navController,
