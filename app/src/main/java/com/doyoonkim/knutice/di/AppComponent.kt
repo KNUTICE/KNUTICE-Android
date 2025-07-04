@@ -8,6 +8,7 @@ import com.doyoonkim.domain.di.DomainModule
 import com.doyoonkim.knutice.MainActivity
 import com.doyoonkim.knutice.MainApplication
 import com.doyoonkim.main.di.MainModule
+import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.NotificationBindingModule
 import com.doyoonkim.notification.di.NotificationModule
 import com.doyoonkim.notification.fcm.PushNotificationService
@@ -22,6 +23,7 @@ import javax.inject.Singleton
         CommonModule::class,
         DataModule::class,
         DomainModule::class,
+        NetworkModule::class,
         NotificationModule::class,
         NotificationBindingModule::class,
         BookmarkModule::class,

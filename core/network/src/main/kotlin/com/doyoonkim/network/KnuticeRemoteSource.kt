@@ -17,44 +17,44 @@ import javax.inject.Singleton
 
 // This class should be provided/injected as Singleton Instance.
 @Singleton
-class KnuticeRemoteSource @Inject constructor() {
+class KnuticeRemoteSource @Inject constructor(
+    private val knuticeApi: KnuticeService
+) {
     private val TAG = "KnuticeRemoteSource"
-
-    // Consider providing this instance via DI.
-    private val knuticeService = Retrofit.Builder()
-        .baseUrl(BuildConfig.API_LIVE)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
 
     // Should be later migrated to DataStore.
     var validatedToken: String = ""
 
     suspend fun getTopThreeNotices() = runCatching {
-            knuticeService.create(KnuticeService::class.java).getTopThreeNotices()
+            knuticeApi.getTopThreeNotices()
         }
 
     suspend fun getNoticesPerPage(category: NoticeCategory, lastNttId: Int?) = runCatching {
-            knuticeService.create(KnuticeService::class.java).getNoticesPerPage(category, lastNttId)
+            knuticeApi.getNoticesPerPage(category, lastNttId)
         }
 
     suspend fun getNoticeById(nttId: Int) = runCatching {
-            knuticeService.create(KnuticeService::class.java).getNoticeById(nttId.toString())
+            knuticeApi.getNoticeById(nttId.toString())
         }
 
 
     suspend fun getNoticesByKeyword(keyword: String) = runCatching {
-            knuticeService.create(KnuticeService::class.java).getNoticesByKeyword(keyword)
+            knuticeApi.getNoticesByKeyword(keyword)
         }
 
     suspend fun getTopicSubscriptionStatus() = runCatching {
             if (validatedToken.isBlank()) throw Exception("No validated token found")
             else {
-                knuticeService.create(KnuticeService::class.java).getTopicSubscriptionStatus(validatedToken)
+                knuticeApi.getTopicSubscriptionStatus(validatedToken)
             }
         }
 
+    suspend fun getAllTips() = runCatching {
+        knuticeApi.getAllTips(deviceType = "AOS")
+    }
+
     suspend fun validateToken(request: DeviceTokenRequest) = runCatching {
-            knuticeService.create(KnuticeService::class.java).validateToken(request)
+            knuticeApi.validateToken(request)
         }
 
     fun updateValidatedToken(fcmToken: String) {
@@ -62,11 +62,11 @@ class KnuticeRemoteSource @Inject constructor() {
     }
 
     suspend fun submitUserReport(request: UserReportRequest) = runCatching {
-            knuticeService.create(KnuticeService::class.java).submitUserReport(request)
+            knuticeApi.submitUserReport(request)
         }
 
     suspend fun submitTopicSubscriptionPreferences(request: TopicSubscriptionPreferencesRequest) =
         runCatching {
-            knuticeService.create(KnuticeService::class.java).submitTopicSubscriptionPreferences(request)
+            knuticeApi.submitTopicSubscriptionPreferences(request)
         }
 }
