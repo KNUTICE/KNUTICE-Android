@@ -1,5 +1,6 @@
 package com.doyoonkim.main.splash
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +23,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -51,7 +51,12 @@ fun KnuticeSplashScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(Unit) {
+        viewModel.startPreprocess()
+    }
+
     LaunchedEffect(uiState.splashStage) {
+        Log.d("SplashScreen", "Splash Stage: ${uiState.splashStage}")
         when (uiState.splashStage) {
             SplashStage.LOADING -> {
 
@@ -65,37 +70,37 @@ fun KnuticeSplashScreen(
         }
     }
 
-    Column(
-        modifier = modifier.fillMaxSize()
-            .padding(horizontal = 10.dp)
-            .background(MaterialTheme.colorScheme.displayBackground),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+    if(uiState.splashStage == SplashStage.LOADING) {
         Column(
-            modifier = Modifier.wrapContentSize().weight(6f),
-            verticalArrangement = Arrangement.spacedBy(50.dp),
+            modifier = modifier.fillMaxSize()
+                .background(MaterialTheme.colorScheme.displayBackground),
+            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Image(
-                painter = painterResource(R.drawable.knutice_icon_splash),
-                contentDescription = "App Icon",
-                contentScale = ContentScale.FillBounds,
-                modifier = Modifier
-                    .size(128.dp)
-            )
+            Column(
+                modifier = Modifier.wrapContentSize().weight(6f),
+                verticalArrangement = Arrangement.spacedBy(50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.knutice_icon_splash),
+                    contentDescription = "App Icon",
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier
+                        .size(128.dp)
+                )
 
-            Text(
-                text = stringResource(R.string.app_name),
-                fontSize = 24.sp,
-                fontWeight = FontWeight.ExtraBold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.subTitle,
-                modifier = Modifier.fillMaxWidth()
-                    .wrapContentHeight()
-            )
-        }
-        if (uiState.splashStage == SplashStage.LOADING) {
+                Text(
+                    text = stringResource(R.string.app_name),
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.subTitle,
+                    modifier = Modifier.fillMaxWidth()
+                        .wrapContentHeight()
+                )
+            }
+
             Box(
                 modifier = Modifier.fillMaxWidth().weight(5f, fill = false)
             ) {
