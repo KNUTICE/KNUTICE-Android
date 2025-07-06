@@ -1,19 +1,11 @@
 package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.LocalRepository
-import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.domain.SortOption
 import com.doyoonkim.model.BookmarkAsListElementVO
-import com.doyoonkim.model.BookmarkVO
-import com.doyoonkim.model.NoticeVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
-import java.text.SimpleDateFormat
-import java.util.Locale
 import javax.inject.Inject
 
 

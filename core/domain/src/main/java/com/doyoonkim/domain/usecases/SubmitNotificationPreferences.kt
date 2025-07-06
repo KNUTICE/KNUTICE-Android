@@ -1,6 +1,6 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -11,7 +11,7 @@ interface SubmitNotificationPreferences {
 }
 
 class SubmitNotificationPreferencesImpl @Inject constructor(
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: TopicSubscriptionRemoteRepository
 ) : SubmitNotificationPreferences {
 
     override operator fun invoke(body: TopicSubscriptionPreferencesBody) =

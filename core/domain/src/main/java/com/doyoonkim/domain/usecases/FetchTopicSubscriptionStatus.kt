@@ -1,6 +1,6 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
 import com.doyoonkim.model.TopicSubscriptionPreferencesVO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -12,7 +12,7 @@ interface FetchTopicSubscriptionStatus {
 }
 
 class FetchTopicSubscriptionStatusImpl @Inject constructor(
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: TopicSubscriptionRemoteRepository
 ) : FetchTopicSubscriptionStatus {
 
     override operator fun invoke() =

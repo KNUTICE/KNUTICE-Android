@@ -11,9 +11,13 @@ import com.doyoonkim.data.room.LocalDatabase
 import com.doyoonkim.data.room.MainDatabaseDao
 import com.doyoonkim.domain.ImageRepository
 import com.doyoonkim.domain.LocalRepository
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
+import com.doyoonkim.domain.interfaces.TipRemoteRepository
+import com.doyoonkim.domain.interfaces.TokenRemoteRepository
+import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
+import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
 import com.doyoonkim.network.ImageRemoteSource
-import com.doyoonkim.network.KnuticeRemoteSource
+import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.Dispatchers
@@ -55,17 +59,39 @@ object DataModule {
     }
 
     @Provides
-    fun provideRemoteRepository(
-        remoteSource: KnuticeRemoteSource
-    ): RemoteRepository {
-        return RemoteRepositoryImpl(remoteSource)
-    }
-
-    @Provides
     fun providesImageRepository(
         imageRemoteSource: ImageRemoteSource
     ): ImageRepository {
         return ImageRepositoryImpl(imageRemoteSource)
     }
+}
+
+@Module
+abstract class DataBindingModule {
+
+    @Binds
+    abstract fun bindsNoticeRemoteRepo(
+        impl: RemoteRepositoryImpl
+    ) : NoticeRemoteRepository
+
+    @Binds
+    abstract fun bindsTipRemoteRepo(
+        impl: RemoteRepositoryImpl
+    ) : TipRemoteRepository
+
+    @Binds
+    abstract fun bindsTokenRemoteRepo(
+        impl: RemoteRepositoryImpl
+    ) : TokenRemoteRepository
+
+    @Binds
+    abstract fun bindsTopicSubscriptionRemoteRepo(
+        impl: RemoteRepositoryImpl
+    ) : TopicSubscriptionRemoteRepository
+
+    @Binds
+    abstract fun bindsUserReportRemoteRepo(
+        impl: RemoteRepositoryImpl
+    ) : UserReportRemoteRepository
 
 }

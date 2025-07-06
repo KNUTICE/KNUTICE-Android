@@ -1,7 +1,7 @@
 package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.LocalRepository
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +21,7 @@ interface ModifyBookmark {
 
 class ModifyBookmarkImpl @Inject constructor(
     private val localRepository: LocalRepository,
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: NoticeRemoteRepository
 ) : ModifyBookmark {
 
     override fun query(nttId: Int): Flow<BookmarkVO> =

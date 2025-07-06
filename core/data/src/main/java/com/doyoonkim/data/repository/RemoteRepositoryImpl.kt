@@ -1,9 +1,12 @@
 package com.doyoonkim.data.repository
 
 import android.util.Log
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
+import com.doyoonkim.domain.interfaces.TipRemoteRepository
+import com.doyoonkim.domain.interfaces.TokenRemoteRepository
+import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
+import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
 import com.doyoonkim.model.NoticeCategory
-import com.doyoonkim.model.TipVO
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import com.doyoonkim.model.requestBody.UserReportBody
@@ -12,7 +15,6 @@ import com.doyoonkim.network.model.DeviceTokenRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import model.NetworkResult
@@ -20,7 +22,12 @@ import javax.inject.Inject
 
 class RemoteRepositoryImpl @Inject constructor(
     private val remoteSource: KnuticeRemoteSource
-) : RemoteRepository {
+) : NoticeRemoteRepository,
+    TokenRemoteRepository,
+    TopicSubscriptionRemoteRepository,
+    UserReportRemoteRepository,
+    TipRemoteRepository
+{
     private val TAG = "RemoteRepositoryImpl"
 
     override fun queryTopThreeNotices() = flow {

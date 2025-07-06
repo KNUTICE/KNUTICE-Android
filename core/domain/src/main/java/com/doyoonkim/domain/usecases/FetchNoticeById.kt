@@ -1,6 +1,6 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -12,7 +12,7 @@ interface FetchNoticeById {
 }
 
 class FetchNoticeByIdImpl @Inject constructor(
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: NoticeRemoteRepository
 ) : FetchNoticeById {
 
     override operator fun invoke(nttId: Int) =

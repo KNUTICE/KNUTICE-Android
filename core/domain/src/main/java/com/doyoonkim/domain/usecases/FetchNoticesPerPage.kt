@@ -1,6 +1,6 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.Flow
@@ -13,7 +13,7 @@ interface FetchNoticesPerPage {
 }
 
 class FetchNoticesPerPageImpl @Inject constructor(
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: NoticeRemoteRepository
 ) : FetchNoticesPerPage {
 
     override operator fun invoke(category: NoticeCategory, lastNttId: Int) =

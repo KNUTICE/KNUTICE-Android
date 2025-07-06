@@ -1,6 +1,6 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
 import com.doyoonkim.model.requestBody.UserReportBody
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -11,7 +11,7 @@ interface SubmitUserReport {
 }
 
 class SubmitUserReportImpl @Inject constructor(
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: UserReportRemoteRepository
 ) : SubmitUserReport {
 
     override operator fun invoke(body: UserReportBody) =

@@ -5,8 +5,7 @@ import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.common.di.TokenHandler
 import com.doyoonkim.domain.ImageRepository
-import com.doyoonkim.domain.RemoteRepository
-import com.doyoonkim.domain.usecases.ValidateDeviceToken
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.notification.fcm.PushNotificationHandler
 import com.doyoonkim.notification.fcm.TokenHandlerImpl
 import dagger.Binds
@@ -20,7 +19,7 @@ object NotificationModule {
     @Provides
     @Singleton
     fun providesPushNotificationHandler(
-        remoteRepository: RemoteRepository,
+        remoteRepository: NoticeRemoteRepository,
         imageRepository: ImageRepository,
         bitmapHandler: BitmapHandler,
         @ApplicationContext context: Context

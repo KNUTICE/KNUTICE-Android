@@ -1,6 +1,6 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -12,7 +12,7 @@ interface FetchNoticesByKeyword {
 }
 
 class FetchNoticesByKeywordImpl @Inject constructor(
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: NoticeRemoteRepository
 ) : FetchNoticesByKeyword {
 
     override operator fun invoke(keyword: String) =

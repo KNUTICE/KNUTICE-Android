@@ -1,22 +1,16 @@
 package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.LocalRepository
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
-import jdk.javadoc.internal.doclets.toolkit.taglets.snippet.Bookmark
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.time.withTimeout
 import kotlinx.coroutines.withTimeout
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -39,7 +33,7 @@ interface SyncDataWithUpdateDatabase {
 
 class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
     private val localRepository: LocalRepository,
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: NoticeRemoteRepository
 ) : SyncDataWithUpdateDatabase {
 
     override fun manualSync(): Flow<DatabaseSyncResult> = flow {

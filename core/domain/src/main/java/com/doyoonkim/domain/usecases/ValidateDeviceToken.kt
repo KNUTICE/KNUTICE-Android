@@ -1,6 +1,6 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.TokenRemoteRepository
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -14,7 +14,7 @@ interface ValidateDeviceToken {
 }
 
 class ValidateDeviceTokenImpl @Inject constructor(
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: TokenRemoteRepository
 ) : ValidateDeviceToken {
 
     override operator fun invoke(requestBody: DeviceTokenBody) =
