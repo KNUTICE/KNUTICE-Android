@@ -5,8 +5,6 @@ import com.doyoonkim.network.model.DeviceTokenRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
 import com.doyoonkim.network.retrofit.KnuticeService
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 

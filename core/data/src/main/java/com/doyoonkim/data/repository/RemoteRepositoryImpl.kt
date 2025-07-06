@@ -3,6 +3,7 @@ package com.doyoonkim.data.repository
 import android.util.Log
 import com.doyoonkim.domain.RemoteRepository
 import com.doyoonkim.model.NoticeCategory
+import com.doyoonkim.model.TipVO
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import com.doyoonkim.model.requestBody.UserReportBody
@@ -11,6 +12,7 @@ import com.doyoonkim.network.model.DeviceTokenRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import model.NetworkResult
@@ -37,7 +39,7 @@ class RemoteRepositoryImpl @Inject constructor(
     override fun queryNoticesPerPage(category: NoticeCategory, lastNttId: Int?) = flow {
         remoteSource.getNoticesPerPage(category, lastNttId).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(it.body.map { it.toVO() })
+                if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
                 else it.result.printLog().also { emit(null) }
             },
             onFailure = {
@@ -64,7 +66,7 @@ class RemoteRepositoryImpl @Inject constructor(
     override fun queryNoticesByKeyword(keyword: String) = flow {
         remoteSource.getNoticesByKeyword(keyword).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(it.body.map { it.toVO() })
+                if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
                 else it.result.printLog().also { emit(null) }
             },
             onFailure = {
@@ -82,6 +84,20 @@ class RemoteRepositoryImpl @Inject constructor(
                     if (it.body != null) emit(it.body?.toVO())
                     else it.result.printLog().also { emit(null) }
                 }
+            },
+            onFailure = {
+                it.printLog()
+                emit(null)
+            }
+        )
+    }
+
+    override fun queryAllTips() = flow {
+        remoteSource.getAllTips().fold(
+            onSuccess = {
+                if (it.result?.resultCode == 200) {
+                    emit(it.body?.map { dto -> dto.toVO() })
+                } else it.result.printLog().also { emit(null) }
             },
             onFailure = {
                 it.printLog()

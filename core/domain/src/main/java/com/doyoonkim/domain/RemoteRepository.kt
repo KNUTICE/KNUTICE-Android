@@ -2,6 +2,7 @@ package com.doyoonkim.domain
 
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.TipVO
 import com.doyoonkim.model.TopThreeNoticeVO
 import com.doyoonkim.model.TopicSubscriptionPreferencesVO
 import com.doyoonkim.model.requestBody.DeviceTokenBody
@@ -21,6 +22,8 @@ interface RemoteRepository {
 
     fun queryTopicSubscriptionStatus(): Flow<TopicSubscriptionPreferencesVO?>
 
+    fun queryAllTips(): Flow<List<TipVO>?>
+
     fun requestTokenValidation(body: DeviceTokenBody): Flow<Boolean>
 
     fun requestUpdateValidatedToken(fcmToken: String)
@@ -30,5 +33,4 @@ interface RemoteRepository {
     fun requestTopicSubscriptionPreferencesSubmission(
         body: TopicSubscriptionPreferencesBody
     ): Flow<Boolean>
-
 }

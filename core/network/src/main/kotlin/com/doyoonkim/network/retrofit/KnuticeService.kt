@@ -8,6 +8,7 @@ import model.NoticeByIdResult
 import model.NoticesByKeywordResult
 import model.NoticesPerPageResult
 import model.PostResult
+import model.TipResult
 import model.TopThreeNoticeResults
 import model.TopicSubscriptionPreferencesResult
 import retrofit2.http.Body
@@ -47,6 +48,11 @@ interface KnuticeService {
     suspend fun getTopicSubscriptionStatus(
         @Header("fcmToken") token: String
     ): TopicSubscriptionPreferencesResult
+
+    @GET("open-api/tips")
+    suspend fun getAllTips(
+        @Query("deviceType") deviceType: String
+    ): TipResult
 
     @Headers("Content-Type: application/json")
     @POST("open-api/fcm")
