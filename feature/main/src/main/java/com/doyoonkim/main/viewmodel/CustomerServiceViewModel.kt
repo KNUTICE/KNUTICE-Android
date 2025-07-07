@@ -3,7 +3,7 @@ package com.doyoonkim.main.viewmodel
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.domain.usecases.SubmitUserReportImpl
+import com.doyoonkim.domain.usecases.SubmitUserReport
 import com.doyoonkim.model.requestBody.UserReportBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CustomerServiceViewModel @Inject constructor(
-    private val submitUserReport: SubmitUserReportImpl
+    private val submitUserReport: SubmitUserReport
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(CustomerServiceStatus())

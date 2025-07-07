@@ -24,6 +24,8 @@ interface AlarmScheduler {
     fun schedule(target: BookmarkVO, nav: BookmarkInfo)
 
     fun cancel(target: BookmarkVO, nav: BookmarkInfo)
+
+    fun canScheduleExactAlarms(): Boolean
 }
 
 class NotificationAlarmScheduler @Inject constructor(
@@ -75,7 +77,7 @@ class NotificationAlarmScheduler @Inject constructor(
         ).also { Log.d("NotificationAlarmScheduler", "Cancellation Completed") }
     }
 
-    fun canScheduleExactAlarms(): Boolean {
+    override fun canScheduleExactAlarms(): Boolean {
         return alarmManager.canScheduleExactAlarms()
     }
 

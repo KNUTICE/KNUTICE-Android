@@ -3,7 +3,7 @@ package com.doyoonkim.main.viewmodel
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.domain.usecases.FetchNoticesByKeywordImpl
+import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticeSearchViewModel @Inject constructor(
-    private val fetchNoticesByKeyword: FetchNoticesByKeywordImpl
+    private val fetchNoticesByKeyword: FetchNoticesByKeyword
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(NoticeSearchState())

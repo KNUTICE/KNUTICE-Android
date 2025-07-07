@@ -8,7 +8,7 @@ import com.doyoonkim.domain.usecases.FetchNoticeByIdFromLocal
 import com.doyoonkim.domain.usecases.ModifyBookmark
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
-import com.doyoonkim.notification.local.NotificationAlarmScheduler
+import com.doyoonkim.notification.local.AlarmScheduler
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,7 +23,7 @@ import javax.inject.Inject
 class EditBookmarkViewModel @Inject constructor(
     private val modifyBookmark: ModifyBookmark,
     private val fetchNoticeByIdLocal: FetchNoticeByIdFromLocal,
-    private val alarmScheduler: NotificationAlarmScheduler
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(EditBookmarkState())

@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.domain.usecases.FetchTips
-import com.doyoonkim.domain.usecases.FetchTopThreeNoticesImpl
+import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.TipVO
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 
 class HomeViewModel @Inject constructor(
-    private val fetchTopThreeNotices: FetchTopThreeNoticesImpl,
+    private val fetchTopThreeNotices: FetchTopThreeNotices,
     private val fetchTips: FetchTips
 ) : ViewModel() {
 

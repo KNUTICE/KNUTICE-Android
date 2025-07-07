@@ -8,6 +8,8 @@ import com.doyoonkim.domain.interfaces.ImageRemoteRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.notification.fcm.PushNotificationHandler
 import com.doyoonkim.notification.fcm.TokenHandlerImpl
+import com.doyoonkim.notification.local.AlarmScheduler
+import com.doyoonkim.notification.local.NotificationAlarmScheduler
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -35,6 +37,11 @@ object NotificationModule {
 
 @Module
 abstract class NotificationBindingModule {
+    @Binds
+    abstract fun bindsNotificationAlarmScheduler(
+        impl: NotificationAlarmScheduler
+    ) : AlarmScheduler
+
     @Binds
     abstract fun bindsTokenHandler(
         impl: TokenHandlerImpl

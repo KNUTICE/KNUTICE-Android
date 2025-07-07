@@ -2,7 +2,7 @@ package com.doyoonkim.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.domain.usecases.FetchNoticesPerPageImpl
+import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.Dispatchers
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticesInCategoryViewModel @Inject constructor(
-    private val fetchNoticesPerPage: FetchNoticesPerPageImpl
+    private val fetchNoticesPerPage: FetchNoticesPerPage
 ) : ViewModel() {
 
     // uiStates

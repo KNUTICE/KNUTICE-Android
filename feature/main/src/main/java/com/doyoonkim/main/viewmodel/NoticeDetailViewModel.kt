@@ -2,7 +2,7 @@ package com.doyoonkim.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.domain.usecases.FetchNoticeByIdImpl
+import com.doyoonkim.domain.usecases.FetchNoticeById
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticeDetailViewModel @Inject constructor(
-    private val fetchNoticeById: FetchNoticeByIdImpl
+    private val fetchNoticeById: FetchNoticeById
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(NoticeDetailState())

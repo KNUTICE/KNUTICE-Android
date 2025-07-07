@@ -3,8 +3,8 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatusImpl
-import com.doyoonkim.domain.usecases.SubmitNotificationPreferencesImpl
+import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
+import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import kotlinx.coroutines.CoroutineScope
@@ -21,8 +21,8 @@ import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 class NotificationPreferencesViewModel @Inject constructor(
-    private val submitNotificationPreferences: SubmitNotificationPreferencesImpl,
-    private val fetchTopicSubscriptionStatus: FetchTopicSubscriptionStatusImpl
+    private val submitNotificationPreferences: SubmitNotificationPreferences,
+    private val fetchTopicSubscriptionStatus: FetchTopicSubscriptionStatus
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(NotificationPreferencesState())
