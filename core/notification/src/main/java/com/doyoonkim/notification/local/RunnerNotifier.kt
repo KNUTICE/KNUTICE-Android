@@ -43,6 +43,7 @@ class RunnerNotifier(
             .setContentText(content)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(deeplinkIntent)
+            .setAutoCancel(true)
             .build()
     }
 }
