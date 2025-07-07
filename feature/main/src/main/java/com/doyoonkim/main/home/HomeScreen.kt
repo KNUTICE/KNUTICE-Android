@@ -72,6 +72,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getTopThreeNotices()
+        viewModel.getTips()
     }
 
     Scaffold(
@@ -111,16 +112,18 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            TipContainer(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                tipCategory = TipCategory.SYS_NOTICE,
-                containerColor = MaterialTheme.colorScheme.onAnyBackground,
-                tipText = "[사과문] 알림 기능 오류에 대해 진심으로 사과드립니다.",
-            ) {
-                onTipClicked(
-                    TipCategory.SYS_NOTICE,
-                    "https://knutice.github.io/KNUTICE-OpenSourceLicense/Android/apologies/knutice_apology_notice.html"
-                )
+            if (uiState.tips.isNotEmpty()) {
+                TipContainer(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    tipCategory = TipCategory.SYS_NOTICE,
+                    containerColor = MaterialTheme.colorScheme.onAnyBackground,
+                    tipText = uiState.tips[0].title,
+                ) {
+                    onTipClicked(
+                        TipCategory.SYS_NOTICE,
+                        uiState.tips[0].url
+                    )
+                }
             }
 
             NotificationPreviewList (

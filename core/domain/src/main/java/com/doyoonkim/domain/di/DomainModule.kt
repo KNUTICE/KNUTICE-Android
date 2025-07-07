@@ -10,6 +10,8 @@ import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
 import com.doyoonkim.domain.usecases.FetchNoticesByKeywordImpl
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.domain.usecases.FetchNoticesPerPageImpl
+import com.doyoonkim.domain.usecases.FetchTips
+import com.doyoonkim.domain.usecases.FetchTipsImpl
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.domain.usecases.FetchTopThreeNoticesImpl
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
@@ -89,5 +91,10 @@ abstract class DomainModule {
    abstract fun bindsSyncDataWithUpdatedDatabase(
        impl: SyncDataWithUpdatedDatabaseImpl
    ): SyncDataWithUpdateDatabase
+
+   @Binds
+   abstract fun bindsFetchTips(
+       impl: FetchTipsImpl
+   ): FetchTips
 
 }
