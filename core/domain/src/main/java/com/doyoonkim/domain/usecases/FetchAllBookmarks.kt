@@ -1,7 +1,7 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.LocalRepository
 import com.doyoonkim.domain.SortOption
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.model.BookmarkAsListElementVO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -14,7 +14,7 @@ interface FetchAllBookmarks {
 }
 
 class FetchAllBookmarksImpl @Inject constructor(
-    private val localRepository: LocalRepository
+    private val localRepository: BookmarkLocalRepository
 ) : FetchAllBookmarks {
 
     override operator fun invoke(size: Int, pageNumber: Int, option: SortOption) =

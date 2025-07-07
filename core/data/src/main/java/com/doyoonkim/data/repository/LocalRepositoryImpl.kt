@@ -5,19 +5,19 @@ import com.doyoonkim.data.model.Bookmark
 import com.doyoonkim.data.model.BookmarkAsListElement
 import com.doyoonkim.data.model.NoticeEntity
 import com.doyoonkim.data.room.MainDatabaseDao
-import com.doyoonkim.domain.LocalRepository
 import com.doyoonkim.domain.SortOption
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
+import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.model.BookmarkAsListElementVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class LocalRepositoryImpl @Inject constructor(
     // Inject Local Database from the app module (planned)
     private val localDao: MainDatabaseDao
-) : LocalRepository {
+) : BookmarkLocalRepository, NoticeLocalRepository {
     private val TAG = "LocalRepositoryImpl"
 
     // CRUD

@@ -1,6 +1,7 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.LocalRepository
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
+import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
@@ -20,12 +21,13 @@ interface ModifyBookmark {
 }
 
 class ModifyBookmarkImpl @Inject constructor(
-    private val localRepository: LocalRepository,
+    private val noticeLocalRepository: NoticeLocalRepository,
+    private val bookmarkLocalRepository: BookmarkLocalRepository,
     private val remoteRepository: NoticeRemoteRepository
 ) : ModifyBookmark {
 
     override fun query(nttId: Int): Flow<BookmarkVO> =
-        localRepository.queryBookmarkByNttId(nttId).transform { result ->
+        bookmarkLocalRepository.queryBookmarkByNttId(nttId).transform { result ->
             result?.let { emit(it) }
         }.catch {
             /* Internal Error. Consume values, and never emit values. */
@@ -36,13 +38,13 @@ class ModifyBookmarkImpl @Inject constructor(
         return if (notice == null) {
             // Need creation. Request notice instance from the remote source first.
             remoteRepository.queryNoticeById(bookmark.targetNoticeNttId).transform { result ->
-                if (result != null) emitAll(localRepository.createBookmark(bookmark, result))
+                if (result != null) emitAll(bookmarkLocalRepository.createBookmark(bookmark, result))
                 else emit(false)
             }.catch {
                 /* Internal Error. Consume values, and never emit values. */
             }
         } else {
-            localRepository.updateBookmark(bookmark)
+            bookmarkLocalRepository.updateBookmark(bookmark)
                 .catch {
                     /* Internal Error. Consume values, and never emit values. */
                 }
@@ -50,8 +52,8 @@ class ModifyBookmarkImpl @Inject constructor(
     }
 
     override fun delete(bookmark: BookmarkVO, notice: NoticeVO): Flow<Boolean> =
-        localRepository.requestBookmarkDeletion(bookmark).transform { result ->
-            if (result) emitAll(localRepository.requestNoticeDeletion(notice))
+        bookmarkLocalRepository.requestBookmarkDeletion(bookmark).transform { result ->
+            if (result) emitAll(noticeLocalRepository.requestNoticeDeletion(notice))
             else emit(false)
         }.catch {
             /* Internal Error. Consume values, and never emit values. */

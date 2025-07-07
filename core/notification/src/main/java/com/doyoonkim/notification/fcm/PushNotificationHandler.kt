@@ -14,7 +14,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.R
-import com.doyoonkim.domain.ImageRepository
+import com.doyoonkim.domain.interfaces.ImageRemoteRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeCategory
 import com.google.firebase.messaging.RemoteMessage
@@ -31,7 +31,7 @@ import kotlin.random.Random
 
 class PushNotificationHandler @Inject constructor(
     private val remoteRepository: NoticeRemoteRepository,
-    private val imageRepository: ImageRepository,
+    private val imageRepository: ImageRemoteRepository,
     private val bitMapHandler: BitmapHandler,
     private val context: Context
 ) {

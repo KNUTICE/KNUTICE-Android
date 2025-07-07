@@ -8,15 +8,14 @@ import com.doyoonkim.data.repository.ImageRepositoryImpl
 import com.doyoonkim.data.repository.LocalRepositoryImpl
 import com.doyoonkim.data.repository.RemoteRepositoryImpl
 import com.doyoonkim.data.room.LocalDatabase
-import com.doyoonkim.data.room.MainDatabaseDao
-import com.doyoonkim.domain.ImageRepository
-import com.doyoonkim.domain.LocalRepository
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
+import com.doyoonkim.domain.interfaces.ImageRemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.domain.interfaces.TipRemoteRepository
 import com.doyoonkim.domain.interfaces.TokenRemoteRepository
 import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
 import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
-import com.doyoonkim.network.ImageRemoteSource
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -50,20 +49,6 @@ object DataModule {
 
     @Provides
     fun provideMainDatabaseDao(db: LocalDatabase) = db.getDao()
-
-    @Provides
-    fun provideLocalRepository(
-        localDao: MainDatabaseDao
-    ): LocalRepository {
-        return LocalRepositoryImpl(localDao)
-    }
-
-    @Provides
-    fun providesImageRepository(
-        imageRemoteSource: ImageRemoteSource
-    ): ImageRepository {
-        return ImageRepositoryImpl(imageRemoteSource)
-    }
 }
 
 @Module
@@ -93,5 +78,20 @@ abstract class DataBindingModule {
     abstract fun bindsUserReportRemoteRepo(
         impl: RemoteRepositoryImpl
     ) : UserReportRemoteRepository
+
+    @Binds
+    abstract fun bindsImageRemoteRepo(
+        impl: ImageRepositoryImpl
+    ) : ImageRemoteRepository
+
+    @Binds
+    abstract fun bindsBookmarkLocalRepository(
+        impl: LocalRepositoryImpl
+    ) : BookmarkLocalRepository
+
+    @Binds
+    abstract fun bindsNoticeLocalRepository(
+        impl: LocalRepositoryImpl
+    ) : NoticeLocalRepository
 
 }

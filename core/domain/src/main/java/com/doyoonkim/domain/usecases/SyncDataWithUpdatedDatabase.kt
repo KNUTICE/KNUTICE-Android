@@ -1,6 +1,7 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.LocalRepository
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
+import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
@@ -32,7 +33,8 @@ interface SyncDataWithUpdateDatabase {
 }
 
 class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
-    private val localRepository: LocalRepository,
+    private val noticeLocalRepository: NoticeLocalRepository,
+    private val bookmarkLocalRepository: BookmarkLocalRepository,
     private val remoteRepository: NoticeRemoteRepository
 ) : SyncDataWithUpdateDatabase {
 
@@ -45,7 +47,7 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
     }
 
     private fun databaseSync_1_2() = flow {
-        val bookmarks = localRepository.queryAllBookmarks()
+        val bookmarks = bookmarkLocalRepository.queryAllBookmarks()
             .firstOrNull()
 
         if (bookmarks.isNullOrEmpty()) {
@@ -62,7 +64,7 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
         for (bookmark in bookmarks) {
             println("BookmarkVO: ${bookmark.toString()}")
             try {
-                val noticeLocal = localRepository.queryNoticeById(bookmark.targetNoticeNttId)
+                val noticeLocal = noticeLocalRepository.queryNoticeById(bookmark.targetNoticeNttId)
                     .firstOrNull()
                 if (noticeLocal == null) {
                     failureCounts++
@@ -79,7 +81,7 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                             if (bookmark.updatedAt > 0) bookmark.updatedAt
                             else noticeLocal.timestamp.toLong()
                     ).also { println("Synced Bookmark: ${it.toString()}") }
-                    localRepository.updateBookmark(syncedBookmark).firstOrNull()
+                    bookmarkLocalRepository.updateBookmark(syncedBookmark).firstOrNull()
                 }
 
                 if (!noticeLocal.isSynced()) {
@@ -96,7 +98,7 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                     val syncedNotice = noticeLocal.copy(
                         noticeName = noticeRemote.noticeName
                     ).also { println("Synced Notice: ${it.toString()}") }
-                    localRepository.updateNoticeEntity(syncedNotice).firstOrNull()
+                    noticeLocalRepository.updateNoticeEntity(syncedNotice).firstOrNull()
                 }
             } catch (e: Exception) {
                 // Error occurred during synchronization

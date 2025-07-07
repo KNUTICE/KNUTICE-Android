@@ -4,7 +4,7 @@ import android.content.Context
 import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.common.di.TokenHandler
-import com.doyoonkim.domain.ImageRepository
+import com.doyoonkim.domain.interfaces.ImageRemoteRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.notification.fcm.PushNotificationHandler
 import com.doyoonkim.notification.fcm.TokenHandlerImpl
@@ -20,7 +20,7 @@ object NotificationModule {
     @Singleton
     fun providesPushNotificationHandler(
         remoteRepository: NoticeRemoteRepository,
-        imageRepository: ImageRepository,
+        imageRepository: ImageRemoteRepository,
         bitmapHandler: BitmapHandler,
         @ApplicationContext context: Context
     ) =
