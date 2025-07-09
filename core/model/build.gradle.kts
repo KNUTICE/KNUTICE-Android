@@ -14,4 +14,5 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlin.serialization)
+    implementation(libs.javax.inject)
 }
