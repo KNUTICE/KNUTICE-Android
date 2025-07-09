@@ -14,7 +14,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -49,6 +48,7 @@ class NotificationPreferencesViewModel @Inject constructor(
             )
         }
 
+        // TODO: Consider using viewModelScope + Dispatcher Injection in Usecase.
         CoroutineScope(Dispatchers.IO).launch {
             val jobSubmit = launch {
                 // Ignore the result.
@@ -85,7 +85,6 @@ class NotificationPreferencesViewModel @Inject constructor(
         viewModelScope.launch {
             withTimeout(5000L) {
                 fetchTopicSubscriptionStatus()
-                    .flowOn(Dispatchers.IO)
                     .collectLatest { status ->
                         _uiState.update {
                             it.copy(

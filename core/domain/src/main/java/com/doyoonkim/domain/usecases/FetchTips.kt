@@ -2,6 +2,8 @@ package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.interfaces.TipRemoteRepository
 import com.doyoonkim.model.TipVO
+import com.doyoonkim.model.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -14,7 +16,8 @@ interface FetchTips {
 }
 
 class FetchTipsImpl @Inject constructor(
-    private val remoteRepository: TipRemoteRepository
+    private val remoteRepository: TipRemoteRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FetchTips {
     override fun invoke() =
         remoteRepository.queryAllTips().transform { nullable ->
@@ -23,5 +26,5 @@ class FetchTipsImpl @Inject constructor(
             }
         }.catch {
             /* INTERNAL ERROR, EMIT NOTHING */
-        }.flowOn(Dispatchers.IO)
+        }.flowOn(ioDispatcher)
 }

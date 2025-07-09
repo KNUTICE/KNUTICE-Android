@@ -24,7 +24,6 @@ class NoticeDetailViewModel @Inject constructor(
     fun getTargetNoticeById(nttId:Int) =
         viewModelScope.launch {
             fetchNoticeById(nttId)
-                .flowOn(Dispatchers.IO)
                 .collectLatest { result ->
                     _uiState.update {
                         it.copy(

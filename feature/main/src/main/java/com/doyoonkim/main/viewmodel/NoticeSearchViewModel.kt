@@ -3,9 +3,10 @@ package com.doyoonkim.main.viewmodel
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
 import com.doyoonkim.model.NoticeVO
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,7 +20,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticeSearchViewModel @Inject constructor(
-    private val fetchNoticesByKeyword: FetchNoticesByKeyword
+    private val fetchNoticesByKeyword: FetchNoticesByKeyword,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(NoticeSearchState())
@@ -28,7 +30,6 @@ class NoticeSearchViewModel @Inject constructor(
     fun searchNoticeUsingKeyword(keyword: String) {
         viewModelScope.launch {
             fetchNoticesByKeyword(keyword)
-                .flowOn(Dispatchers.IO)
                 .collectLatest { result ->
                     _uiState.update {
                         it.copy(
@@ -42,6 +43,7 @@ class NoticeSearchViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class)
     suspend fun observeKeywordInput() = snapshotFlow { uiState.value.searchKeyword }
+        .flowOn(defaultDispatcher)
         .debounce(500L)
         .distinctUntilChanged()
         .filter { it.isNotBlank() }

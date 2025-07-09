@@ -5,11 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -25,7 +23,6 @@ class NoticesInCategoryViewModel @Inject constructor(
     fun getNoticesPerPageInCategory(category: NoticeCategory) =
         viewModelScope.launch {
             fetchNoticesPerPage(category, uiState.value.currentLastNttId)
-                .flowOn(Dispatchers.IO)
                 .collectLatest { result ->
                     _uiState.update {
                         it.copy(

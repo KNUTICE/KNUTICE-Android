@@ -18,8 +18,8 @@ import com.doyoonkim.domain.interfaces.ImageRemoteRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeCategory
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.firstOrNull
@@ -33,13 +33,14 @@ class PushNotificationHandler @Inject constructor(
     private val remoteRepository: NoticeRemoteRepository,
     private val imageRepository: ImageRemoteRepository,
     private val bitMapHandler: BitmapHandler,
+    private val ioDispatcher: CoroutineDispatcher,
     private val context: Context
 ) {
     private val TAG = "PushNotificationHandler"
 
     // HardCoded CoroutineScope for Testing
     private val job = SupervisorJob()     // Variable for manual Cancellation
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
+    private val coroutineScope = CoroutineScope(ioDispatcher + job)
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     fun handleReceivedMessage(message: RemoteMessage) {

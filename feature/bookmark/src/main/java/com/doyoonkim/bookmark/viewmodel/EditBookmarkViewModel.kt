@@ -9,11 +9,9 @@ import com.doyoonkim.domain.usecases.ModifyBookmark
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.notification.local.AlarmScheduler
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -47,7 +45,6 @@ class EditBookmarkViewModel @Inject constructor(
         viewModelScope.launch {
             withTimeout(3000L) {
                 modifyBookmark.query(nttId)
-                    .flowOn(Dispatchers.IO)
                     .collectLatest { result ->
                         _uiState.update {
                             it.copy(
@@ -85,7 +82,6 @@ class EditBookmarkViewModel @Inject constructor(
         viewModelScope.launch {
             withTimeout(2000L) {
                 fetchNoticeByIdLocal(nttId)
-                    .flowOn(Dispatchers.IO)
                     .collectLatest { notice ->
                         _uiState.update {
                             it.copy(
@@ -189,7 +185,6 @@ class EditBookmarkViewModel @Inject constructor(
             }
 
             modifyBookmark.createOrUpdate(bookmark, uiState.value.targetNotice)
-                .flowOn(Dispatchers.IO)
                 .collectLatest { result ->
                     if (result) {
                         // Access AlarmScheduler to set local alarm
@@ -231,7 +226,6 @@ class EditBookmarkViewModel @Inject constructor(
                 }
             } else {
                 modifyBookmark.delete(bookmark, uiState.value.targetNotice!!)
-                    .flowOn(Dispatchers.IO)
                     .collectLatest { result ->
                         if (result) {
                             // Access AlarmScheduler to set local alarm

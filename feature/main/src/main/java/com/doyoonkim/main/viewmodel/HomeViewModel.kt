@@ -7,17 +7,12 @@ import com.doyoonkim.domain.usecases.FetchTips
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.TipVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-//import javax.inject.Inject
-
 
 class HomeViewModel @Inject constructor(
     private val fetchTopThreeNotices: FetchTopThreeNotices,
@@ -29,7 +24,6 @@ class HomeViewModel @Inject constructor(
 
     fun getTopThreeNotices() = viewModelScope.launch {
         fetchTopThreeNotices()
-            .flowOn(Dispatchers.IO)
             .collectLatest { vo ->
                 _uiState.update {
                     it.copy(

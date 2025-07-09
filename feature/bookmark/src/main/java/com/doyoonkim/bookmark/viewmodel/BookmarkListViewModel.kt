@@ -7,12 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
 import com.doyoonkim.model.BookmarkAsListElementVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -45,9 +43,11 @@ class BookmarkListViewModel @Inject constructor(
             updateFetchingStatus(false).also { delay(200L) }
             val receivedPage = mutableListOf<BookmarkAsListElementVO>()
 
-            fetchAllBookmarks(size = size, pageNumber = pageNumber, option = uiState.value.sortOption)
-                .flowOn(Dispatchers.IO)
-                .onCompletion { e ->
+            fetchAllBookmarks(
+                size = size,
+                pageNumber = pageNumber,
+                option = uiState.value.sortOption
+            ).onCompletion { e ->
                     if (e == null) {
                         if (receivedPage.size == 0) {
                             _uiState.update {

@@ -5,6 +5,8 @@ import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -35,16 +37,17 @@ interface SyncDataWithUpdateDatabase {
 class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
     private val noticeLocalRepository: NoticeLocalRepository,
     private val bookmarkLocalRepository: BookmarkLocalRepository,
-    private val remoteRepository: NoticeRemoteRepository
+    private val remoteRepository: NoticeRemoteRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : SyncDataWithUpdateDatabase {
 
     override fun manualSync(): Flow<DatabaseSyncResult> = flow {
         emitAll(databaseSync_1_2())
-    }
+    }.flowOn(ioDispatcher)
 
     override fun entrySync(): Flow<DatabaseSyncResult> = flow {
         emitAll(databaseSync_1_2())
-    }
+    }.flowOn(ioDispatcher)
 
     private fun databaseSync_1_2() = flow {
         val bookmarks = bookmarkLocalRepository.queryAllBookmarks()

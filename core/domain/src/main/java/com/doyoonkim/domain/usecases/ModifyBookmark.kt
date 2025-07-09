@@ -5,9 +5,12 @@ import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.di.IoDispatcher
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
@@ -23,7 +26,8 @@ interface ModifyBookmark {
 class ModifyBookmarkImpl @Inject constructor(
     private val noticeLocalRepository: NoticeLocalRepository,
     private val bookmarkLocalRepository: BookmarkLocalRepository,
-    private val remoteRepository: NoticeRemoteRepository
+    private val remoteRepository: NoticeRemoteRepository,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ModifyBookmark {
 
     override fun query(nttId: Int): Flow<BookmarkVO> =
@@ -31,7 +35,7 @@ class ModifyBookmarkImpl @Inject constructor(
             result?.let { emit(it) }
         }.catch {
             /* Internal Error. Consume values, and never emit values. */
-        }
+        }.flowOn(ioDispatcher)
 
     // TODO: Need to be revised later. (Is NoticeVO really required)
     override fun createOrUpdate(bookmark: BookmarkVO, notice: NoticeVO?): Flow<Boolean> {
@@ -42,12 +46,12 @@ class ModifyBookmarkImpl @Inject constructor(
                 else emit(false)
             }.catch {
                 /* Internal Error. Consume values, and never emit values. */
-            }
+            }.flowOn(ioDispatcher)
         } else {
             bookmarkLocalRepository.updateBookmark(bookmark)
                 .catch {
                     /* Internal Error. Consume values, and never emit values. */
-                }
+                }.flowOn(ioDispatcher)
         }
     }
 
@@ -57,7 +61,7 @@ class ModifyBookmarkImpl @Inject constructor(
             else emit(false)
         }.catch {
             /* Internal Error. Consume values, and never emit values. */
-        }
+        }.flowOn(ioDispatcher)
 
 }
 

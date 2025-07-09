@@ -5,11 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.domain.usecases.SubmitUserReport
 import com.doyoonkim.model.requestBody.UserReportBody
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,8 +36,7 @@ class CustomerServiceViewModel @Inject constructor(
                     deviceName = "${Build.BRAND} ${Build.MODEL}",
                     version = versionInfo
                 )
-            ).flowOn(Dispatchers.IO)
-                .collectLatest { result ->
+            ).collectLatest { result ->
                     _uiState.update {
                         if (result) {
                             it.copy(
