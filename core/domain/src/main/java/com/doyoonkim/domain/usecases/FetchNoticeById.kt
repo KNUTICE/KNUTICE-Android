@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchNoticeById {
-    operator fun invoke(nttId: Int): Flow<NoticeVO>
+    operator fun invoke(nttId: Int): Flow<Result<NoticeVO>>
 }
 
 class FetchNoticeByIdImpl @Inject constructor(
@@ -21,8 +21,11 @@ class FetchNoticeByIdImpl @Inject constructor(
 
     override operator fun invoke(nttId: Int) =
         remoteRepository.queryNoticeById(nttId).transform { result ->
-            result?.let { emit(it) }
+            result?.let {
+                emit(Result.success(it))
+            } ?: emit(Result.failure(NoSuchElementException()))
         }.catch {
-            /* Internal Error. Consume values, and never emit values. */
+            /* Internal Error. */
+            emit(Result.failure(it))
         }.flowOn(ioDispatcher)
 }

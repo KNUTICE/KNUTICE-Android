@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchNoticesByKeyword {
-    operator fun invoke (keyword: String): Flow<List<NoticeVO>>
+    operator fun invoke (keyword: String, lastNttId: Int?): Flow<Result<List<NoticeVO>>>
 }
 
 class FetchNoticesByKeywordImpl @Inject constructor(
@@ -19,10 +19,13 @@ class FetchNoticesByKeywordImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FetchNoticesByKeyword {
 
-    override operator fun invoke(keyword: String) =
-        remoteRepository.queryNoticesByKeyword(keyword).transform { result ->
-            result?.let { emit(it) }
+    override operator fun invoke(keyword: String, lastNttId: Int?) =
+        remoteRepository.queryNoticesByKeyword(keyword, lastNttId).transform { result ->
+            result?.let {
+                emit(Result.success(it))
+            } ?: emit(Result.failure(NoSuchElementException()))
         }.catch {
-            /* Internal Error. Consume values, and never emit values. */
+            /* Internal Error. */
+            emit(Result.failure(it))
         }.flowOn(ioDispatcher)
 }

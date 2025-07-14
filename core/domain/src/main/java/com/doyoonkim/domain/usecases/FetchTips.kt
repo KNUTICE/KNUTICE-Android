@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchTips {
-    operator fun invoke(): Flow<List<TipVO>>
+    operator fun invoke(): Flow<Result<List<TipVO>>>
 }
 
 class FetchTipsImpl @Inject constructor(
@@ -22,8 +22,8 @@ class FetchTipsImpl @Inject constructor(
     override fun invoke() =
         remoteRepository.queryAllTips().transform { nullable ->
             nullable?.let {
-                emit(it)
-            }
+                emit(Result.success(it))
+            } ?: emit(Result.failure(NoSuchElementException()))
         }.catch {
             /* INTERNAL ERROR, EMIT NOTHING */
         }.flowOn(ioDispatcher)

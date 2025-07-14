@@ -31,6 +31,7 @@ import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreview
+import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.model.NoticeCategory
@@ -76,61 +77,71 @@ fun NoticesInCategoryScreen(
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
-        Box(
-            modifier = modifier.fillMaxWidth()
-                .padding(innerPadding)
-//                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
-                .pullRefresh(pullRefreshState)
-        ) {
-            LazyColumn(
-                Modifier.fillMaxWidth().wrapContentHeight(),
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                userScrollEnabled = true
+        if (uiState.isError) {
+            PlaceholderScreen(
+                modifier = Modifier.padding(innerPadding),
+                imageResource = R.drawable.outline_network_check_24,
+                contentText = stringResource(R.string.error_no_network_connection)
+            )
+        } else {
+            Box(
+                modifier = modifier.fillMaxWidth()
+                    .padding(innerPadding)
+                    .pullRefresh(pullRefreshState)
             ) {
-                items(uiState.notices.size) { index ->
-                    if (index == uiState.notices.size - 1) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.wrapContentSize(),
-                                color = MaterialTheme.colorScheme.variantPurple,
-                                trackColor = MaterialTheme.colorScheme.displayBackground
-                            )
-                        }
-                        viewModel.requestMoreNotices()
-                    } else {
-                        if (index != 0) {
-                            HorizontalDivider(
-                                Modifier.fillMaxWidth(),
-                                color =MaterialTheme.colorScheme.onAnyBackground,
-                                thickness = 1.2.dp
-                            )
-                        }
-                        val notice = uiState.notices[index]
-                        Row(
-                            modifier = Modifier.wrapContentSize()
-                                .clickable { onNoticeSelected(notice.nttId, notice.url) }
-                        ) {
-                            NotificationPreview(
-                                isLoading = uiState.isLoading,
-                                notificationTitle = notice.title,
-                                notificationInfo = "[${notice.departName}] ${notice.timestamp}",
-                                isImageContained = notice.imageUrl != null,
-                                imageUrl = notice.imageUrl ?: ""
-                            )
+                LazyColumn(
+                    Modifier.fillMaxWidth().wrapContentHeight(),
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    userScrollEnabled = true
+                ) {
+                    items(uiState.notices.size) { index ->
+                        if (index == uiState.notices.size - 1) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.wrapContentSize(),
+                                    color = MaterialTheme.colorScheme.variantPurple,
+                                    trackColor = MaterialTheme.colorScheme.displayBackground
+                                )
+                            }
+                            viewModel.requestMoreNotices()
+                        } else {
+                            if (index != 0) {
+                                HorizontalDivider(
+                                    Modifier.fillMaxWidth(),
+                                    color =MaterialTheme.colorScheme.onAnyBackground,
+                                    thickness = 1.2.dp
+                                )
+                            }
+                            val notice = uiState.notices[index]
+                            Row(
+                                modifier = Modifier.wrapContentSize()
+                                    .clickable {
+                                        if (!uiState.isLoading)
+                                            onNoticeSelected(notice.nttId, notice.url)
+                                    }
+                            ) {
+                                NotificationPreview(
+                                    isLoading = uiState.isLoading,
+                                    notificationTitle = notice.title,
+                                    notificationInfo = "[${notice.departName}] ${notice.timestamp}",
+                                    isImageContained = notice.imageUrl != null,
+                                    imageUrl = notice.imageUrl ?: ""
+                                )
+                            }
                         }
                     }
                 }
+                PullRefreshIndicator(
+                    modifier = Modifier.align(Alignment.TopCenter)
+                        .padding(top = 10.dp),
+                    refreshing = uiState.isRefreshRequested,
+                    state = pullRefreshState
+                )
             }
-            PullRefreshIndicator(
-                modifier = Modifier.align(Alignment.TopCenter)
-                    .padding(top = 10.dp),
-                refreshing = uiState.isRefreshRequested,
-                state = pullRefreshState
-            )
         }
     }
 }

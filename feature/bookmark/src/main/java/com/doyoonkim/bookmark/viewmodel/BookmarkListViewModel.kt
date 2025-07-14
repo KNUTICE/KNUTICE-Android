@@ -41,39 +41,30 @@ class BookmarkListViewModel @Inject constructor(
     ) {
         viewModelScope.launch {
             updateFetchingStatus(false).also { delay(200L) }
-            val receivedPage = mutableListOf<BookmarkAsListElementVO>()
 
             fetchAllBookmarks(
                 size = size,
                 pageNumber = pageNumber,
                 option = uiState.value.sortOption
-            ).onCompletion { e ->
-                    if (e == null) {
-                        if (receivedPage.size == 0) {
-                            _uiState.update {
-                                it.copy(
-                                    isRequested = false,
-                                    isReachEnd = true
-                                )
-                            }
-                        } else {
+            ).collectLatest { result ->
+                    result.fold(
+                        onSuccess = { vo ->
                             _uiState.update {
                                 it.copy(
                                     bookmarks = it.bookmarks.toMutableList().apply {
-                                        this.addAll(receivedPage)
-                                    }.distinctBy { e -> e.bookmarkId }.toList(),
+                                        this.addAll(vo)
+                                    }.distinctBy { i -> i.bookmarkId }.toList(),
                                     pageNumber = it.pageNumber + 1,
                                     isRequested = false,
-                                    isReachEnd = receivedPage.size % size != 0
+                                    isReachEnd = vo.size < size
                                 )
                             }
+                        },
+                        onFailure = {
+                            updateFetchingStatus(true)
                         }
-                    } else {
-                        Log.d("BookmarkListViewModel", "Completed with error")
-                        updateFetchingStatus(true)
-                    }
+                    )
                 }
-                .collectLatest { result -> receivedPage.add(result) }
         }
     }
 

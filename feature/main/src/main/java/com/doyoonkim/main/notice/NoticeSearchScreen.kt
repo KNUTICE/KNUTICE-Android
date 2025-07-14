@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -51,6 +51,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreview
+import com.doyoonkim.common.ui.PlaceholderScreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -125,35 +126,53 @@ fun NoticeSearchScreen(
                     )
                 }
         ) {
-            if (uiState.fetchResult.isEmpty()) {
-                /* TODO Add image for empty list. */
+            if (uiState.searchKeyword.isBlank()) {
+                PlaceholderScreen(
+                    modifier = Modifier,
+                    imageResource = R.drawable.magnifying_glasses,
+                    contentText = stringResource(R.string.text_search_greeting)
+                )
             } else {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .align(Alignment.TopCenter),
-                    contentPadding = PaddingValues(3.dp)
-                ) {
-                    items(uiState.fetchResult) { notice ->
-                        HorizontalDivider(
-                            Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
-                            color = MaterialTheme.colorScheme.onAnyBackground
-                        )
+                if (!uiState.isFetching && uiState.fetchResult.isEmpty()) {
+                    PlaceholderScreen(
+                        modifier = Modifier,
+                        imageResource = R.drawable.question_mark,
+                        contentText = stringResource(R.string.error_no_search_result)
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .align(Alignment.TopCenter),
+                        contentPadding = PaddingValues(3.dp)
+                    ) {
+                        itemsIndexed(uiState.fetchResult) { index, notice ->
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable { onNoticeSelected(notice.nttId, notice.url) }
-                        ) {
-                            NotificationPreview(
-                                modifier = Modifier.fillMaxWidth(),
-                                isLoading = uiState.isFetching,
-                                isImageContained = notice.imageUrl != null,
-                                notificationTitle = notice.title,
-                                notificationInfo = "[${notice.departName}] ${notice.timestamp}",
-                                imageUrl = notice.imageUrl ?: ""
+                            if (index == uiState.fetchResult.size - 1 && uiState.canRequestMoreNotices) {
+                                // List reach ends.
+                                viewModel.fetchMoreNotices()
+                            }
+
+                            HorizontalDivider(
+                                Modifier.fillMaxWidth().padding(start = 10.dp, end = 10.dp),
+                                color = MaterialTheme.colorScheme.onAnyBackground
                             )
+
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable { onNoticeSelected(notice.nttId, notice.url) }
+                            ) {
+                                NotificationPreview(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    isLoading = uiState.isFetching,
+                                    isImageContained = notice.imageUrl != null,
+                                    notificationTitle = notice.title,
+                                    notificationInfo = "[${notice.departName}] ${notice.timestamp}",
+                                    imageUrl = notice.imageUrl ?: ""
+                                )
+                            }
                         }
                     }
                 }

@@ -43,26 +43,26 @@ class EditBookmarkViewModel @Inject constructor(
 
     fun getBookmarkByNoticeId(nttId: Int) =
         viewModelScope.launch {
-            withTimeout(3000L) {
-                modifyBookmark.query(nttId)
-                    .collectLatest { result ->
-                        _uiState.update {
-                            it.copy(
-                                bookmarkId = result.bookmarkId,
-                                isReminderRequested = result.isScheduled,
-                                timeForRemind = result.reminderSchedule,
-                                bookmarkNote = result.bookmarkNote,
-                                createdAt = result.createdAt,
-                                updatedAt = result.updatedAt,
-                                requireCreation = false,
-                                bookmarkInstances = result
-                            )
-                        }.also {
-                            calendar.timeInMillis = result.reminderSchedule
+            runCatching {
+                withTimeout(3000L) {
+                    modifyBookmark.query(nttId)
+                        .collectLatest { result ->
+                            _uiState.update {
+                                it.copy(
+                                    bookmarkId = result.bookmarkId,
+                                    isReminderRequested = result.isScheduled,
+                                    timeForRemind = result.reminderSchedule,
+                                    bookmarkNote = result.bookmarkNote,
+                                    createdAt = result.createdAt,
+                                    updatedAt = result.updatedAt,
+                                    requireCreation = false,
+                                    bookmarkInstances = result
+                                )
+                            }.also {
+                                calendar.timeInMillis = result.reminderSchedule
+                            }
                         }
-                    }
-            }.runCatching {
-                /* DO NOTHING (PROCESS COMPLETED ON TIME) */
+                }
             }.onFailure {
                 _uiState.update {
                     it.copy(
@@ -249,6 +249,7 @@ class EditBookmarkViewModel @Inject constructor(
 }
 
 data class EditBookmarkState(
+    val isUnableToEdit: Boolean = false,
     val bookmarkId: Int = 0,
     val targetNoticeId: Int = 0,
     val isReminderRequested: Boolean = false,

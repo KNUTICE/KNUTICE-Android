@@ -25,11 +25,13 @@ class NoticeDetailViewModel @Inject constructor(
         viewModelScope.launch {
             fetchNoticeById(nttId)
                 .collectLatest { result ->
-                    _uiState.update {
-                        it.copy(
-                            receivedNotice = result,
-                            isReceived = true
-                        )
+                    result.onSuccess { vo ->
+                        _uiState.update {
+                            it.copy(
+                                receivedNotice = vo,
+                                isReceived = true
+                            )
+                        }
                     }
                 }
         }

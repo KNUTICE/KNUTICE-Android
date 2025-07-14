@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchAllBookmarks {
-    operator fun invoke(size: Int, pageNumber: Int, option: SortOption): Flow<BookmarkAsListElementVO>
+    operator fun invoke(size: Int, pageNumber: Int, option: SortOption): Flow<Result<List<BookmarkAsListElementVO>>>
 }
 
 class FetchAllBookmarksImpl @Inject constructor(
@@ -25,10 +25,11 @@ class FetchAllBookmarksImpl @Inject constructor(
             size, pageNumber, option
         ).transform { element ->
             element?.let {
-                emit(it)
-            }
-        }.catch {
-            /* Internal Error. Consume values, and never emit values. */
+                emit(Result.success(it))
+            } ?: emit(Result.failure(NoSuchElementException()))
+        }.catch { e ->
+            /* Internal Error */
+            emit(Result.failure(e))
         }.flowOn(ioDispatcher)
 
 }

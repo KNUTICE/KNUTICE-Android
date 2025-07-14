@@ -24,19 +24,33 @@ class NoticesInCategoryViewModel @Inject constructor(
         viewModelScope.launch {
             fetchNoticesPerPage(category, uiState.value.currentLastNttId)
                 .collectLatest { result ->
-                    _uiState.update {
-                        it.copy(
-                            currentLastNttId = result.last().nttId,
-                            notices =
-                                if (uiState.value.currentLastNttId == 0)
-                                    result
-                                else
-                                    it.notices.addAll(result),
-                            isNoticesRequested = false,
-                            isLoading = false,
-                            isRefreshRequested = false
-                        )
-                    }
+                    result.fold(
+                        onSuccess = { vo ->
+                            _uiState.update {
+                                it.copy(
+                                    currentLastNttId = vo.last().nttId,
+                                    notices =
+                                        if (uiState.value.currentLastNttId == 0)
+                                            vo
+                                        else
+                                            it.notices.addAll(vo),
+                                    isNoticesRequested = false,
+                                    isLoading = false,
+                                    isRefreshRequested = false
+                                )
+                            }
+                        },
+                        onFailure = {
+                            _uiState.update {
+                                it.copy(
+                                    isError = true,
+                                    isNoticesRequested = false,
+                                    isLoading = false,
+                                    isRefreshRequested = false
+                                )
+                            }
+                        }
+                    )
                 }
         }
 
@@ -68,6 +82,7 @@ data class NoticesInCategoryStates(
     val currentLastNttId: Int = 0,
     val notices: List<NoticeVO> = List(20) { NoticeVO() },
     val isNoticesRequested: Boolean = true,
+    val isError: Boolean = false,
     val isLoading: Boolean = true,
     val isRefreshRequested: Boolean = false
 )

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchTopicSubscriptionStatus {
-    operator fun invoke(): Flow<TopicSubscriptionPreferencesVO>
+    operator fun invoke(): Flow<Result<TopicSubscriptionPreferencesVO>>
 }
 
 class FetchTopicSubscriptionStatusImpl @Inject constructor(
@@ -21,9 +21,12 @@ class FetchTopicSubscriptionStatusImpl @Inject constructor(
 
     override operator fun invoke() =
         remoteRepository.queryTopicSubscriptionStatus().transform { nullable ->
-            nullable?.let { emit(it) }
+            nullable?.let {
+                emit(Result.success(it))
+            } ?: emit(Result.failure(NoSuchElementException()))
         }.catch {
-            /* Internal Error. Consume values, and never emit values. */
+            /* Internal Error. */
+            emit(Result.failure(it))
         }.flowOn(ioDispatcher)
 
 }

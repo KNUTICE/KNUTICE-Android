@@ -51,6 +51,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
+import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TopAppBarDropdownMenu
 import com.doyoonkim.common.ui.TopAppBarWithActions
 import java.text.SimpleDateFormat
@@ -91,7 +92,9 @@ fun BookmarkListScreen(
                         stringResource(R.string.text_oldest)
                     ),
                     onMenuSelected = { index ->
-                        viewModel.updateSortOption(index)
+                        if (uiState.bookmarks.isNotEmpty()) {
+                            viewModel.updateSortOption(index)
+                        }
                     }
                 )
                 IconButton(
@@ -139,15 +142,10 @@ fun BookmarkListScreen(
                             )
                         }
                     } else {
-                        Text(
-                            text = stringResource(R.string.text_no_bookmark),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.subTitle,
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .align(Alignment.Center)
+                        PlaceholderScreen(
+                            modifier = Modifier.fillMaxSize(),
+                            imageResource = R.drawable.bookmark,
+                            contentText = stringResource(R.string.error_no_bookmark)
                         )
                     }
                 }

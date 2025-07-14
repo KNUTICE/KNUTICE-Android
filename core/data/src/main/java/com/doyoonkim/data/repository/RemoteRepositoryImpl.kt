@@ -7,6 +7,9 @@ import com.doyoonkim.domain.interfaces.TokenRemoteRepository
 import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
 import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
 import com.doyoonkim.model.NoticeCategory
+import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.TipVO
+import com.doyoonkim.model.TopThreeNoticeVO
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import com.doyoonkim.model.requestBody.UserReportBody
@@ -34,7 +37,7 @@ class RemoteRepositoryImpl @Inject constructor(
         remoteSource.getTopThreeNotices().fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(it.body?.toVO())
-                else it.result.printLog().also { emit(null) }
+                else it.result.printLog().also { emit(TopThreeNoticeVO()) }
             },
             onFailure = {
                 it.printLog()
@@ -47,7 +50,7 @@ class RemoteRepositoryImpl @Inject constructor(
         remoteSource.getNoticesPerPage(category, lastNttId).fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
-                else it.result.printLog().also { emit(null) }
+                else it.result.printLog().also { emit(emptyList<NoticeVO>()) }
             },
             onFailure = {
                 it.printLog()
@@ -70,11 +73,11 @@ class RemoteRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun queryNoticesByKeyword(keyword: String) = flow {
-        remoteSource.getNoticesByKeyword(keyword).fold(
+    override fun queryNoticesByKeyword(keyword: String, lastNttId: Int?) = flow {
+        remoteSource.getNoticesByKeyword(keyword, lastNttId).fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
-                else it.result.printLog().also { emit(null) }
+                else it.result.printLog().also { emit(emptyList<NoticeVO>()) }
             },
             onFailure = {
                 it.printLog()
@@ -104,7 +107,7 @@ class RemoteRepositoryImpl @Inject constructor(
             onSuccess = {
                 if (it.result?.resultCode == 200) {
                     emit(it.body?.map { dto -> dto.toVO() })
-                } else it.result.printLog().also { emit(null) }
+                } else it.result.printLog().also { emit(emptyList<TipVO>()) }
             },
             onFailure = {
                 it.printLog()

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchNoticesPerPage {
-    operator fun invoke(category: NoticeCategory, lastNttId: Int): Flow<List<NoticeVO>>
+    operator fun invoke(category: NoticeCategory, lastNttId: Int): Flow<Result<List<NoticeVO>>>
 }
 
 class FetchNoticesPerPageImpl @Inject constructor(
@@ -25,8 +25,11 @@ class FetchNoticesPerPageImpl @Inject constructor(
             if (lastNttId == 0) queryNoticesPerPage(category, null)
             else queryNoticesPerPage(category, lastNttId)
         }.transform { result ->
-            result?.let { emit(it) }
+            result?.let {
+                emit(Result.success(it))
+            } ?: emit(Result.failure(NoSuchElementException()))
         }.catch {
-            /* Internal Error. Consume values, and never emit values. */
+            /* Internal Error. */
+            emit(Result.failure(it))
         }.flowOn(ioDispatcher)
 }

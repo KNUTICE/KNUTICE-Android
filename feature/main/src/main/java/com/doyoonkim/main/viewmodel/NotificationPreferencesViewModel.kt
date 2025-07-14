@@ -83,32 +83,33 @@ class NotificationPreferencesViewModel @Inject constructor(
 
     fun getTopicSubscriptionStatus() =
         viewModelScope.launch {
-            withTimeout(5000L) {
-                fetchTopicSubscriptionStatus()
-                    .collectLatest { status ->
-                        _uiState.update {
-                            it.copy(
-                                isEachChannelAllowed = listOf(
-                                    status.general,
-                                    status.academic,
-                                    status.scholarship,
-                                    status.event
-                                ),
-                                isSyncCompleted = true,
-                                isError = false
-                            )
+            fetchTopicSubscriptionStatus()
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess =  { status ->
+                            _uiState.update {
+                                it.copy(
+                                    isEachChannelAllowed = listOf(
+                                        status.general,
+                                        status.academic,
+                                        status.scholarship,
+                                        status.event
+                                    ),
+                                    isSyncCompleted = true,
+                                    isError = false
+                                )
+                            }
+                        },
+                        onFailure = {
+                            _uiState.update {
+                                it.copy(
+                                    isSyncCompleted = true,
+                                    isError = true
+                                )
+                            }
                         }
-                    }
-            }.runCatching {
-                /* DO NOTHING (SYNC COMPLETED ON TIME. */
-            }.onFailure {
-                _uiState.update {
-                    it.copy(
-                        isSyncCompleted = true,
-                        isError = true
                     )
                 }
-            }
         }
 
     private fun List<Boolean>.updateValueByIndex(index: Int, value: Boolean) =

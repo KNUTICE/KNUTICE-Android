@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchTopThreeNotices {
-    operator fun invoke(): Flow<TopThreeNoticeVO>
+    operator fun invoke(): Flow<Result<TopThreeNoticeVO>>
 }
 
 class FetchTopThreeNoticesImpl @Inject constructor(
@@ -19,11 +19,14 @@ class FetchTopThreeNoticesImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FetchTopThreeNotices {
 
-    override operator fun invoke(): Flow<TopThreeNoticeVO> =
+    override operator fun invoke() =
         remoteRepository.queryTopThreeNotices().transform { result ->
-            result?.let { emit(it) }
+            result?.let {
+                emit(Result.success(it))
+            } ?: emit(Result.failure(NoSuchElementException()))
         }.catch {
-            /* Internal Error. Consume values, and never emit values. */
+            /* Internal Error. */
+            emit(Result.failure(it))
         }.flowOn(ioDispatcher)
 
 }

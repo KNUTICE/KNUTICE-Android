@@ -12,7 +12,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.seconds
 
 class HomeViewModel @Inject constructor(
     private val fetchTopThreeNotices: FetchTopThreeNotices,
@@ -24,26 +26,41 @@ class HomeViewModel @Inject constructor(
 
     fun getTopThreeNotices() = viewModelScope.launch {
         fetchTopThreeNotices()
-            .collectLatest { vo ->
-                _uiState.update {
-                    it.copy(
-                        isLoading = false,
-                        notificationGeneral = vo.general,
-                        notificationScholarship = vo.scholarship,
-                        notificationAcademic = vo.academic,
-                        notificationEvent = vo.event
-                    )
-                }
+            .collectLatest { result ->
+                result.fold(
+                    onSuccess = { vo ->
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isError = false,
+                                notificationGeneral = vo.general,
+                                notificationScholarship = vo.scholarship,
+                                notificationAcademic = vo.academic,
+                                notificationEvent = vo.event
+                            )
+                        }
+                    },
+                    onFailure = {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                isError = true
+                            )
+                        }
+                    }
+                )
             }
     }
 
     fun getTips() = viewModelScope.launch {
         fetchTips()
             .collectLatest { result ->
-                _uiState.update {
-                    it.copy(
-                        tips = result
-                    )
+                result.onSuccess { vo ->
+                    _uiState.update {
+                        it.copy(
+                            tips = vo
+                        )
+                    }
                 }
             }
     }
@@ -51,6 +68,7 @@ class HomeViewModel @Inject constructor(
 
 data class HomeViewState(
     val isLoading: Boolean = true,
+    val isError: Boolean = false,
     val notificationGeneral: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
     val notificationAcademic: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
     val notificationScholarship: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),

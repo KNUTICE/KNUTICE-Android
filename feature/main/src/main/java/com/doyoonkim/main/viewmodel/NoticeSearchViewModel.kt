@@ -1,5 +1,6 @@
 package com.doyoonkim.main.viewmodel
 
+import android.os.Trace
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +18,10 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.yield
 import javax.inject.Inject
 
 class NoticeSearchViewModel @Inject constructor(
@@ -27,16 +32,67 @@ class NoticeSearchViewModel @Inject constructor(
     private var _uiState = MutableStateFlow(NoticeSearchState())
     val uiState = _uiState.asStateFlow()
 
-    fun searchNoticeUsingKeyword(keyword: String) {
+    fun fetchMoreNotices() {
+        updateFetchingStatus(true)
         viewModelScope.launch {
-            fetchNoticesByKeyword(keyword)
-                .collectLatest { result ->
-                    _uiState.update {
-                        it.copy(
-                            isFetching = false,
-                            fetchResult = result
-                        )
+            fetchNoticesByKeyword(
+                uiState.value.searchKeyword,
+                uiState.value.fetchResult.lastOrNull()?.nttId
+            ).collectLatest { result ->
+                result.fold(
+                    onSuccess = { vo ->
+                        _uiState.update {
+                            it.copy(
+                                fetchResult = it.fetchResult.toMutableList().apply {
+                                    addAll(vo)
+                                }.toList(),
+                                isError = false,
+                                isFetching = false,
+                                canRequestMoreNotices = vo.size == 20
+                            )
+                        }
+                    },
+                    onFailure = {
+                        _uiState.update {
+                            it.copy(
+                                isError = true,
+                                isFetching = false,
+                                canRequestMoreNotices = false
+                            )
+                        }
                     }
+                )
+            }
+        }
+    }
+
+    // Need to have separate function for fetching notices when keyword changes and more notices requested.
+    private fun searchNoticeUsingKeyword(keyword: String) {
+        updateFetchingStatus(true)
+        viewModelScope.launch {
+            fetchNoticesByKeyword(keyword, null)
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess = { vo ->
+                            _uiState.update {
+                                it.copy(
+                                    fetchResult = vo,
+                                    isError = false,
+                                    isFetching = false,
+                                    canRequestMoreNotices = vo.size == 20
+                                )
+                            }
+                        },
+                        onFailure = {
+                            _uiState.update {
+                                it.copy(
+                                    isError = true,
+                                    isFetching = false,
+                                    canRequestMoreNotices = false
+                                )
+                            }
+                        }
+                    )
                 }
         }
     }
@@ -59,12 +115,21 @@ class NoticeSearchViewModel @Inject constructor(
         }
     }
 
-    private fun updateFetchingStatus(status: Boolean) = _uiState.update { it.copy(isFetching = status) }
+    private fun updateFetchingStatus(
+        status: Boolean
+    ) = _uiState.update {
+        it.copy(
+            isFetching = status,
+            canRequestMoreNotices = it.fetchResult.size % 20 == 0
+        )
+    }
 
 }
 
 data class NoticeSearchState(
     val searchKeyword: String = "",
+    val isError: Boolean = false,
     val isFetching: Boolean = false,
+    val canRequestMoreNotices: Boolean = true,
     val fetchResult: List<NoticeVO> = emptyList()
 )
