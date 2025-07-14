@@ -27,7 +27,7 @@ fun NotificationPreviewCard(
         modifier.fillMaxWidth()
             .wrapContentHeight()
             .clickable {
-                onClick()
+                if (!isLoading) onClick()
             },
         colors = CardColors(
             containerColor = MaterialTheme.colorScheme.secondaryBackground,
