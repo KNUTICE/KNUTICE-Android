@@ -81,9 +81,9 @@ class LocalRepositoryImpl @Inject constructor(
                 SortOption.DES_CREATION -> localDao.getBookmarkListSortedOldest(size, pageNumber)
             }
         }.onFailure { throw it }.fold(
-            onSuccess = {
-                Log.d(TAG, "${it.size}")
-                it.forEach { dto -> emit(dto.toVO()).also { Log.d(TAG, dto.toString()) } }
+            onSuccess = { dto ->
+                Log.d(TAG, "${dto.size}")
+                emit(dto.map { it.toVO() })
             },
             onFailure = { it.printLog().also { emit(null) } }
         )
