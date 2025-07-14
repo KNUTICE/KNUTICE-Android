@@ -61,7 +61,6 @@ fun NavGraphBuilder.mainServiceNavGraph(
             modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<HomeViewModel>(factory = viewModelFactory),
             bottomPadding = contentPadding.calculateBottomPadding(),
-            onSearchRequested = { navController.navigate(NavRoutes.NoticeSearch.route) },
             onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onGoBackAction = {
                 navController.popBackStack().also { if (!it) onExit() }
@@ -87,23 +86,12 @@ fun NavGraphBuilder.mainServiceNavGraph(
     }
 
     composable(
-        route = NavRoutes.NoticeSearch.route,
-        enterTransition = {
-            slideIntoContainer(
-                animationSpec = tween(300, easing = EaseIn),
-                towards = AnimatedContentTransitionScope.SlideDirection.Up
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                animationSpec = tween(300, easing = EaseOut),
-                towards = AnimatedContentTransitionScope.SlideDirection.Down
-            )
-        }
+        route = NavRoutes.NoticeSearch.route
     ) {
         NoticeSearchScreen(
             modifier = Modifier,
             viewModel = viewModel<NoticeSearchViewModel>(factory = viewModelFactory),
+            bottomPadding = contentPadding.calculateBottomPadding(),
             onBackPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))

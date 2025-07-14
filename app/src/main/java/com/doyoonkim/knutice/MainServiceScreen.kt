@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.doyoonkim.common.R
@@ -28,6 +30,9 @@ import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 @Composable
 fun MainServiceScreen(
@@ -37,12 +42,13 @@ fun MainServiceScreen(
     onExit: () -> Unit
 ) {
 
-    var sharedScaffoldState: Triple<Boolean, Boolean, Boolean>
+    var bottomBarSelectionState: Triple<Boolean, Boolean, Boolean>
     val backStackEntryState by navController.currentBackStackEntryAsState()
     backStackEntryState?.destination?.route.let {
-        sharedScaffoldState = when(it) {
-            NavRoutes.Home.route -> Triple(true, true, false)
-            NavRoutes.Bookmark.route -> Triple(true, false, true)
+        bottomBarSelectionState = when(it) {
+            NavRoutes.Home.route -> Triple(true, false, false)
+            NavRoutes.Bookmark.route -> Triple(false, true, false)
+            NavRoutes.NoticeSearch.route -> Triple(false, false, true)
             else -> Triple(false, false, false)
         }
     }
@@ -50,7 +56,7 @@ fun MainServiceScreen(
     Scaffold(
         modifier = modifier.fillMaxSize(),
         bottomBar = {
-            if (sharedScaffoldState.first) {
+            if (bottomBarSelectionState.atLeastOneSelected()) {
                 BottomAppBar(
                     modifier = Modifier
                         .wrapContentSize()
@@ -59,10 +65,10 @@ fun MainServiceScreen(
                     actions = {
                         // https://developer.android.com/develop/ui/compose/navigation#bottom-nav
                         BottomNavigationItem(
-                            selected = sharedScaffoldState.second,
+                            selected = bottomBarSelectionState.first,
                             enabled = true,
                             onClick = {
-                                if (!sharedScaffoldState.second) {
+                                if (!bottomBarSelectionState.first) {
                                     navController.navigate(NavRoutes.Home.route)
                                 }
                             },
@@ -80,10 +86,10 @@ fun MainServiceScreen(
                             unselectedContentColor = MaterialTheme.colorScheme.subTitle
                         )
                         BottomNavigationItem(
-                            selected = sharedScaffoldState.third,
+                            selected = bottomBarSelectionState.second,
                             enabled = true,
                             onClick = {
-                                if (!sharedScaffoldState.third) {
+                                if (!bottomBarSelectionState.second) {
                                     navController.navigate(NavRoutes.Bookmark.route)
                                 }
                             },
@@ -96,6 +102,27 @@ fun MainServiceScreen(
                             },
                             label = {
                                 Text(stringResource(R.string.bottom_bar_bookmark))
+                            },
+                            selectedContentColor = MaterialTheme.colorScheme.title,
+                            unselectedContentColor = MaterialTheme.colorScheme.subTitle
+                        )
+                        BottomNavigationItem(
+                            selected = bottomBarSelectionState.third,
+                            enabled = true,
+                            onClick = {
+                                if (!bottomBarSelectionState.third) {
+                                    navController.navigate(NavRoutes.NoticeSearch.route)
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.baseline_search_24),
+                                    contentDescription = "Search",
+                                    modifier = Modifier.padding(bottom = 5.dp)
+                                )
+                            },
+                            label = {
+                                Text(stringResource(R.string.title_search))
                             },
                             selectedContentColor = MaterialTheme.colorScheme.title,
                             unselectedContentColor = MaterialTheme.colorScheme.subTitle
@@ -116,3 +143,5 @@ fun MainServiceScreen(
         )
     }
 }
+
+fun Triple<Boolean, Boolean, Boolean>.atLeastOneSelected() = this.first || this.second || this.third

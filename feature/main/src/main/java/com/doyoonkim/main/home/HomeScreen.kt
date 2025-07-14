@@ -57,7 +57,6 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel,
     bottomPadding: Dp = 0.dp,
-    onSearchRequested: () -> Unit,
     onSettingsRequested: () -> Unit,
     onGoBackAction: () -> Unit,
     onMoreNoticeRequested: (Destination) -> Unit,
@@ -82,16 +81,6 @@ fun HomeScreen(
             TopAppBarWithActions(
                 titleText = stringResource(R.string.app_name)
             ) {
-                IconButton(
-                    onClick = onSearchRequested
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.baseline_search_24),
-                        contentDescription = "Search",
-                        modifier = Modifier.wrapContentSize(),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
-                    )
-                }
                 IconButton(
                     onClick = onSettingsRequested
                 ) {
