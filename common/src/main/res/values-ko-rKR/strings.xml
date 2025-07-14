@@ -83,4 +83,8 @@
     <string name="text_tip_updates">업데이트</string>
     <string name="text_tip_sys_notice">시스템 공지</string>
     <string name="text_tip_general">힌트</string>
+    <string name="error_no_network_connection">서버에 연결할 수 없어요</string>
+    <string name="error_no_bookmark">저장된 북마크가 없어요</string>
+    <string name="text_search_greeting">어떤 공지사항을 찾아드릴까요?</string>
+    <string name="error_no_search_result">검색 결과가 없어요</string>
 </resources>

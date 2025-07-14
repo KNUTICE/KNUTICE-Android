@@ -83,4 +83,8 @@
     <string name="text_sync_result">結果 (合計 / 失敗):</string>
     <string name="text_created_at">作成日</string>
     <string name="text_updated_at">修正日</string>
+    <string name="error_no_network_connection">サーバーに接続できません。</string>
+    <string name="error_no_bookmark">セーブしたブックマークはありません。</string>
+    <string name="text_search_greeting">どのようなお知らせをお探しですか？</string>
+    <string name="error_no_search_result">検索結果がありません。</string>
 </resources>

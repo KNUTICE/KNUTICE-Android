@@ -94,4 +94,8 @@
     <string name="text_created_at">Created at</string>
     <string name="text_updated_at">Updated at</string>
     <string name="text_category_not_found" translatable="false">Category Not Found</string>
+    <string name="error_no_network_connection">Unable to connect to the server.</string>
+    <string name="error_no_bookmark">There\'s no saved bookmark</string>
+    <string name="text_search_greeting">What do you like to search</string>
+    <string name="error_no_search_result">No result found.</string>
 </resources>
