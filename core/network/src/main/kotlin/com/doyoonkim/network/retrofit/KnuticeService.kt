@@ -39,9 +39,10 @@ interface KnuticeService {
         @Path("nttId") nttId: String
     ): NoticeByIdResult
 
-    @GET("open-api/search")
+    @GET("open-api/notices/search")
     suspend fun getNoticesByKeyword(
-        @Query("keyword") keyword: String
+        @Query("keyword") keyword: String,
+        @Query("nttId") lastNttId: Int? = null
     ): NoticesByKeywordResult
 
     @GET("open-api/topic")

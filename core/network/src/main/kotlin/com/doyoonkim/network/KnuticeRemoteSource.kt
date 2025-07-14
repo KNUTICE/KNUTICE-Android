@@ -1,5 +1,6 @@
 package com.doyoonkim.network
 
+import android.util.Log
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.network.model.DeviceTokenRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
@@ -36,8 +37,9 @@ class KnuticeRemoteSource @Inject constructor(
         }
 
 
-    suspend fun getNoticesByKeyword(keyword: String) = runCatching {
-            knuticeApi.getNoticesByKeyword(keyword)
+    suspend fun getNoticesByKeyword(keyword: String, nttId: Int?) = runCatching {
+            Log.d(TAG, "Received Parameter: $keyword $nttId")
+            knuticeApi.getNoticesByKeyword(keyword, nttId)
         }
 
     suspend fun getTopicSubscriptionStatus() = runCatching {

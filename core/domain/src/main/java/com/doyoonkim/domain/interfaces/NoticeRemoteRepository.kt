@@ -12,5 +12,5 @@ interface NoticeRemoteRepository {
 
     fun queryNoticeById(nttId: Int): Flow<NoticeVO?>
 
-    fun queryNoticesByKeyword(keyword: String): Flow<List<NoticeVO>?>
+    fun queryNoticesByKeyword(keyword: String, lastNttId: Int?): Flow<List<NoticeVO>?>
 }
