@@ -33,7 +33,12 @@ class NoticeSearchViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     fun fetchMoreNotices() {
-        updateFetchingStatus(true)
+        _uiState.update {
+            it.copy(
+                isFetching = true
+            )
+        }
+
         viewModelScope.launch {
             fetchNoticesByKeyword(
                 uiState.value.searchKeyword,
@@ -68,7 +73,13 @@ class NoticeSearchViewModel @Inject constructor(
 
     // Need to have separate function for fetching notices when keyword changes and more notices requested.
     private fun searchNoticeUsingKeyword(keyword: String) {
-        updateFetchingStatus(true)
+        _uiState.update {
+            it.copy(
+                fetchResult = emptyList(),
+                isFetching = true
+            )
+        }
+
         viewModelScope.launch {
             fetchNoticesByKeyword(keyword, null)
                 .collectLatest { result ->
@@ -113,15 +124,6 @@ class NoticeSearchViewModel @Inject constructor(
                 searchKeyword = newKeyword
             )
         }
-    }
-
-    private fun updateFetchingStatus(
-        status: Boolean
-    ) = _uiState.update {
-        it.copy(
-            isFetching = status,
-            canRequestMoreNotices = it.fetchResult.size % 20 == 0
-        )
     }
 
 }
