@@ -1,4 +1,4 @@
-package com.doyoonkim.knutice.di
+package com.doyoonkim.knutice.di.components
 
 import android.app.Application
 import com.doyoonkim.bookmark.di.BookmarkModule
@@ -8,6 +8,9 @@ import com.doyoonkim.data.di.DataModule
 import com.doyoonkim.domain.di.DomainModule
 import com.doyoonkim.knutice.MainActivity
 import com.doyoonkim.knutice.MainApplication
+import com.doyoonkim.knutice.di.AppModule
+import com.doyoonkim.knutice.di.DispatcherModule
+import com.doyoonkim.knutice.di.ViewModelFactoryModule
 import com.doyoonkim.main.di.MainModule
 import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.NotificationBindingModule

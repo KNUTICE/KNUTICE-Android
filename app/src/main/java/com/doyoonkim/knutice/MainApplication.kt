@@ -7,10 +7,9 @@ import android.os.Build
 import com.doyoonkim.common.di.AppInjector
 import com.doyoonkim.common.di.AppInjectorProvider
 import com.doyoonkim.common.R
-import com.doyoonkim.knutice.di.AppComponent
+import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.DaggerAppComponent
 import com.doyoonkim.notification.fcm.PushNotificationService
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class MainApplication() : Application(), AppInjectorProvider {
@@ -26,16 +25,16 @@ class MainApplication() : Application(), AppInjectorProvider {
                 else -> error("Unsupported Target $target")
             }
         }
-
     }
+
+    @Inject lateinit var notificationManager: NotificationManager
 
     override fun onCreate() {
         super.onCreate()
-        // Application-Level injection
         appComponent.inject(this)
 
         // Create channel group
-        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).run {
+        notificationManager.run {
             createNotificationChannel(
                 getString(R.string.inapp_notification_channel_id),
                 getString(R.string.inapp_notificaiton_channel_name),
@@ -60,8 +59,6 @@ class MainApplication() : Application(), AppInjectorProvider {
             }
 
             // Register Custom-defined notification channel
-            val notificationManager: NotificationManager =
-                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
         }
     }
