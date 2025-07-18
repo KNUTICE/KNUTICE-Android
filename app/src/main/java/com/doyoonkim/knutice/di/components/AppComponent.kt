@@ -1,9 +1,14 @@
 package com.doyoonkim.knutice.di.components
 
+import android.app.AlarmManager
 import android.app.Application
+import android.app.NotificationManager
+import android.content.Context
+import android.content.SharedPreferences
 import com.doyoonkim.bookmark.di.BookmarkModule
+import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.common.di.ApplicationScope
 import com.doyoonkim.common.di.CommonModule
-import com.doyoonkim.data.di.DataBindingModule
 import com.doyoonkim.data.di.DataModule
 import com.doyoonkim.domain.di.DomainModule
 import com.doyoonkim.knutice.MainActivity
@@ -20,30 +25,20 @@ import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
 
-@Singleton
 @Component(
     modules = [
-        AppModule::class,
-        DispatcherModule::class,
-        CommonModule::class,
-        DataModule::class,
-        DataBindingModule::class,
-        DomainModule::class,
-        NetworkModule::class,
-        NotificationModule::class,
-        NotificationBindingModule::class,
-        BookmarkModule::class,
-        MainModule::class,
-        ViewModelFactoryModule::class
+        AppModule::class
     ]
 )
 interface AppComponent {
 
     fun inject(app: MainApplication)
 
-    fun inject(activity: MainActivity)
-
-    fun inject(service: PushNotificationService)
+    // Provision Functions
+    @ApplicationContext fun applicationContext(): Context
+    fun sharedPreference(): SharedPreferences
+    fun alarmManager(): AlarmManager
+    fun notificationManager(): NotificationManager
 
     @Component.Factory
     interface Factory {

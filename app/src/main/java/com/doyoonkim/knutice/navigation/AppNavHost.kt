@@ -1,4 +1,4 @@
-package com.doyoonkim.knutice
+package com.doyoonkim.knutice.navigation
 
 import android.net.Uri
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.doyoonkim.bookmark.bookmarkServiceGraph
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.main.mainServiceNavGraph
 

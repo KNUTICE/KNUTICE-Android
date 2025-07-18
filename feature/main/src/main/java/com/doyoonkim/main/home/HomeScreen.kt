@@ -63,6 +63,7 @@ fun HomeScreen(
     onFullContentRequested: (Int, String) -> Unit,
     onTipClicked: (TipCategory, String) -> Unit
 ) {
+
     val uiState by viewModel.uiState.collectAsState()
 
     // Back button/gesture actions

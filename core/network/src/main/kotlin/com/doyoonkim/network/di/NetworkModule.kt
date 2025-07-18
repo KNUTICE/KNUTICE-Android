@@ -12,7 +12,6 @@ import javax.inject.Singleton
 object NetworkModule {
 
     @Provides
-    @Singleton
     fun providesKnuticeApi(provider: RetrofitProvider): KnuticeService {
         return provider.provide().create(KnuticeService::class.java)
     }

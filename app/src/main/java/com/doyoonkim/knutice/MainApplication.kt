@@ -8,7 +8,8 @@ import com.doyoonkim.common.di.AppInjector
 import com.doyoonkim.common.di.AppInjectorProvider
 import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.components.AppComponent
-import com.doyoonkim.knutice.di.DaggerAppComponent
+import com.doyoonkim.knutice.di.components.DaggerAppComponent
+import com.doyoonkim.knutice.di.components.DaggerNotificationServiceComponent
 import com.doyoonkim.notification.fcm.PushNotificationService
 import javax.inject.Inject
 
@@ -21,7 +22,10 @@ class MainApplication() : Application(), AppInjectorProvider {
     override val appInjector: AppInjector = object : AppInjector {
         override fun inject(target: Any) {
             when(target) {
-                is PushNotificationService -> appComponent.inject(target)
+                is PushNotificationService -> {
+                    DaggerNotificationServiceComponent.factory()
+                        .create(this@MainApplication).inject(target)
+                }
                 else -> error("Unsupported Target $target")
             }
         }

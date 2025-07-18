@@ -15,7 +15,6 @@ import javax.inject.Singleton
  */
 
 // This class should be provided/injected as Singleton Instance.
-@Singleton
 class KnuticeRemoteSource @Inject constructor(
     private val knuticeApi: KnuticeService
 ) {

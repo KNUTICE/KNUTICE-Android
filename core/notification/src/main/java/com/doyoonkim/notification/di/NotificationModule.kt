@@ -20,8 +20,8 @@ import javax.inject.Singleton
 @Module
 object NotificationModule {
 
+    // Considered to be removed.
     @Provides
-    @Singleton
     fun providesPushNotificationHandler(
         remoteRepository: NoticeRemoteRepository,
         imageRepository: ImageRemoteRepository,

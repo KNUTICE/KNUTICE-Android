@@ -6,6 +6,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.common.di.ApplicationScope
+import com.doyoonkim.knutice.di.components.MainActivityComponent
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -15,22 +17,19 @@ object AppModule {
 
     // Inject ApplicationContext
     @Provides
-    @Singleton
     @ApplicationContext
     fun providesApplicationContext(app: Application): Context = app.applicationContext
 
     @Provides
-    @Singleton
     fun providesApplicationPreferences(@ApplicationContext context: Context): SharedPreferences =
+        // Only one instance of the SharedPreferences object is returned to any callers for the same name
         context.applicationContext.getSharedPreferences("app_pref", Context.MODE_PRIVATE)
 
     @Provides
-    @Singleton
     fun providesAlarmManager(@ApplicationContext context: Context) : AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     @Provides
-    @Singleton
     fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

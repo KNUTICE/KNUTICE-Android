@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice
 
 import android.Manifest
+import android.app.AlarmManager
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -42,6 +43,7 @@ import com.doyoonkim.common.R
 import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
+import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
 import com.doyoonkim.main.splash.KnuticeSplashScreen
 import com.doyoonkim.main.viewmodel.SplashViewModel
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
@@ -50,9 +52,8 @@ import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
 
-    @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
-    @Inject lateinit var notificationAlarmScheduler: NotificationAlarmScheduler
-    @Inject lateinit var appPreferences: AppPreferences
+     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
+     @Inject lateinit var alarmManager: AlarmManager
 
     // NavController
     private lateinit var navController: NavHostController
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
     private val receivedIntent = mutableStateOf<Intent?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        (applicationContext as MainApplication).appComponent.inject(this)
+        DaggerMainActivityComponent.factory().create(application).inject(this)
         super.onCreate(savedInstanceState)
         receivedIntent.value = intent
 
@@ -94,7 +95,7 @@ class MainActivity : ComponentActivity() {
                         permissions.entries.forEach {
                             Log.d("MainServiceScreen", "${it.key}, ${it.value}")
                             if (it.key == Manifest.permission.SCHEDULE_EXACT_ALARM
-                                && !notificationAlarmScheduler.canScheduleExactAlarms()) {
+                                && !alarmManager.canScheduleExactAlarms()) {
                                 showPermissionRationale = true
                             }
                         }

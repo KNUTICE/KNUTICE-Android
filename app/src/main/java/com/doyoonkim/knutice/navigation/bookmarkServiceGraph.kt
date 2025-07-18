@@ -1,14 +1,12 @@
-package com.doyoonkim.bookmark
+package com.doyoonkim.knutice.navigation
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
@@ -24,7 +22,6 @@ import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.navigation.NoticeDetail
-import com.doyoonkim.common.theme.displayBackground
 
 fun NavGraphBuilder.bookmarkServiceGraph(
     navController: NavController,
