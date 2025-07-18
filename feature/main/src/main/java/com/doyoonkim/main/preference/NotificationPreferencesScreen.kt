@@ -89,7 +89,7 @@ fun NotificationPreferencesScreen(
         if (uiStatus.isError) {
             PlaceholderScreen(
                 modifier = Modifier.padding(innerPadding),
-                imageResource = R.drawable.outline_network_check_24,
+                imageResource = R.drawable.wifi,
                 contentText = stringResource(R.string.error_no_network_connection)
             )
         } else {

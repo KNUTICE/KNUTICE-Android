@@ -99,7 +99,7 @@ fun HomeScreen(
         if (uiState.isError) {
             PlaceholderScreen(
                 modifier = modifier.padding(innerPadding).padding(bottom = bottomPadding),
-                imageResource = R.drawable.outline_network_check_24,
+                imageResource = R.drawable.wifi,
                 contentText = stringResource(R.string.error_no_network_connection)
             )
         } else {
