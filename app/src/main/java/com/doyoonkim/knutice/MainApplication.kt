@@ -8,7 +8,7 @@ import com.doyoonkim.common.di.AppInjector
 import com.doyoonkim.common.di.AppInjectorProvider
 import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.components.AppComponent
-import com.doyoonkim.knutice.di.DaggerAppComponent
+import com.doyoonkim.knutice.di.components.DaggerAppComponent
 import com.doyoonkim.notification.fcm.PushNotificationService
 import javax.inject.Inject
 
