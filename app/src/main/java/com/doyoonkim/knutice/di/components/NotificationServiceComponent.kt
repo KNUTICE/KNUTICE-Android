@@ -2,7 +2,7 @@ package com.doyoonkim.knutice.di.components
 
 import android.app.Application
 import com.doyoonkim.data.di.DataModule
-import com.doyoonkim.knutice.di.AppModule
+import com.doyoonkim.knutice.di.modules.AppModule
 import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.NotificationModule
 import com.google.firebase.messaging.FirebaseMessagingService

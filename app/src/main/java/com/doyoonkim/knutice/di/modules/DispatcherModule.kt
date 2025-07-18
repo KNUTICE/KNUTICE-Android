@@ -1,4 +1,4 @@
-package com.doyoonkim.knutice.di
+package com.doyoonkim.knutice.di.modules
 
 import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.model.di.IoDispatcher

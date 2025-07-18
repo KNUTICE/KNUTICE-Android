@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.doyoonkim.bookmark.di.BookmarkModule
 import com.doyoonkim.data.di.DataModule
 import com.doyoonkim.domain.di.DomainModule
-import com.doyoonkim.knutice.di.DispatcherModule
-import com.doyoonkim.knutice.di.ViewModelFactoryModule
+import com.doyoonkim.knutice.di.modules.DispatcherModule
+import com.doyoonkim.knutice.di.modules.ViewModelFactoryModule
 import dagger.Component
 
 @Component(

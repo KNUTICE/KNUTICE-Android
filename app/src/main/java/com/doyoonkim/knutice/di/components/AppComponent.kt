@@ -5,25 +5,11 @@ import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
-import com.doyoonkim.bookmark.di.BookmarkModule
 import com.doyoonkim.common.di.ApplicationContext
-import com.doyoonkim.common.di.ApplicationScope
-import com.doyoonkim.common.di.CommonModule
-import com.doyoonkim.data.di.DataModule
-import com.doyoonkim.domain.di.DomainModule
-import com.doyoonkim.knutice.MainActivity
 import com.doyoonkim.knutice.MainApplication
-import com.doyoonkim.knutice.di.AppModule
-import com.doyoonkim.knutice.di.DispatcherModule
-import com.doyoonkim.knutice.di.ViewModelFactoryModule
-import com.doyoonkim.main.di.MainModule
-import com.doyoonkim.network.di.NetworkModule
-import com.doyoonkim.notification.di.NotificationBindingModule
-import com.doyoonkim.notification.di.NotificationModule
-import com.doyoonkim.notification.fcm.PushNotificationService
+import com.doyoonkim.knutice.di.modules.AppModule
 import dagger.BindsInstance
 import dagger.Component
-import javax.inject.Singleton
 
 @Component(
     modules = [

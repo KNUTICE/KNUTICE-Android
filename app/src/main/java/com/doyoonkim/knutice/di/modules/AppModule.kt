@@ -1,4 +1,4 @@
-package com.doyoonkim.knutice.di
+package com.doyoonkim.knutice.di.modules
 
 import android.app.AlarmManager
 import android.app.Application
@@ -6,11 +6,8 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import com.doyoonkim.common.di.ApplicationContext
-import com.doyoonkim.common.di.ApplicationScope
-import com.doyoonkim.knutice.di.components.MainActivityComponent
 import dagger.Module
 import dagger.Provides
-import javax.inject.Singleton
 
 @Module
 object AppModule {

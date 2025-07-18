@@ -1,4 +1,4 @@
-package com.doyoonkim.knutice.di
+package com.doyoonkim.knutice.di.util
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
