@@ -72,6 +72,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
                         Destination.MORE_ACADEMIC -> navigate(NavRoutes.AcademicNotices.route)
                         Destination.MORE_SCHOLARSHIP -> navigate(NavRoutes.ScholarshipNotices.route)
                         Destination.MORE_EVENT -> navigate(NavRoutes.EventNotices.route)
+                        Destination.MORE_EMPLOYMENT -> navigate(NavRoutes.EmploymentNotices.route)
                         else -> { /* DO NOTHING. */ }
                     }
                 }
@@ -195,6 +196,32 @@ fun NavGraphBuilder.mainServiceNavGraph(
         NoticesInCategoryScreen(
             modifier = Modifier,
             category = NoticeCategory.EVENT_NEWS,
+            viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
+            onBackButtonPressed = { navController.popBackStack() },
+            onNoticeSelected = { id, url ->
+                onNoticeDetailRequested(NoticeDetail(id, url))
+            }
+        )
+    }
+
+    composable(
+        route = NavRoutes.EmploymentNotices.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
+        NoticesInCategoryScreen(
+            modifier = Modifier,
+            category = NoticeCategory.EMPLOYMENT_NEWS,
             viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
             onBackButtonPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
