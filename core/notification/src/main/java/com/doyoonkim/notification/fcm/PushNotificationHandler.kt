@@ -182,7 +182,7 @@ class PushNotificationHandler @Inject constructor(
                 NoticeCategory.ACADEMIC_NEWS.name -> getString(R.string.academic_news)
                 NoticeCategory.SCHOLARSHIP_NEWS.name -> getString(R.string.scholarship_news)
                 NoticeCategory.EVENT_NEWS.name -> getString(R.string.event_news)
-                NoticeCategory.JOB_NEWS.name -> getString(R.string.job_news)
+                NoticeCategory.EMPLOYMENT_NEWS.name -> getString(R.string.employment_news)
                 else -> null
             }?.let {
                 "${getString(R.string.push_title_new)} " +
