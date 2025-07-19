@@ -168,7 +168,6 @@ class EditBookmarkViewModel @Inject constructor(
                         bookmarkNote = bookmarkNote,
                         createdAt = createdAt,
                         updatedAt = createdAt
-
                     )
                 } else {
                     // Update
