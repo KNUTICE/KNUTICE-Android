@@ -120,9 +120,18 @@ class NoticeSearchViewModel @Inject constructor(
 
     fun updateSearchKeyword(newKeyword: String) {
         _uiState.update {
-            it.copy(
-                searchKeyword = newKeyword
-            )
+            it.run {
+                if (fetchResult.isNotEmpty()) {
+                    copy(
+                        fetchResult = emptyList(),
+                        searchKeyword = newKeyword
+                    )
+                } else {
+                    copy(
+                        searchKeyword = newKeyword
+                    )
+                }
+            }
         }
     }
 
