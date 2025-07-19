@@ -42,6 +42,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.R
 import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.notificationType5
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.NotificationPreviewCard
@@ -160,6 +161,16 @@ fun HomeScreen(
                     isContentLoading = uiState.isLoading,
                     contents = uiState.notificationEvent,
                     onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
+                ) {
+                    onFullContentRequested(it.nttId, it.url)
+                }
+
+                NotificationPreviewList(
+                    listTitle = stringResource(R.string.employment_news),
+                    titleColor = MaterialTheme.colorScheme.notificationType5,
+                    isContentLoading = uiState.isLoading,
+                    contents = uiState.notificationEmployment,
+                    onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EMPLOYMENT) }
                 ) {
                     onFullContentRequested(it.nttId, it.url)
                 }

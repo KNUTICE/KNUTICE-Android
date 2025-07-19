@@ -36,7 +36,8 @@ class HomeViewModel @Inject constructor(
                                 notificationGeneral = vo.general,
                                 notificationScholarship = vo.scholarship,
                                 notificationAcademic = vo.academic,
-                                notificationEvent = vo.event
+                                notificationEvent = vo.event,
+                                notificationEmployment = vo.employment
                             )
                         }
                     },
@@ -73,5 +74,6 @@ data class HomeViewState(
     val notificationAcademic: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
     val notificationScholarship: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
     val notificationEvent: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
+    val notificationEmployment: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
     val tips: List<TipVO> = emptyList()
 )
