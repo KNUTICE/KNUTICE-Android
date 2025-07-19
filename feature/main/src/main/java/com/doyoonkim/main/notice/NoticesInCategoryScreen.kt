@@ -51,6 +51,7 @@ fun NoticesInCategoryScreen(
         NoticeCategory.ACADEMIC_NEWS -> R.string.academic_news
         NoticeCategory.SCHOLARSHIP_NEWS -> R.string.scholarship_news
         NoticeCategory.EVENT_NEWS -> R.string.event_news
+        NoticeCategory.EMPLOYMENT_NEWS -> R.string.employment_news
         else -> R.string.app_name
     }
     // Back Handler
@@ -77,7 +78,7 @@ fun NoticesInCategoryScreen(
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
-        if (uiState.isError) {
+        if (uiState.isError && uiState.notices.isEmpty()) {
             PlaceholderScreen(
                 modifier = Modifier.padding(innerPadding),
                 imageResource = R.drawable.wifi,
@@ -95,7 +96,37 @@ fun NoticesInCategoryScreen(
                     userScrollEnabled = true
                 ) {
                     items(uiState.notices.size) { index ->
-                        if (index == uiState.notices.size - 1) {
+                        if (index == uiState.notices.size - 1 && !uiState.isError) {
+                            viewModel.requestMoreNotices()
+                        }
+
+                        if (index != 0) {
+                            HorizontalDivider(
+                                Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.onAnyBackground,
+                                thickness = 1.2.dp
+                            )
+                        }
+                        val notice = uiState.notices[index]
+                        Row(
+                            modifier = Modifier.wrapContentSize()
+                                .clickable {
+                                    if (!uiState.isLoading)
+                                        onNoticeSelected(notice.nttId, notice.url)
+                                }
+                        ) {
+                            NotificationPreview(
+                                isLoading = uiState.isLoading,
+                                notificationTitle = notice.title,
+                                notificationInfo = "[${notice.departName}] ${notice.timestamp}",
+                                isImageContained = notice.imageUrl != null,
+                                imageUrl = notice.imageUrl ?: ""
+                            )
+                        }
+                    }
+
+                    if (uiState.isNoticesRequested) {
+                        item {
                             Row(
                                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                                 verticalAlignment = Alignment.CenterVertically,
@@ -105,31 +136,6 @@ fun NoticesInCategoryScreen(
                                     modifier = Modifier.wrapContentSize(),
                                     color = MaterialTheme.colorScheme.variantPurple,
                                     trackColor = MaterialTheme.colorScheme.displayBackground
-                                )
-                            }
-                            viewModel.requestMoreNotices()
-                        } else {
-                            if (index != 0) {
-                                HorizontalDivider(
-                                    Modifier.fillMaxWidth(),
-                                    color =MaterialTheme.colorScheme.onAnyBackground,
-                                    thickness = 1.2.dp
-                                )
-                            }
-                            val notice = uiState.notices[index]
-                            Row(
-                                modifier = Modifier.wrapContentSize()
-                                    .clickable {
-                                        if (!uiState.isLoading)
-                                            onNoticeSelected(notice.nttId, notice.url)
-                                    }
-                            ) {
-                                NotificationPreview(
-                                    isLoading = uiState.isLoading,
-                                    notificationTitle = notice.title,
-                                    notificationInfo = "[${notice.departName}] ${notice.timestamp}",
-                                    isImageContained = notice.imageUrl != null,
-                                    imageUrl = notice.imageUrl ?: ""
                                 )
                             }
                         }
