@@ -1,6 +1,5 @@
 package com.doyoonkim.main.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.domain.usecases.FetchTips
@@ -12,9 +11,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
-import kotlin.time.Duration.Companion.seconds
 
 class HomeViewModel @Inject constructor(
     private val fetchTopThreeNotices: FetchTopThreeNotices,

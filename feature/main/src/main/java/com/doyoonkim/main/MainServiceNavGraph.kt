@@ -1,22 +1,17 @@
 package com.doyoonkim.main
 
 import android.net.Uri
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -34,7 +29,6 @@ import com.doyoonkim.main.preference.CustomerServiceScreen
 import com.doyoonkim.main.preference.NotificationPreferencesScreen
 import com.doyoonkim.main.preference.OssNoticeScreen
 import com.doyoonkim.main.preference.UserPreferenceScreen
-import com.doyoonkim.main.splash.KnuticeSplashScreen
 import com.doyoonkim.main.tip.TipDetailScreen
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.main.viewmodel.HomeViewModel
@@ -43,7 +37,6 @@ import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
 import com.doyoonkim.main.viewmodel.SettingsViewModel
-import com.doyoonkim.main.viewmodel.SplashViewModel
 import com.doyoonkim.model.NoticeCategory
 
 fun NavGraphBuilder.mainServiceNavGraph(
