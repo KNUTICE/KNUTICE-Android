@@ -11,7 +11,6 @@ import com.doyoonkim.knutice.di.modules.DispatcherModule
 import com.doyoonkim.knutice.di.modules.ViewModelFactoryModule
 import com.doyoonkim.main.di.MainModule
 import com.doyoonkim.network.di.NetworkModule
-import com.doyoonkim.notification.di.NotificationBindingModule
 import com.doyoonkim.notification.di.NotificationModule
 import dagger.BindsInstance
 import dagger.Component
@@ -24,7 +23,6 @@ import dagger.Component
     DomainModule::class,
     NetworkModule::class,
     NotificationModule::class,
-    NotificationBindingModule::class,
     BookmarkModule::class,
     MainModule::class,
     ViewModelFactoryModule::class
