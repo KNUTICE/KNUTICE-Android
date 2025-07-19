@@ -2,9 +2,13 @@ package com.doyoonkim.data.repository
 
 import android.util.Log
 import com.doyoonkim.data.model.Bookmark
+import com.doyoonkim.data.model.BookmarkAsListElement
 import com.doyoonkim.data.model.NoticeEntity
 import com.doyoonkim.data.room.MainDatabaseDao
-import com.doyoonkim.domain.LocalRepository
+import com.doyoonkim.domain.SortOption
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
+import com.doyoonkim.domain.interfaces.NoticeLocalRepository
+import com.doyoonkim.model.BookmarkAsListElementVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.flow.flow
@@ -13,7 +17,7 @@ import javax.inject.Inject
 class LocalRepositoryImpl @Inject constructor(
     // Inject Local Database from the app module (planned)
     private val localDao: MainDatabaseDao
-) : LocalRepository {
+) : BookmarkLocalRepository, NoticeLocalRepository {
     private val TAG = "LocalRepositoryImpl"
 
     // CRUD
@@ -49,15 +53,38 @@ class LocalRepositoryImpl @Inject constructor(
         )
     }
 
+    override fun updateNoticeEntity(notice: NoticeVO) = flow {
+        runCatching {
+            localDao.updateNoticeEntity(notice.toNoticeEntity())
+        }.onFailure { throw it }.fold(
+            onSuccess = { emit(true) },
+            onFailure = { it.printLog().also { emit(false) } }
+        )
+    }
+
     override fun queryAllBookmarks() = flow {
         runCatching {
             localDao.getAllBookmarks()
         }.onFailure { throw it }.fold(
             onSuccess = {
                 Log.d(TAG, "${it.size}")
-                it.toListOfBookmarkVO().forEach {
-                vo -> emit(vo).also { Log.d(TAG, vo.toString()) }
-            } },
+                emit(it.toListOfBookmarkVO())
+            },
+            onFailure = { it.printLog().also { emit(null) } }
+        )
+    }
+
+    override fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption) = flow {
+        runCatching {
+            when (option) {
+                SortOption.ASC_CREATION -> localDao.getBookmarkListSortedNewest(size, pageNumber)
+                SortOption.DES_CREATION -> localDao.getBookmarkListSortedOldest(size, pageNumber)
+            }
+        }.onFailure { throw it }.fold(
+            onSuccess = { dto ->
+                Log.d(TAG, "${dto.size}")
+                emit(dto.map { it.toVO() })
+            },
             onFailure = { it.printLog().also { emit(null) } }
         )
     }
@@ -114,7 +141,8 @@ class LocalRepositoryImpl @Inject constructor(
             url = this.url,
             imageUrl = this.imageUrl ?: "",
             departName = this.departName,
-            timestamp = this.timestamp
+            timestamp = this.timestamp,
+            noticeCategory = this.noticeName
         ).run {
             this@toNoticeEntity.entityId?.let { id ->
                 this.copy(
@@ -131,7 +159,8 @@ class LocalRepositoryImpl @Inject constructor(
             url = this.url,
             imageUrl = this.imageUrl,
             departName = this.departName,
-            timestamp = this.timestamp
+            timestamp = this.timestamp,
+            noticeName = this.noticeCategory
         )
 
     private fun BookmarkVO.toBookmark() =
@@ -140,7 +169,9 @@ class LocalRepositoryImpl @Inject constructor(
             nttId = this.targetNoticeNttId,
             isScheduled = this.isScheduled,
             reminderSchedule = this.reminderSchedule,
-            note = this.bookmarkNote
+            note = this.bookmarkNote,
+            createdAt = this.createdAt,
+            updatedAt = this.updatedAt
         )
 
     private fun Bookmark.toBookmarkVO() =
@@ -149,7 +180,20 @@ class LocalRepositoryImpl @Inject constructor(
             targetNoticeNttId = this.nttId,
             isScheduled = this.isScheduled,
             reminderSchedule = this.reminderSchedule,
-            bookmarkNote = this.note
+            bookmarkNote = this.note,
+            createdAt = this.createdAt,
+            updatedAt = this.updatedAt
+        )
+
+    private fun BookmarkAsListElement.toVO() =
+        BookmarkAsListElementVO(
+            bookmarkId = this.bookmarkId,
+            noticeId = this.noticeId,
+            noticeTitle = this.noticeTitle,
+            noticeCategory = this.noticeCategory,
+            isReminderSet = this.isReminderSet,
+            createdAt = this.createdAt,
+            updatedAt = this.updatedAt
         )
 
     private fun List<Bookmark>.toListOfBookmarkVO() =

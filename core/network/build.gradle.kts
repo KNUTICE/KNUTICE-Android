@@ -54,15 +54,10 @@ dependencies {
     implementation(libs.material)
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.okhttp3.mockwebserver)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-
-    // Coroutine for Android
-    implementation(libs.kotlinx.coroutines.android)
-
-    // Retrofit 2
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
+    androidTestImplementation(libs.okhttp3.mockwebserver)
 
     // Dagger
     implementation(libs.dagger)
@@ -70,4 +65,11 @@ dependencies {
     implementation(libs.dagger.android.support)
     kapt(libs.dagger.compiler)
     kapt(libs.dagger.android.processor)
+
+    // Coroutine for Android
+    implementation(libs.kotlinx.coroutines.android)
+
+    // Retrofit 2
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 }

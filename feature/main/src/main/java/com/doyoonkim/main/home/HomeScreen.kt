@@ -15,15 +15,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -35,7 +31,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,24 +41,23 @@ import com.doyoonkim.common.theme.notificationType4
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.R
 import com.doyoonkim.common.navigation.Destination
-import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.notificationType5
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.NotificationPreviewCard
+import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.common.ui.TipContainer
 import com.doyoonkim.common.ui.TopAppBarWithActions
 import com.doyoonkim.main.viewmodel.HomeViewModel
 import com.doyoonkim.model.NoticeVO
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel,
     bottomPadding: Dp = 0.dp,
-    onSearchRequested: () -> Unit,
     onSettingsRequested: () -> Unit,
     onGoBackAction: () -> Unit,
     onMoreNoticeRequested: (Destination) -> Unit,
@@ -79,6 +73,7 @@ fun HomeScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getTopThreeNotices()
+        viewModel.getTips()
     }
 
     Scaffold(
@@ -87,16 +82,6 @@ fun HomeScreen(
             TopAppBarWithActions(
                 titleText = stringResource(R.string.app_name)
             ) {
-                IconButton(
-                    onClick = onSearchRequested
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.baseline_search_24),
-                        contentDescription = "Search",
-                        modifier = Modifier.wrapContentSize(),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
-                    )
-                }
                 IconButton(
                     onClick = onSettingsRequested
                 ) {
@@ -111,66 +96,87 @@ fun HomeScreen(
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
-        Column(
-            modifier = modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState(0)),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TipContainer(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                tipCategory = TipCategory.SYS_NOTICE,
-                containerColor = MaterialTheme.colorScheme.onAnyBackground,
-                tipText = "[사과문] 알림 기능 오류에 대해 진심으로 사과드립니다.",
-            ) {
-                onTipClicked(
-                    TipCategory.SYS_NOTICE,
-                    "https://knutice.github.io/KNUTICE-OpenSourceLicense/Android/apologies/knutice_apology_notice.html"
-                )
-            }
 
-            NotificationPreviewList (
-                listTitle = stringResource(R.string.general_news),
-                titleColor = MaterialTheme.colorScheme.notificationType1,
-                isContentLoading = uiState.isLoading,
-                contents = uiState.notificationGeneral,
-                onMoreClicked = { onMoreNoticeRequested(Destination.MORE_GENERAL) }
+        if (uiState.isError) {
+            PlaceholderScreen(
+                modifier = modifier.padding(innerPadding).padding(bottom = bottomPadding),
+                imageResource = R.drawable.wifi,
+                contentText = stringResource(R.string.error_no_network_connection)
+            )
+        } else {
+            Column(
+                modifier = modifier
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState(0)),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                onFullContentRequested(it.nttId, it.url)
-            }
+                if (uiState.tips.isNotEmpty()) {
+                    TipContainer(
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                        tipCategory = TipCategory.SYS_NOTICE,
+                        containerColor = MaterialTheme.colorScheme.onAnyBackground,
+                        tipText = uiState.tips[0].title,
+                    ) {
+                        onTipClicked(
+                            TipCategory.SYS_NOTICE,
+                            uiState.tips[0].url
+                        )
+                    }
+                }
 
-            NotificationPreviewList(
-                listTitle = stringResource(R.string.academic_news),
-                titleColor = MaterialTheme.colorScheme.notificationType2,
-                isContentLoading = uiState.isLoading,
-                contents = uiState.notificationAcademic,
-                onMoreClicked = { onMoreNoticeRequested(Destination.MORE_ACADEMIC) }
-            ) {
-                onFullContentRequested(it.nttId, it.url)
-            }
+                NotificationPreviewList (
+                    listTitle = stringResource(R.string.general_news),
+                    titleColor = MaterialTheme.colorScheme.notificationType1,
+                    isContentLoading = uiState.isLoading,
+                    contents = uiState.notificationGeneral,
+                    onMoreClicked = { onMoreNoticeRequested(Destination.MORE_GENERAL) }
+                ) {
+                    onFullContentRequested(it.nttId, it.url)
+                }
 
-            NotificationPreviewList(
-                listTitle = stringResource(R.string.scholarship_news),
-                titleColor = MaterialTheme.colorScheme.notificationType3,
-                isContentLoading = uiState.isLoading,
-                contents = uiState.notificationScholarship,
-                onMoreClicked = { onMoreNoticeRequested(Destination.MORE_SCHOLARSHIP) }
-            ) {
-                onFullContentRequested(it.nttId, it.url)
-            }
+                NotificationPreviewList(
+                    listTitle = stringResource(R.string.academic_news),
+                    titleColor = MaterialTheme.colorScheme.notificationType2,
+                    isContentLoading = uiState.isLoading,
+                    contents = uiState.notificationAcademic,
+                    onMoreClicked = { onMoreNoticeRequested(Destination.MORE_ACADEMIC) }
+                ) {
+                    onFullContentRequested(it.nttId, it.url)
+                }
 
-            NotificationPreviewList(
-                listTitle = stringResource(R.string.event_news),
-                titleColor = MaterialTheme.colorScheme.notificationType4,
-                isContentLoading = uiState.isLoading,
-                contents = uiState.notificationEvent,
-                onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
-            ) {
-                onFullContentRequested(it.nttId, it.url)
-            }
+                NotificationPreviewList(
+                    listTitle = stringResource(R.string.scholarship_news),
+                    titleColor = MaterialTheme.colorScheme.notificationType3,
+                    isContentLoading = uiState.isLoading,
+                    contents = uiState.notificationScholarship,
+                    onMoreClicked = { onMoreNoticeRequested(Destination.MORE_SCHOLARSHIP) }
+                ) {
+                    onFullContentRequested(it.nttId, it.url)
+                }
 
-            Spacer(Modifier.height(bottomPadding))
+                NotificationPreviewList(
+                    listTitle = stringResource(R.string.event_news),
+                    titleColor = MaterialTheme.colorScheme.notificationType4,
+                    isContentLoading = uiState.isLoading,
+                    contents = uiState.notificationEvent,
+                    onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
+                ) {
+                    onFullContentRequested(it.nttId, it.url)
+                }
+
+                NotificationPreviewList(
+                    listTitle = stringResource(R.string.employment_news),
+                    titleColor = MaterialTheme.colorScheme.notificationType5,
+                    isContentLoading = uiState.isLoading,
+                    contents = uiState.notificationEmployment,
+                    onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EMPLOYMENT) }
+                ) {
+                    onFullContentRequested(it.nttId, it.url)
+                }
+
+                Spacer(Modifier.height(bottomPadding))
+            }
         }
     }
 }

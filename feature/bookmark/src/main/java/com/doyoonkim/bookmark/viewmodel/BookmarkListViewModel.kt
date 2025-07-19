@@ -1,58 +1,119 @@
 package com.doyoonkim.bookmark.viewmodel
 
+import com.doyoonkim.domain.SortOption
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
-import com.doyoonkim.model.BookmarkVO
-import com.doyoonkim.model.NoticeVO
-import kotlinx.coroutines.Dispatchers
+import com.doyoonkim.model.BookmarkAsListElementVO
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BookmarkListViewModel @Inject constructor(
+    private val appPreferences: AppPreferences,
     private val fetchAllBookmarks: FetchAllBookmarks
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(BookmarkListState())
     val uiState = _uiState.asStateFlow()
 
-    fun getAllBookmarks() {
-        viewModelScope.launch {
-            updateFetchingStatus(false).also { delay(200L) }
-            fetchAllBookmarks()
-                .flowOn(Dispatchers.IO)
-                .collectLatest { result ->
-                    Log.d("BookmarkListViewModel", "${result}")
-                    _uiState.update {
-                        it.copy(
-                            bookmarks = it.bookmarks.toMutableList().apply {
-                                this.add(result)
-                            }.distinctBy { e -> e.first.bookmarkId }.toList()
-                        )
-                    }
-                }
-        }.run { if (this.isCompleted) updateFetchingStatus(true) }
+    init {
+        if (appPreferences.isPartialFailedDuringDatabaseSync()) {
+            _uiState.update {
+                it.copy(
+                    isSyncRequired = true
+                )
+            }
+        }
     }
 
-    fun updateFetchingStatus(status: Boolean) =
+
+    fun requestBookmarks(
+        size: Int = 20,
+        pageNumber: Int = 0
+    ) {
+        viewModelScope.launch {
+            updateFetchingStatus(false).also { delay(200L) }
+
+            fetchAllBookmarks(
+                size = size,
+                pageNumber = pageNumber,
+                option = uiState.value.sortOption
+            ).collectLatest { result ->
+                    result.fold(
+                        onSuccess = { vo ->
+                            _uiState.update {
+                                it.copy(
+                                    bookmarks = it.bookmarks.toMutableList().apply {
+                                        this.addAll(vo)
+                                    }.distinctBy { i -> i.bookmarkId }.toList(),
+                                    pageNumber = it.pageNumber + 1,
+                                    isRequested = false,
+                                    isReachEnd = vo.size < size
+                                )
+                            }
+                        },
+                        onFailure = {
+                            updateFetchingStatus(true)
+                        }
+                    )
+                }
+        }
+    }
+
+    fun updateBookmarkRequestStatus(status: Boolean) =
+        _uiState.update {
+            it.copy(
+                isRequested = status
+            )
+        }
+
+
+    private fun updateFetchingStatus(status: Boolean) =
         _uiState.update {
             it.copy(
                 isFetchingCompleted = status
             )
         }
 
+    private fun updateStateOnFetchComplete(pageNumber: Int, isReachEnd: Boolean) =
+        _uiState.update {
+            it.copy(
+                isFetchingCompleted = true,
+                pageNumber = pageNumber,
+                isReachEnd = isReachEnd,
+                isRequested = false
+            )
+        }
+
+    fun updateSortOption(index: Int) {
+        // When sort option is changed -> Fetch bookmark again from page 0.
+        _uiState.update {
+            it.copy(
+                sortOption = SortOption.entries[index],
+                bookmarks = emptyList(),
+                isRequested = true,
+                pageNumber = 0
+            )
+        }
+    }
 
 }
 
 data class BookmarkListState(
-    val bookmarks: List<Pair<BookmarkVO, NoticeVO>> = emptyList(),
+    val bookmarks: List<BookmarkAsListElementVO> = emptyList(),
     val isRefreshing: Boolean = false,
+    val isRequested: Boolean = true,
     val isFetchingCompleted: Boolean = true,
+    val sortOption: SortOption = SortOption.DES_CREATION,
+    val pageNumber: Int = 0,
+    val isReachEnd: Boolean = false,
+    val isSyncRequired: Boolean = false
 )

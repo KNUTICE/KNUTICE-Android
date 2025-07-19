@@ -3,8 +3,8 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatusImpl
-import com.doyoonkim.domain.usecases.SubmitNotificationPreferencesImpl
+import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
+import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import kotlinx.coroutines.CoroutineScope
@@ -14,15 +14,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import javax.inject.Inject
 
 class NotificationPreferencesViewModel @Inject constructor(
-    private val submitNotificationPreferences: SubmitNotificationPreferencesImpl,
-    private val fetchTopicSubscriptionStatus: FetchTopicSubscriptionStatusImpl
+    private val submitNotificationPreferences: SubmitNotificationPreferences,
+    private val fetchTopicSubscriptionStatus: FetchTopicSubscriptionStatus
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(NotificationPreferencesState())
@@ -49,6 +48,7 @@ class NotificationPreferencesViewModel @Inject constructor(
             )
         }
 
+        // TODO: Consider using viewModelScope + Dispatcher Injection in Usecase.
         CoroutineScope(Dispatchers.IO).launch {
             val jobSubmit = launch {
                 // Ignore the result.
@@ -83,33 +83,33 @@ class NotificationPreferencesViewModel @Inject constructor(
 
     fun getTopicSubscriptionStatus() =
         viewModelScope.launch {
-            withTimeout(5000L) {
-                fetchTopicSubscriptionStatus()
-                    .flowOn(Dispatchers.IO)
-                    .collectLatest { status ->
-                        _uiState.update {
-                            it.copy(
-                                isEachChannelAllowed = listOf(
-                                    status.general,
-                                    status.academic,
-                                    status.scholarship,
-                                    status.event
-                                ),
-                                isSyncCompleted = true,
-                                isError = false
-                            )
+            fetchTopicSubscriptionStatus()
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess =  { status ->
+                            _uiState.update {
+                                it.copy(
+                                    isEachChannelAllowed = listOf(
+                                        status.general,
+                                        status.academic,
+                                        status.scholarship,
+                                        status.event
+                                    ),
+                                    isSyncCompleted = true,
+                                    isError = false
+                                )
+                            }
+                        },
+                        onFailure = {
+                            _uiState.update {
+                                it.copy(
+                                    isSyncCompleted = true,
+                                    isError = true
+                                )
+                            }
                         }
-                    }
-            }.runCatching {
-                /* DO NOTHING (SYNC COMPLETED ON TIME. */
-            }.onFailure {
-                _uiState.update {
-                    it.copy(
-                        isSyncCompleted = true,
-                        isError = true
                     )
                 }
-            }
         }
 
     private fun List<Boolean>.updateValueByIndex(index: Int, value: Boolean) =

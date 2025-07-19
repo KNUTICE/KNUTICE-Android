@@ -1,9 +1,11 @@
 package com.doyoonkim.domain.usecases
 
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.TokenRemoteRepository
 import com.doyoonkim.model.requestBody.DeviceTokenBody
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 
 
@@ -12,7 +14,7 @@ interface ValidateDeviceToken {
 }
 
 class ValidateDeviceTokenImpl @Inject constructor(
-    private val remoteRepository: RemoteRepository
+    private val remoteRepository: TokenRemoteRepository
 ) : ValidateDeviceToken {
 
     override operator fun invoke(requestBody: DeviceTokenBody) =
@@ -20,5 +22,5 @@ class ValidateDeviceTokenImpl @Inject constructor(
             .catch {
                 /* Internal Error. Consume values, and never emit values. */
                 emit(false)
-            }
+            }.flowOn(Dispatchers.IO)
 }

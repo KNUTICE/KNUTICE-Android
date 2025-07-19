@@ -10,6 +10,8 @@ import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
 import com.doyoonkim.domain.usecases.FetchNoticesByKeywordImpl
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.domain.usecases.FetchNoticesPerPageImpl
+import com.doyoonkim.domain.usecases.FetchTips
+import com.doyoonkim.domain.usecases.FetchTipsImpl
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.domain.usecases.FetchTopThreeNoticesImpl
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
@@ -20,6 +22,8 @@ import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferencesImpl
 import com.doyoonkim.domain.usecases.SubmitUserReport
 import com.doyoonkim.domain.usecases.SubmitUserReportImpl
+import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
+import com.doyoonkim.domain.usecases.SyncDataWithUpdatedDatabaseImpl
 import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.doyoonkim.domain.usecases.ValidateDeviceTokenImpl
 import dagger.Binds
@@ -82,5 +86,15 @@ abstract class DomainModule {
    abstract fun bindsValidateDeviceToken(
        impl: ValidateDeviceTokenImpl
    ): ValidateDeviceToken
+
+   @Binds
+   abstract fun bindsSyncDataWithUpdatedDatabase(
+       impl: SyncDataWithUpdatedDatabaseImpl
+   ): SyncDataWithUpdateDatabase
+
+   @Binds
+   abstract fun bindsFetchTips(
+       impl: FetchTipsImpl
+   ): FetchTips
 
 }

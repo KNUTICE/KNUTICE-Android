@@ -11,7 +11,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code" translatable="false">1.4.2.2</string>
+    <string name="version_code" translatable="false">1.5.0</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -77,11 +77,25 @@
     <string name="text_schedule_alarm_unavailable_content">Please check permission status under Alarm and Reminder at Settings</string>
     <string name="push_title_new">New</string>
     <string name="push_title_arrived">notice has been delivered</string>
-    <string name="job_news">Career</string>
     <string name="text_select_time">Select Time</string>
     <string name="text_set_reminder_date_time">Select time for reminder</string>
     <string name="text_push_to_notice">Tap notification to check arrived notice.</string>
     <string name="text_tip_updates">Updates</string>
     <string name="text_tip_sys_notice">System Notice</string>
     <string name="text_tip_general">Hint</string>
+    <string name="text_newest">Newest</string>
+    <string name="text_oldest">Oldest</string>
+    <string name="text_sync_warning">Some data is not been synced. It may cause failure in sorting and filtering\nPlease go to Settings > Manual Sync to perform sync.</string>
+    <string name="text_manual_sync">Sync Database</string>
+    <string name="text_manual_sync_description">Sync database manually for data integrity</string>
+    <string name="text_sync_in_progress">Sync in progress</string>
+    <string name="text_sync_result">Result (Total / Failure):</string>
+    <string name="text_created_at">Created at</string>
+    <string name="text_updated_at">Updated at</string>
+    <string name="text_category_not_found" translatable="false">Category Not Found</string>
+    <string name="error_no_network_connection">Unable to connect to the server.</string>
+    <string name="error_no_bookmark">There\'s no saved bookmark</string>
+    <string name="text_search_greeting">What do you like to search</string>
+    <string name="error_no_search_result">No result found.</string>
+    <string name="employment_news">Career News</string>
 </resources>

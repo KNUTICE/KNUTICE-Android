@@ -8,6 +8,8 @@ import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
 import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
+import com.doyoonkim.main.viewmodel.SettingsViewModel
+import com.doyoonkim.main.viewmodel.SplashViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -44,5 +46,15 @@ abstract class MainModule {
     @IntoMap
     @ViewModelKey(CustomerServiceViewModel::class)
     abstract fun bindsCustomerServiceViewModel(viewModel:CustomerServiceViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SplashViewModel::class)
+    abstract fun bindsSplashViewModel(viewModel: SplashViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(SettingsViewModel::class)
+    abstract fun bindsSettingsViewModel(viewModel: SettingsViewModel): ViewModel
 
 }

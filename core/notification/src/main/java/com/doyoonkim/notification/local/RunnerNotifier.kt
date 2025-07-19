@@ -27,7 +27,7 @@ class RunnerNotifier(
             Intent.ACTION_VIEW,
             uriString.toUri()
         ).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }.run {
             PendingIntent.getActivity(
                 context,
@@ -43,6 +43,7 @@ class RunnerNotifier(
             .setContentText(content)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentIntent(deeplinkIntent)
+            .setAutoCancel(true)
             .build()
     }
 }

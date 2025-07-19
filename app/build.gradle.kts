@@ -33,9 +33,9 @@ android {
     defaultConfig {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 31
-        targetSdk = 34
-        versionCode = 23
-        versionName = "1.4.2.2"
+        targetSdk = 35
+        versionCode = 24
+        versionName = "1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -61,11 +61,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
         compose = true

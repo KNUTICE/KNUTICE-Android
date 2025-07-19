@@ -1,8 +1,15 @@
 package com.doyoonkim.data.repository
 
 import android.util.Log
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
+import com.doyoonkim.domain.interfaces.TipRemoteRepository
+import com.doyoonkim.domain.interfaces.TokenRemoteRepository
+import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
+import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
 import com.doyoonkim.model.NoticeCategory
+import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.TipVO
+import com.doyoonkim.model.TopThreeNoticeVO
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import com.doyoonkim.model.requestBody.UserReportBody
@@ -18,14 +25,19 @@ import javax.inject.Inject
 
 class RemoteRepositoryImpl @Inject constructor(
     private val remoteSource: KnuticeRemoteSource
-) : RemoteRepository {
+) : NoticeRemoteRepository,
+    TokenRemoteRepository,
+    TopicSubscriptionRemoteRepository,
+    UserReportRemoteRepository,
+    TipRemoteRepository
+{
     private val TAG = "RemoteRepositoryImpl"
 
     override fun queryTopThreeNotices() = flow {
         remoteSource.getTopThreeNotices().fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(it.body?.toVO())
-                else it.result.printLog().also { emit(null) }
+                else it.result.printLog().also { emit(TopThreeNoticeVO()) }
             },
             onFailure = {
                 it.printLog()
@@ -37,8 +49,8 @@ class RemoteRepositoryImpl @Inject constructor(
     override fun queryNoticesPerPage(category: NoticeCategory, lastNttId: Int?) = flow {
         remoteSource.getNoticesPerPage(category, lastNttId).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(it.body.map { it.toVO() })
-                else it.result.printLog().also { emit(null) }
+                if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
+                else it.result.printLog().also { emit(emptyList<NoticeVO>()) }
             },
             onFailure = {
                 it.printLog()
@@ -50,6 +62,7 @@ class RemoteRepositoryImpl @Inject constructor(
     override fun queryNoticeById(nttId: Int) = flow {
         remoteSource.getNoticeById(nttId).fold(
             onSuccess = {
+                Log.d(TAG, "Received Result: ${it.toString()}")
                 if (it.result?.resultCode == 200) emit(it.body?.toVO())
                 else it.result.printLog().also { emit(null) }
             },
@@ -60,11 +73,11 @@ class RemoteRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun queryNoticesByKeyword(keyword: String) = flow {
-        remoteSource.getNoticesByKeyword(keyword).fold(
+    override fun queryNoticesByKeyword(keyword: String, lastNttId: Int?) = flow {
+        remoteSource.getNoticesByKeyword(keyword, lastNttId).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(it.body.map { it.toVO() })
-                else it.result.printLog().also { emit(null) }
+                if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
+                else it.result.printLog().also { emit(emptyList<NoticeVO>()) }
             },
             onFailure = {
                 it.printLog()
@@ -81,6 +94,20 @@ class RemoteRepositoryImpl @Inject constructor(
                     if (it.body != null) emit(it.body?.toVO())
                     else it.result.printLog().also { emit(null) }
                 }
+            },
+            onFailure = {
+                it.printLog()
+                emit(null)
+            }
+        )
+    }
+
+    override fun queryAllTips() = flow {
+        remoteSource.getAllTips().fold(
+            onSuccess = {
+                if (it.result?.resultCode == 200) {
+                    emit(it.body?.map { dto -> dto.toVO() })
+                } else it.result.printLog().also { emit(emptyList<TipVO>()) }
             },
             onFailure = {
                 it.printLog()

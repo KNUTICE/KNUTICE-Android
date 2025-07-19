@@ -67,11 +67,24 @@
     <string name="text_schedule_alarm_unavailable_content">설정의 알람 및 리마인더 메뉴에서 권한을 확인 해 주세요.</string>
     <string name="push_title_new">새로운</string>
     <string name="push_title_arrived">알림이 도착했어요</string>
-    <string name="job_news">취업</string>
     <string name="text_select_time">시간 선택</string>
     <string name="text_set_reminder_date_time">알림 시간</string>
+    <string name="text_newest">최신순</string>
+    <string name="text_oldest">오래된 순</string>
+    <string name="text_sync_warning">일부 데이터가 업데이트 되지 않았어요. 정렬과 필터링이 동작하지 않을 수 있어요.\n오른쪽 위의 설정 메뉴에서 수동으로 업데이트를 진행해 주세요.</string>
+    <string name="text_manual_sync">데이터베이스 업데이트</string>
+    <string name="text_manual_sync_description">데이터베이스 정보를 수동으로 갱신 할  수 있어요.</string>
+    <string name="text_sync_in_progress">데이터베이스를 갱신중입니다.</string>
+    <string name="text_sync_result">결과 (전체 / 실패):</string>
+    <string name="text_created_at">생성일자</string>
+    <string name="text_updated_at">수정일자</string>
     <string name="text_push_to_notice">탭하여 공지를 확인해주세요.</string>
     <string name="text_tip_updates">업데이트</string>
     <string name="text_tip_sys_notice">시스템 공지</string>
     <string name="text_tip_general">힌트</string>
+    <string name="error_no_network_connection">서버에 연결할 수 없어요</string>
+    <string name="error_no_bookmark">저장된 북마크가 없어요</string>
+    <string name="text_search_greeting">어떤 공지사항을 찾아드릴까요?</string>
+    <string name="error_no_search_result">검색 결과가 없어요</string>
+    <string name="employment_news">취업공지</string>
 </resources>

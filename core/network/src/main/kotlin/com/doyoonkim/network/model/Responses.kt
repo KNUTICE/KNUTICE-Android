@@ -1,6 +1,7 @@
 package model
 
 import androidx.annotation.Keep
+import com.doyoonkim.network.model.dto.TipDTO
 import com.doyoonkim.network.model.dto.TopicSubscriptionPreferencesDTO
 import com.google.gson.annotations.SerializedName
 import model.dto.NoticeDTO
@@ -27,7 +28,7 @@ data class TopThreeNoticeResults(
 @Keep
 data class NoticesPerPageResult(
     @SerializedName("result") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: ArrayList<NoticeDTO>
+    @SerializedName("body") var body: ArrayList<NoticeDTO>?
 )
 
 @Keep
@@ -39,7 +40,7 @@ data class NoticeByIdResult(
 @Keep
 data class NoticesByKeywordResult(
     @SerializedName("result") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: ArrayList<NoticeDTO>
+    @SerializedName("body") var body: ArrayList<NoticeDTO>?
 )
 
 @Keep
@@ -52,4 +53,10 @@ data class TopicSubscriptionPreferencesResult(
 data class PostResult(
     @SerializedName("result") var result: NetworkResult? = NetworkResult(),
     @SerializedName("body") var body: Boolean? = null
+)
+
+@Keep
+data class TipResult(
+    @SerializedName("result") var result: NetworkResult? = NetworkResult(),
+    @SerializedName("body") var body: ArrayList<TipDTO>? = null
 )

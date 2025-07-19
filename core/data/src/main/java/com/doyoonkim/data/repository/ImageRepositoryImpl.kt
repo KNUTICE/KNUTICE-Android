@@ -1,10 +1,8 @@
 package com.doyoonkim.data.repository
 
 import android.util.Log
-import com.doyoonkim.domain.ImageRepository
+import com.doyoonkim.domain.interfaces.ImageRemoteRepository
 import com.doyoonkim.network.ImageRemoteSource
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 /**
@@ -13,7 +11,7 @@ import javax.inject.Inject
  */
 class ImageRepositoryImpl @Inject constructor(
     private val remoteSource: ImageRemoteSource
-) : ImageRepository {
+) : ImageRemoteRepository {
     override suspend fun getImageByteArrayFromUrl(url: String): ByteArray? {
         remoteSource.getByteArrayFromImageUrl(url)
             .fold(

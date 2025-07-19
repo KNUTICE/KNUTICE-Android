@@ -14,12 +14,12 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.R
-import com.doyoonkim.domain.ImageRepository
-import com.doyoonkim.domain.RemoteRepository
+import com.doyoonkim.domain.interfaces.ImageRemoteRepository
+import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeCategory
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.firstOrNull
@@ -30,16 +30,17 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 class PushNotificationHandler @Inject constructor(
-    private val remoteRepository: RemoteRepository,
-    private val imageRepository: ImageRepository,
+    private val remoteRepository: NoticeRemoteRepository,
+    private val imageRepository: ImageRemoteRepository,
     private val bitMapHandler: BitmapHandler,
+    private val ioDispatcher: CoroutineDispatcher,
     private val context: Context
 ) {
     private val TAG = "PushNotificationHandler"
 
     // HardCoded CoroutineScope for Testing
     private val job = SupervisorJob()     // Variable for manual Cancellation
-    private val coroutineScope = CoroutineScope(Dispatchers.IO + job)
+    private val coroutineScope = CoroutineScope(ioDispatcher + job)
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     fun handleReceivedMessage(message: RemoteMessage) {
@@ -75,7 +76,7 @@ class PushNotificationHandler @Inject constructor(
             Intent.ACTION_VIEW,
             "knutice://service/noticeDetail/$nttId/${Uri.encode(url)}/$fabVisible".toUri()
         ).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
 
         val pendingIntent = PendingIntent.getActivity(
@@ -181,7 +182,7 @@ class PushNotificationHandler @Inject constructor(
                 NoticeCategory.ACADEMIC_NEWS.name -> getString(R.string.academic_news)
                 NoticeCategory.SCHOLARSHIP_NEWS.name -> getString(R.string.scholarship_news)
                 NoticeCategory.EVENT_NEWS.name -> getString(R.string.event_news)
-                NoticeCategory.JOB_NEWS.name -> getString(R.string.job_news)
+                NoticeCategory.EMPLOYMENT_NEWS.name -> getString(R.string.employment_news)
                 else -> null
             }?.let {
                 "${getString(R.string.push_title_new)} " +

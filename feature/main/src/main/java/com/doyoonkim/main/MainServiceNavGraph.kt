@@ -1,21 +1,17 @@
 package com.doyoonkim.main
 
 import android.net.Uri
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -40,6 +36,7 @@ import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
 import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
+import com.doyoonkim.main.viewmodel.SettingsViewModel
 import com.doyoonkim.model.NoticeCategory
 
 fun NavGraphBuilder.mainServiceNavGraph(
@@ -57,7 +54,6 @@ fun NavGraphBuilder.mainServiceNavGraph(
             modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<HomeViewModel>(factory = viewModelFactory),
             bottomPadding = contentPadding.calculateBottomPadding(),
-            onSearchRequested = { navController.navigate(NavRoutes.NoticeSearch.route) },
             onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onGoBackAction = {
                 navController.popBackStack().also { if (!it) onExit() }
@@ -69,6 +65,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
                         Destination.MORE_ACADEMIC -> navigate(NavRoutes.AcademicNotices.route)
                         Destination.MORE_SCHOLARSHIP -> navigate(NavRoutes.ScholarshipNotices.route)
                         Destination.MORE_EVENT -> navigate(NavRoutes.EventNotices.route)
+                        Destination.MORE_EMPLOYMENT -> navigate(NavRoutes.EmploymentNotices.route)
                         else -> { /* DO NOTHING. */ }
                     }
                 }
@@ -83,23 +80,12 @@ fun NavGraphBuilder.mainServiceNavGraph(
     }
 
     composable(
-        route = NavRoutes.NoticeSearch.route,
-        enterTransition = {
-            slideIntoContainer(
-                animationSpec = tween(300, easing = EaseIn),
-                towards = AnimatedContentTransitionScope.SlideDirection.Up
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                animationSpec = tween(300, easing = EaseOut),
-                towards = AnimatedContentTransitionScope.SlideDirection.Down
-            )
-        }
+        route = NavRoutes.NoticeSearch.route
     ) {
         NoticeSearchScreen(
             modifier = Modifier,
             viewModel = viewModel<NoticeSearchViewModel>(factory = viewModelFactory),
+            bottomPadding = contentPadding.calculateBottomPadding(),
             onBackPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
@@ -211,6 +197,32 @@ fun NavGraphBuilder.mainServiceNavGraph(
         )
     }
 
+    composable(
+        route = NavRoutes.EmploymentNotices.route,
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) {
+        NoticesInCategoryScreen(
+            modifier = Modifier,
+            category = NoticeCategory.EMPLOYMENT_NEWS,
+            viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
+            onBackButtonPressed = { navController.popBackStack() },
+            onNoticeSelected = { id, url ->
+                onNoticeDetailRequested(NoticeDetail(id, url))
+            }
+        )
+    }
+
     // preferences
     composable(
         route = NavRoutes.Settings.route,
@@ -229,10 +241,17 @@ fun NavGraphBuilder.mainServiceNavGraph(
     ) {
         UserPreferenceScreen(
             modifier = Modifier.padding(horizontal = 10.dp),
+            viewModel = viewModel<SettingsViewModel>(factory = viewModelFactory),
             onNotificationPreferenceClicked = { navController.navigate(NavRoutes.NotificationPreferences.route) },
             onCustomerServiceClicked = { navController.navigate(NavRoutes.CustomerService.route) },
             onOssClicked = { navController.navigate(NavRoutes.OpenSource.route) },
-            onBackPressed = { navController.popBackStack() }
+            onBackPressed = { syncPerformed ->
+                if (syncPerformed) {
+                    navController.popBackStack(NavRoutes.Home.route, inclusive = true)
+                    navController.navigate(NavRoutes.Bookmark.route)
+                }
+                else navController.popBackStack()
+            }
         )
     }
 
@@ -337,7 +356,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
             onBookmarkCreate = { onBookmarkServiceRequested(BookmarkInfo(
                 noticeId = it.nttId,
                 noticeTitle = it.title,
-                noticeInfo = "[${it.departName}] ${it.timestamp}"
+                noticeInfo = it.noticeName
             )) },
             onBackPressed = { navController.popBackStack() }
         )

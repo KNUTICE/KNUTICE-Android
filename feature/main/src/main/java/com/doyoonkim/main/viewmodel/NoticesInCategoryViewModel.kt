@@ -2,20 +2,18 @@ package com.doyoonkim.main.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.domain.usecases.FetchNoticesPerPageImpl
+import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticesInCategoryViewModel @Inject constructor(
-    private val fetchNoticesPerPage: FetchNoticesPerPageImpl
+    private val fetchNoticesPerPage: FetchNoticesPerPage
 ) : ViewModel() {
 
     // uiStates
@@ -25,21 +23,34 @@ class NoticesInCategoryViewModel @Inject constructor(
     fun getNoticesPerPageInCategory(category: NoticeCategory) =
         viewModelScope.launch {
             fetchNoticesPerPage(category, uiState.value.currentLastNttId)
-                .flowOn(Dispatchers.IO)
                 .collectLatest { result ->
-                    _uiState.update {
-                        it.copy(
-                            currentLastNttId = result.last().nttId,
-                            notices =
-                                if (uiState.value.currentLastNttId == 0)
-                                    result
-                                else
-                                    it.notices.addAll(result),
-                            isNoticesRequested = false,
-                            isLoading = false,
-                            isRefreshRequested = false
-                        )
-                    }
+                    result.fold(
+                        onSuccess = { vo ->
+                            _uiState.update {
+                                it.copy(
+                                    currentLastNttId = vo.last().nttId,
+                                    notices =
+                                        if (uiState.value.currentLastNttId == 0)
+                                            vo
+                                        else
+                                            it.notices.addAll(vo),
+                                    isNoticesRequested = false,
+                                    isLoading = false,
+                                    isRefreshRequested = false
+                                )
+                            }
+                        },
+                        onFailure = {
+                            _uiState.update {
+                                it.copy(
+                                    isError = true,
+                                    isNoticesRequested = false,
+                                    isLoading = false,
+                                    isRefreshRequested = false
+                                )
+                            }
+                        }
+                    )
                 }
         }
 
@@ -48,7 +59,8 @@ class NoticesInCategoryViewModel @Inject constructor(
             it.copy(
                 currentLastNttId = 0,
                 notices = emptyList(),
-                isRefreshRequested = true
+                isRefreshRequested = true,
+                isError = false
             )
         }
 
@@ -71,6 +83,7 @@ data class NoticesInCategoryStates(
     val currentLastNttId: Int = 0,
     val notices: List<NoticeVO> = List(20) { NoticeVO() },
     val isNoticesRequested: Boolean = true,
+    val isError: Boolean = false,
     val isLoading: Boolean = true,
     val isRefreshRequested: Boolean = false
 )

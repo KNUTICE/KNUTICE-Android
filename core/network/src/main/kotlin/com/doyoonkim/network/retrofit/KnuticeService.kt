@@ -8,6 +8,7 @@ import model.NoticeByIdResult
 import model.NoticesByKeywordResult
 import model.NoticesPerPageResult
 import model.PostResult
+import model.TipResult
 import model.TopThreeNoticeResults
 import model.TopicSubscriptionPreferencesResult
 import retrofit2.http.Body
@@ -38,15 +39,21 @@ interface KnuticeService {
         @Path("nttId") nttId: String
     ): NoticeByIdResult
 
-    @GET("open-api/search")
+    @GET("open-api/notices/search")
     suspend fun getNoticesByKeyword(
-        @Query("keyword") keyword: String
+        @Query("keyword") keyword: String,
+        @Query("nttId") lastNttId: Int? = null
     ): NoticesByKeywordResult
 
     @GET("open-api/topic")
     suspend fun getTopicSubscriptionStatus(
         @Header("fcmToken") token: String
     ): TopicSubscriptionPreferencesResult
+
+    @GET("open-api/tips")
+    suspend fun getAllTips(
+        @Query("deviceType") deviceType: String
+    ): TipResult
 
     @Headers("Content-Type: application/json")
     @POST("open-api/fcm")

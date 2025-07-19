@@ -3,9 +3,10 @@ package com.doyoonkim.main.viewmodel
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.domain.usecases.FetchNoticesByKeywordImpl
+import com.doyoonkim.model.di.DefaultDispatcher
+import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
 import com.doyoonkim.model.NoticeVO
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,29 +20,92 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticeSearchViewModel @Inject constructor(
-    private val fetchNoticesByKeyword: FetchNoticesByKeywordImpl
+    private val fetchNoticesByKeyword: FetchNoticesByKeyword,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private var _uiState = MutableStateFlow(NoticeSearchState())
     val uiState = _uiState.asStateFlow()
 
-    fun searchNoticeUsingKeyword(keyword: String) {
+    fun fetchMoreNotices() {
+        _uiState.update {
+            it.copy(
+                isFetching = true
+            )
+        }
+
         viewModelScope.launch {
-            fetchNoticesByKeyword(keyword)
-                .flowOn(Dispatchers.IO)
-                .collectLatest { result ->
-                    _uiState.update {
-                        it.copy(
-                            isFetching = false,
-                            fetchResult = result
-                        )
+            fetchNoticesByKeyword(
+                uiState.value.searchKeyword,
+                uiState.value.fetchResult.lastOrNull()?.nttId
+            ).collectLatest { result ->
+                result.fold(
+                    onSuccess = { vo ->
+                        _uiState.update {
+                            it.copy(
+                                fetchResult = it.fetchResult.toMutableList().apply {
+                                    addAll(vo)
+                                }.toList(),
+                                isError = false,
+                                isFetching = false,
+                                canRequestMoreNotices = vo.size == 20
+                            )
+                        }
+                    },
+                    onFailure = {
+                        _uiState.update {
+                            it.copy(
+                                isError = true,
+                                isFetching = false,
+                                canRequestMoreNotices = false
+                            )
+                        }
                     }
+                )
+            }
+        }
+    }
+
+    // Need to have separate function for fetching notices when keyword changes and more notices requested.
+    private fun searchNoticeUsingKeyword(keyword: String) {
+        _uiState.update {
+            it.copy(
+                fetchResult = emptyList(),
+                isFetching = true
+            )
+        }
+
+        viewModelScope.launch {
+            fetchNoticesByKeyword(keyword, null)
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess = { vo ->
+                            _uiState.update {
+                                it.copy(
+                                    fetchResult = vo,
+                                    isError = false,
+                                    isFetching = false,
+                                    canRequestMoreNotices = vo.size == 20
+                                )
+                            }
+                        },
+                        onFailure = {
+                            _uiState.update {
+                                it.copy(
+                                    isError = true,
+                                    isFetching = false,
+                                    canRequestMoreNotices = false
+                                )
+                            }
+                        }
+                    )
                 }
         }
     }
 
     @OptIn(FlowPreview::class)
     suspend fun observeKeywordInput() = snapshotFlow { uiState.value.searchKeyword }
+        .flowOn(defaultDispatcher)
         .debounce(500L)
         .distinctUntilChanged()
         .filter { it.isNotBlank() }
@@ -51,18 +115,27 @@ class NoticeSearchViewModel @Inject constructor(
 
     fun updateSearchKeyword(newKeyword: String) {
         _uiState.update {
-            it.copy(
-                searchKeyword = newKeyword
-            )
+            it.run {
+                if (fetchResult.isNotEmpty()) {
+                    copy(
+                        fetchResult = emptyList(),
+                        searchKeyword = newKeyword
+                    )
+                } else {
+                    copy(
+                        searchKeyword = newKeyword
+                    )
+                }
+            }
         }
     }
-
-    private fun updateFetchingStatus(status: Boolean) = _uiState.update { it.copy(isFetching = status) }
 
 }
 
 data class NoticeSearchState(
     val searchKeyword: String = "",
+    val isError: Boolean = false,
     val isFetching: Boolean = false,
+    val canRequestMoreNotices: Boolean = true,
     val fetchResult: List<NoticeVO> = emptyList()
 )

@@ -5,29 +5,17 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -36,24 +24,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.common.R
-import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
-import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreview
+import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.model.NoticeCategory
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun NoticesInCategoryScreen(
     modifier: Modifier,
@@ -68,6 +51,7 @@ fun NoticesInCategoryScreen(
         NoticeCategory.ACADEMIC_NEWS -> R.string.academic_news
         NoticeCategory.SCHOLARSHIP_NEWS -> R.string.scholarship_news
         NoticeCategory.EVENT_NEWS -> R.string.event_news
+        NoticeCategory.EMPLOYMENT_NEWS -> R.string.employment_news
         else -> R.string.app_name
     }
     // Back Handler
@@ -94,43 +78,42 @@ fun NoticesInCategoryScreen(
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
-        Box(
-            modifier = modifier.fillMaxWidth()
-                .padding(innerPadding)
-//                .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Bottom))
-                .pullRefresh(pullRefreshState)
-        ) {
-            LazyColumn(
-                Modifier.fillMaxWidth().wrapContentHeight(),
-                verticalArrangement = Arrangement.spacedBy(5.dp),
-                userScrollEnabled = true
+        if (uiState.isError && uiState.notices.isEmpty()) {
+            PlaceholderScreen(
+                modifier = Modifier.padding(innerPadding),
+                imageResource = R.drawable.wifi,
+                contentText = stringResource(R.string.error_no_network_connection)
+            )
+        } else {
+            Box(
+                modifier = modifier.fillMaxWidth()
+                    .padding(innerPadding)
+                    .pullRefresh(pullRefreshState)
             ) {
-                items(uiState.notices.size) { index ->
-                    if (index == uiState.notices.size - 1) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.wrapContentSize(),
-                                color = MaterialTheme.colorScheme.variantPurple,
-                                trackColor = MaterialTheme.colorScheme.displayBackground
-                            )
+                LazyColumn(
+                    Modifier.fillMaxWidth().wrapContentHeight(),
+                    verticalArrangement = Arrangement.spacedBy(5.dp),
+                    userScrollEnabled = true
+                ) {
+                    items(uiState.notices.size) { index ->
+                        if (index == uiState.notices.size - 1 && !uiState.isError) {
+                            viewModel.requestMoreNotices()
                         }
-                        viewModel.requestMoreNotices()
-                    } else {
+
                         if (index != 0) {
                             HorizontalDivider(
                                 Modifier.fillMaxWidth(),
-                                color =MaterialTheme.colorScheme.onAnyBackground,
+                                color = MaterialTheme.colorScheme.onAnyBackground,
                                 thickness = 1.2.dp
                             )
                         }
                         val notice = uiState.notices[index]
                         Row(
                             modifier = Modifier.wrapContentSize()
-                                .clickable { onNoticeSelected(notice.nttId, notice.url) }
+                                .clickable {
+                                    if (!uiState.isLoading)
+                                        onNoticeSelected(notice.nttId, notice.url)
+                                }
                         ) {
                             NotificationPreview(
                                 isLoading = uiState.isLoading,
@@ -141,14 +124,30 @@ fun NoticesInCategoryScreen(
                             )
                         }
                     }
+
+                    if (uiState.isNoticesRequested) {
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.wrapContentSize(),
+                                    color = MaterialTheme.colorScheme.variantPurple,
+                                    trackColor = MaterialTheme.colorScheme.displayBackground
+                                )
+                            }
+                        }
+                    }
                 }
+                PullRefreshIndicator(
+                    modifier = Modifier.align(Alignment.TopCenter)
+                        .padding(top = 10.dp),
+                    refreshing = uiState.isRefreshRequested,
+                    state = pullRefreshState
+                )
             }
-            PullRefreshIndicator(
-                modifier = Modifier.align(Alignment.TopCenter)
-                    .padding(top = 10.dp),
-                refreshing = uiState.isRefreshRequested,
-                state = pullRefreshState
-            )
         }
     }
 }
