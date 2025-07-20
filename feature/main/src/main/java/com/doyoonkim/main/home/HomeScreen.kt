@@ -114,12 +114,12 @@ fun HomeScreen(
                 if (uiState.tips.isNotEmpty()) {
                     TipContainer(
                         modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                        tipCategory = TipCategory.SYS_NOTICE,
+                        tipCategory = TipCategory.UPDATES,
                         containerColor = MaterialTheme.colorScheme.onAnyBackground,
                         tipText = uiState.tips[0].title,
                     ) {
                         onTipClicked(
-                            TipCategory.SYS_NOTICE,
+                            TipCategory.UPDATES,
                             uiState.tips[0].url
                         )
                     }
