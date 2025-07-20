@@ -13,13 +13,15 @@ data class TopThreeNoticeDTO(
     @SerializedName("latestThreeGeneralNews") var generalNotices: ArrayList<NoticeDTO> = arrayListOf(),
     @SerializedName("latestThreeScholarshipNews") var scholarshipNotices: ArrayList<NoticeDTO> = arrayListOf(),
     @SerializedName("latestThreeEventNews") var eventNotices: ArrayList<NoticeDTO> = arrayListOf(),
-    @SerializedName("latestThreeAcademicNews") var academicNews: ArrayList<NoticeDTO> = arrayListOf()
+    @SerializedName("latestThreeAcademicNews") var academicNews: ArrayList<NoticeDTO> = arrayListOf(),
+    @SerializedName("latestThreeEmploymentNews") var employmentNews: ArrayList<NoticeDTO> = arrayListOf()
 ) {
     fun toVO() =
         TopThreeNoticeVO(
             general = this.generalNotices.map { it.toVO() },
             scholarship = this.scholarshipNotices.map { it.toVO() },
             event = this.eventNotices.map { it.toVO() },
-            academic = this.academicNews.map { it.toVO() }
+            academic = this.academicNews.map { it.toVO() },
+            employment = this.employmentNews.map { it.toVO() }
         )
 }

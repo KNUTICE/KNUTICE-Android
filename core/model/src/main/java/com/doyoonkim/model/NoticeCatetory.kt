@@ -9,6 +9,6 @@ enum class NoticeCategory {
     ACADEMIC_NEWS,
     SCHOLARSHIP_NEWS,
     EVENT_NEWS,
-    JOB_NEWS,
+    EMPLOYMENT_NEWS,
     Unspecified
 }

@@ -51,6 +51,10 @@ val ColorScheme.notificationType4: Color
     @Composable
     get() = Notification04
 
+val ColorScheme.notificationType5: Color
+    @Composable
+    get() = Notification05
+
 val ColorScheme.displayBackground: Color
     @Composable
     get() = if(isSystemInDarkTheme()) DarkBackground else WhiteBackground

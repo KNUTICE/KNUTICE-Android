@@ -11,6 +11,7 @@ import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerAppComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationServiceComponent
 import com.doyoonkim.notification.fcm.PushNotificationService
+import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class MainApplication() : Application(), AppInjectorProvider {
@@ -29,12 +30,14 @@ class MainApplication() : Application(), AppInjectorProvider {
                 else -> error("Unsupported Target $target")
             }
         }
+
     }
 
     @Inject lateinit var notificationManager: NotificationManager
 
     override fun onCreate() {
         super.onCreate()
+        // Application-Level injection
         appComponent.inject(this)
 
         // Create channel group

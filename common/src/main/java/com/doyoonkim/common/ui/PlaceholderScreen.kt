@@ -57,7 +57,7 @@ fun PlaceholderScreen(
 fun PlaceholderScreen_Preview() {
     PlaceholderScreen(
         modifier = Modifier,
-        imageResource = R.drawable.outline_network_check_24,
+        imageResource = R.drawable.wifi,
         contentText = "There's no bookmark to be listed."
     )
 }

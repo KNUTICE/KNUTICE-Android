@@ -8,6 +8,7 @@ import com.doyoonkim.common.theme.notificationType1
 import com.doyoonkim.common.theme.notificationType2
 import com.doyoonkim.common.theme.notificationType3
 import com.doyoonkim.common.theme.notificationType4
+import com.doyoonkim.common.theme.notificationType5
 import com.doyoonkim.model.NoticeCategory
 
 class NoticeResources {
@@ -19,6 +20,7 @@ class NoticeResources {
                 NoticeCategory.ACADEMIC_NEWS.name -> R.string.academic_news
                 NoticeCategory.SCHOLARSHIP_NEWS.name -> R.string.scholarship_news
                 NoticeCategory.EVENT_NEWS.name -> R.string.event_news
+                NoticeCategory.EMPLOYMENT_NEWS.name -> R.string.employment_news
                 else -> R.string.text_category_not_found
             }
         }
@@ -30,6 +32,7 @@ class NoticeResources {
                 NoticeCategory.ACADEMIC_NEWS.name -> MaterialTheme.colorScheme.notificationType2
                 NoticeCategory.SCHOLARSHIP_NEWS.name -> MaterialTheme.colorScheme.notificationType3
                 NoticeCategory.EVENT_NEWS.name -> MaterialTheme.colorScheme.notificationType4
+                NoticeCategory.EMPLOYMENT_NEWS.name -> MaterialTheme.colorScheme.notificationType5
                 else -> MaterialTheme.colorScheme.containerGray
             }
         }

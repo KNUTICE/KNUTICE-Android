@@ -77,7 +77,6 @@
     <string name="text_schedule_alarm_unavailable_content">Please check permission status under Alarm and Reminder at Settings</string>
     <string name="push_title_new">New</string>
     <string name="push_title_arrived">notice has been delivered</string>
-    <string name="job_news">Career</string>
     <string name="text_select_time">Select Time</string>
     <string name="text_set_reminder_date_time">Select time for reminder</string>
     <string name="text_push_to_notice">Tap notification to check arrived notice.</string>
@@ -98,4 +97,5 @@
     <string name="error_no_bookmark">There\'s no saved bookmark</string>
     <string name="text_search_greeting">What do you like to search</string>
     <string name="error_no_search_result">No result found.</string>
+    <string name="employment_news">Career News</string>
 </resources>

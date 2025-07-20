@@ -59,7 +59,8 @@ class NoticesInCategoryViewModel @Inject constructor(
             it.copy(
                 currentLastNttId = 0,
                 notices = emptyList(),
-                isRefreshRequested = true
+                isRefreshRequested = true,
+                isError = false
             )
         }
 

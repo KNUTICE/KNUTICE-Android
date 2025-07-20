@@ -128,8 +128,9 @@ fun NoticeSearchScreen(
                         ),
                         contentPadding = PaddingValues(0.dp),
                         modifier = Modifier
-                            .size(30.dp)
+                            .wrapContentSize()
                             .align(Alignment.CenterEnd)
+                            .padding(end = 10.dp)
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Clear,

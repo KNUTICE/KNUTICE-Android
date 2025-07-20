@@ -42,6 +42,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.R
 import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.notificationType5
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.NotificationPreviewCard
@@ -100,7 +101,7 @@ fun HomeScreen(
         if (uiState.isError) {
             PlaceholderScreen(
                 modifier = modifier.padding(innerPadding).padding(bottom = bottomPadding),
-                imageResource = R.drawable.outline_network_check_24,
+                imageResource = R.drawable.wifi,
                 contentText = stringResource(R.string.error_no_network_connection)
             )
         } else {
@@ -114,12 +115,12 @@ fun HomeScreen(
                 if (uiState.tips.isNotEmpty()) {
                     TipContainer(
                         modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                        tipCategory = TipCategory.SYS_NOTICE,
+                        tipCategory = TipCategory.UPDATES,
                         containerColor = MaterialTheme.colorScheme.onAnyBackground,
                         tipText = uiState.tips[0].title,
                     ) {
                         onTipClicked(
-                            TipCategory.SYS_NOTICE,
+                            TipCategory.UPDATES,
                             uiState.tips[0].url
                         )
                     }
@@ -161,6 +162,16 @@ fun HomeScreen(
                     isContentLoading = uiState.isLoading,
                     contents = uiState.notificationEvent,
                     onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
+                ) {
+                    onFullContentRequested(it.nttId, it.url)
+                }
+
+                NotificationPreviewList(
+                    listTitle = stringResource(R.string.employment_news),
+                    titleColor = MaterialTheme.colorScheme.notificationType5,
+                    isContentLoading = uiState.isLoading,
+                    contents = uiState.notificationEmployment,
+                    onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EMPLOYMENT) }
                 ) {
                     onFullContentRequested(it.nttId, it.url)
                 }
