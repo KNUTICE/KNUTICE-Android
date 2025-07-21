@@ -34,7 +34,6 @@ import com.doyoonkim.knutice.navigation.AppNavHost
 fun MainServiceScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModelFactory: ViewModelProvider.Factory,
     onExit: () -> Unit
 ) {
 
@@ -134,7 +133,6 @@ fun MainServiceScreen(
             modifier = Modifier,
             contentPadding = contentPadding,
             navController = navController,
-            viewModelFactory = viewModelFactory,
             onExit = onExit
         )
     }
