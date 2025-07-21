@@ -16,12 +16,10 @@ import javax.inject.Singleton
 
 // This class should be provided/injected as Singleton Instance.
 class KnuticeRemoteSource @Inject constructor(
-    private val knuticeApi: KnuticeService
+    private val knuticeApi: KnuticeService,
+    private val deviceToken: DeviceToken
 ) {
     private val TAG = "KnuticeRemoteSource"
-
-    // Should be later migrated to DataStore.
-    var validatedToken: String = ""
 
     suspend fun getTopThreeNotices() = runCatching {
             knuticeApi.getTopThreeNotices()
@@ -42,9 +40,9 @@ class KnuticeRemoteSource @Inject constructor(
         }
 
     suspend fun getTopicSubscriptionStatus() = runCatching {
-            if (validatedToken.isBlank()) throw Exception("No validated token found")
+            if (deviceToken.validatedToken().isBlank()) throw Exception("No validated token found")
             else {
-                knuticeApi.getTopicSubscriptionStatus(validatedToken)
+                knuticeApi.getTopicSubscriptionStatus(deviceToken.validatedToken())
             }
         }
 
@@ -57,15 +55,17 @@ class KnuticeRemoteSource @Inject constructor(
         }
 
     fun updateValidatedToken(fcmToken: String) {
-        validatedToken = fcmToken
+        deviceToken.updateValidatedToken(fcmToken)
     }
 
     suspend fun submitUserReport(request: UserReportRequest) = runCatching {
-            knuticeApi.submitUserReport(request)
-        }
+        val body = request.body.copy(fcmToken = deviceToken.validatedToken())
+        knuticeApi.submitUserReport(request.copy(body = body))
+    }
 
     suspend fun submitTopicSubscriptionPreferences(request: TopicSubscriptionPreferencesRequest) =
         runCatching {
-            knuticeApi.submitTopicSubscriptionPreferences(request)
+            val body = request.body.copy(fcmToken = deviceToken.validatedToken())
+            knuticeApi.submitTopicSubscriptionPreferences(request.copy(body = body))
         }
 }
