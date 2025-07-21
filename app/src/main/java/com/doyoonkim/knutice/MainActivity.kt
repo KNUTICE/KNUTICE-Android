@@ -44,6 +44,8 @@ import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
+import com.doyoonkim.knutice.di.components.DaggerSplashSceneComponent
+import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.main.splash.KnuticeSplashScreen
 import com.doyoonkim.main.viewmodel.SplashViewModel
 import com.doyoonkim.notification.local.NotificationAlarmScheduler
@@ -52,7 +54,6 @@ import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
 
-     @Inject lateinit var viewModelFactory: ViewModelProvider.Factory
      @Inject lateinit var alarmManager: AlarmManager
 
     // NavController
@@ -61,7 +62,10 @@ class MainActivity : ComponentActivity() {
     private val receivedIntent = mutableStateOf<Intent?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        DaggerMainActivityComponent.factory().create(application).inject(this)
+        val appComponent = (application as MainApplication).appComponent
+        DaggerMainActivityComponent.factory().create(DefaultSystemService(appComponent))
+            .inject(this)
+
         super.onCreate(savedInstanceState)
         receivedIntent.value = intent
 
@@ -77,9 +81,13 @@ class MainActivity : ComponentActivity() {
 
                 var isPreProcessCompleted by remember { mutableStateOf(false) }
                 if (!isPreProcessCompleted) {
+                    val sceneComponent = remember(appComponent) {
+                        DaggerSplashSceneComponent.factory().create(DefaultSystemService(appComponent))
+                    }
+
                     KnuticeSplashScreen(
                         modifier = Modifier.fillMaxSize(),
-                        viewModel = viewModel<SplashViewModel>(factory = viewModelFactory)
+                        viewModel = viewModel<SplashViewModel>(factory = sceneComponent.viewModelFactory())
                     ) { result ->
                         if (!result) this.finish()
                         isPreProcessCompleted = true
@@ -115,7 +123,6 @@ class MainActivity : ComponentActivity() {
                     MainServiceScreen(
                         modifier = Modifier,
                         navController = navController,
-                        viewModelFactory = viewModelFactory
                     ) { activity.finish() }
 
                     if (showPermissionRationale) {
