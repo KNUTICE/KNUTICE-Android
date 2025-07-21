@@ -1,4 +1,4 @@
-package com.doyoonkim.main
+package com.doyoonkim.knutice.navigation
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
@@ -8,9 +8,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -21,6 +21,15 @@ import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.common.ui.TipCategory
+import com.doyoonkim.knutice.di.components.AppComponent
+import com.doyoonkim.knutice.di.components.DaggerCustomerServiceSceneComponent
+import com.doyoonkim.knutice.di.components.DaggerHomeSceneComponent
+import com.doyoonkim.knutice.di.components.DaggerNoticeDetailSceneComponent
+import com.doyoonkim.knutice.di.components.DaggerNoticeInCategorySceneComponent
+import com.doyoonkim.knutice.di.components.DaggerNoticeSearchSceneComponent
+import com.doyoonkim.knutice.di.components.DaggerNotificationPreferencesSceneComponent
+import com.doyoonkim.knutice.di.components.DaggerSettingsSceneComponent
+import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.main.home.HomeScreen
 import com.doyoonkim.main.notice.NoticeDetailScreen
 import com.doyoonkim.main.notice.NoticeSearchScreen
@@ -41,18 +50,23 @@ import com.doyoonkim.model.NoticeCategory
 
 fun NavGraphBuilder.mainServiceNavGraph(
     navController: NavController,
-    viewModelFactory: ViewModelProvider.Factory,
+    appComponent: AppComponent,
     contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkServiceRequested: (BookmarkInfo) -> Unit,
     onExit: () -> Unit = {  }
 ) {
 
+
     // ViewModels will be injected via ViewModelFactory
     composable(NavRoutes.Home.route) {
+        val sceneComponent = remember(appComponent) {
+            DaggerHomeSceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         HomeScreen(
             modifier = Modifier.padding(horizontal = 5.dp),
-            viewModel = viewModel<HomeViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<HomeViewModel>(factory = sceneComponent.viewModelFactory()),
             bottomPadding = contentPadding.calculateBottomPadding(),
             onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onGoBackAction = {
@@ -82,9 +96,13 @@ fun NavGraphBuilder.mainServiceNavGraph(
     composable(
         route = NavRoutes.NoticeSearch.route
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerNoticeSearchSceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         NoticeSearchScreen(
             modifier = Modifier,
-            viewModel = viewModel<NoticeSearchViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<NoticeSearchViewModel>(factory = sceneComponent.viewModelFactory()),
             bottomPadding = contentPadding.calculateBottomPadding(),
             onBackPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
@@ -108,10 +126,14 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         }
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         NoticesInCategoryScreen(
             modifier = Modifier,
             category = NoticeCategory.GENERAL_NEWS,
-            viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<NoticesInCategoryViewModel>(factory = sceneComponent.viewModelFactory()),
             onBackButtonPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
@@ -134,10 +156,14 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         }
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         NoticesInCategoryScreen(
             modifier = Modifier,
             category = NoticeCategory.ACADEMIC_NEWS,
-            viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<NoticesInCategoryViewModel>(factory = sceneComponent.viewModelFactory()),
             onBackButtonPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
@@ -160,10 +186,14 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         }
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         NoticesInCategoryScreen(
             modifier = Modifier,
             category = NoticeCategory.SCHOLARSHIP_NEWS,
-            viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<NoticesInCategoryViewModel>(factory = sceneComponent.viewModelFactory()),
             onBackButtonPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
@@ -186,10 +216,14 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         }
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         NoticesInCategoryScreen(
             modifier = Modifier,
             category = NoticeCategory.EVENT_NEWS,
-            viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<NoticesInCategoryViewModel>(factory = sceneComponent.viewModelFactory()),
             onBackButtonPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
@@ -212,10 +246,14 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         }
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         NoticesInCategoryScreen(
             modifier = Modifier,
             category = NoticeCategory.EMPLOYMENT_NEWS,
-            viewModel = viewModel<NoticesInCategoryViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<NoticesInCategoryViewModel>(factory = sceneComponent.viewModelFactory()),
             onBackButtonPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
@@ -239,9 +277,13 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         }
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerSettingsSceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         UserPreferenceScreen(
             modifier = Modifier.padding(horizontal = 10.dp),
-            viewModel = viewModel<SettingsViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<SettingsViewModel>(factory = sceneComponent.viewModelFactory()),
             onNotificationPreferenceClicked = { navController.navigate(NavRoutes.NotificationPreferences.route) },
             onCustomerServiceClicked = { navController.navigate(NavRoutes.CustomerService.route) },
             onOssClicked = { navController.navigate(NavRoutes.OpenSource.route) },
@@ -270,9 +312,13 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         }
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerNotificationPreferencesSceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         NotificationPreferencesScreen(
             modifier = Modifier.padding(horizontal = 10.dp),
-            viewModel = viewModel<NotificationPreferencesViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<NotificationPreferencesViewModel>(factory = sceneComponent.viewModelFactory()),
             onBackPressed = { navController.popBackStack() }
         )
     }
@@ -292,9 +338,13 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         }
     ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerCustomerServiceSceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         CustomerServiceScreen(
             modifier = Modifier.padding(horizontal = 10.dp),
-            viewModel = viewModel<CustomerServiceViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<CustomerServiceViewModel>(factory = sceneComponent.viewModelFactory()),
             onBackPressed = { navController.popBackStack() }
         )
     }
@@ -349,9 +399,13 @@ fun NavGraphBuilder.mainServiceNavGraph(
             )
         } ?: Triple(0, "", false)
 
+        val sceneComponent = remember(appComponent) {
+            DaggerNoticeDetailSceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         NoticeDetailScreen(
             modifier = Modifier.fillMaxSize(),
-            viewModel = viewModel<NoticeDetailViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<NoticeDetailViewModel>(factory = sceneComponent.viewModelFactory()),
             noticeInfo = noticeInfo,
             onBookmarkCreate = { onBookmarkServiceRequested(BookmarkInfo(
                 noticeId = it.nttId,

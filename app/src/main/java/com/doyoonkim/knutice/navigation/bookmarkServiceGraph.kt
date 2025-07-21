@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -24,13 +22,14 @@ import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.navigation.NoticeDetail
-import com.doyoonkim.knutice.MainApplication
+import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerBookmarkListSceneComponent
+import com.doyoonkim.knutice.di.components.DaggerEditBookmarkSceneComponent
 import com.doyoonkim.knutice.di.util.DefaultSystemService
 
 fun NavGraphBuilder.bookmarkServiceGraph(
     navController: NavController,
-    viewModelFactory: ViewModelProvider.Factory,
+    appComponent: AppComponent,
     contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkRequested: (BookmarkInfo) -> Unit,
@@ -38,7 +37,6 @@ fun NavGraphBuilder.bookmarkServiceGraph(
 ) {
 
     composable(NavRoutes.Bookmark.route) {
-        val appComponent = (LocalContext.current.applicationContext as MainApplication).appComponent
         val sceneComponent = remember(appComponent) {
             DaggerBookmarkListSceneComponent.factory().create(DefaultSystemService(appComponent))
         }
@@ -85,9 +83,13 @@ fun NavGraphBuilder.bookmarkServiceGraph(
             )
         } ?: BookmarkInfo(0, "", "")
 
+        val sceneComponent = remember(appComponent) {
+            DaggerEditBookmarkSceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
         EditBookmarkScreen(
             modifier = Modifier.padding(horizontal = 10.dp),
-            viewModel = viewModel<EditBookmarkViewModel>(factory = viewModelFactory),
+            viewModel = viewModel<EditBookmarkViewModel>(factory = sceneComponent.viewModelFactory()),
             bookmarkInfo = bookmarkInfo,
             onNoticeSelected = { onNoticeDetailRequested(it) },
             onCompleted = {
