@@ -1,27 +1,31 @@
 package com.doyoonkim.knutice.di.components
 
-import android.app.Application
-import com.doyoonkim.data.di.DataModule
-import com.doyoonkim.knutice.di.modules.AppModule
-import com.doyoonkim.network.di.NetworkModule
+import com.doyoonkim.common.di.CommonModule
+import com.doyoonkim.data.di.ImageRemoteModule
+import com.doyoonkim.data.di.NoticeRemoteModule
+import com.doyoonkim.knutice.di.modules.DispatcherModule
+import com.doyoonkim.knutice.di.util.SystemServices
+import com.doyoonkim.network.di.NotificationNetworkModule
 import com.doyoonkim.notification.di.NotificationModule
-import com.google.firebase.messaging.FirebaseMessagingService
-import dagger.BindsInstance
+import com.doyoonkim.notification.fcm.PushNotificationService
 import dagger.Component
 
 @Component(
+    dependencies = [SystemServices::class],
     modules = [
-        AppModule::class,
         NotificationModule::class,
-        DataModule::class,
-        NetworkModule::class
+        DispatcherModule::class,
+        NoticeRemoteModule::class,
+        ImageRemoteModule::class,
+        CommonModule::class,
+        NotificationNetworkModule::class
     ]
 )
 interface NotificationServiceComponent {
-    fun inject(service: FirebaseMessagingService)
+    fun inject(service: PushNotificationService)
 
     @Component.Factory
     interface Factory {
-        fun create(@BindsInstance application: Application): NotificationServiceComponent
+        fun create(systemServices: SystemServices): NotificationServiceComponent
     }
 }
