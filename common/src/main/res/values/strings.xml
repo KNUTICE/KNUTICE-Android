@@ -98,4 +98,6 @@
     <string name="text_search_greeting">What do you like to search</string>
     <string name="error_no_search_result">No result found.</string>
     <string name="employment_news">Career News</string>
+    <string name="error_submission_unavailable">Submission Unavailable</string>
+    <string name="error_submission_unavailable_description">Error occurred while processing your request.</string>
 </resources>

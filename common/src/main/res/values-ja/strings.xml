@@ -87,4 +87,6 @@
     <string name="text_search_greeting">どのようなお知らせをお探しですか？</string>
     <string name="error_no_search_result">検索結果がありません。</string>
     <string name="employment_news">就職</string>
+    <string name="error_submission_unavailable">提出できません.</string>
+    <string name="error_submission_unavailable_description">リクエストの処理中にエラーが発生しました。</string>
 </resources>
