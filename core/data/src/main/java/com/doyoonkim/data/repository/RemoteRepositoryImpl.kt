@@ -140,7 +140,7 @@ class RemoteRepositoryImpl @Inject constructor(
     override fun requestUserReportSubmission(body: UserReportBody) = flow {
         remoteSource.submitUserReport(
             // Should be revised.
-            UserReportRequest(body = body.copy(fcmToken = remoteSource.validatedToken))
+            UserReportRequest(body = body)
         ).fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(true)
@@ -158,7 +158,7 @@ class RemoteRepositoryImpl @Inject constructor(
     ) = flow {
         remoteSource.run {
             submitTopicSubscriptionPreferences(
-                TopicSubscriptionPreferencesRequest(body = body.copy(fcmToken = this.validatedToken))
+                TopicSubscriptionPreferencesRequest(body = body)
             )
         }.fold(
             onSuccess = {
