@@ -4,14 +4,15 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import android.util.Log
 import com.doyoonkim.common.di.AppInjector
 import com.doyoonkim.common.di.AppInjectorProvider
 import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerAppComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationServiceComponent
+import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.notification.fcm.PushNotificationService
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
 class MainApplication() : Application(), AppInjectorProvider {
@@ -25,7 +26,7 @@ class MainApplication() : Application(), AppInjectorProvider {
             when(target) {
                 is PushNotificationService -> {
                     DaggerNotificationServiceComponent.factory()
-                        .create(this@MainApplication).inject(target)
+                        .create(DefaultSystemService(appComponent)).inject(target)
                 }
                 else -> error("Unsupported Target $target")
             }
