@@ -38,6 +38,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.common.R
@@ -160,41 +161,46 @@ fun CustomerServiceScreen(
                 }
             }
 
-            AnimatedVisibility(
-                modifier = Modifier.wrapContentSize().align(Alignment.Center),
-                visible = uiState.isSubmissionCompleted,
-                enter = scaleIn(),
-                exit = scaleOut()
-            ) {
-                Surface(
-                    modifier = Modifier.padding(15.dp)
-                        .clip(RoundedCornerShape(15.dp)),
-                    color = MaterialTheme.colorScheme.surfaceBright
+            if (uiState.isSubmissionCompleted) {
+                Dialog(
+                    onDismissRequest = { /* Do nothing on onDismiss */ }
                 ) {
-                    Column(
-                        modifier = Modifier.wrapContentHeight()
-                            .padding(30.dp),
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    Surface(
+                        modifier = Modifier.padding(15.dp)
+                            .clip(RoundedCornerShape(15.dp)),
+                        color = MaterialTheme.colorScheme.surfaceBright
                     ) {
-                        Text(
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            text = stringResource(R.string.submission_completed_title)
-                        )
-                        Text(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Bold,
-                            text = stringResource(R.string.submission_completed__subtitle)
-                        )
-                        Button(
-                            onClick = { viewModel.resetSubmissionStatus() },
-                            modifier = Modifier.fillMaxWidth()
+                        Column(
+                            modifier = Modifier.wrapContentHeight()
+                                .padding(30.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
+                            Text(
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                text = stringResource(
+                                    if (!uiState.isSubmissionFailed) R.string.submission_completed_title
+                                    else R.string.error_submission_unavailable
+                                )
+                            )
                             Text(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
-                                text = stringResource(R.string.btn_confirm)
+                                text = stringResource(
+                                    if (!uiState.isSubmissionFailed) R.string.submission_completed__subtitle
+                                    else R.string.error_submission_unavailable_description
+                                )
                             )
+                            Button(
+                                onClick = { viewModel.resetSubmissionStatus() },
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    text = stringResource(R.string.btn_confirm)
+                                )
+                            }
                         }
                     }
                 }
