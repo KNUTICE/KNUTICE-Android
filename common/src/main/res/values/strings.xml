@@ -100,4 +100,6 @@
     <string name="employment_news">Career News</string>
     <string name="error_submission_unavailable">Submission Unavailable</string>
     <string name="error_submission_unavailable_description">Error occurred while processing your request.</string>
+    <string name="employment_notification_channel_name">Career Notices</string>
+    <string name="employment_notification_channel_descrption">Get push notification when new career notice is being posted.</string>
 </resources>
