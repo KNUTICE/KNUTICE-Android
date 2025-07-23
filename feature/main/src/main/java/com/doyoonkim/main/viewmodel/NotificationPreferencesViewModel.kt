@@ -31,7 +31,8 @@ class NotificationPreferencesViewModel @Inject constructor(
         0 to NoticeCategory.GENERAL_NEWS,
         1 to NoticeCategory.ACADEMIC_NEWS,
         2 to NoticeCategory.SCHOLARSHIP_NEWS,
-        3 to NoticeCategory.EVENT_NEWS
+        3 to NoticeCategory.EVENT_NEWS,
+        4 to NoticeCategory.EMPLOYMENT_NEWS
     )
 
     fun updateMainNotificationPermissionStatus(status: Boolean) =
@@ -93,7 +94,8 @@ class NotificationPreferencesViewModel @Inject constructor(
                                         status.general,
                                         status.academic,
                                         status.scholarship,
-                                        status.event
+                                        status.event,
+                                        status.employment
                                     ),
                                     isSyncCompleted = true,
                                     isError = false
@@ -122,7 +124,7 @@ class NotificationPreferencesViewModel @Inject constructor(
 
 data class NotificationPreferencesState(
     val isMainNotificationPermissionGranted: Boolean = false,
-    val isEachChannelAllowed: List<Boolean> = listOf(false, false, false, false),
+    val isEachChannelAllowed: List<Boolean> = listOf(false, false, false, false, false),
     val isSyncCompleted: Boolean = false,
     val isError: Boolean = false
 )
