@@ -29,12 +29,12 @@ interface AlarmScheduler {
 }
 
 class NotificationAlarmScheduler @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val alarmManager: AlarmManager
 ) : AlarmScheduler {
     private val TAG = "NotificationAlarmScheduler"
     // AlarmManager Instance
     // Context: ApplicationContext
-    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     override fun createPendingIntent(target: BookmarkVO, nav: BookmarkInfo): PendingIntent {
         val uri = "knutice://service/bookmark/${nav.noticeId}/${Uri.encode(nav.noticeTitle)}/${Uri.encode(nav.noticeInfo)}"

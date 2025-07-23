@@ -114,14 +114,9 @@ fun NoticeDetailScreen(
                                             """
                                                 let div_accessibility = document.getElementById('accessibility');
                                                 let div_header = document.getElementById('header');
-                                                let div_point = document.getElementById('point');
                                                 let div_footer = document.getElementById('footer');
-                                                let div_footer_root = document.getElementById('fb-root');
-                                                
-                                                let section_svisual = document.getElementById('svisual');
-                                                let section_location = document.getElementById('location');
+                                               
                                                 let aside_remote = document.getElementById('remote');
-                                                
                                                 let p_board_butt = document.getElementsByClassName('board_butt');
                                                 
                                                 div_accessibility.remove();

@@ -1,6 +1,7 @@
-package com.doyoonkim.knutice.di
+package com.doyoonkim.knutice.di.modules
 
 import androidx.lifecycle.ViewModelProvider
+import com.doyoonkim.knutice.di.util.DaggerViewModelFactory
 import dagger.Binds
 import dagger.Module
 

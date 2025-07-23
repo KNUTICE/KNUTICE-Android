@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -21,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.doyoonkim.common.R
@@ -30,15 +28,12 @@ import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.doyoonkim.knutice.navigation.AppNavHost
 
 @Composable
 fun MainServiceScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModelFactory: ViewModelProvider.Factory,
     onExit: () -> Unit
 ) {
 
@@ -138,7 +133,6 @@ fun MainServiceScreen(
             modifier = Modifier,
             contentPadding = contentPadding,
             navController = navController,
-            viewModelFactory = viewModelFactory,
             onExit = onExit
         )
     }

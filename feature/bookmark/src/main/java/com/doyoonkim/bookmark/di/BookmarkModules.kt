@@ -9,16 +9,17 @@ import dagger.Module
 import dagger.multibindings.IntoMap
 
 @Module
-abstract class BookmarkModule {
-
+abstract class BookmarkListSceneModule {
     @Binds
     @IntoMap
     @ViewModelKey(BookmarkListViewModel::class)
-    abstract fun bindsBookmarkListViewModel(viewModel: BookmarkListViewModel): ViewModel
+    abstract fun bindsBookmarkListViewModel(vm: BookmarkListViewModel): ViewModel
+}
 
+@Module
+abstract class EditBookmarkSceneModule {
     @Binds
     @IntoMap
     @ViewModelKey(EditBookmarkViewModel::class)
     abstract fun bindsEditBookmarkViewModel(viewModel: EditBookmarkViewModel): ViewModel
-
 }

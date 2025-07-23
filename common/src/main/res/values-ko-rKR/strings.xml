@@ -87,4 +87,6 @@
     <string name="text_search_greeting">어떤 공지사항을 찾아드릴까요?</string>
     <string name="error_no_search_result">검색 결과가 없어요</string>
     <string name="employment_news">취업공지</string>
+    <string name="error_submission_unavailable">오류가 발생했습니다.</string>
+    <string name="error_submission_unavailable_description">요청을 처리하는 중 오류가 발생했어요.</string>
 </resources>

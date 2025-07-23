@@ -120,55 +120,44 @@ class PushNotificationHandler @Inject constructor(
                 Log.d(TAG, "START FETCHING NOTICE")
                 nttId?.let {
                     val notice = async {
-                        runCatching {
-                            withTimeout(5000L) {
-                                remoteRepository.queryNoticeById(it.toInt())
-                                    .firstOrNull()
-                            }
-                        }
+                        remoteRepository.queryNoticeById(it.toInt())
+                            .firstOrNull()
                     }
-                    notice.await().fold(
-                        onSuccess = { nullable ->
-                            nullable?.let { vo ->
-                                Log.d(TAG, "RECEIVED ${vo.toString()}")
-                                notificationBuilder.apply {
-                                    setContentTitle(localizedTitle(vo.noticeName))
-                                    setContentText(vo.title)
-                                }
+                    notice.await()?.let { vo ->
+                        Log.d(TAG, "RECEIVED ${vo.toString()}")
+                        notificationBuilder.apply {
+                            setContentTitle(localizedTitle(vo.noticeName))
+                            setContentText(vo.title)
+                        }
 
-                                vo.imageUrl?.let { url ->
-                                    val bitmapImage = async {
-                                        runCatching {
-                                            withTimeout(5000L) {
-                                                imageRepository.getImageByteArrayFromUrl(url)?.let { b ->
-                                                    bitMapHandler.decodeByteArray(b)
-                                                }
-                                            }
+                        vo.imageUrl?.let { url ->
+                            val bitmapImage = async {
+                                runCatching {
+                                    withTimeout(5000L) {
+                                        imageRepository.getImageByteArrayFromUrl(url)?.let { b ->
+                                            bitMapHandler.decodeByteArray(b)
                                         }
                                     }
-                                    bitmapImage.await().fold(
-                                        onSuccess = { result ->
-                                            result?.let {
-                                                notificationBuilder.apply {
-                                                    setStyle(
-                                                        NotificationCompat.BigPictureStyle()
-                                                            .bigPicture(it)
-                                                    )
-                                                }
-                                            }
-                                        },
-                                        onFailure = {
-                                            Log.d(TAG, "Unable to receive image.\n" +
-                                                    "REASON: ${it.stackTrace}")
-                                        }
-                                    )
                                 }
                             }
-                        },
-                        onFailure = {
-                            Log.d(TAG, "Unable to get Notice.\nREASON: ${it.stackTrace}")
+                            bitmapImage.await().fold(
+                                onSuccess = { result ->
+                                    result?.let {
+                                        notificationBuilder.apply {
+                                            setStyle(
+                                                NotificationCompat.BigPictureStyle()
+                                                    .bigPicture(it)
+                                            )
+                                        }
+                                    }
+                                },
+                                onFailure = {
+                                    Log.d(TAG, "Unable to receive image.\n" +
+                                            "REASON: ${it.stackTrace}")
+                                }
+                            )
                         }
-                    )
+                    }
                 }
             }.invokeOnCompletion { notify(notificationId, notificationBuilder.build()) }
 

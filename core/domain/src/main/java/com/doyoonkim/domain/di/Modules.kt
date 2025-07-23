@@ -29,72 +29,83 @@ import com.doyoonkim.domain.usecases.ValidateDeviceTokenImpl
 import dagger.Binds
 import dagger.Module
 
-@Module
-abstract class DomainModule {
 
+@Module
+abstract class NoticeUseCaseModule {
+    @Binds
+    abstract fun bindsFetchNoticeById(
+        impl: FetchNoticeByIdImpl
+    ): FetchNoticeById
+
+    @Binds
+    abstract fun bindsFetchNoticesByKeyword(
+        impl: FetchNoticesByKeywordImpl
+    ): FetchNoticesByKeyword
+
+    @Binds
+    abstract fun bindsFetchNoticesPerPage(
+        impl: FetchNoticesPerPageImpl
+    ): FetchNoticesPerPage
+
+    @Binds
+    abstract fun bindsFetchTopThreeNotices(
+        impl: FetchTopThreeNoticesImpl
+    ): FetchTopThreeNotices
+}
+
+@Module
+abstract class BookmarkUseCaseModule {
     @Binds
     abstract fun bindFetchAllBookmarks(
         impl: FetchAllBookmarksImpl
     ): FetchAllBookmarks
 
     @Binds
-    abstract fun bindsFetchNoticeById(
-        impl: FetchNoticeByIdImpl
-    ): FetchNoticeById
+    abstract fun bindsFetchNoticeByIdFromLocal(
+        impl: FetchNoticeByIdFromLocalImpl
+    ): FetchNoticeByIdFromLocal
 
-   @Binds
-   abstract fun bindsFetchNoticeByIdFromLocal(
-       impl: FetchNoticeByIdFromLocalImpl
-   ): FetchNoticeByIdFromLocal
+    @Binds
+    abstract fun bindsModifyBookmark(
+        impl: ModifyBookmarkImpl
+    ): ModifyBookmark
+}
 
-   @Binds
-   abstract fun bindsFetchNoticesByKeyword(
-       impl: FetchNoticesByKeywordImpl
-   ): FetchNoticesByKeyword
+@Module
+abstract class TipUseCaseModule {
+    @Binds
+    abstract fun bindsFetchTips(
+        impl: FetchTipsImpl
+    ): FetchTips
+}
 
-   @Binds
-   abstract fun bindsFetchNoticesPerPage(
-       impl: FetchNoticesPerPageImpl
-   ): FetchNoticesPerPage
+@Module
+abstract class PreferencesUseCaseModule {
+    @Binds
+    abstract fun bindsFetchTopicSubscriptionStatus(
+        impl: FetchTopicSubscriptionStatusImpl
+    ): FetchTopicSubscriptionStatus
 
-   @Binds
-   abstract fun bindsFetchTopicSubscriptionStatus(
-       impl: FetchTopicSubscriptionStatusImpl
-   ): FetchTopicSubscriptionStatus
+    @Binds
+    abstract fun bindsSubmitNotificationPreferences(
+        impl: SubmitNotificationPreferencesImpl
+    ): SubmitNotificationPreferences
 
-   @Binds
-   abstract fun bindsFetchTopThreeNotices(
-       impl: FetchTopThreeNoticesImpl
-   ): FetchTopThreeNotices
+    @Binds
+    abstract fun bindsSubmitUserReport(
+        impl: SubmitUserReportImpl
+    ): SubmitUserReport
+}
 
-   @Binds
-   abstract fun bindsModifyBookmark(
-       impl: ModifyBookmarkImpl
-   ): ModifyBookmark
+@Module
+abstract class PreProcessingUseCaseModule {
+    @Binds
+    abstract fun bindsValidateDeviceToken(
+        impl: ValidateDeviceTokenImpl
+    ): ValidateDeviceToken
 
-   @Binds
-   abstract fun bindsSubmitNotificationPreferences(
-       impl: SubmitNotificationPreferencesImpl
-   ): SubmitNotificationPreferences
-
-   @Binds
-   abstract fun bindsSubmitUserReport(
-       impl: SubmitUserReportImpl
-   ): SubmitUserReport
-
-   @Binds
-   abstract fun bindsValidateDeviceToken(
-       impl: ValidateDeviceTokenImpl
-   ): ValidateDeviceToken
-
-   @Binds
-   abstract fun bindsSyncDataWithUpdatedDatabase(
-       impl: SyncDataWithUpdatedDatabaseImpl
-   ): SyncDataWithUpdateDatabase
-
-   @Binds
-   abstract fun bindsFetchTips(
-       impl: FetchTipsImpl
-   ): FetchTips
-
+    @Binds
+    abstract fun bindsSyncDataWithUpdatedDatabase(
+        impl: SyncDataWithUpdatedDatabaseImpl
+    ): SyncDataWithUpdateDatabase
 }

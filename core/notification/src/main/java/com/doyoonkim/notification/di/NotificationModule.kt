@@ -18,29 +18,27 @@ import kotlinx.coroutines.CoroutineDispatcher
 import javax.inject.Singleton
 
 @Module
-object NotificationModule {
+abstract class NotificationModule {
 
-    @Provides
-    @Singleton
-    fun providesPushNotificationHandler(
-        remoteRepository: NoticeRemoteRepository,
-        imageRepository: ImageRemoteRepository,
-        bitmapHandler: BitmapHandler,
-        @IoDispatcher dispatcher: CoroutineDispatcher,
-        @ApplicationContext context: Context
-    ) =
-        PushNotificationHandler(
-            remoteRepository,
-            imageRepository,
-            bitmapHandler,
-            dispatcher,
-            context
-        )
+    companion object {
+        // Considered to be removed.
+        @Provides
+        fun providesPushNotificationHandler(
+            remoteRepository: NoticeRemoteRepository,
+            imageRepository: ImageRemoteRepository,
+            bitmapHandler: BitmapHandler,
+            @IoDispatcher dispatcher: CoroutineDispatcher,
+            @ApplicationContext context: Context
+        ) =
+            PushNotificationHandler(
+                remoteRepository,
+                imageRepository,
+                bitmapHandler,
+                dispatcher,
+                context
+            )
+    }
 
-}
-
-@Module
-abstract class NotificationBindingModule {
     @Binds
     abstract fun bindsNotificationAlarmScheduler(
         impl: NotificationAlarmScheduler
@@ -50,4 +48,5 @@ abstract class NotificationBindingModule {
     abstract fun bindsTokenHandler(
         impl: TokenHandlerImpl
     ): TokenHandler
+
 }
