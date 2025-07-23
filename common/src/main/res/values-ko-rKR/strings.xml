@@ -36,10 +36,10 @@
     <string name="scholarship_notification_channel_name">장학 공지 알림</string>
     <string name="academic_notification_channel_name">학사 공지 알림</string>
     <string name="event_notification_channel_name">행사 공지 알림</string>
-    <string name="general_notification_channel_description">새로운 일반 공지가 올라오면 알림을 받을래요.</string>
-    <string name="scholarship_notification_channel_description">새로운 장학 공지가 올라오면 알림을 받을래요.</string>
-    <string name="academic_notification_channel_description">새로운 학사 공지가 올라오면 알림을 받을래요.</string>
-    <string name="event_notification_channel_description">새로운 행사 공지가 올라오면 알림을 받을래요.</string>
+    <string name="general_notification_channel_description">헉교의 주요 공지와 다양한 소식을 알려드려요</string>
+    <string name="scholarship_notification_channel_description">수강, 성적, 졸업 등 학사 운영과 관련된 다양한 소식을 알려드려요</string>
+    <string name="academic_notification_channel_description">장학금의 신청 자격, 절차, 일정 등과 관련된 다양한 소식을 알랴드려요</string>
+    <string name="event_notification_channel_description">학교에서 진행되는 각종 교육, 문화, 진로 등 다양한 소식을 알려드려요</string>
     <string name="title_notification_pref">알림 설정</string>
     <string name="subtitle_set_reminder">알림 설정하기</string>
     <string name="title_edit_bookmark">북마크 수정</string>
@@ -89,4 +89,6 @@
     <string name="employment_news">취업공지</string>
     <string name="error_submission_unavailable">오류가 발생했습니다.</string>
     <string name="error_submission_unavailable_description">요청을 처리하는 중 오류가 발생했어요.</string>
+    <string name="employment_notification_channel_name">취업 공지 알림</string>
+    <string name="employment_notification_channel_descrption">채용 정보, 취업 지원 프로그램, 진로 상담 등 학생들의 진로 설계를 돕기 위한 소식을 알려드려요</string>
 </resources>

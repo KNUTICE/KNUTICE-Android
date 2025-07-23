@@ -200,7 +200,7 @@ fun NotificationPreferencesScreen(
                     subTitleText = stringResource(R.string.event_notification_channel_description),
                     primaryColor = MaterialTheme.colorScheme.title,
                     secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    hasBottomDivider = false
+                    hasBottomDivider = true
                 ) {
                     Switch(
                         checked = uiStatus.isEachChannelAllowed[3],
@@ -214,7 +214,30 @@ fun NotificationPreferencesScreen(
                         enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
                     )
                 }
+
+                RoundedCornerColumnTextItemWithExtraOnRight(
+                    modifier = Modifier.padding(start = 10.dp),
+                    verticalPadding = 15.dp,
+                    titleText = stringResource(R.string.employment_notification_channel_name),
+                    subTitleText = stringResource(R.string.employment_notification_channel_descrption),
+                    primaryColor = MaterialTheme.colorScheme.title,
+                    secondaryColor = MaterialTheme.colorScheme.subTitle,
+                    hasBottomDivider = false
+                ) {
+                    Switch(
+                        checked = uiStatus.isEachChannelAllowed[4],
+                        colors = SwitchDefaults.colors().copy(
+                            checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
+                            checkedThumbColor = Color.White
+                        ),
+                        onCheckedChange = {
+                            viewModel.updateChannelPreferenceState(4, it)
+                        },
+                        enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+                    )
+                }
             }
+
             if (!uiStatus.isSyncCompleted) {
                 Box(
                     modifier = Modifier.fillMaxSize()
