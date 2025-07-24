@@ -8,12 +8,14 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -42,8 +44,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.PlaceholderScreen
-import com.doyoonkim.common.ui.RoundedCornerColumn
-import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
+import com.doyoonkim.common.ui.SingleRoundedCornerItem
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
 
@@ -93,17 +94,20 @@ fun NotificationPreferencesScreen(
                 contentText = stringResource(R.string.error_no_network_connection)
             )
         } else {
-            RoundedCornerColumn(
-                modifier = modifier.fillMaxWidth().padding(innerPadding),
-                backgroundColor = MaterialTheme.colorScheme.secondaryBackground
+            Column(
+                modifier = modifier.fillMaxSize()
+                    .background(Color.Transparent)
+                    .verticalScroll(rememberScrollState(0))
+                    .padding(innerPadding),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RoundedCornerColumnTextItemWithExtraOnRight(
-                    verticalPadding = 15.dp,
-                    titleText = stringResource(R.string.enable_notification_title),
-                    subTitleText = stringResource(R.string.enable_service_notification_sub),
+                SingleRoundedCornerItem(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
                     primaryColor = MaterialTheme.colorScheme.title,
                     secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    hasBottomDivider = true
+                    titleText = stringResource(R.string.enable_notification_title),
+                    descriptionText = stringResource(R.string.enable_service_notification_sub)
                 ) {
                     Switch(
                         checked = uiStatus.isMainNotificationPermissionGranted,
@@ -127,14 +131,12 @@ fun NotificationPreferencesScreen(
                     )
                 }
 
-                RoundedCornerColumnTextItemWithExtraOnRight(
-                    modifier = Modifier.padding(start = 10.dp),
-                    verticalPadding = 15.dp,
-                    titleText = stringResource(R.string.general_notificaiton_channel_name),
-                    subTitleText = stringResource(R.string.general_notification_channel_description),
+                SingleRoundedCornerItem(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
                     primaryColor = MaterialTheme.colorScheme.title,
                     secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    hasBottomDivider = true
+                    titleText = stringResource(R.string.general_notificaiton_channel_name),
+                    descriptionText = stringResource(R.string.general_notification_channel_description)
                 ) {
                     Switch(
                         checked = uiStatus.isEachChannelAllowed[0],
@@ -149,14 +151,12 @@ fun NotificationPreferencesScreen(
                     )
                 }
 
-                RoundedCornerColumnTextItemWithExtraOnRight(
-                    modifier = Modifier.padding(start = 10.dp),
-                    verticalPadding = 15.dp,
-                    titleText = stringResource(R.string.academic_notification_channel_name),
-                    subTitleText = stringResource(R.string.academic_notification_channel_description),
+                SingleRoundedCornerItem(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
                     primaryColor = MaterialTheme.colorScheme.title,
                     secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    hasBottomDivider = true
+                    titleText = stringResource(R.string.academic_notification_channel_name),
+                    descriptionText = stringResource(R.string.academic_notification_channel_description)
                 ) {
                     Switch(
                         checked = uiStatus.isEachChannelAllowed[1],
@@ -171,14 +171,12 @@ fun NotificationPreferencesScreen(
                     )
                 }
 
-                RoundedCornerColumnTextItemWithExtraOnRight(
-                    modifier = Modifier.padding(start = 10.dp),
-                    verticalPadding = 15.dp,
-                    titleText = stringResource(R.string.scholarship_notification_channel_name),
-                    subTitleText = stringResource(R.string.scholarship_notification_channel_description),
+                SingleRoundedCornerItem(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
                     primaryColor = MaterialTheme.colorScheme.title,
                     secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    hasBottomDivider = true
+                    titleText = stringResource(R.string.scholarship_notification_channel_name),
+                    descriptionText = stringResource(R.string.scholarship_notification_channel_description)
                 ) {
                     Switch(
                         checked = uiStatus.isEachChannelAllowed[2],
@@ -193,14 +191,12 @@ fun NotificationPreferencesScreen(
                     )
                 }
 
-                RoundedCornerColumnTextItemWithExtraOnRight(
-                    modifier = Modifier.padding(start = 10.dp),
-                    verticalPadding = 15.dp,
-                    titleText = stringResource(R.string.event_notification_channel_name),
-                    subTitleText = stringResource(R.string.event_notification_channel_description),
+                SingleRoundedCornerItem(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
                     primaryColor = MaterialTheme.colorScheme.title,
                     secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    hasBottomDivider = true
+                    titleText = stringResource(R.string.event_notification_channel_name),
+                    descriptionText = stringResource(R.string.event_notification_channel_description)
                 ) {
                     Switch(
                         checked = uiStatus.isEachChannelAllowed[3],
@@ -215,14 +211,12 @@ fun NotificationPreferencesScreen(
                     )
                 }
 
-                RoundedCornerColumnTextItemWithExtraOnRight(
-                    modifier = Modifier.padding(start = 10.dp),
-                    verticalPadding = 15.dp,
-                    titleText = stringResource(R.string.employment_notification_channel_name),
-                    subTitleText = stringResource(R.string.employment_notification_channel_descrption),
+                SingleRoundedCornerItem(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
                     primaryColor = MaterialTheme.colorScheme.title,
                     secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    hasBottomDivider = false
+                    titleText = stringResource(R.string.employment_notification_channel_name),
+                    descriptionText = stringResource(R.string.employment_notification_channel_descrption)
                 ) {
                     Switch(
                         checked = uiStatus.isEachChannelAllowed[4],
