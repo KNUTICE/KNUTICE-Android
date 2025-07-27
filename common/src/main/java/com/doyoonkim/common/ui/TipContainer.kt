@@ -57,7 +57,7 @@ fun TipContainer(
             modifier = Modifier.wrapContentHeight()
                 .padding(7.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Surface(
                 modifier = Modifier.wrapContentSize()
