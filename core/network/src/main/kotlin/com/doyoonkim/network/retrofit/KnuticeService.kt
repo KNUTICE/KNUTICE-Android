@@ -25,16 +25,16 @@ import retrofit2.http.Query
  */
 
 interface KnuticeService {
-    @GET("open-api/notice")
+    @GET("open-api/notices/latest")
     suspend fun getTopThreeNotices(): TopThreeNoticeResults
 
-    @GET("open-api/notice/list")
+    @GET("open-api/notices")
     suspend fun getNoticesPerPage(
         @Query("noticeName") category: NoticeCategory,
         @Query("nttId") lastNttId: Int? = null
     ): NoticesPerPageResult
 
-    @GET("open-api/notice/{nttId}")
+    @GET("open-api/notices/{nttId}")
     suspend fun getNoticeById(
         @Path("nttId") nttId: String
     ): NoticeByIdResult
@@ -45,7 +45,7 @@ interface KnuticeService {
         @Query("nttId") lastNttId: Int? = null
     ): NoticesByKeywordResult
 
-    @GET("open-api/topic")
+    @GET("open-api/topics/status")
     suspend fun getTopicSubscriptionStatus(
         @Header("fcmToken") token: String
     ): TopicSubscriptionPreferencesResult
@@ -56,19 +56,19 @@ interface KnuticeService {
     ): TipResult
 
     @Headers("Content-Type: application/json")
-    @POST("open-api/fcm")
+    @POST("open-api/fcm/tokens")
     suspend fun validateToken(
         @Body request: DeviceTokenRequest
     ): PostResult
 
     @Headers("Content-Type: application/json")
-    @POST("open-api/report")
+    @POST("open-api/reports")
     suspend fun submitUserReport(
         @Body request: UserReportRequest
     ): PostResult
 
     @Headers("Content-Type: application/json")
-    @POST("open-api/topic")
+    @POST("open-api/topics/subscription")
     suspend fun submitTopicSubscriptionPreferences(
         @Body request: TopicSubscriptionPreferencesRequest
     ): PostResult
