@@ -7,7 +7,7 @@ class DeeplinkHandler {
     companion object {
         fun processIntent(
             intent: Intent,
-            onDestination: (uri: String) -> Unit
+            onDestination: (service: String, uri: String) -> Unit
         ) {
             var destination = NavRoutes.Home.route
 
@@ -22,7 +22,8 @@ class DeeplinkHandler {
                 }
             }
 
-            onDestination(destination)
+            val service = destination.split("/")[0]
+            onDestination(service, destination)
         }
 
         private fun Uri.navDestination(): String {
