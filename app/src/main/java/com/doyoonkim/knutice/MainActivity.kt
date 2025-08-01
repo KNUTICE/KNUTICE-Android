@@ -45,6 +45,7 @@ import com.doyoonkim.knutice.di.components.DaggerSplashSceneComponent
 import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.main.splash.KnuticeSplashScreen
 import com.doyoonkim.main.viewmodel.SplashViewModel
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
@@ -61,6 +62,7 @@ class MainActivity : ComponentActivity() {
         val appComponent = (application as MainApplication).appComponent
         DaggerMainActivityComponent.factory().create(DefaultSystemService(appComponent))
             .inject(this)
+        val analytics = appComponent.analytics()
 
         super.onCreate(savedInstanceState)
         receivedIntent.value = intent
@@ -173,7 +175,16 @@ class MainActivity : ComponentActivity() {
                                 isDeeplinkInProcess = true
                                 lastProcessedIntent = intent.hashCode()
 
-                                DeeplinkHandler.processIntent(intent) { navController.navigate(it) }
+                                DeeplinkHandler.processIntent(intent) { service, uri ->
+                                    // Analytics
+                                    analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
+                                        putString(FirebaseAnalytics.Param.CONTENT_TYPE, service)
+                                        putString(FirebaseAnalytics.Param.SOURCE, "PUSH")
+                                        putString(FirebaseAnalytics.Param.DESTINATION, uri)
+                                    })
+
+                                    navController.navigate(uri)
+                                }
                                 isDeeplinkInProcess = false
                             }
                         }
