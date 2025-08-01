@@ -7,13 +7,16 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.knutice.MainApplication
+import com.doyoonkim.knutice.analytics.AnalyticsLogger
 import com.doyoonkim.knutice.di.modules.AppModule
+import com.doyoonkim.knutice.di.modules.FirebaseAnalyticsModule
 import dagger.BindsInstance
 import dagger.Component
 
 @Component(
     modules = [
-        AppModule::class
+        AppModule::class,
+        FirebaseAnalyticsModule::class
     ]
 )
 interface AppComponent {
@@ -25,6 +28,9 @@ interface AppComponent {
     fun sharedPreference(): SharedPreferences
     fun alarmManager(): AlarmManager
     fun notificationManager(): NotificationManager
+
+    // Analytics
+    fun analytics(): AnalyticsLogger
 
     @Component.Factory
     interface Factory {
