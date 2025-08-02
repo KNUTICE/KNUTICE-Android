@@ -24,4 +24,7 @@ dependencies {
     // Dagger
     implementation(libs.dagger)
     kapt(libs.dagger.compiler)
+
+    // Open Korean Tokenizer
+    implementation(libs.open.korean.text)
 }
