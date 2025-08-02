@@ -2,6 +2,8 @@ package com.doyoonkim.domain.di
 
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
 import com.doyoonkim.domain.usecases.FetchAllBookmarksImpl
+import com.doyoonkim.domain.usecases.FetchBookmarkByKeyword
+import com.doyoonkim.domain.usecases.FetchBookmarkByKeywordImpl
 import com.doyoonkim.domain.usecases.FetchNoticeById
 import com.doyoonkim.domain.usecases.FetchNoticeByIdFromLocal
 import com.doyoonkim.domain.usecases.FetchNoticeByIdFromLocalImpl
@@ -69,6 +71,11 @@ abstract class BookmarkUseCaseModule {
     abstract fun bindsModifyBookmark(
         impl: ModifyBookmarkImpl
     ): ModifyBookmark
+
+    @Binds
+    abstract fun bindsFetchBookmarkByKeyword(
+        impl: FetchBookmarkByKeywordImpl
+    ): FetchBookmarkByKeyword
 }
 
 @Module

@@ -13,6 +13,7 @@ import com.doyoonkim.domain.di.NoticeUseCaseModule
 import com.doyoonkim.domain.di.PreProcessingUseCaseModule
 import com.doyoonkim.domain.di.PreferencesUseCaseModule
 import com.doyoonkim.domain.di.TipUseCaseModule
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.knutice.di.modules.DispatcherModule
 import com.doyoonkim.knutice.di.modules.ViewModelFactoryModule
 import com.doyoonkim.knutice.di.util.SystemServices
@@ -122,7 +123,9 @@ interface NoticeDetailSceneComponent {
         DispatcherModule::class,
         NoticeSearchSceneModule::class,
         NoticeUseCaseModule::class,
+        BookmarkUseCaseModule::class,
         NoticeRemoteModule::class,
+        LocalModule::class,
         NetworkModule::class
     ]
 )
