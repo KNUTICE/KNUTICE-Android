@@ -54,6 +54,7 @@ class SplashViewModel @Inject constructor(
             .collectLatest { result ->
                 // result: Pair<Boolean, Boolean> (SyncCompleted, PartialFailed)
                 appPreferences.setSyncStatus_1_2(result.completed)
+                appPreferences.setSyncStatus_2_3(result.completed)
                 appPreferences.setDatabaseSyncPartialFailedStatus(result.withError)
 
                 if (result.completed) {
