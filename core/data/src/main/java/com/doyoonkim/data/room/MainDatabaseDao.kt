@@ -5,9 +5,11 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.doyoonkim.data.model.Bookmark
 import com.doyoonkim.data.model.BookmarkAsListElement
+import com.doyoonkim.data.model.BookmarkFtsTarget
 import com.doyoonkim.data.model.NoticeEntity
 
 @Dao
@@ -35,6 +37,55 @@ interface MainDatabaseDao {
 
     @Delete
     fun deleteNoticeEntity(target: NoticeEntity)
+
+    // Fts
+    @Query("""
+        INSERT INTO 
+            BookmarkFts(
+                rowid,
+                bookmarkNotes,
+                noticeTitle,
+                bookmarkNoteTokenized,
+                noticeTitleTokenized
+            )
+        VALUES(
+            :id,
+            :notes,
+            :title,
+            :notesTokenized,
+            :titleTokenized
+        )
+    """)
+    fun createBookmarkFts(
+        id: Int,
+        notes: String,
+        title: String,
+        notesTokenized: String,
+        titleTokenized: String
+    )
+
+    @Query("""
+        DELETE FROM BookmarkFts WHERE rowid = :ftsId
+    """)
+    fun deleteBookmarkFts(ftsId: Int)
+
+    @Transaction
+    fun updateBookmarkFts(
+        id: Int,
+        notes: String,
+        title: String,
+        notesTokenized: String,
+        titleTokenized: String
+    ) {
+        // Based on Official SQL documentation, use DELETE followed by INSERT statement
+        // would be used for updates.
+        deleteBookmarkFts(id)
+        createBookmarkFts(
+            id, notes, title, notesTokenized, titleTokenized
+        )
+    }
+
+
 
     @Query("SELECT * FROM NoticeEntity WHERE ntt_id=:nttId")
     fun getNoticeByNttId(nttId: Int): NoticeEntity?
@@ -78,4 +129,47 @@ interface MainDatabaseDao {
     """)
     fun getBookmarkListSortedOldest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
 
+    @Query("""
+        SELECT
+            b.bookmarkId AS bookmarkId,
+            b.bookmark_note AS bookmarkNotes,
+            n.notice_title AS noticeTitle
+        FROM Bookmark b
+        INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
+    """)
+    fun getFtsEntriesFromExistingTables(): List<BookmarkFtsTarget>
+
+
+    @Query("""
+        SELECT
+            b.bookmarkId AS bookmarkId,
+            n.ntt_id AS noticeId,
+            n.notice_title AS noticeTitle,
+            n.notice_category AS noticeCategory,
+            b.isScheduled AS isReminderSet,
+            b.created_at AS createdAt,
+            b.updated_at AS updatedAt
+        FROM BookmarkFts
+        INNER JOIN Bookmark b ON b.bookmarkId = BookmarkFts.rowid
+        INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
+        WHERE BookmarkFts MATCH :keyword
+        LIMIT :size OFFSET :pageNumber * :size
+    """)
+    fun getBookmarkListByKeywordFts(keyword: String, size: Int, pageNumber: Int): List<BookmarkAsListElement>
+
+    @Query("""
+        SELECT
+            b.bookmarkId AS bookmarkId,
+            n.ntt_id AS noticeId,
+            n.notice_title AS noticeTitle,
+            n.notice_category AS noticeCategory,
+            b.isScheduled AS isReminderSet,
+            b.created_at AS createdAt,
+            b.updated_at AS updatedAt
+        FROM Bookmark b
+        INNER JOIN NoticeEntity n ON b.target_ntt_id = n.ntt_id
+        WHERE b.bookmark_note LIKE '%' || :keyword || '%'
+        LIMIT :size OFFSET :pageNumber * :size
+    """)
+    fun getBookmarkListByKeyword(keyword: String, size: Int, pageNumber: Int): List<BookmarkAsListElement>
 }
