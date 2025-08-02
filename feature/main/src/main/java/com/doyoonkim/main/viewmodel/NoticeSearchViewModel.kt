@@ -1,10 +1,13 @@
 package com.doyoonkim.main.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.domain.usecases.FetchBookmarkByKeyword
 import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
+import com.doyoonkim.model.BookmarkAsListElementVO
 import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
@@ -21,6 +24,7 @@ import javax.inject.Inject
 
 class NoticeSearchViewModel @Inject constructor(
     private val fetchNoticesByKeyword: FetchNoticesByKeyword,
+    private val fetchBookmarkByKeyword: FetchBookmarkByKeyword,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -35,33 +39,68 @@ class NoticeSearchViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            fetchNoticesByKeyword(
-                uiState.value.searchKeyword,
-                uiState.value.fetchResult.lastOrNull()?.nttId
-            ).collectLatest { result ->
-                result.fold(
-                    onSuccess = { vo ->
-                        _uiState.update {
-                            it.copy(
-                                fetchResult = it.fetchResult.toMutableList().apply {
-                                    addAll(vo)
-                                }.toList(),
-                                isError = false,
-                                isFetching = false,
-                                canRequestMoreNotices = vo.size == 20
-                            )
-                        }
-                    },
-                    onFailure = {
-                        _uiState.update {
-                            it.copy(
-                                isError = true,
-                                isFetching = false,
-                                canRequestMoreNotices = false
-                            )
-                        }
+            when (uiState.value.fetchingSource) {
+                FetchingSource.REMOTE -> {
+                    fetchNoticesByKeyword(
+                        uiState.value.searchKeyword,
+                        uiState.value.fetchResult.lastOrNull()?.nttId
+                    ).collectLatest { result ->
+                        result.fold(
+                            onSuccess = { vo ->
+                                _uiState.update {
+                                    it.copy(
+                                        fetchResult = it.fetchResult.toMutableList().apply {
+                                            addAll(vo)
+                                        }.toList(),
+                                        isError = false,
+                                        isFetching = false,
+                                        canRequestMoreNotices = vo.size == 20
+                                    )
+                                }
+                            },
+                            onFailure = {
+                                _uiState.update {
+                                    it.copy(
+                                        isError = true,
+                                        isFetching = false,
+                                        canRequestMoreNotices = false
+                                    )
+                                }
+                            }
+                        )
                     }
-                )
+                }
+                FetchingSource.LOCAL -> {
+                    fetchBookmarkByKeyword(
+                        uiState.value.searchKeyword,
+                        20,
+                        uiState.value.localFetchResult.size / 20 + 1
+                    ).collectLatest { result ->
+                        result.fold(
+                            onSuccess = { vo ->
+                                _uiState.update {
+                                    it.copy(
+                                        localFetchResult = it.localFetchResult.toMutableList().apply {
+                                            addAll(vo)
+                                        }.toList(),
+                                        isError = false,
+                                        isFetching = false,
+                                        canRequestMoreNotices = vo.size == 20
+                                    )
+                                }
+                            },
+                            onFailure = {
+                                _uiState.update {
+                                    it.copy(
+                                        isError = true,
+                                        isFetching = false,
+                                        canRequestMoreNotices = false
+                                    )
+                                }
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -71,35 +110,81 @@ class NoticeSearchViewModel @Inject constructor(
         _uiState.update {
             it.copy(
                 fetchResult = emptyList(),
+                localFetchResult = emptyList(),
                 isFetching = true
             )
         }
 
         viewModelScope.launch {
-            fetchNoticesByKeyword(keyword, null)
-                .collectLatest { result ->
-                    result.fold(
-                        onSuccess = { vo ->
-                            _uiState.update {
-                                it.copy(
-                                    fetchResult = vo,
-                                    isError = false,
-                                    isFetching = false,
-                                    canRequestMoreNotices = vo.size == 20
-                                )
-                            }
-                        },
-                        onFailure = {
-                            _uiState.update {
-                                it.copy(
-                                    isError = true,
-                                    isFetching = false,
-                                    canRequestMoreNotices = false
-                                )
-                            }
+            when (uiState.value.fetchingSource) {
+                FetchingSource.REMOTE -> {
+                    fetchNoticesByKeyword(keyword, null)
+                        .collectLatest { result ->
+                            result.fold(
+                                onSuccess = { vo ->
+                                    _uiState.update {
+                                        it.copy(
+                                            fetchResult = vo,
+                                            isError = false,
+                                            isFetching = false,
+                                            canRequestMoreNotices = vo.size == 20
+                                        )
+                                    }
+                                },
+                                onFailure = {
+                                    _uiState.update {
+                                        it.copy(
+                                            isError = true,
+                                            isFetching = false,
+                                            canRequestMoreNotices = false
+                                        )
+                                    }
+                                }
+                            )
                         }
-                    )
                 }
+                FetchingSource.LOCAL -> {
+                    fetchBookmarkByKeyword(keyword, 20, 0)
+                        .collectLatest { result ->
+                            result.fold(
+                                onSuccess =  { vo ->
+                                    Log.d("NoticeSearchViewModel", "Received Local Search Result: ${vo.size}")
+                                    vo.forEach { Log.d("NoticeSearchViewModel", it.toString()) }
+                                    _uiState.update {
+                                        it.copy(
+                                            localFetchResult = vo,
+                                            isError = false,
+                                            isFetching = false,
+                                            canRequestMoreNotices = vo.size == 20
+                                        )
+                                    }
+                                },
+                                onFailure = {
+                                    _uiState.update {
+                                        it.copy(
+                                            isError = true,
+                                            isFetching = false,
+                                            canRequestMoreNotices = false
+                                        )
+                                    }
+                                }
+                            )
+                        }
+                }
+            }
+        }.invokeOnCompletion {
+            _uiState.update {
+                it.copy(
+                    isSearchResultEmpty = isSearchResultEmpty()
+                )
+            }
+        }
+    }
+
+    fun isSearchResultEmpty(): Boolean {
+        return when (uiState.value.fetchingSource) {
+            FetchingSource.REMOTE -> uiState.value.fetchResult.isEmpty()
+            FetchingSource.LOCAL -> uiState.value.localFetchResult.isEmpty()
         }
     }
 
@@ -130,12 +215,29 @@ class NoticeSearchViewModel @Inject constructor(
         }
     }
 
+    fun updateSourceStatus(index: Int) {
+        _uiState.update {
+            it.copy(
+                fetchingSource = FetchingSource.entries[index],
+                isError = false,
+                isFetching = false,
+                canRequestMoreNotices = true
+            )
+        }
+        searchNoticeUsingKeyword(uiState.value.searchKeyword)
+    }
+
 }
 
 data class NoticeSearchState(
     val searchKeyword: String = "",
+    val fetchingSource: FetchingSource = FetchingSource.REMOTE,
     val isError: Boolean = false,
     val isFetching: Boolean = false,
+    val isSearchResultEmpty: Boolean = false,
     val canRequestMoreNotices: Boolean = true,
-    val fetchResult: List<NoticeVO> = emptyList()
+    val fetchResult: List<NoticeVO> = emptyList(),
+    val localFetchResult: List<BookmarkAsListElementVO> = emptyList()
 )
+
+enum class FetchingSource { REMOTE, LOCAL }
