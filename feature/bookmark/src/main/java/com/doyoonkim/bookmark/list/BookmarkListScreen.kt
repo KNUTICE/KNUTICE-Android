@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -47,7 +46,6 @@ import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
-import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
@@ -89,7 +87,9 @@ fun BookmarkListScreen(
                     menuContentColor = MaterialTheme.colorScheme.title,
                     menuOptions = listOf(
                         stringResource(R.string.text_newest),
-                        stringResource(R.string.text_oldest)
+                        stringResource(R.string.text_oldest),
+                        stringResource(R.string.text_updated_newest),
+                        stringResource(R.string.text_updated_oldest)
                     ),
                     onMenuSelected = { index ->
                         if (uiState.bookmarks.isNotEmpty()) {
