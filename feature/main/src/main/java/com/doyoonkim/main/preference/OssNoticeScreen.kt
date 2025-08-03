@@ -13,6 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
@@ -33,7 +34,7 @@ fun OssNoticeScreen(
                 onBackPressed = onBackPressed
             )
         },
-        containerColor = MaterialTheme.colorScheme.displayBackground
+        containerColor = Color.White
     ) { innerPadding ->
         AndroidView(
             modifier = modifier.fillMaxSize().padding(innerPadding),
