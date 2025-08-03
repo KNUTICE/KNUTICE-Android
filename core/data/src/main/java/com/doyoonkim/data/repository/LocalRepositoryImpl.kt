@@ -150,17 +150,27 @@ class LocalRepositoryImpl @Inject constructor(
     }
 
     override fun createBookmarkFts(ftsEntry: BookmarkFtsVO) = flow {
+        Log.d("LocalRepositoryImpl", "Create FTS entry using ${ftsEntry.toString()}")
         runCatching {
             localDao.createBookmarkFts(
-                id = ftsEntry.ftsId,
-                notes = ftsEntry.bookmarkNote,
-                title = ftsEntry.noticeTitle,
-                notesTokenized = ftsEntry.bookmarkNoteTokenized,
-                titleTokenized = ftsEntry.noticeTitleTokenized
+                with(ftsEntry) {
+                    BookmarkFts(
+                        id = ftsId,
+                        bookmarkNotes = bookmarkNote,
+                        noticeTitle = noticeTitle,
+                        bookmarkNoteTokenized = bookmarkNoteTokenized,
+                        noticeTitleTokenized = noticeTitleTokenized
+                    )
+                }
             )
         }.fold(
-            onSuccess = { emit(true) },
-            onFailure = { emit(false) }
+            onSuccess = {
+                emit(true)
+                        },
+            onFailure = {
+                it.printLog()
+                emit(false)
+            }
         )
     }
 
