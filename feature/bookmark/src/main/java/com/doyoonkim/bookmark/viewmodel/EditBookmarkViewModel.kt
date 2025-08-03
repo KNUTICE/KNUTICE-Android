@@ -157,6 +157,11 @@ class EditBookmarkViewModel @Inject constructor(
     @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     fun submitBookmark() =
         viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isProcessing = true
+                )
+            }
             // Bookmark creation requires getting Notice Instance.
             val bookmark = uiState.value.run {
                 if (this.requireCreation) {
@@ -194,6 +199,7 @@ class EditBookmarkViewModel @Inject constructor(
                     }
                     _uiState.update {
                         it.copy(
+                            isProcessing = false,
                             isSuccessful = result,
                             isCompleted = true
                         )
@@ -204,6 +210,11 @@ class EditBookmarkViewModel @Inject constructor(
     @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     fun removeBookmark() {
         viewModelScope.launch {
+            _uiState.update {
+                it.copy(
+                    isProcessing = true
+                )
+            }
             val bookmark = uiState.value.run {
                 BookmarkVO(
                     bookmarkId = bookmarkId,
@@ -236,7 +247,8 @@ class EditBookmarkViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 requireCreation = true,
-                                isSuccessful = true,
+                                isProcessing = false,
+                                isSuccessful = result,
                                 isCompleted = true
                             )
                         }
@@ -261,6 +273,7 @@ data class EditBookmarkState(
     val targetNotice: NoticeVO? = null,
     val datePickerVisible: Boolean = false,
     val timePickerVisible: Boolean = false,
+    val isProcessing: Boolean = false,
     val isSuccessful: Boolean = false,
     val isCompleted: Boolean = false,
     val alarmPermissionStatus: Boolean = true

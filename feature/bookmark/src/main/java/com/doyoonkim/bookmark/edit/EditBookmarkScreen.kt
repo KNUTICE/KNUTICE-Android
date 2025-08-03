@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -42,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
@@ -57,6 +60,7 @@ import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
@@ -288,6 +292,26 @@ fun EditBookmarkScreen(
                             modifier = Modifier.padding(10.dp)
                         )
                     }
+                }
+            }
+        }
+
+        if (uiState.isProcessing) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .background(Color.Transparent)
+            ) {
+                Surface(
+                    modifier = Modifier.align(Alignment.Center)
+                        .background(Color.Transparent)
+                        .clip(RoundedCornerShape(20.dp)),
+                    color = MaterialTheme.colorScheme.onAnyBackground
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                            .padding(25.dp),
+                        color = MaterialTheme.colorScheme.variantPurple
+                    )
                 }
             }
         }
