@@ -15,6 +15,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
@@ -45,40 +47,42 @@ class ModifyBookmarkImpl @Inject constructor(
             /* Internal Error. Consume values, and never emit values. */
         }.flowOn(ioDispatcher)
 
-    // TODO: Need to be revised later. (Is NoticeVO really required)
     override fun createOrUpdate(bookmark: BookmarkVO, notice: NoticeVO?) = flow {
+        println("ModifyBookmarkImpl\t\tCreate: ${notice == null}")
         if (notice == null) {
+            println("ModifyBookmarkImpl\t\tQuery RemoteSource")
             // Need creation. Request notice instance from the remote source first.
-            remoteRepository.queryNoticeById(bookmark.targetNoticeNttId).transform { result ->
-                if (result != null) {
-                    emitAll(
-                        combine(
-                            bookmarkLocalRepository.createBookmark(bookmark, result),
-                            bookmarkLocalRepository.createBookmarkFts(
-                                generateBookmarkFtsEntry(bookmark, result)
-                            )
-                        ) { first, second ->
-                            first && second
-                        }
-                    )
+            val vo = remoteRepository.queryNoticeById(bookmark.targetNoticeNttId)
+                .firstOrNull()
+            vo?.let {
+                val bookmarkCreation = bookmarkLocalRepository.createBookmark(bookmark, vo)
+                    .first()
+
+                if (bookmarkCreation) {
+                    val savedBookmark = bookmarkLocalRepository.queryBookmarkByNttId(vo.nttId)
+                        .firstOrNull()
+
+                    savedBookmark?.let {
+                        val ftsCreation = bookmarkLocalRepository.createBookmarkFts(
+                            generateBookmarkFtsEntry(it, vo)
+                        ).first()
+
+                        emit(ftsCreation)
+                    } ?: emit(false)
+                } else {
+                    emit(false)
                 }
-                else emit(false)
-            }.catch {
-                /* Internal Error. Consume values, and never emit values. */
-            }.flowOn(ioDispatcher)
+            } ?: emit(false)
         } else {
-            emitAll(
-                combine(
-                    bookmarkLocalRepository.updateBookmark(bookmark),
-                    bookmarkLocalRepository.updateBookmarkFts(
-                        generateBookmarkFtsEntry(bookmark, notice)
-                    )
-                ) { first, second ->
-                    first && second
-                }
-            )
+            val updateBookmark = bookmarkLocalRepository.updateBookmark(bookmark)
+                .first()
+            val updateFts = bookmarkLocalRepository.updateBookmarkFts(
+                generateBookmarkFtsEntry(bookmark, notice)
+            ).first()
+
+            emit(updateBookmark && updateFts)
         }
-    }
+    }.catch { /* Internal Error */ }.flowOn(ioDispatcher)
 
     override fun delete(bookmark: BookmarkVO, notice: NoticeVO): Flow<Boolean> =
         bookmarkLocalRepository.requestBookmarkDeletion(bookmark).transform { result ->
