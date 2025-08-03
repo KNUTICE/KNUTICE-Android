@@ -25,24 +25,17 @@ android {
     namespace = "com.doyoonkim.knutice"
     compileSdk = 35
 
-    val properties = Properties().apply {
-        load(FileInputStream("${rootDir}/local.properties"))
-    }
-    val apiMigrated = properties["api_migrated"] ?: ""
-
     defaultConfig {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 31
         targetSdk = 35
-        versionCode = 26
-        versionName = "1.5.0"
+        versionCode = 27
+        versionName = "1.5.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
-
-        buildConfigField("String", "API_MIGRATED", "\"$apiMigrated\"")
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -58,6 +51,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        create("ExperimentalServerDebug") {
+            initWith(buildTypes["debug"])
         }
     }
     compileOptions {
@@ -93,8 +90,8 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
@@ -104,14 +101,24 @@ dependencies {
     implementation(libs.firebase.messaging.directboot)
     implementation(libs.androidx.junit.ktx)
     implementation(libs.protolite.well.known.types)
+    implementation(libs.firebase.analytics)
+
+    testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)        // Library to test coroutines in JUnit
+    testImplementation(libs.mockk)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.compose.ui.test)
+
+    androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.mockk.android)
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Dagger
     implementation(libs.dagger)
@@ -119,6 +126,11 @@ dependencies {
     implementation(libs.dagger.android.support)
     kapt(libs.dagger.compiler)
     kapt(libs.dagger.android.processor)
+
+    // Dagger for Android Test
+    androidTestImplementation(libs.dagger)
+    androidTestImplementation(libs.dagger.compiler)
+    kaptAndroidTest(libs.dagger.compiler)
 
     implementation(libs.kotlin.serialization)
 

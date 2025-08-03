@@ -2,16 +2,20 @@ package com.doyoonkim.main.tip
 
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.doyoonkim.common.R
-import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
 
@@ -38,15 +42,22 @@ fun TipDetailScreen(
                 onBackPressed = onBackPressed
             )
         },
-        containerColor = MaterialTheme.colorScheme.displayBackground
+        containerColor = Color.White
     ) { innerPadding ->
-        AndroidView(
-            modifier = modifier.fillMaxSize().padding(innerPadding),
-            factory = { context ->
-                WebView(context).apply {
-                    loadUrl(contentUrl)
+        Box(
+            modifier = Modifier.wrapContentSize()
+                .padding(horizontal = 10.dp)
+                .background(Color.Transparent),
+            contentAlignment = Alignment.Center
+        ) {
+            AndroidView(
+                modifier = modifier.fillMaxSize().padding(innerPadding),
+                factory = { context ->
+                    WebView(context).apply {
+                        loadUrl(contentUrl)
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }

@@ -22,7 +22,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
@@ -46,16 +45,10 @@ class PushNotificationHandler @Inject constructor(
     fun handleReceivedMessage(message: RemoteMessage) {
         // When the app is in background or killed, Data Payload would be delivered once the user
         // clicks the system tray.
-        Log.d(TAG, "Message data payload: ${message.notification}")
+        Log.d(TAG, "Notification payload: ${message.notification}")
+        Log.d(TAG, "Data payload: ${message.data}")
 
-        if (message.data.isNotEmpty()) {
-            Log.d(TAG, "Message Data Payload: ${message.data}")     // message.data: Map<String!, String!>
-
-            message.toPushNotification()
-
-            // Apply "Do not disturb" option. (Temporarily save the message and deliver after the core time is end.
-            // Use Local Database (Room?)
-        }
+        message.toPushNotification()
     }
 
     fun inactivateCoroutineScope() {
@@ -65,16 +58,36 @@ class PushNotificationHandler @Inject constructor(
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun RemoteMessage.toPushNotification() {
+        val notification = this@toPushNotification.notification
+        val data = this@toPushNotification.data
+
+        val notificationId = Random(System.currentTimeMillis().toInt()).nextInt()
+        // Utilize channel already created by FCM as default
+        val notificationBuilder = NotificationCompat.Builder(
+            context, context.getString(R.string.inapp_notification_channel_id)
+        ).apply {
+            setSmallIcon(R.mipmap.ic_launcher)
+            setContentTitle(notification?.title ?: context.getString(R.string.new_notice))
+            setContentText(notification?.body ?: context.getString(R.string.text_push_to_notice))
+            setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            setAutoCancel(true)
+        }
 
         // Create Pending Intent (For access push notification while the app is in foreground)
-        val nttId = this@toPushNotification.data["nttId"]
-        val url = this@toPushNotification.data["contentUrl"]
+        val nttId = data["nttId"]
+        val url = data["contentUrl"]
         val fabVisible = true
+
+        val uri = if (nttId != null && url != null) {
+            "knutice://service/noticeDetail/$nttId/${Uri.encode(url)}/$fabVisible".toUri()
+        } else {
+            "".toUri()
+        }
 
         // Deeplink featured by Jetpack Navigation won't work because notification payload consumes custom-defined deeplink intent using ACTION_VIEW
         val deeplinkIntent = Intent(
             Intent.ACTION_VIEW,
-            "knutice://service/noticeDetail/$nttId/${Uri.encode(url)}/$fabVisible".toUri()
+            uri
         ).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
@@ -86,17 +99,8 @@ class PushNotificationHandler @Inject constructor(
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notificationId = Random(System.currentTimeMillis().toInt()).nextInt()
-        // Utilize channel already created by FCM as default
-        val notificationBuilder = NotificationCompat.Builder(
-            context, context.getString(R.string.inapp_notification_channel_id)
-        ).apply {
-            setSmallIcon(R.mipmap.ic_launcher)
-            setContentTitle(context.getString(R.string.new_notice))
-            setContentText(context.getString(R.string.text_push_to_notice))
+        notificationBuilder.apply {
             setContentIntent(pendingIntent)
-            setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            setAutoCancel(true)
         }
 
         with(NotificationManagerCompat.from(context)) {
@@ -117,47 +121,33 @@ class PushNotificationHandler @Inject constructor(
             }
 
             coroutineScope.launch {
-                Log.d(TAG, "START FETCHING NOTICE")
-                nttId?.let {
-                    val notice = async {
-                        remoteRepository.queryNoticeById(it.toInt())
-                            .firstOrNull()
-                    }
-                    notice.await()?.let { vo ->
-                        Log.d(TAG, "RECEIVED ${vo.toString()}")
-                        notificationBuilder.apply {
-                            setContentTitle(localizedTitle(vo.noticeName))
-                            setContentText(vo.title)
-                        }
-
-                        vo.imageUrl?.let { url ->
-                            val bitmapImage = async {
-                                runCatching {
-                                    withTimeout(5000L) {
-                                        imageRepository.getImageByteArrayFromUrl(url)?.let { b ->
-                                            bitMapHandler.decodeByteArray(b)
-                                        }
-                                    }
+                Log.d(TAG, "START FETCHING IMAGE")
+                notification?.imageUrl?.let { uri ->
+                    val bitmapImage = async {
+                        runCatching {
+                            withTimeout(5000L) {
+                                imageRepository.getImageByteArrayFromUrl(uri.toString())?.let { b ->
+                                    bitMapHandler.decodeByteArray(b)
                                 }
                             }
-                            bitmapImage.await().fold(
-                                onSuccess = { result ->
-                                    result?.let {
-                                        notificationBuilder.apply {
-                                            setStyle(
-                                                NotificationCompat.BigPictureStyle()
-                                                    .bigPicture(it)
-                                            )
-                                        }
-                                    }
-                                },
-                                onFailure = {
-                                    Log.d(TAG, "Unable to receive image.\n" +
-                                            "REASON: ${it.stackTrace}")
-                                }
-                            )
                         }
                     }
+                    bitmapImage.await().fold(
+                        onSuccess = { result ->
+                            result?.let {
+                                notificationBuilder.apply {
+                                    setStyle(
+                                        NotificationCompat.BigPictureStyle()
+                                            .bigPicture(it)
+                                    )
+                                }
+                            }
+                        },
+                        onFailure = {
+                            Log.d(TAG, "Unable to receive image.\n" +
+                                    "REASON: ${it.stackTrace}")
+                        }
+                    )
                 }
             }.invokeOnCompletion { notify(notificationId, notificationBuilder.build()) }
 

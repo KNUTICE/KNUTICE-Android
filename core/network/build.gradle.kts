@@ -15,6 +15,7 @@ android {
         load(FileInputStream("${rootDir}/local.properties"))
     }
     val apiBaseLive = properties["api_migrated"] ?: ""
+    val apiBaseTest = properties["api_migrated_test"] ?: ""
 
     defaultConfig {
         minSdk = 30
@@ -32,6 +33,11 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        create("ExperimentalServerDebug") {
+            initWith(buildTypes["debug"])
+            buildConfigField("String", "API_LIVE", "\"$apiBaseTest\"")
         }
     }
     compileOptions {

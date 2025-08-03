@@ -30,19 +30,6 @@ class PushNotificationService : FirebaseMessagingService() {
 //        requestCurrentToken()
     }
 
-    // Fix problem: onMessageReceived is not being called when app is in background/cold-start
-    override fun handleIntent(intent: Intent?) {
-        // Manually remove notification payload (https://medium.com/@jms8732/background에서-onmessagereceived가-호출-안되는-현상에-관하여-7595df624d91)
-        val newIntent = intent?.apply {
-            val temp = extras?.apply {
-                remove(MessageNotificationKeys.ENABLE_NOTIFICATION)
-                remove("gcm.notification.e")
-            }
-            replaceExtras(temp)
-        }
-        super.handleIntent(newIntent)
-    }
-
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     override fun onMessageReceived(message: RemoteMessage) {
         (applicationContext as AppInjectorProvider).appInjector.inject(this)

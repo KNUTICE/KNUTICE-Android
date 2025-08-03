@@ -76,9 +76,13 @@ class LocalRepositoryImpl @Inject constructor(
 
     override fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption) = flow {
         runCatching {
-            when (option) {
-                SortOption.ASC_CREATION -> localDao.getBookmarkListSortedNewest(size, pageNumber)
-                SortOption.DES_CREATION -> localDao.getBookmarkListSortedOldest(size, pageNumber)
+            with (localDao) {
+                when (option) {
+                    SortOption.ASC_CREATION -> getBookmarkListSortedNewest(size, pageNumber)
+                    SortOption.DES_CREATION -> getBookmarkListSortedOldest(size, pageNumber)
+                    SortOption.ASC_UPDATED -> getBookmarkListSortedUpdatedNewest(size, pageNumber)
+                    SortOption.DESC_UPDATED -> getBookmarkListSortedUpdatedOldest(size, pageNumber)
+                }
             }
         }.onFailure { throw it }.fold(
             onSuccess = { dto ->

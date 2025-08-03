@@ -28,6 +28,9 @@ android {
                 "proguard-rules.pro"
             )
         }
+        create("ExperimentalServerDebug") {
+            initWith(buildTypes["debug"])
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11

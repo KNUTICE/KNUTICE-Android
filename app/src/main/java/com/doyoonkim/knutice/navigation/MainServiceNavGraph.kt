@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.navigation
 
 import android.net.Uri
+import android.os.Bundle
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -47,6 +48,7 @@ import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
 import com.doyoonkim.main.viewmodel.SettingsViewModel
 import com.doyoonkim.model.NoticeCategory
+import com.google.firebase.analytics.FirebaseAnalytics
 
 fun NavGraphBuilder.mainServiceNavGraph(
     navController: NavController,
@@ -56,7 +58,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
     onBookmarkServiceRequested: (BookmarkInfo) -> Unit,
     onExit: () -> Unit = {  }
 ) {
-
+    val analytics = appComponent.analytics()
 
     // ViewModels will be injected via ViewModelFactory
     composable(NavRoutes.Home.route) {
@@ -88,6 +90,11 @@ fun NavGraphBuilder.mainServiceNavGraph(
                 onNoticeDetailRequested(NoticeDetail(id, url))
             },
             onTipClicked = { category, url ->
+                analytics.logEvent("BROWSE_TIP", Bundle().apply {
+                    putString(FirebaseAnalytics.Param.ITEM_CATEGORY, category.name)
+                    putString(FirebaseAnalytics.Param.SOURCE, "HomeScreen")
+                    putString(FirebaseAnalytics.Param.DESTINATION, url)
+                })
                 navController.navigate("tipDetail/${category.name}/${Uri.encode(url)}")
             }
         )

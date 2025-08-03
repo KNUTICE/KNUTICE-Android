@@ -3,7 +3,6 @@ package com.doyoonkim.knutice
 import android.Manifest
 import android.app.AlarmManager
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -32,15 +31,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.theme.KNUTICETheme
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.common.navigation.DeeplinkHandler
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
@@ -48,7 +45,7 @@ import com.doyoonkim.knutice.di.components.DaggerSplashSceneComponent
 import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.main.splash.KnuticeSplashScreen
 import com.doyoonkim.main.viewmodel.SplashViewModel
-import com.doyoonkim.notification.local.NotificationAlarmScheduler
+import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.delay
 import javax.inject.Inject
 
@@ -65,6 +62,7 @@ class MainActivity : ComponentActivity() {
         val appComponent = (application as MainApplication).appComponent
         DaggerMainActivityComponent.factory().create(DefaultSystemService(appComponent))
             .inject(this)
+        val analytics = appComponent.analytics()
 
         super.onCreate(savedInstanceState)
         receivedIntent.value = intent
@@ -76,7 +74,7 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 navController = rememberNavController()
 
-                var lastProcessedIntent by remember { mutableStateOf<Int?>(receivedIntent.value.hashCode()) }
+                var lastProcessedIntent by remember { mutableStateOf<Int?>(null) }
                 var isDeeplinkInProcess by remember { mutableStateOf(false) }
 
                 var isPreProcessCompleted by remember { mutableStateOf(false) }
@@ -170,16 +168,25 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                LaunchedEffect(receivedIntent.value) {
-                    receivedIntent.value?.let { intent ->
-                        if (intent.hashCode() != lastProcessedIntent && isPreProcessCompleted) {
-                            isDeeplinkInProcess = true
-                            lastProcessedIntent = intent.hashCode()
+                LaunchedEffect(receivedIntent.value, isPreProcessCompleted) {
+                    if (isPreProcessCompleted) {
+                        receivedIntent.value?.let { intent ->
+                            if (intent.hashCode() != lastProcessedIntent) {
+                                isDeeplinkInProcess = true
+                                lastProcessedIntent = intent.hashCode()
 
-                            intent.data?.let { uri ->
-                                navController.navigate(uri.navDestination())
+                                DeeplinkHandler.processIntent(intent) { service, uri ->
+                                    // Analytics
+                                    analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
+                                        putString(FirebaseAnalytics.Param.CONTENT_TYPE, service)
+                                        putString(FirebaseAnalytics.Param.SOURCE, "PUSH")
+                                        putString(FirebaseAnalytics.Param.DESTINATION, uri)
+                                    })
+
+                                    navController.navigate(uri)
+                                }
+                                isDeeplinkInProcess = false
                             }
-                            isDeeplinkInProcess = false
                         }
                     }
                 }
@@ -193,14 +200,6 @@ class MainActivity : ComponentActivity() {
 
         Log.d("MainActivity", "Intent received onNewIntent: ${intent?.data}")
         receivedIntent.value = intent
-    }
-
-    private fun Uri.navDestination(): String {
-        return if (this.host != "service") {
-            NavRoutes.Home.route
-        } else {
-            this.encodedPath?.substring(1) ?: NavRoutes.Home.route
-        }
     }
 
     override fun onDestroy() {
