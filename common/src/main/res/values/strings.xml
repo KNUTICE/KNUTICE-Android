@@ -102,4 +102,6 @@
     <string name="error_submission_unavailable_description">Error occurred while processing your request.</string>
     <string name="employment_notification_channel_name">Career Notices</string>
     <string name="employment_notification_channel_descrption">Get push notification when new career notice is being posted.</string>
+    <string name="text_updated_newest">Newest Updated</string>
+    <string name="text_updated_oldest">Oldest Updated</string>
 </resources>

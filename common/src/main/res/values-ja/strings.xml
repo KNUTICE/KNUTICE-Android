@@ -91,4 +91,6 @@
     <string name="error_submission_unavailable_description">リクエストの処理中にエラーが発生しました。</string>
     <string name="employment_notification_channel_name">就職アラム</string>
     <string name="employment_notification_channel_descrption">新しい就職公知があればアラムを取りたい</string>
+    <string name="text_updated_newest">更新が新しい順</string>
+    <string name="text_updated_oldest">更新が古い順</string>
 </resources>
