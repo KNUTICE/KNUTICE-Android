@@ -9,6 +9,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.doyoonkim.data.model.Bookmark
 import com.doyoonkim.data.model.BookmarkAsListElement
+import com.doyoonkim.data.model.BookmarkFts
 import com.doyoonkim.data.model.BookmarkFtsTarget
 import com.doyoonkim.data.model.NoticeEntity
 
@@ -39,30 +40,8 @@ interface MainDatabaseDao {
     fun deleteNoticeEntity(target: NoticeEntity)
 
     // Fts
-    @Query("""
-        INSERT INTO 
-            BookmarkFts(
-                rowid,
-                bookmarkNotes,
-                noticeTitle,
-                bookmarkNoteTokenized,
-                noticeTitleTokenized
-            )
-        VALUES(
-            :id,
-            :notes,
-            :title,
-            :notesTokenized,
-            :titleTokenized
-        )
-    """)
-    fun createBookmarkFts(
-        id: Int,
-        notes: String,
-        title: String,
-        notesTokenized: String,
-        titleTokenized: String
-    )
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun createBookmarkFts(entry: BookmarkFts)
 
     @Query("""
         DELETE FROM BookmarkFts WHERE rowid = :ftsId
@@ -81,7 +60,7 @@ interface MainDatabaseDao {
         // would be used for updates.
         deleteBookmarkFts(id)
         createBookmarkFts(
-            id, notes, title, notesTokenized, titleTokenized
+            BookmarkFts(id, notes, title, notesTokenized, titleTokenized)
         )
     }
 
