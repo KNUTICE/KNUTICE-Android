@@ -41,6 +41,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.doyoonkim.bookmark.contract.BookmarkListEvent
+import com.doyoonkim.bookmark.contract.BookmarkListSideEffect
 import com.doyoonkim.bookmark.viewmodel.BookmarkListViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.R
@@ -69,8 +71,14 @@ fun BookmarkListScreen(
 
     BackHandler { onBackPressed() }
 
-    LaunchedEffect(uiState.isRequested) {
-        if (uiState.isRequested) viewModel.requestBookmarks(pageNumber = uiState.pageNumber)
+    LaunchedEffect(Unit) {
+        viewModel.uiSideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                is BookmarkListSideEffect.NavTo -> {
+                    onBookmarkSelected(sideEffect.dest)
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -92,9 +100,7 @@ fun BookmarkListScreen(
                         stringResource(R.string.text_updated_oldest)
                     ),
                     onMenuSelected = { index ->
-                        if (uiState.bookmarks.isNotEmpty()) {
-                            viewModel.updateSortOption(index)
-                        }
+                        viewModel.sendUiEvent(BookmarkListEvent.UpdateSortOption(index))
                     }
                 )
                 IconButton(
@@ -196,14 +202,8 @@ fun BookmarkListScreen(
                             },
                             noticeCategory = item.noticeCategory,
                             onItemClicked = {
-                                onBookmarkSelected(
-                                    item.run {
-                                        BookmarkInfo(
-                                            noticeId = this.noticeId,
-                                            noticeTitle = this.noticeTitle,
-                                            noticeInfo = this.noticeCategory
-                                        )
-                                    }
+                                viewModel.sendUiEvent(
+                                    BookmarkListEvent.RequestBookmarkDetail(index)
                                 )
                             }
                         )
@@ -222,7 +222,7 @@ fun BookmarkListScreen(
                                     trackColor = MaterialTheme.colorScheme.displayBackground
                                 )
                             }
-                            viewModel.updateBookmarkRequestStatus(true)
+                            viewModel.sendUiEvent(BookmarkListEvent.RequestMoreBookmark)
                         }
 
                     }

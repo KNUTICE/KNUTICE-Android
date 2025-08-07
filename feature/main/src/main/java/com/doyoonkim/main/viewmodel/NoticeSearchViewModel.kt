@@ -1,34 +1,53 @@
 package com.doyoonkim.main.viewmodel
 
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
-import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.main.contract.NoticeSearchEvent
+import com.doyoonkim.main.contract.NoticeSearchSideEffect
+import com.doyoonkim.main.contract.NoticeSearchState
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticeSearchViewModel @Inject constructor(
     private val fetchNoticesByKeyword: FetchNoticesByKeyword,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
-) : ViewModel() {
+) : BaseViewModel<NoticeSearchState, NoticeSearchEvent, NoticeSearchSideEffect>() {
+    override fun setInitialState(): NoticeSearchState = NoticeSearchState()
 
-    private var _uiState = MutableStateFlow(NoticeSearchState())
-    val uiState = _uiState.asStateFlow()
+    override fun handleEvent(event: NoticeSearchEvent) {
+        when (event) {
+            is NoticeSearchEvent.InitiateSearch -> {
+                searchNoticeUsingKeyword(event.keyword)
+            }
+            is NoticeSearchEvent.UpdateSearchKeyword -> {
+                updateSearchKeyword(event.value)
+            }
+            is NoticeSearchEvent.RequestMoreNotices -> {
+                fetchMoreNotices()
+            }
+            is NoticeSearchEvent.RequestNoticeDetail -> {
+                with (event) {
+                    sendSideEffect(
+                        NoticeSearchSideEffect.NavToNoticeDetail(id, url)
+                    )
+                }
+            }
+            is NoticeSearchEvent.GoBack -> sendSideEffect(NoticeSearchSideEffect.NavToBack)
+        }
+    }
 
-    fun fetchMoreNotices() {
-        _uiState.update {
+    private fun fetchMoreNotices() {
+        stateUpdate {
             it.copy(
                 isFetching = true
             )
@@ -41,7 +60,7 @@ class NoticeSearchViewModel @Inject constructor(
             ).collectLatest { result ->
                 result.fold(
                     onSuccess = { vo ->
-                        _uiState.update {
+                        stateUpdate {
                             it.copy(
                                 fetchResult = it.fetchResult.toMutableList().apply {
                                     addAll(vo)
@@ -53,7 +72,7 @@ class NoticeSearchViewModel @Inject constructor(
                         }
                     },
                     onFailure = {
-                        _uiState.update {
+                        stateUpdate {
                             it.copy(
                                 isError = true,
                                 isFetching = false,
@@ -68,7 +87,7 @@ class NoticeSearchViewModel @Inject constructor(
 
     // Need to have separate function for fetching notices when keyword changes and more notices requested.
     private fun searchNoticeUsingKeyword(keyword: String) {
-        _uiState.update {
+        stateUpdate {
             it.copy(
                 fetchResult = emptyList(),
                 isFetching = true
@@ -80,7 +99,7 @@ class NoticeSearchViewModel @Inject constructor(
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = { vo ->
-                            _uiState.update {
+                            stateUpdate {
                                 it.copy(
                                     fetchResult = vo,
                                     isError = false,
@@ -90,7 +109,7 @@ class NoticeSearchViewModel @Inject constructor(
                             }
                         },
                         onFailure = {
-                            _uiState.update {
+                            stateUpdate {
                                 it.copy(
                                     isError = true,
                                     isFetching = false,
@@ -110,11 +129,11 @@ class NoticeSearchViewModel @Inject constructor(
         .distinctUntilChanged()
         .filter { it.isNotBlank() }
         .collectLatest {
-            searchNoticeUsingKeyword(it)
+            sendUiEvent(NoticeSearchEvent.InitiateSearch(it))
         }
 
-    fun updateSearchKeyword(newKeyword: String) {
-        _uiState.update {
+    private fun updateSearchKeyword(newKeyword: String) {
+        stateUpdate {
             it.run {
                 if (fetchResult.isNotEmpty()) {
                     copy(
@@ -131,11 +150,3 @@ class NoticeSearchViewModel @Inject constructor(
     }
 
 }
-
-data class NoticeSearchState(
-    val searchKeyword: String = "",
-    val isError: Boolean = false,
-    val isFetching: Boolean = false,
-    val canRequestMoreNotices: Boolean = true,
-    val fetchResult: List<NoticeVO> = emptyList()
-)

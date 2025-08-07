@@ -51,6 +51,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.doyoonkim.bookmark.contract.BookmarkListSideEffect
+import com.doyoonkim.bookmark.contract.EditBookmarkEvent
+import com.doyoonkim.bookmark.contract.EditBookmarkSideEffect
 import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
 import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.navigation.BookmarkInfo
@@ -85,15 +88,22 @@ fun EditBookmarkScreen(
     val localFocusManager = LocalFocusManager.current
 
     BackHandler {
-        onBackPressed()
+        viewModel.sendUiEvent(EditBookmarkEvent.GoBack)
     }
 
     // Once per composition?
     LaunchedEffect(Unit) {
-        viewModel.apply {
-            createBookmarkInfo(bookmarkInfo)
-            getBookmarkByNoticeId(bookmarkInfo.noticeId)
-            getNoticeById(bookmarkInfo.noticeId)
+        viewModel.sendUiEvent(EditBookmarkEvent.GetBookmarkInformation(bookmarkInfo))
+
+        // Process Side Effect
+        viewModel.uiSideEffect.collect { effect ->
+            when (effect) {
+                is EditBookmarkSideEffect.NavToSelectedNotice -> {
+                    onNoticeSelected(effect.dest)
+                }
+                is EditBookmarkSideEffect.NavToBack -> onBackPressed()
+                is EditBookmarkSideEffect.ExitOnCompletion -> onCompleted()
+            }
         }
     }
 
@@ -101,7 +111,7 @@ fun EditBookmarkScreen(
         topBar = {
             TopAppBarWithBackButton(
                 titleText = stringResource(R.string.title_edit_bookmark),
-                onBackPressed = onBackPressed
+                onBackPressed = { viewModel.sendUiEvent(EditBookmarkEvent.GoBack) }
             )
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
@@ -124,7 +134,7 @@ fun EditBookmarkScreen(
                 )
             ) {
                 // Request Full Content
-                uiState.targetNotice?.let { onNoticeSelected(NoticeDetail(it.nttId, it.url, false)) }
+                viewModel.sendUiEvent(EditBookmarkEvent.RequestNoticeDetail)
             }
 
             Spacer(Modifier.height(30.dp))
@@ -149,7 +159,7 @@ fun EditBookmarkScreen(
                             checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
                             checkedThumbColor = Color.White
                         ),
-                        onCheckedChange = { viewModel.updateReminderOptions(requested = !uiState.isReminderRequested) }
+                        onCheckedChange = { viewModel.sendUiEvent(EditBookmarkEvent.UpdateReminderOption) }
                     )
                 }
 
@@ -182,12 +192,16 @@ fun EditBookmarkScreen(
                             DatePickerDialog(
                                 initialTime = uiState.timeForRemind
                             ) { year, month, day ->
-                                viewModel.updateDateInfo(year, month, day)
+                                viewModel.sendUiEvent(
+                                    EditBookmarkEvent.UpdateReminderDate(year, month, day)
+                                )
                             }
                             TimePickerDialog(
                                 initialTime = uiState.timeForRemind
                             ) { hour, min ->
-                                viewModel.updateTimeInfo(hour, min)
+                                viewModel.sendUiEvent(
+                                    EditBookmarkEvent.UpdateReminderTime(hour, min)
+                                )
                             }
                         }
                     }
@@ -217,7 +231,7 @@ fun EditBookmarkScreen(
                     placeholder = { Text(text = stringResource(R.string.placeholder_notes)) },
                     enabled = true,
                     onValueChange = {
-                        viewModel.updateBookmarkNotes(it)
+                        viewModel.sendUiEvent(EditBookmarkEvent.UpdateBookmarkNotes(it))
                     },
                     colors = TextFieldDefaults.colors(
                         focusedTextColor = MaterialTheme.colorScheme.title,
@@ -257,7 +271,7 @@ fun EditBookmarkScreen(
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
-                        viewModel.submitBookmark()
+                        viewModel.sendUiEvent(EditBookmarkEvent.SaveBookmark)
                     }
                 ) {
                     Text(
@@ -278,7 +292,7 @@ fun EditBookmarkScreen(
                             contentColor = Color.White
                         ),
                         onClick = {
-                            viewModel.removeBookmark()
+                            viewModel.sendUiEvent(EditBookmarkEvent.RemoveBookmark)
                         }
                     ) {
                         Text(
@@ -322,8 +336,7 @@ fun EditBookmarkScreen(
                         Spacer(modifier = Modifier.height(24.dp))
                         TextButton(
                             onClick = {
-                                if (uiState.isSuccessful) onCompleted()
-                                viewModel.updateCompletionStatus(false)     // Set false for completion status for marking a new transaction is ready to start.
+                                viewModel.sendUiEvent(EditBookmarkEvent.ValidateProcessResult)
                             },
                             modifier = Modifier.align(Alignment.End)
                         ) {

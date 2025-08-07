@@ -3,9 +3,13 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.domain.usecases.DatabaseSyncResult
 import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
+import com.doyoonkim.main.contract.SettingsEvent
+import com.doyoonkim.main.contract.SettingsSideEffect
+import com.doyoonkim.main.contract.SettingsState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -16,27 +20,47 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val appPreferences: AppPreferences,
     private val syncDataWithUpdateDatabase: SyncDataWithUpdateDatabase
-) : ViewModel() {
+) : BaseViewModel<SettingsState, SettingsEvent, SettingsSideEffect>() {
 
-    private var _uiState = MutableStateFlow(SettingsState())
-    val uiState = _uiState.asStateFlow()
+    override fun setInitialState(): SettingsState = SettingsState()
 
-    init {
-        if (appPreferences.isPartialFailedDuringDatabaseSync()) {
-            updateSyncNecessaryState(true)
+    override fun handleEvent(event: SettingsEvent) {
+        when (event) {
+            is SettingsEvent.CheckDatabaseSyncStatus -> {
+                if (appPreferences.isPartialFailedDuringDatabaseSync())
+                    updateSyncNecessaryState(true)
+            }
+            is SettingsEvent.RequestManualSync -> requestManualDatabaseSync()
+            is SettingsEvent.DismissSyncDialog -> dismissSyncDialog()
+            is SettingsEvent.RequestNotificationSettings -> {
+                sendSideEffect(SettingsSideEffect.NavToNotificationSettings)
+            }
+            is SettingsEvent.RequestCustomerService -> {
+                sendSideEffect(SettingsSideEffect.NavToCustomerService)
+            }
+            is SettingsEvent.RequestOssNotice -> {
+                sendSideEffect(SettingsSideEffect.NavToRequestOssNotice)
+            }
+            is SettingsEvent.GoBack -> {
+                sendSideEffect(
+                    SettingsSideEffect.NavToBack(
+                        uiState.value.databaseSyncResult.completed
+                    )
+                )
+            }
         }
     }
 
-    fun dismissSyncDialog() {
-        _uiState.update {
+    private fun dismissSyncDialog() {
+        stateUpdate {
             it.copy(
                 isSyncDialogVisible = false
             )
         }
     }
 
-    fun requestManualDatabaseSync() = viewModelScope.launch {
-        _uiState.update {
+    private fun requestManualDatabaseSync() = viewModelScope.launch {
+        stateUpdate {
             it.copy(
                 isSyncDialogVisible = true,
                 isSyncRequested = true
@@ -46,7 +70,7 @@ class SettingsViewModel @Inject constructor(
         syncDataWithUpdateDatabase.manualSync()
             .collectLatest { syncResult ->
                 appPreferences.setDatabaseSyncPartialFailedStatus(syncResult.withError)
-                _uiState.update {
+                stateUpdate {
                     it.copy(
                         isSyncRequested = false,
                         databaseSyncResult = syncResult
@@ -55,18 +79,10 @@ class SettingsViewModel @Inject constructor(
             }
     }
 
-    fun updateSyncNecessaryState(state: Boolean) =
-        _uiState.update {
+    private fun updateSyncNecessaryState(state: Boolean) =
+        stateUpdate {
             it.copy(
                 isSyncNecessary = state
             )
         }
-
 }
-
-data class SettingsState(
-    val isSyncDialogVisible: Boolean = false,
-    val isSyncNecessary: Boolean = false,
-    val isSyncRequested: Boolean = false,
-    val databaseSyncResult: DatabaseSyncResult = DatabaseSyncResult()
-)

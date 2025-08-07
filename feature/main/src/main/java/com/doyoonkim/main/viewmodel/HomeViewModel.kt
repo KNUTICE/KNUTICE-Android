@@ -1,32 +1,73 @@
 package com.doyoonkim.main.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.base.BaseViewModel
+import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.domain.usecases.FetchTips
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
-import com.doyoonkim.model.NoticeVO
-import com.doyoonkim.model.TipVO
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import com.doyoonkim.main.contract.HomeEvent
+import com.doyoonkim.main.contract.HomeSideEffect
+import com.doyoonkim.main.contract.HomeViewState
+import com.doyoonkim.model.NoticeCategory
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
     private val fetchTopThreeNotices: FetchTopThreeNotices,
     private val fetchTips: FetchTips
-) : ViewModel() {
+) : BaseViewModel<HomeViewState, HomeEvent, HomeSideEffect>() {
+    override fun setInitialState(): HomeViewState = HomeViewState()
 
-    private var _uiState = MutableStateFlow(HomeViewState())
-    val uiState = _uiState.asStateFlow()
+    override fun handleEvent(event: HomeEvent) {
+        when (event) {
+            is HomeEvent.RequestMainContents -> {
+                getTopThreeNotices()
+                getTips()
+            }
+            is HomeEvent.RequestNoticeDetail -> {
+                with (event) {
+                    sendSideEffect(
+                        HomeSideEffect.NavToNoticeDetail(id, url)
+                    )
+                }
+            }
+            is HomeEvent.RequestMore -> {
+                with (event.category) {
+                    sendSideEffect(
+                        HomeSideEffect.NavToMoreNoticeInCategory(
+                            when (this) {
+                                NoticeCategory.GENERAL_NEWS -> Destination.MORE_GENERAL
+                                NoticeCategory.ACADEMIC_NEWS -> Destination.MORE_ACADEMIC
+                                NoticeCategory.SCHOLARSHIP_NEWS -> Destination.MORE_SCHOLARSHIP
+                                NoticeCategory.EVENT_NEWS -> Destination.MORE_EVENT
+                                NoticeCategory.EMPLOYMENT_NEWS -> Destination.MORE_EMPLOYMENT
+                                else -> Destination.HOME
+                            }
+                        )
+                    )
+                }
+            }
+            is HomeEvent.RequestSettings -> {
+                sendSideEffect(HomeSideEffect.NavToSettings)
+            }
+            is HomeEvent.RequestTipDetail -> {
+                with (event) {
+                    sendSideEffect(HomeSideEffect.NavToTipDetail(category, url))
+                }
+            }
+            is HomeEvent.GoBack -> {
+                sendSideEffect(HomeSideEffect.NavToBack)
+            }
+        }
+    }
 
-    fun getTopThreeNotices() = viewModelScope.launch {
+    private fun getTopThreeNotices() = viewModelScope.launch {
         fetchTopThreeNotices()
             .collectLatest { result ->
                 result.fold(
                     onSuccess = { vo ->
-                        _uiState.update {
+                        stateUpdate {
                             it.copy(
                                 isLoading = false,
                                 isError = false,
@@ -39,7 +80,7 @@ class HomeViewModel @Inject constructor(
                         }
                     },
                     onFailure = {
-                        _uiState.update {
+                        stateUpdate {
                             it.copy(
                                 isLoading = false,
                                 isError = true
@@ -50,11 +91,11 @@ class HomeViewModel @Inject constructor(
             }
     }
 
-    fun getTips() = viewModelScope.launch {
+    private fun getTips() = viewModelScope.launch {
         fetchTips()
             .collectLatest { result ->
                 result.onSuccess { vo ->
-                    _uiState.update {
+                    stateUpdate {
                         it.copy(
                             tips = vo
                         )
@@ -63,14 +104,3 @@ class HomeViewModel @Inject constructor(
             }
     }
 }
-
-data class HomeViewState(
-    val isLoading: Boolean = true,
-    val isError: Boolean = false,
-    val notificationGeneral: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
-    val notificationAcademic: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
-    val notificationScholarship: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
-    val notificationEvent: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
-    val notificationEmployment: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
-    val tips: List<TipVO> = emptyList()
-)

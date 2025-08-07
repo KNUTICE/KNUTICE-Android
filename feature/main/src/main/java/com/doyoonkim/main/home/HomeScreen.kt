@@ -52,7 +52,10 @@ import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.common.ui.TipContainer
 import com.doyoonkim.common.ui.TipPager
 import com.doyoonkim.common.ui.TopAppBarWithActions
+import com.doyoonkim.main.contract.HomeEvent
+import com.doyoonkim.main.contract.HomeSideEffect
 import com.doyoonkim.main.viewmodel.HomeViewModel
+import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
 
 @Composable
@@ -71,12 +74,37 @@ fun HomeScreen(
 
     // Back button/gesture actions
     BackHandler {
-        onGoBackAction()
+        viewModel.sendUiEvent(HomeEvent.GoBack)
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getTopThreeNotices()
-        viewModel.getTips()
+        viewModel.sendUiEvent(HomeEvent.RequestMainContents)
+
+        viewModel.uiSideEffect.collect { effect ->
+            when (effect) {
+                is HomeSideEffect.NavToNoticeDetail -> {
+                    with (effect) {
+                        onFullContentRequested(id, url)
+                    }
+                }
+                is HomeSideEffect.NavToMoreNoticeInCategory -> {
+                    with (effect) {
+                        onMoreNoticeRequested(dest)
+                    }
+                }
+                is HomeSideEffect.NavToTipDetail -> {
+                    with (effect) {
+                        onTipClicked(category,url)
+                    }
+                }
+                is HomeSideEffect.NavToSettings -> {
+                    onSettingsRequested()
+                }
+                is HomeSideEffect.NavToBack -> {
+                    onGoBackAction()
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -86,7 +114,7 @@ fun HomeScreen(
                 titleText = stringResource(R.string.app_name)
             ) {
                 IconButton(
-                    onClick = onSettingsRequested
+                    onClick = { viewModel.sendUiEvent(HomeEvent.RequestSettings) }
                 ) {
                     Image(
                         painter = painterResource(R.drawable.baseline_settings_24),
@@ -102,7 +130,9 @@ fun HomeScreen(
 
         if (uiState.isError) {
             PlaceholderScreen(
-                modifier = modifier.padding(innerPadding).padding(bottom = bottomPadding),
+                modifier = modifier
+                    .padding(innerPadding)
+                    .padding(bottom = bottomPadding),
                 imageResource = R.drawable.wifi,
                 contentText = stringResource(R.string.error_no_network_connection)
             )
@@ -116,12 +146,13 @@ fun HomeScreen(
                 if (uiState.tips.isNotEmpty()) {
                     item(key = "header") {
                         TipPager(
-                            modifier = Modifier.fillMaxWidth().height(50.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
                             tips = uiState.tips
                         ) {
-                            onTipClicked(
-                                TipCategory.UPDATES,
-                                it
+                            viewModel.sendUiEvent(
+                                HomeEvent.RequestTipDetail(TipCategory.UPDATES, it)
                             )
                         }
                     }
@@ -133,9 +164,13 @@ fun HomeScreen(
                         titleColor = MaterialTheme.colorScheme.notificationType1,
                         isContentLoading = uiState.isLoading,
                         contents = uiState.notificationGeneral,
-                        onMoreClicked = { onMoreNoticeRequested(Destination.MORE_GENERAL) }
+                        onMoreClicked = {
+                            viewModel.sendUiEvent(
+                                HomeEvent.RequestMore(NoticeCategory.GENERAL_NEWS)
+                            )
+                        }
                     ) {
-                        onFullContentRequested(it.nttId, it.url)
+                        viewModel.sendUiEvent(HomeEvent.RequestNoticeDetail(it.nttId, it.url))
                     }
                 }
 
@@ -145,9 +180,13 @@ fun HomeScreen(
                         titleColor = MaterialTheme.colorScheme.notificationType2,
                         isContentLoading = uiState.isLoading,
                         contents = uiState.notificationAcademic,
-                        onMoreClicked = { onMoreNoticeRequested(Destination.MORE_ACADEMIC) }
+                        onMoreClicked = {
+                            viewModel.sendUiEvent(
+                                HomeEvent.RequestMore(NoticeCategory.ACADEMIC_NEWS)
+                            )
+                        }
                     ) {
-                        onFullContentRequested(it.nttId, it.url)
+                        viewModel.sendUiEvent(HomeEvent.RequestNoticeDetail(it.nttId, it.url))
                     }
                 }
 
@@ -157,9 +196,13 @@ fun HomeScreen(
                         titleColor = MaterialTheme.colorScheme.notificationType3,
                         isContentLoading = uiState.isLoading,
                         contents = uiState.notificationScholarship,
-                        onMoreClicked = { onMoreNoticeRequested(Destination.MORE_SCHOLARSHIP) }
+                        onMoreClicked = {
+                            viewModel.sendUiEvent(
+                                HomeEvent.RequestMore(NoticeCategory.SCHOLARSHIP_NEWS)
+                            )
+                        }
                     ) {
-                        onFullContentRequested(it.nttId, it.url)
+                        viewModel.sendUiEvent(HomeEvent.RequestNoticeDetail(it.nttId, it.url))
                     }
                 }
 
@@ -169,9 +212,13 @@ fun HomeScreen(
                         titleColor = MaterialTheme.colorScheme.notificationType4,
                         isContentLoading = uiState.isLoading,
                         contents = uiState.notificationEvent,
-                        onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EVENT) }
+                        onMoreClicked = {
+                            viewModel.sendUiEvent(
+                                HomeEvent.RequestMore(NoticeCategory.EVENT_NEWS)
+                            )
+                        }
                     ) {
-                        onFullContentRequested(it.nttId, it.url)
+                        viewModel.sendUiEvent(HomeEvent.RequestNoticeDetail(it.nttId, it.url))
                     }
                 }
 
@@ -181,9 +228,13 @@ fun HomeScreen(
                         titleColor = MaterialTheme.colorScheme.notificationType5,
                         isContentLoading = uiState.isLoading,
                         contents = uiState.notificationEmployment,
-                        onMoreClicked = { onMoreNoticeRequested(Destination.MORE_EMPLOYMENT) }
+                        onMoreClicked = {
+                            viewModel.sendUiEvent(
+                                HomeEvent.RequestMore(NoticeCategory.EMPLOYMENT_NEWS)
+                            )
+                        }
                     ) {
-                        onFullContentRequested(it.nttId, it.url)
+                        viewModel.sendUiEvent(HomeEvent.RequestNoticeDetail(it.nttId, it.url))
                     }
                 }
 
@@ -206,18 +257,23 @@ fun NotificationPreviewList(
     onNoticeClicked: (NoticeVO) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(7.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            Modifier.fillMaxWidth().wrapContentHeight(),
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                modifier = Modifier.wrapContentHeight().weight(6f),
+                modifier = Modifier
+                    .wrapContentHeight()
+                    .weight(6f),
                 text = listTitle,
                 color = titleColor,
                 fontSize = 18.sp,
@@ -225,7 +281,9 @@ fun NotificationPreviewList(
             )
 
             TextButton(
-                modifier = Modifier.fillMaxWidth().weight(1f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
                 onClick = { onMoreClicked() },
                 contentPadding = PaddingValues(0.dp)
             ) {

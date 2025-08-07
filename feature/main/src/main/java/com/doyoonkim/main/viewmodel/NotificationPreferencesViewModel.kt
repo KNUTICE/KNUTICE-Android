@@ -1,10 +1,21 @@
 package com.doyoonkim.main.viewmodel
 
+import android.Manifest
+import android.app.NotificationManager
+import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.base.BaseViewModel
+import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
+import com.doyoonkim.main.R
+import com.doyoonkim.main.contract.NotificationPrefEvent
+import com.doyoonkim.main.contract.NotificationPrefSideEffect
+import com.doyoonkim.main.contract.NotificationPrefStatus
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import kotlinx.coroutines.CoroutineScope
@@ -20,11 +31,51 @@ import javax.inject.Inject
 
 class NotificationPreferencesViewModel @Inject constructor(
     private val submitNotificationPreferences: SubmitNotificationPreferences,
-    private val fetchTopicSubscriptionStatus: FetchTopicSubscriptionStatus
-) : ViewModel() {
+    private val fetchTopicSubscriptionStatus: FetchTopicSubscriptionStatus,
+    private val notificationManager: NotificationManager,
+    @ApplicationContext private val context: Context
+) : BaseViewModel<NotificationPrefStatus, NotificationPrefEvent, NotificationPrefSideEffect>() {
 
-    private var _uiState = MutableStateFlow(NotificationPreferencesState())
-    val uiState = _uiState.asStateFlow()
+    override fun setInitialState(): NotificationPrefStatus = NotificationPrefStatus()
+
+    override fun handleEvent(event: NotificationPrefEvent) {
+        when (event) {
+            is NotificationPrefEvent.CheckMainPermissionStatus -> {
+                checkMainPermissionStatus()
+            }
+            is NotificationPrefEvent.RequestSystemSettings -> {
+                sendSideEffect(NotificationPrefSideEffect.NavToSystemSettings)
+            }
+            is NotificationPrefEvent.RequestTopicSubscriptionStatus -> {
+                getTopicSubscriptionStatus()
+            }
+            is NotificationPrefEvent.UpdateSubscriptionStatus -> {
+                with (event) {
+                    updateChannelPreferenceState(index, value)
+                }
+            }
+            is NotificationPrefEvent.GoBack -> {
+                if (uiState.value.isSyncCompleted)
+                    sendSideEffect(NotificationPrefSideEffect.NavToBack)
+            }
+        }
+    }
+
+    // Check Main Notification Status
+    private fun checkMainPermissionStatus() {
+        val isNotificationAllowed = ContextCompat.checkSelfPermission(
+            context, Manifest.permission.POST_NOTIFICATIONS
+        ) == PackageManager.PERMISSION_GRANTED
+
+        val isChannelAllowed = notificationManager
+            .getNotificationChannel(
+                context.getString(com.doyoonkim.common.R.string.inapp_notification_channel_id)
+            ).importance > 0
+
+        updateMainNotificationPermissionStatus(
+            isNotificationAllowed && isChannelAllowed
+        )
+    }
 
     private val notificationChannels = hashMapOf(
         0 to NoticeCategory.GENERAL_NEWS,
@@ -34,15 +85,15 @@ class NotificationPreferencesViewModel @Inject constructor(
         4 to NoticeCategory.EMPLOYMENT_NEWS
     )
 
-    fun updateMainNotificationPermissionStatus(status: Boolean) =
-        _uiState.update {
+    private fun updateMainNotificationPermissionStatus(status: Boolean) =
+        stateUpdate {
             it.copy(
                 isMainNotificationPermissionGranted = status
             )
         }
 
-    fun updateChannelPreferenceState(index: Int, state: Boolean) {
-        _uiState.update {
+    private fun updateChannelPreferenceState(index: Int, state: Boolean) {
+        stateUpdate {
             it.copy(
                 isSyncCompleted = false
             )
@@ -59,14 +110,14 @@ class NotificationPreferencesViewModel @Inject constructor(
                     )
                 ).collectLatest { result ->
                     if (!result) {
-                        _uiState.update {
+                        stateUpdate {
                             it.copy(
                                 isSyncCompleted = true,
                                 isError = true
                             )
                         }
                     } else {
-                        _uiState.update {
+                        stateUpdate {
                             it.copy(
                                 isEachChannelAllowed = it.isEachChannelAllowed.updateValueByIndex(index, state),
                                 isSyncCompleted = true,
@@ -81,13 +132,13 @@ class NotificationPreferencesViewModel @Inject constructor(
         }
     }
 
-    fun getTopicSubscriptionStatus() =
+    private fun getTopicSubscriptionStatus() =
         viewModelScope.launch {
             fetchTopicSubscriptionStatus()
                 .collectLatest { result ->
                     result.fold(
                         onSuccess =  { status ->
-                            _uiState.update {
+                            stateUpdate {
                                 it.copy(
                                     isEachChannelAllowed = listOf(
                                         status.general,
@@ -102,7 +153,7 @@ class NotificationPreferencesViewModel @Inject constructor(
                             }
                         },
                         onFailure = {
-                            _uiState.update {
+                            stateUpdate {
                                 it.copy(
                                     isSyncCompleted = true,
                                     isError = true
@@ -118,12 +169,4 @@ class NotificationPreferencesViewModel @Inject constructor(
             if (it == index) value
             else this[it]
         }
-
 }
-
-data class NotificationPreferencesState(
-    val isMainNotificationPermissionGranted: Boolean = false,
-    val isEachChannelAllowed: List<Boolean> = listOf(false, false, false, false, false),
-    val isSyncCompleted: Boolean = false,
-    val isError: Boolean = false
-)

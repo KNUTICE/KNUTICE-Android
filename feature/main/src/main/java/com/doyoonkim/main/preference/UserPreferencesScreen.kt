@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,6 +53,8 @@ import com.doyoonkim.common.ui.RoundedCornerColumn
 import com.doyoonkim.common.ui.RoundedCornerColumnTextItem
 import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.main.contract.SettingsEvent
+import com.doyoonkim.main.contract.SettingsSideEffect
 import com.doyoonkim.main.viewmodel.SettingsViewModel
 
 @Composable
@@ -65,13 +68,33 @@ fun UserPreferenceScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    BackHandler { onBackPressed(uiState.databaseSyncResult.completed) }
+    BackHandler { viewModel.sendUiEvent(SettingsEvent.GoBack) }
+
+    LaunchedEffect(Unit) {
+        viewModel.sendUiEvent(SettingsEvent.CheckDatabaseSyncStatus)
+        viewModel.uiSideEffect.collect { effect ->
+            when (effect) {
+                is SettingsSideEffect.NavToNotificationSettings -> {
+                    onNotificationPreferenceClicked()
+                }
+                is SettingsSideEffect.NavToCustomerService -> {
+                    onCustomerServiceClicked()
+                }
+                is SettingsSideEffect.NavToRequestOssNotice -> {
+                    onOssClicked()
+                }
+                is SettingsSideEffect.NavToBack -> {
+                    onBackPressed(effect.status)
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
             TopAppBarWithBackButton(
                 titleText = stringResource(R.string.title_preference),
-                onBackPressed = { onBackPressed(uiState.databaseSyncResult.completed) }
+                onBackPressed = { viewModel.sendUiEvent(SettingsEvent.GoBack) }
             )
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
@@ -80,7 +103,8 @@ fun UserPreferenceScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             Column(
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
                     .padding(innerPadding),
                 verticalArrangement = Arrangement.spacedBy(30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -100,7 +124,9 @@ fun UserPreferenceScreen(
                             modifier = Modifier.weight(1f),
                             containerColor = MaterialTheme.colorScheme.buttonOnBackground,
                             contentColor = MaterialTheme.colorScheme.subTitle,
-                            onClick = onNotificationPreferenceClicked
+                            onClick = {
+                                viewModel.sendUiEvent(SettingsEvent.RequestNotificationSettings)
+                            }
                         )
                     }
                 }
@@ -120,7 +146,9 @@ fun UserPreferenceScreen(
                             modifier = Modifier.weight(1f),
                             containerColor = MaterialTheme.colorScheme.buttonOnBackground,
                             contentColor = MaterialTheme.colorScheme.subTitle,
-                            onClick = onCustomerServiceClicked
+                            onClick = {
+                                viewModel.sendUiEvent(SettingsEvent.RequestCustomerService)
+                            }
                         )
                     }
                 }
@@ -149,7 +177,9 @@ fun UserPreferenceScreen(
                             modifier = Modifier.weight(1f),
                             containerColor = MaterialTheme.colorScheme.buttonOnBackground,
                             contentColor = MaterialTheme.colorScheme.subTitle,
-                            onClick = onOssClicked
+                            onClick = {
+                                viewModel.sendUiEvent(SettingsEvent.RequestOssNotice)
+                            }
                         )
                     }
 
@@ -162,7 +192,7 @@ fun UserPreferenceScreen(
                         hasBottomDivider = false
                     ) {
                         IconButton(
-                            onClick = { viewModel.requestManualDatabaseSync() },
+                            onClick = { viewModel.sendUiEvent(SettingsEvent.RequestManualSync) },
                             modifier = modifier
                                 .wrapContentSize()
                                 .clip(CircleShape),
@@ -188,13 +218,15 @@ fun UserPreferenceScreen(
                     )
                 ) {
                     Surface(
-                        modifier = Modifier.wrapContentSize()
+                        modifier = Modifier
+                            .wrapContentSize()
                             .background(Color.Transparent),
                         color = MaterialTheme.colorScheme.onAnyBackground,
                         shape = RoundedCornerShape(15.dp)
                     ) {
                         Column(
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(20.dp)
                                 .wrapContentHeight(),
                             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -228,8 +260,10 @@ fun UserPreferenceScreen(
 
                             TextButton(
                                 enabled = !uiState.isSyncRequested,
-                                onClick = { viewModel.dismissSyncDialog() },
-                                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                                onClick = { viewModel.sendUiEvent(SettingsEvent.DismissSyncDialog) },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
                                 colors = ButtonDefaults.buttonColors().copy(
                                     containerColor = MaterialTheme.colorScheme.variantPurple,
                                     contentColor = MaterialTheme.colorScheme.title,
