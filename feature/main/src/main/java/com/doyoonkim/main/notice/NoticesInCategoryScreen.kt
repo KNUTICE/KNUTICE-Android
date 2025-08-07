@@ -33,6 +33,8 @@ import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.main.contract.NoticesInCategoryEvent
+import com.doyoonkim.main.contract.NoticesInCategorySideEffect
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.model.NoticeCategory
 
@@ -55,25 +57,42 @@ fun NoticesInCategoryScreen(
         else -> R.string.app_name
     }
     // Back Handler
-    BackHandler { onBackButtonPressed() }
+    BackHandler { viewModel.sendUiEvent(NoticesInCategoryEvent.GoBack) }
 
      // Pull-to-Refresh
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isRefreshRequested,
-        onRefresh = { viewModel.requestRefresh() }
+        onRefresh = {
+            viewModel.run {
+                sendUiEvent(NoticesInCategoryEvent.RequestRefresh)
+                sendUiEvent(NoticesInCategoryEvent.RequestNotices(category))
+            }
+        }
     )
 
     // Fetching notification on entry
-    LaunchedEffect(uiState.isNoticesRequested, uiState.isRefreshRequested) {
-        if (uiState.isRefreshRequested || uiState.isNoticesRequested)
-            viewModel.getNoticesPerPageInCategory(category)
+    LaunchedEffect(Unit) {
+        viewModel.sendUiEvent(NoticesInCategoryEvent.RequestNotices(category))
+
+        viewModel.uiSideEffect.collect { effect ->
+            when (effect) {
+                is NoticesInCategorySideEffect.NavToNoticeDetail -> {
+                    with (effect) {
+                        onNoticeSelected(id, url)
+                    }
+                }
+                is NoticesInCategorySideEffect.NavToBack -> onBackButtonPressed()
+            }
+        }
     }
 
     Scaffold(
         topBar = {
             TopAppBarWithBackButton(
                 titleText = stringResource(scaffoldTitle),
-                onBackPressed = onBackButtonPressed
+                onBackPressed = {
+                    viewModel.sendUiEvent(NoticesInCategoryEvent.GoBack)
+                }
             )
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
@@ -86,18 +105,21 @@ fun NoticesInCategoryScreen(
             )
         } else {
             Box(
-                modifier = modifier.fillMaxWidth()
+                modifier = modifier
+                    .fillMaxWidth()
                     .padding(innerPadding)
                     .pullRefresh(pullRefreshState)
             ) {
                 LazyColumn(
-                    Modifier.fillMaxWidth().wrapContentHeight(),
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
                     verticalArrangement = Arrangement.spacedBy(5.dp),
                     userScrollEnabled = true
                 ) {
                     items(uiState.notices.size) { index ->
                         if (index == uiState.notices.size - 1 && !uiState.isError) {
-                            viewModel.requestMoreNotices()
+                            viewModel.sendUiEvent(NoticesInCategoryEvent.RequestNotices(category))
                         }
 
                         if (index != 0) {
@@ -109,10 +131,14 @@ fun NoticesInCategoryScreen(
                         }
                         val notice = uiState.notices[index]
                         Row(
-                            modifier = Modifier.wrapContentSize()
+                            modifier = Modifier
+                                .wrapContentSize()
                                 .clickable {
-                                    if (!uiState.isLoading)
-                                        onNoticeSelected(notice.nttId, notice.url)
+                                    viewModel.sendUiEvent(
+                                        NoticesInCategoryEvent.RequestNoticeDetail(
+                                            notice.nttId, notice.url
+                                        )
+                                    )
                                 }
                         ) {
                             NotificationPreview(
@@ -128,7 +154,9 @@ fun NoticesInCategoryScreen(
                     if (uiState.isNoticesRequested) {
                         item {
                             Row(
-                                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .wrapContentHeight(),
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.Center
                             ) {
@@ -142,7 +170,8 @@ fun NoticesInCategoryScreen(
                     }
                 }
                 PullRefreshIndicator(
-                    modifier = Modifier.align(Alignment.TopCenter)
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
                         .padding(top = 10.dp),
                     refreshing = uiState.isRefreshRequested,
                     state = pullRefreshState

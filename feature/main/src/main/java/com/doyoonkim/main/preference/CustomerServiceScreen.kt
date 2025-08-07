@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,6 +49,8 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.main.contract.CustomerServiceEvent
+import com.doyoonkim.main.contract.CustomerServiceSideEffect
 
 @Composable
 fun CustomerServiceScreen(
@@ -61,15 +64,23 @@ fun CustomerServiceScreen(
     val adjustImePadding = Modifier.consumeWindowInsets(WindowInsets.ime).imePadding()
     val localFocusManager = LocalFocusManager.current
 
-    BackHandler {
-        onBackPressed()
+    BackHandler { viewModel.sendUiEvent(CustomerServiceEvent.GoBack) }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiSideEffect.collect { effect ->
+            when (effect) {
+                is CustomerServiceSideEffect.NavToBack -> onBackPressed()
+            }
+        }
     }
 
     Scaffold(
         topBar = {
             TopAppBarWithBackButton(
                 titleText = stringResource(R.string.title_customer_service),
-                onBackPressed = onBackPressed
+                onBackPressed = {
+                    viewModel.sendUiEvent(CustomerServiceEvent.GoBack)
+                }
             )
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
@@ -113,7 +124,7 @@ fun CustomerServiceScreen(
                         placeholder = { Text(stringResource(R.string.placeholder_customer_report)) },
                         enabled = !uiState.isSubmissionCompleted,
                         onValueChange = {
-                            viewModel.updateUserReportContent(it)
+                            viewModel.sendUiEvent(CustomerServiceEvent.UpdateUserReport(it))
                         },
                         colors = TextFieldDefaults.colors(
                             focusedTextColor = MaterialTheme.colorScheme.title,
@@ -150,7 +161,9 @@ fun CustomerServiceScreen(
                         containerColor = MaterialTheme.colorScheme.variantPurple,
                         contentColor = Color.White,
                     ),
-                    onClick = { viewModel.submitUserReport(versionInfo) }
+                    onClick = {
+                        viewModel.sendUiEvent(CustomerServiceEvent.SubmitUserReport(versionInfo))
+                    }
                 ) {
                     Text(
                         text = stringResource(R.string.btn_submit),
@@ -192,7 +205,11 @@ fun CustomerServiceScreen(
                                 )
                             )
                             Button(
-                                onClick = { viewModel.resetSubmissionStatus() },
+                                onClick = {
+                                    viewModel.sendUiEvent(
+                                        CustomerServiceEvent.ResetSubmissionStatus
+                                    )
+                                },
                                 modifier = Modifier.fillMaxWidth()
                             ) {
                                 Text(

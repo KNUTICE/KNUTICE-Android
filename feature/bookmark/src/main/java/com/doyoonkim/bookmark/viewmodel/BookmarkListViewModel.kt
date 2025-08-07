@@ -1,40 +1,66 @@
 package com.doyoonkim.bookmark.viewmodel
 
 import com.doyoonkim.domain.SortOption
-import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.bookmark.contract.BookmarkListEvent
+import com.doyoonkim.bookmark.contract.BookmarkListSideEffect
+import com.doyoonkim.bookmark.contract.BookmarkListState
+import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
-import com.doyoonkim.model.BookmarkAsListElementVO
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BookmarkListViewModel @Inject constructor(
     private val appPreferences: AppPreferences,
     private val fetchAllBookmarks: FetchAllBookmarks
-) : ViewModel() {
-
-    private var _uiState = MutableStateFlow(BookmarkListState())
-    val uiState = _uiState.asStateFlow()
+) : BaseViewModel<BookmarkListState, BookmarkListEvent, BookmarkListSideEffect>() {
 
     init {
-        if (appPreferences.isPartialFailedDuringDatabaseSync()) {
-            _uiState.update {
-                it.copy(
-                    isSyncRequired = true
-                )
+        // Preprocessing
+        sendUiEvent(BookmarkListEvent.CheckSyncStatus)
+        sendUiEvent(BookmarkListEvent.RequestBookmark)
+    }
+
+    override fun setInitialState(): BookmarkListState {
+        return BookmarkListState()
+    }
+
+    override fun handleEvent(event: BookmarkListEvent) {
+        when (event) {
+            is BookmarkListEvent.CheckSyncStatus -> {
+                if (appPreferences.isPartialFailedDuringDatabaseSync()) {
+                    stateUpdate {
+                        it.copy(isSyncRequired = true)
+                    }
+                }
+            }
+            is BookmarkListEvent.RequestBookmark -> requestBookmarks()
+            is BookmarkListEvent.RequestMoreBookmark -> requestBookmarks()
+            is BookmarkListEvent.RequestBookmarkDetail -> {
+                val dest = uiState.value.bookmarks[event.index].run {
+                    BookmarkInfo(
+                        noticeId = this.noticeId,
+                        noticeTitle = this.noticeTitle,
+                        noticeInfo = this.noticeCategory
+                    )
+                }
+                sendSideEffect(BookmarkListSideEffect.NavTo(dest))
+            }
+            is BookmarkListEvent.UpdateSortOption -> {
+                if (uiState.value.bookmarks.isNotEmpty()) {
+                    updateSortOption(event.option)
+                    requestBookmarks()
+                }
             }
         }
     }
 
 
-    fun requestBookmarks(
+    private fun requestBookmarks(
         size: Int = 20,
         pageNumber: Int = 0
     ) {
@@ -43,12 +69,12 @@ class BookmarkListViewModel @Inject constructor(
 
             fetchAllBookmarks(
                 size = size,
-                pageNumber = pageNumber,
+                pageNumber = uiState.value.pageNumber,
                 option = uiState.value.sortOption
             ).collectLatest { result ->
                     result.fold(
                         onSuccess = { vo ->
-                            _uiState.update {
+                            stateUpdate {
                                 it.copy(
                                     bookmarks = it.bookmarks.toMutableList().apply {
                                         this.addAll(vo)
@@ -67,34 +93,17 @@ class BookmarkListViewModel @Inject constructor(
         }
     }
 
-    fun updateBookmarkRequestStatus(status: Boolean) =
-        _uiState.update {
-            it.copy(
-                isRequested = status
-            )
-        }
-
 
     private fun updateFetchingStatus(status: Boolean) =
-        _uiState.update {
+        stateUpdate {
             it.copy(
                 isFetchingCompleted = status
             )
         }
 
-    private fun updateStateOnFetchComplete(pageNumber: Int, isReachEnd: Boolean) =
-        _uiState.update {
-            it.copy(
-                isFetchingCompleted = true,
-                pageNumber = pageNumber,
-                isReachEnd = isReachEnd,
-                isRequested = false
-            )
-        }
-
-    fun updateSortOption(index: Int) {
+    private fun updateSortOption(index: Int) {
         // When sort option is changed -> Fetch bookmark again from page 0.
-        _uiState.update {
+        stateUpdate {
             it.copy(
                 sortOption = SortOption.entries[index],
                 bookmarks = emptyList(),
@@ -103,16 +112,4 @@ class BookmarkListViewModel @Inject constructor(
             )
         }
     }
-
 }
-
-data class BookmarkListState(
-    val bookmarks: List<BookmarkAsListElementVO> = emptyList(),
-    val isRefreshing: Boolean = false,
-    val isRequested: Boolean = true,
-    val isFetchingCompleted: Boolean = true,
-    val sortOption: SortOption = SortOption.DES_CREATION,
-    val pageNumber: Int = 0,
-    val isReachEnd: Boolean = false,
-    val isSyncRequired: Boolean = false
-)

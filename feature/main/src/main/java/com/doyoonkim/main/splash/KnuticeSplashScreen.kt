@@ -39,9 +39,10 @@ import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
-import com.doyoonkim.main.viewmodel.SplashStage
+import com.doyoonkim.main.contract.SplashEvent
+import com.doyoonkim.main.contract.SplashSideEffect
+import com.doyoonkim.main.contract.SyncStatus
 import com.doyoonkim.main.viewmodel.SplashViewModel
-import com.doyoonkim.main.viewmodel.SyncStatus
 
 @Composable
 fun KnuticeSplashScreen(
@@ -52,95 +53,88 @@ fun KnuticeSplashScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.startPreprocess()
-    }
-
-    LaunchedEffect(uiState.splashStage) {
-        Log.d("SplashScreen", "Splash Stage: ${uiState.splashStage}")
-        when (uiState.splashStage) {
-            SplashStage.LOADING -> {
-
-            }
-            SplashStage.DISMISS -> {
-                onPreProcessCompleted(true)
-            }
-            SplashStage.DISMISS_WITH_ERROR -> {
-                onPreProcessCompleted(false)
+        viewModel.sendUiEvent(SplashEvent.InitiatePreprocess)
+        viewModel.uiSideEffect.collect { effect ->
+            when (effect) {
+                is SplashSideEffect.Dismiss -> {
+                    onPreProcessCompleted(true)
+                }
+                is SplashSideEffect.DismissWithError -> {
+                    onPreProcessCompleted(false)
+                }
             }
         }
     }
 
-    if(uiState.splashStage == SplashStage.LOADING) {
+    Column(
+        modifier = modifier.fillMaxSize()
+            .background(MaterialTheme.colorScheme.displayBackground),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Column(
-            modifier = modifier.fillMaxSize()
-                .background(MaterialTheme.colorScheme.displayBackground),
-            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.wrapContentSize().weight(6f),
+            verticalArrangement = Arrangement.spacedBy(50.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Column(
-                modifier = Modifier.wrapContentSize().weight(6f),
-                verticalArrangement = Arrangement.spacedBy(50.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Image(
-                    painter = painterResource(R.drawable.knutice_icon_splash),
-                    contentDescription = "App Icon",
-                    contentScale = ContentScale.FillBounds,
-                    modifier = Modifier
-                        .size(128.dp)
-                )
+            Image(
+                painter = painterResource(R.drawable.knutice_icon_splash),
+                contentDescription = "App Icon",
+                contentScale = ContentScale.FillBounds,
+                modifier = Modifier
+                    .size(128.dp)
+            )
 
-                Text(
-                    text = stringResource(R.string.app_name),
-                    fontSize = 24.sp,
-                    fontWeight = FontWeight.ExtraBold,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.subTitle,
+            Text(
+                text = stringResource(R.string.app_name),
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.subTitle,
+                modifier = Modifier.fillMaxWidth()
+                    .wrapContentHeight()
+            )
+        }
+
+        Box(
+            modifier = Modifier.fillMaxWidth().weight(5f, fill = false)
+        ) {
+            if (uiState.syncStatus == SyncStatus.PROCESSING) {
+                Column(
                     modifier = Modifier.fillMaxWidth()
-                        .wrapContentHeight()
-                )
-            }
-
-            Box(
-                modifier = Modifier.fillMaxWidth().weight(5f, fill = false)
-            ) {
-                if (uiState.syncStatus == SyncStatus.PROCESSING) {
-                    Column(
+                        .wrapContentHeight(),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.text_sync_in_progress),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.title,
                         modifier = Modifier.fillMaxWidth()
-                            .wrapContentHeight(),
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = stringResource(R.string.text_sync_in_progress),
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.SemiBold,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.title,
-                            modifier = Modifier.fillMaxWidth()
-                                .wrapContentHeight()
-                        )
+                            .wrapContentHeight()
+                    )
 
-                        LinearProgressIndicator(
-                            modifier = Modifier.fillMaxWidth()
-                                .padding(horizontal = 10.dp),
-                            color = MaterialTheme.colorScheme.variantPurple
-                        )
-                    }
-                } else {
-                    Surface(
-                        modifier = Modifier.wrapContentSize()
-                            .background(Color.Transparent)
-                            .align(Alignment.Center),
-                        shape = RoundedCornerShape(15.dp),
-                        color = MaterialTheme.colorScheme.onAnyBackground
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.padding(15.dp),
-                            color = MaterialTheme.colorScheme.variantPurple,
-                            trackColor = MaterialTheme.colorScheme.onAnyBackground
-                        )
-                    }
+                    LinearProgressIndicator(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(horizontal = 10.dp),
+                        color = MaterialTheme.colorScheme.variantPurple
+                    )
+                }
+            } else {
+                Surface(
+                    modifier = Modifier.wrapContentSize()
+                        .background(Color.Transparent)
+                        .align(Alignment.Center),
+                    shape = RoundedCornerShape(15.dp),
+                    color = MaterialTheme.colorScheme.onAnyBackground
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.padding(15.dp),
+                        color = MaterialTheme.colorScheme.variantPurple,
+                        trackColor = MaterialTheme.colorScheme.onAnyBackground
+                    )
                 }
             }
         }

@@ -58,6 +58,8 @@ import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.common.ui.PlaceholderScreen
+import com.doyoonkim.main.contract.NoticeSearchEvent
+import com.doyoonkim.main.contract.NoticeSearchSideEffect
 
 
 @Composable
@@ -71,8 +73,24 @@ fun NoticeSearchScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val localFocusManager = LocalFocusManager.current
 
-    BackHandler { onBackPressed() }
+    BackHandler { viewModel.sendUiEvent(NoticeSearchEvent.GoBack) }
 
+    LaunchedEffect(Unit) {
+        viewModel.uiSideEffect.collect { effect ->
+            when (effect) {
+                is NoticeSearchSideEffect.NavToNoticeDetail -> {
+                    with (effect) {
+                        onNoticeSelected(id, url)
+                    }
+                }
+                is NoticeSearchSideEffect.NavToBack -> {
+                    onBackPressed()
+                }
+            }
+        }
+    }
+
+    // Observing Keyword Input
     LaunchedEffect(uiState.searchKeyword) {
         viewModel.observeKeywordInput()
     }
@@ -104,7 +122,9 @@ fun NoticeSearchScreen(
                             tint = MaterialTheme.colorScheme.onAnyBackground
                         )
                     },
-                    onValueChange = { viewModel.updateSearchKeyword(it) },
+                    onValueChange = {
+                        viewModel.sendUiEvent(NoticeSearchEvent.UpdateSearchKeyword(it))
+                    },
                     colors = TextFieldDefaults.colors(
                         focusedTextColor = MaterialTheme.colorScheme.title,
                         unfocusedTextColor = MaterialTheme.colorScheme.subTitle,
@@ -120,7 +140,9 @@ fun NoticeSearchScreen(
 
                 if (uiState.searchKeyword.isNotBlank()) {
                     Button(
-                        onClick = { viewModel.updateSearchKeyword("") },
+                        onClick = {
+                            viewModel.sendUiEvent(NoticeSearchEvent.UpdateSearchKeyword(""))
+                        },
                         shape = CircleShape,
                         colors = ButtonDefaults.buttonColors().copy(
                             containerColor = MaterialTheme.colorScheme.onAnyBackground,
@@ -174,7 +196,7 @@ fun NoticeSearchScreen(
 
                                 if (index == uiState.fetchResult.size - 1 && uiState.canRequestMoreNotices) {
                                     // List reach ends.
-                                    viewModel.fetchMoreNotices()
+                                    viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
                                 }
 
                                 HorizontalDivider(
@@ -185,7 +207,13 @@ fun NoticeSearchScreen(
                                 Row(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .clickable { onNoticeSelected(notice.nttId, notice.url) }
+                                        .clickable {
+                                            viewModel.sendUiEvent(
+                                                NoticeSearchEvent.RequestNoticeDetail(
+                                                    notice.nttId, notice.url
+                                                )
+                                            )
+                                        }
                                 ) {
                                     NotificationPreview(
                                         modifier = Modifier.fillMaxWidth(),
