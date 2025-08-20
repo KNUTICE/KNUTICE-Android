@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.domain.usecases.SubmitUserReport
 import com.doyoonkim.main.contract.CustomerServiceEvent
 import com.doyoonkim.main.contract.CustomerServiceSideEffect
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CustomerServiceViewModel @Inject constructor(
-    private val submitUserReport: SubmitUserReport
+    private val submitUserReport: SubmitUserReport,
+    private val appPreferences: AppPreferences
 ) : BaseViewModel<CustomerServiceStatus, CustomerServiceEvent, CustomerServiceSideEffect>() {
     override fun setInitialState(): CustomerServiceStatus = CustomerServiceStatus()
 
@@ -53,7 +55,8 @@ class CustomerServiceViewModel @Inject constructor(
                 UserReportBody(
                     content = uiState.value.userReport,
                     deviceName = "${Build.BRAND} ${Build.MODEL}",
-                    version = versionInfo
+                    version = versionInfo,
+//                    fcmToken = appPreferences.getCachedToken()
                 )
             ).collectLatest { result ->
                     stateUpdate {

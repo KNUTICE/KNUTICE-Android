@@ -3,6 +3,7 @@ package com.doyoonkim.network
 import android.util.Log
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.network.model.DeviceTokenRequest
+import com.doyoonkim.network.model.TokenUpdateRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
 import com.doyoonkim.network.retrofit.KnuticeService
@@ -17,7 +18,7 @@ import javax.inject.Singleton
 // This class should be provided/injected as Singleton Instance.
 class KnuticeRemoteSource @Inject constructor(
     private val knuticeApi: KnuticeService,
-    private val deviceToken: DeviceToken
+    private val deviceToken: DeviceToken,
 ) {
     private val TAG = "KnuticeRemoteSource"
 
@@ -67,5 +68,10 @@ class KnuticeRemoteSource @Inject constructor(
         runCatching {
             val body = request.body.copy(fcmToken = deviceToken.validatedToken())
             knuticeApi.submitTopicSubscriptionPreferences(request.copy(body = body))
+        }
+
+    suspend fun updateDeviceToken(request: TokenUpdateRequest) =
+        runCatching {
+            knuticeApi.updateFcmToken(request)
         }
 }

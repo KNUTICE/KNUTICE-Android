@@ -10,7 +10,6 @@ import com.doyoonkim.main.contract.SplashEvent
 import com.doyoonkim.main.contract.SplashSideEffect
 import com.doyoonkim.main.contract.SplashState
 import com.doyoonkim.main.contract.SyncStatus
-import com.doyoonkim.main.contract.TokenValidationStatus
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -41,12 +40,10 @@ class SplashViewModel @Inject constructor(
 
     private fun startPreprocess() = viewModelScope.launch {
         with(uiState.value) {
+            delay(600L)         // Give slight delay to reduce thread workload.
+
             if (syncStatus == SyncStatus.REQUESTED)
                 syncDatabase()
-
-            delay(600L)         // Give slight delay to reduce thread workload.
-            if (tokenValidationResult == TokenValidationStatus.INCOMPLETE)
-                requestTokenValidation()
         }
     }.invokeOnCompletion {
         preProcessCompletionCheck()
@@ -74,26 +71,13 @@ class SplashViewModel @Inject constructor(
             }
     }
 
-    // Should be performed very last.
-    private suspend fun requestTokenValidation() =
-        tokenHandler.handleCurrentTokenRequest()
-            .collectLatest { result ->
-                stateUpdate {
-                    it.copy(
-                        tokenValidationResult = TokenValidationStatus.COMPLETED
-                    )
-                }
-            }
-
     private fun preProcessCompletionCheck() {
         with(uiState.value) {
             if (
-                syncStatus != SyncStatus.REQUESTED &&
-                tokenValidationResult != TokenValidationStatus.INCOMPLETE
+                syncStatus != SyncStatus.REQUESTED
             ) {
                 if (
                     syncStatus == SyncStatus.COMPLETED
-                    && tokenValidationResult == TokenValidationStatus.COMPLETED
                 ) {
                     sendSideEffect(SplashSideEffect.Dismiss)
                 } else {

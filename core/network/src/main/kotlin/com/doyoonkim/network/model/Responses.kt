@@ -56,6 +56,12 @@ data class PostResult(
 )
 
 @Keep
+data class PatchResult(
+    @SerializedName("result") var result: NetworkResult? = NetworkResult(),
+    @SerializedName("body") var body: Boolean? = null
+)
+
+@Keep
 data class TipResult(
     @SerializedName("result") var result: NetworkResult? = NetworkResult(),
     @SerializedName("body") var body: ArrayList<TipDTO>? = null

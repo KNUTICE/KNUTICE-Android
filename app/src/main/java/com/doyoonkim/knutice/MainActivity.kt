@@ -34,6 +34,13 @@ import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import androidx.work.BackoffPolicy
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
 import com.doyoonkim.common.theme.KNUTICETheme
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
@@ -45,8 +52,10 @@ import com.doyoonkim.knutice.di.components.DaggerSplashSceneComponent
 import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.main.splash.KnuticeSplashScreen
 import com.doyoonkim.main.viewmodel.SplashViewModel
+import com.doyoonkim.notification.task.PeriodicTokenRegistration
 import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.delay
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
@@ -65,6 +74,26 @@ class MainActivity : ComponentActivity() {
         val analytics = appComponent.analytics()
 
         super.onCreate(savedInstanceState)
+
+        // Periodic Token Registration Event
+        // Interval: 30-ish days, Backoff: 12 hours Linear
+        val workRequest = PeriodicWorkRequestBuilder<PeriodicTokenRegistration>(
+            730, TimeUnit.DAYS
+        ).setConstraints(
+            Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresBatteryNotLow(true)
+                .build()
+        ).setBackoffCriteria(
+            BackoffPolicy.LINEAR,
+            12,
+            TimeUnit.HOURS
+        ).build()
+
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            "Token Registration", ExistingPeriodicWorkPolicy.UPDATE, workRequest
+        )
+
         receivedIntent.value = intent
 
         WindowCompat.setDecorFitsSystemWindows(window, false)

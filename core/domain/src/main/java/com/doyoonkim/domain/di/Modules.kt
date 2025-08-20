@@ -109,3 +109,11 @@ abstract class PreProcessingUseCaseModule {
         impl: SyncDataWithUpdatedDatabaseImpl
     ): SyncDataWithUpdateDatabase
 }
+
+@Module
+abstract class TokenUseCaseModule {
+    @Binds
+    abstract fun bindsValidateDeviceToken(
+        impl: ValidateDeviceTokenImpl
+    ): ValidateDeviceToken
+}

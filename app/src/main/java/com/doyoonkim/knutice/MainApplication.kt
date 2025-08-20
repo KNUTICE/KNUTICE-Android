@@ -5,12 +5,15 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import android.util.Log
+import androidx.work.Configuration
+import androidx.work.WorkManager
 import com.doyoonkim.common.di.AppInjector
 import com.doyoonkim.common.di.AppInjectorProvider
 import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerAppComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationServiceComponent
+import com.doyoonkim.knutice.di.util.DaggerWorkerFactory
 import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.notification.fcm.PushNotificationService
 import javax.inject.Inject
@@ -35,11 +38,13 @@ class MainApplication() : Application(), AppInjectorProvider {
     }
 
     @Inject lateinit var notificationManager: NotificationManager
+    @Inject lateinit var workerFactory: DaggerWorkerFactory
 
     override fun onCreate() {
         super.onCreate()
         // Application-Level injection
         appComponent.inject(this)
+        configureWorkerManager()
 
         // Create channel group
         notificationManager.run {
@@ -69,5 +74,12 @@ class MainApplication() : Application(), AppInjectorProvider {
             // Register Custom-defined notification channel
             notificationManager.createNotificationChannel(channel)
         }
+    }
+
+    private fun configureWorkerManager() {
+        val configuration = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .build()
+        WorkManager.initialize(this, configuration)
     }
 }

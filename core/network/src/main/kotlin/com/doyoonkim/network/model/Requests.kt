@@ -2,6 +2,7 @@ package com.doyoonkim.network.model
 
 import androidx.annotation.Keep
 import com.doyoonkim.model.requestBody.DeviceTokenBody
+import com.doyoonkim.model.requestBody.TokenUpdateBody
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import com.doyoonkim.model.requestBody.UserReportBody
 import model.NetworkResult
@@ -27,4 +28,10 @@ data class UserReportRequest(
 data class TopicSubscriptionPreferencesRequest(
     val result: NetworkResult? = NetworkResult(),
     val body: TopicSubscriptionPreferencesBody
+)
+
+@Keep
+data class TokenUpdateRequest(
+    val result: NetworkResult? = NetworkResult(),
+    val body: TokenUpdateBody
 )
