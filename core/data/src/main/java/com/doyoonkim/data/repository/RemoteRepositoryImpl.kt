@@ -9,18 +9,23 @@ import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.TipVO
+import com.doyoonkim.model.TokenStatus
 import com.doyoonkim.model.TopThreeNoticeVO
 import com.doyoonkim.model.requestBody.DeviceTokenBody
+import com.doyoonkim.model.requestBody.TokenUpdateBody
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import com.doyoonkim.model.requestBody.UserReportBody
 import com.doyoonkim.network.KnuticeRemoteSource
 import com.doyoonkim.network.model.DeviceTokenRequest
+import com.doyoonkim.network.model.TokenUpdateRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import model.NetworkResult
+import java.net.ConnectException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 class RemoteRepositoryImpl @Inject constructor(
@@ -135,6 +140,44 @@ class RemoteRepositoryImpl @Inject constructor(
 
     override fun requestUpdateValidatedToken(fcmToken: String) {
         remoteSource.updateValidatedToken(fcmToken)
+    }
+
+    override suspend fun requestUpdateFcmToken(body: TokenUpdateBody): TokenStatus {
+        remoteSource.updateDeviceToken(TokenUpdateRequest(body = body)).fold(
+            onSuccess = {
+                if (it.result?.resultCode == 200) return TokenStatus.SUCCESS
+                else it.result.printLog().also { return TokenStatus.RETRY }
+            },
+            onFailure = {
+                it.printLog()
+                return when(it) {
+                    is ConnectException -> TokenStatus.RETRY
+                    is SocketTimeoutException -> TokenStatus.RETRY
+                    else -> TokenStatus.FAILURE
+                }
+            }
+        )
+        // Default
+        return TokenStatus.FAILURE
+    }
+
+    override suspend fun requestFcmTokenRegistration(body: DeviceTokenBody): TokenStatus {
+        remoteSource.validateToken(DeviceTokenRequest(body = body)).fold(
+            onSuccess = {
+                if (it.result?.resultCode == 200) return TokenStatus.SUCCESS
+                else it.result.printLog().also { return TokenStatus.RETRY }
+            },
+            onFailure = {
+                it.printLog()
+                when(it) {
+                    is ConnectException -> return TokenStatus.RETRY
+                    is SocketTimeoutException -> return TokenStatus.RETRY
+                    else -> return TokenStatus.FAILURE
+                }
+            }
+        )
+        // Default
+        return TokenStatus.FAILURE
     }
 
     override fun requestUserReportSubmission(body: UserReportBody) = flow {

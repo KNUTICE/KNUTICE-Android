@@ -2,11 +2,13 @@ package com.doyoonkim.network.retrofit
 
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.network.model.DeviceTokenRequest
+import com.doyoonkim.network.model.TokenUpdateRequest
 import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
 import com.doyoonkim.network.model.UserReportRequest
 import model.NoticeByIdResult
 import model.NoticesByKeywordResult
 import model.NoticesPerPageResult
+import model.PatchResult
 import model.PostResult
 import model.TipResult
 import model.TopThreeNoticeResults
@@ -15,6 +17,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -73,4 +76,8 @@ interface KnuticeService {
         @Body request: TopicSubscriptionPreferencesRequest
     ): PostResult
 
+    @PATCH("open-api/fcm/tokens")
+    suspend fun updateFcmToken(
+        @Body request: TokenUpdateRequest
+    ): PatchResult
 }
