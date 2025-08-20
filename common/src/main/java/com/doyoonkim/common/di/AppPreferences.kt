@@ -12,6 +12,21 @@ class AppPreferences @Inject constructor(
 
     private val DB_SYNC_1_2_STATUS = "DB_SYNC_1_2_STATUS"
 
+    // Token Caching
+    private final val DEVICE_TOKEN = "DEVICE_TOKEN"
+
+    /**
+     * updateDeviceToken
+     * @param token: Unique FCM token issued to this device.
+     */
+    fun updateDeviceToken(token: String) {
+        appPref.edit { putString(DEVICE_TOKEN, token) }
+    }
+
+    fun getCachedToken(): String? {
+        return appPref.getString(DEVICE_TOKEN, null)
+    }
+
     fun isDatabaseSyncCompleted(): Boolean {
         // If sync 2_3 is required, return
         // appPref.getBoolean(DB_SYNC_1_2_STATUS, false) && appPref.getBoolean(DB_SYNC_2_3_STATUS, false)
