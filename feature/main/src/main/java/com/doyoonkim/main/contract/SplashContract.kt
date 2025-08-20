@@ -5,11 +5,9 @@ import com.doyoonkim.common.base.UiSideEffect
 import com.doyoonkim.common.base.UiState
 
 enum class SyncStatus { REQUESTED, PROCESSING, COMPLETED }
-enum class TokenValidationStatus { INCOMPLETE, COMPLETED, COMPLETED_WITH_ERROR }
 
 data class SplashState(
-    val syncStatus: SyncStatus = SyncStatus.REQUESTED,
-    val tokenValidationResult: TokenValidationStatus = TokenValidationStatus.INCOMPLETE,
+    val syncStatus: SyncStatus = SyncStatus.REQUESTED
 ) : UiState
 
 sealed class SplashEvent : UiEvent {
