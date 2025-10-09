@@ -121,6 +121,7 @@ class RemoteRepositoryImpl @Inject constructor(
         )
     }
 
+    @Deprecated("Use requestRegisterFcmToken instead")
     override fun requestTokenValidation(body: DeviceTokenBody) = flow {
         remoteSource.validateToken(
             DeviceTokenRequest(body = body)
@@ -138,6 +139,7 @@ class RemoteRepositoryImpl @Inject constructor(
         )
     }
 
+    @Deprecated("Use requestUpdateFcmToken instead.")
     override fun requestUpdateValidatedToken(fcmToken: String) {
         remoteSource.updateValidatedToken(fcmToken)
     }
