@@ -1,6 +1,7 @@
 package com.doyoonkim.network
 
 import android.util.Log
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.network.model.DeviceTokenRequest
 import com.doyoonkim.network.model.TokenUpdateRequest
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 class KnuticeRemoteSource @Inject constructor(
     private val knuticeApi: KnuticeService,
     private val deviceToken: DeviceToken,
+    private val appPreference: AppPreferences
 ) {
     private val TAG = "KnuticeRemoteSource"
 
@@ -41,9 +43,9 @@ class KnuticeRemoteSource @Inject constructor(
         }
 
     suspend fun getTopicSubscriptionStatus() = runCatching {
-            if (deviceToken.validatedToken().isBlank()) throw Exception("No validated token found")
+            if (appPreference.getCachedToken().isNullOrBlank()) throw Exception("No validated token found")
             else {
-                knuticeApi.getTopicSubscriptionStatus(deviceToken.validatedToken())
+                knuticeApi.getTopicSubscriptionStatus(appPreference.getCachedToken()!!)
             }
         }
 
@@ -60,13 +62,16 @@ class KnuticeRemoteSource @Inject constructor(
     }
 
     suspend fun submitUserReport(request: UserReportRequest) = runCatching {
-        val body = request.body.copy(fcmToken = deviceToken.validatedToken())
-        knuticeApi.submitUserReport(request.copy(body = body))
+        if (appPreference.getCachedToken().isNullOrBlank()) throw Exception("No validated token found")
+        else {
+            val body = request.body.copy(fcmToken = appPreference.getCachedToken()!!)
+            knuticeApi.submitUserReport(request.copy(body = body))
+        }
     }
 
     suspend fun submitTopicSubscriptionPreferences(request: TopicSubscriptionPreferencesRequest) =
         runCatching {
-            val body = request.body.copy(fcmToken = deviceToken.validatedToken())
+            val body = request.body.copy(fcmToken = appPreference.getCachedToken()!!)
             knuticeApi.submitTopicSubscriptionPreferences(request.copy(body = body))
         }
 
