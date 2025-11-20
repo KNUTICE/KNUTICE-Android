@@ -7,11 +7,14 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.work.ListenableWorker
 import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.data.di.LocalModule
 import com.doyoonkim.data.di.TokenRemoteModule
+import com.doyoonkim.domain.di.AsyncFtsEntryInsertionModule
 import com.doyoonkim.domain.di.TokenUseCaseModule
 import com.doyoonkim.knutice.MainApplication
 import com.doyoonkim.knutice.analytics.AnalyticsLogger
 import com.doyoonkim.knutice.di.modules.AppModule
+import com.doyoonkim.knutice.di.modules.DispatcherModule
 import com.doyoonkim.knutice.di.modules.FirebaseAnalyticsModule
 import com.doyoonkim.knutice.di.modules.WorkerModule
 import com.doyoonkim.network.di.NetworkModule
@@ -57,10 +60,13 @@ interface AppComponent {
 
 @Subcomponent(
     modules = [
+        DispatcherModule::class,
         WorkerModule::class,
         FcmTokenModule::class,
         TokenUseCaseModule::class,
         TokenRemoteModule::class,
+        AsyncFtsEntryInsertionModule::class,
+        LocalModule::class,
         NetworkModule::class
     ]
 )

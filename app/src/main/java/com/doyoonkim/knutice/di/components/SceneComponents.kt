@@ -16,6 +16,8 @@ import com.doyoonkim.domain.di.TipUseCaseModule
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.knutice.di.modules.DispatcherModule
 import com.doyoonkim.knutice.di.modules.ViewModelFactoryModule
+import com.doyoonkim.knutice.di.modules.WorkSchedulerModule
+import com.doyoonkim.knutice.di.modules.WorkerModule
 import com.doyoonkim.knutice.di.util.SystemServices
 import com.doyoonkim.main.di.CustomerServiceSceneModule
 import com.doyoonkim.main.di.HomeSceneModule
@@ -28,6 +30,7 @@ import com.doyoonkim.main.di.SplashSceneModule
 import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.NotificationModule
 import dagger.Component
+import javax.inject.Singleton
 
 @Component(
     dependencies = [SystemServices::class],
@@ -71,11 +74,12 @@ interface BookmarkListSceneComponent {
     }
 }
 
-
+@Singleton
 @Component(
     dependencies = [SystemServices::class],
     modules = [
         ViewModelFactoryModule::class,
+        WorkSchedulerModule::class,
         DispatcherModule::class,
         EditBookmarkSceneModule::class,
         BookmarkUseCaseModule::class,

@@ -18,6 +18,8 @@ import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.domain.usecases.FetchTopThreeNoticesImpl
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatusImpl
+import com.doyoonkim.domain.usecases.InsertPendingFtsEntries
+import com.doyoonkim.domain.usecases.InsertPendingFtsEntriesImpl
 import com.doyoonkim.domain.usecases.ModifyBookmark
 import com.doyoonkim.domain.usecases.ModifyBookmarkImpl
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
@@ -123,4 +125,12 @@ abstract class TokenUseCaseModule {
     abstract fun bindsValidateDeviceToken(
         impl: ValidateDeviceTokenImpl
     ): ValidateDeviceToken
+}
+
+@Module
+abstract class AsyncFtsEntryInsertionModule {
+    @Binds
+    abstract fun bindsInsertPendingFtsEntries(
+        impl: InsertPendingFtsEntriesImpl
+    ): InsertPendingFtsEntries
 }
