@@ -1,5 +1,6 @@
 package com.doyoonkim.domain.usecases
 
+import com.doyoonkim.domain.interfaces.AsyncFtsTaskScheduler
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
@@ -7,6 +8,7 @@ import com.doyoonkim.domain.util.KoreanTokenizer
 import com.doyoonkim.model.BookmarkFtsVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.PendingBookmarkFtsVO
 import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.model.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -36,6 +38,7 @@ class ModifyBookmarkImpl @Inject constructor(
     private val noticeLocalRepository: NoticeLocalRepository,
     private val bookmarkLocalRepository: BookmarkLocalRepository,
     private val remoteRepository: NoticeRemoteRepository,
+    private val pendingWorkScheduler: AsyncFtsTaskScheduler,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : ModifyBookmark {
@@ -63,11 +66,19 @@ class ModifyBookmarkImpl @Inject constructor(
                         .firstOrNull()
 
                     savedBookmark?.let {
-                        val ftsCreation = bookmarkLocalRepository.createBookmarkFts(
-                            generateBookmarkFtsEntry(it, vo)
+//                        val ftsCreation = bookmarkLocalRepository.createBookmarkFts(
+//                            generateBookmarkFtsEntry(it, vo)
+//                        ).first()
+                        val enqueueResult = bookmarkLocalRepository.createPendingBookmarkFtsEntity(
+                            PendingBookmarkFtsVO(
+                                bookmarkId = it.bookmarkId,
+                                notes = it.bookmarkNote,
+                                title = vo.title
+                            )
                         ).first()
+                        pendingWorkScheduler.execute()
 
-                        emit(ftsCreation)
+                        emit(enqueueResult)
                     } ?: emit(false)
                 } else {
                     emit(false)
