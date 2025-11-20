@@ -126,6 +126,37 @@ interface MainDatabaseDao {
     @Query("""
         SELECT
             b.bookmarkId AS bookmarkId,
+            n.ntt_id AS noticeId,
+            n.notice_title AS noticeTitle,
+            n.notice_category AS noticeCategory,
+            b.isScheduled AS isReminderSet,
+            b.created_at AS createdAt,
+            b.updated_at AS updatedAt 
+        FROM Bookmark b
+        INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
+        ORDER BY b.updated_at ASC LIMIT :size OFFSET :pageNumber * :size
+    """)
+    fun getBookmarkListSortedUpdatedNewest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
+
+    @Query("""
+        SELECT
+            b.bookmarkId AS bookmarkId,
+            n.ntt_id AS noticeId,
+            n.notice_title AS noticeTitle,
+            n.notice_category AS noticeCategory,
+            b.isScheduled AS isReminderSet,
+            b.created_at AS createdAt,
+            b.updated_at AS updatedAt 
+        FROM Bookmark b
+        INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
+        ORDER BY b.updated_at DESC LIMIT :size OFFSET :pageNumber * :size
+    """)
+    fun getBookmarkListSortedUpdatedOldest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
+
+
+    @Query("""
+        SELECT
+            b.bookmarkId AS bookmarkId,
             b.bookmark_note AS bookmarkNotes,
             n.notice_title AS noticeTitle
         FROM Bookmark b

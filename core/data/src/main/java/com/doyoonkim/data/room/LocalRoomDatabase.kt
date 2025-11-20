@@ -13,15 +13,16 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.doyoonkim.data.model.Bookmark
 import com.doyoonkim.data.model.BookmarkFts
 import com.doyoonkim.data.model.NoticeEntity
+import com.doyoonkim.data.model.PendingBookmarkFtsAsync
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.asExecutor
 
 // Migration Strategy: https://stackoverflow.com/questions/56478785/room-database-schema-update-without-data-loss
 
 @Database(
-    entities = [Bookmark::class, NoticeEntity::class, BookmarkFts::class],
-    version = 3,
-    autoMigrations = [ AutoMigration(from = 2, to = 3) ]
+    entities = [Bookmark::class, NoticeEntity::class, BookmarkFts::class, PendingBookmarkFtsAsync::class],
+    version = 4,
+    autoMigrations = [ AutoMigration(from = 2, to = 3), AutoMigration(from = 3, to = 4) ]
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun getDao(): MainDatabaseDao
