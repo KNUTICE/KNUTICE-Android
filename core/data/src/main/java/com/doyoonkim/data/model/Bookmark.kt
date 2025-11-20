@@ -26,3 +26,12 @@ data class BookmarkFts(
     val bookmarkNoteTokenized: String,
     val noticeTitleTokenized: String
 )
+
+// Temporary Table for Asynchronous FTS table insertion
+@Entity
+data class PendingBookmarkFtsAsync(
+    @PrimaryKey val bookmarkId: Int,
+    val bookmarkNotes: String,
+    val noticeTitle: String,
+    val createdAt: Long = System.currentTimeMillis()
+)

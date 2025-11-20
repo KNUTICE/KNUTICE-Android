@@ -12,6 +12,7 @@ import com.doyoonkim.data.model.BookmarkAsListElement
 import com.doyoonkim.data.model.BookmarkFts
 import com.doyoonkim.data.model.BookmarkFtsTarget
 import com.doyoonkim.data.model.NoticeEntity
+import com.doyoonkim.data.model.PendingBookmarkFtsAsync
 
 @Dao
 interface MainDatabaseDao {
@@ -47,6 +48,20 @@ interface MainDatabaseDao {
         DELETE FROM BookmarkFts WHERE rowid = :ftsId
     """)
     fun deleteBookmarkFts(ftsId: Int)
+
+    // Temp Table for Asynchronous FTS table insertion
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun createAsyncFtsEntity(entity: PendingBookmarkFtsAsync)
+
+    @Query("""
+        SELECT * FROM PendingBookmarkFtsAsync ORDER BY createdAt ASC LIMIT :limit
+    """)
+    fun getPendingBookmarkFtsAsyncBatch(limit: Int): List<PendingBookmarkFtsAsync>
+
+    @Query("""
+        DELETE FROM PendingBookmarkFtsAsync WHERE bookmarkId IN (:bookmarkIds)
+    """)
+    fun removePendingBookmarkFtsAsync(bookmarkIds: List<Int>)
 
     @Transaction
     fun updateBookmarkFts(
