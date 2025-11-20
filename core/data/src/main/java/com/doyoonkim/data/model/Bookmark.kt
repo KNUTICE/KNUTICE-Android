@@ -2,6 +2,7 @@ package com.doyoonkim.data.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Fts4
 import androidx.room.PrimaryKey
 
 @Entity
@@ -13,4 +14,24 @@ data class Bookmark(
     @ColumnInfo("target_ntt_id") val nttId: Int = -1,
     @ColumnInfo("created_at") val createdAt: Long = 0,
     @ColumnInfo("updated_at") val updatedAt: Long = 0
+)
+
+@Fts4
+@Entity
+data class BookmarkFts(
+    // internally created rowid should be matched with bookmark id
+    @PrimaryKey @ColumnInfo("rowid") val id: Int,
+    val bookmarkNotes: String,
+    val noticeTitle: String,
+    val bookmarkNoteTokenized: String,
+    val noticeTitleTokenized: String
+)
+
+// Temporary Table for Asynchronous FTS table insertion
+@Entity
+data class PendingBookmarkFtsAsync(
+    @PrimaryKey val bookmarkId: Int,
+    val bookmarkNotes: String,
+    val noticeTitle: String,
+    val createdAt: Long = System.currentTimeMillis()
 )

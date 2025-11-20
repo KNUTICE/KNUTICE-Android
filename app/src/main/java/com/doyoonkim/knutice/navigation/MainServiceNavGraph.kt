@@ -114,6 +114,15 @@ fun NavGraphBuilder.mainServiceNavGraph(
             onBackPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
+            },
+            onBookmarkSelected = { id, title, category ->
+                onBookmarkServiceRequested(
+                    BookmarkInfo(
+                        noticeId = id,
+                        noticeTitle = title,
+                        noticeInfo = category
+                    )
+                )
             }
         )
     }

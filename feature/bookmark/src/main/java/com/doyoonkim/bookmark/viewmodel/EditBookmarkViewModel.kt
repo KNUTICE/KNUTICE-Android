@@ -215,6 +215,11 @@ class EditBookmarkViewModel @Inject constructor(
     @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     private fun submitBookmark() =
         viewModelScope.launch {
+            stateUpdate {
+                it.copy(
+                    isProcessing = true
+                )
+            }
             // Bookmark creation requires getting Notice Instance.
             val bookmark = uiState.value.run {
                 if (this.requireCreation) {
@@ -252,6 +257,7 @@ class EditBookmarkViewModel @Inject constructor(
                     }
                     stateUpdate {
                         it.copy(
+                            isProcessing = false,
                             isSuccessful = result,
                             isCompleted = true
                         )
@@ -262,6 +268,11 @@ class EditBookmarkViewModel @Inject constructor(
     @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     private fun removeBookmark() {
         viewModelScope.launch {
+            stateUpdate {
+                it.copy(
+                    isProcessing = true
+                )
+            }
             val bookmark = uiState.value.run {
                 BookmarkVO(
                     bookmarkId = bookmarkId,
@@ -294,7 +305,8 @@ class EditBookmarkViewModel @Inject constructor(
                         stateUpdate {
                             it.copy(
                                 requireCreation = true,
-                                isSuccessful = true,
+                                isProcessing = false,
+                                isSuccessful = result,
                                 isCompleted = true
                             )
                         }
@@ -302,4 +314,25 @@ class EditBookmarkViewModel @Inject constructor(
             }
         }
     }
+
 }
+
+data class EditBookmarkState(
+    val isUnableToEdit: Boolean = false,
+    val bookmarkId: Int = 0,
+    val targetNoticeId: Int = 0,
+    val isReminderRequested: Boolean = false,
+    val timeForRemind: Long? = null,
+    val bookmarkNote: String = "",
+    val createdAt: Long = System.currentTimeMillis(),
+    val updatedAt: Long = 0,
+    val requireCreation: Boolean = true,
+    val bookmarkInstances: BookmarkVO? = null,
+    val targetNotice: NoticeVO? = null,
+    val datePickerVisible: Boolean = false,
+    val timePickerVisible: Boolean = false,
+    val isProcessing: Boolean = false,
+    val isSuccessful: Boolean = false,
+    val isCompleted: Boolean = false,
+    val alarmPermissionStatus: Boolean = true
+)

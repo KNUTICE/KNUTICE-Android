@@ -3,17 +3,22 @@ package com.doyoonkim.domain.usecases
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
+import com.doyoonkim.domain.util.KoreanTokenizer
+import com.doyoonkim.model.BookmarkFtsVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.model.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.emitAll
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -38,17 +43,29 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
     private val noticeLocalRepository: NoticeLocalRepository,
     private val bookmarkLocalRepository: BookmarkLocalRepository,
     private val remoteRepository: NoticeRemoteRepository,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
+    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
 ) : SyncDataWithUpdateDatabase {
 
     override fun manualSync(): Flow<DatabaseSyncResult> = flow {
-        emitAll(databaseSync_1_2())
+        val resultFirstSync = databaseSync_1_2().first()
+        if (resultFirstSync.withError) {
+            emit(resultFirstSync)
+        } else {
+            emitAll(databaseSync_2_3())
+        }
     }.flowOn(ioDispatcher)
 
     override fun entrySync(): Flow<DatabaseSyncResult> = flow {
-        emitAll(databaseSync_1_2())
+        val resultFirstSync = databaseSync_1_2().first()
+        if (resultFirstSync.withError) {
+            emit(resultFirstSync)
+        } else {
+            emitAll(databaseSync_2_3())
+        }
     }.flowOn(ioDispatcher)
 
+    // Consider change this function to suspend function.
     private fun databaseSync_1_2() = flow {
         val bookmarks = bookmarkLocalRepository.queryAllBookmarks()
             .firstOrNull()
@@ -119,8 +136,75 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
             )
         )
 
-    }.catch { /* OVERALL ERROR */ }.flowOn(Dispatchers.IO)
+    }.catch { /* OVERALL ERROR */ }.flowOn(ioDispatcher)
 
+    // Consider change this function to suspend function.
+    private fun databaseSync_2_3() = flow {
+        val targets = bookmarkLocalRepository.queryBookmarkFtsTarget()
+            .firstOrNull()
+
+        println("[SyncProcess_2_3] target size: ${targets?.size}")
+
+        if (targets.isNullOrEmpty()) {
+            emit(
+                DatabaseSyncResult(
+                    completed = true,
+                    withError = false,
+                    targetCounts = 0,
+                    failureCounts = 0
+                )
+            )
+            return@flow
+        }
+
+        var failureCounts = 0
+        for (target in targets) {
+            try {
+                val noteTokenized =
+                    withContext(defaultDispatcher) {
+                        async {
+                            KoreanTokenizer.getTokenizedString(
+                                target.bookmarkNotes
+                            )
+                        }
+                    }.await()
+
+                val titleTokenized =
+                    withContext(defaultDispatcher) {
+                        async {
+                            KoreanTokenizer.getTokenizedString(
+                                target.noticeTitle
+                            )
+                        }
+                    }.await()
+
+                val ftsEntryResult = bookmarkLocalRepository.createBookmarkFts(
+                    BookmarkFtsVO(
+                        ftsId = target.bookmarkId,
+                        bookmarkNote = target.bookmarkNotes,
+                        noticeTitle = target.noticeTitle,
+                        bookmarkNoteTokenized = noteTokenized,
+                        noticeTitleTokenized = titleTokenized
+                    )
+                ).first()
+
+                println("[SyncProcess_2_3] ftsEntry processed with result $ftsEntryResult")
+            } catch (e: Exception) {
+                failureCounts++
+                continue
+            }
+        }
+
+        emit(
+            DatabaseSyncResult(
+                completed = true,
+                withError = failureCounts > 0,
+                targetCounts = targets.size,
+                failureCounts = failureCounts
+            )
+        )
+
+    }.catch { /* OVERALL ERROR */ }.flowOn(ioDispatcher)
 
     private fun BookmarkVO.isSynced(): Boolean {
         return this.createdAt > 0 && this.updatedAt > 0
