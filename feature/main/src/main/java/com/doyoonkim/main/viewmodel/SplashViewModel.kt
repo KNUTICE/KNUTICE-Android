@@ -1,6 +1,7 @@
 package com.doyoonkim.main.viewmodel
 
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.AppPreferences
@@ -40,6 +41,7 @@ class SplashViewModel @Inject constructor(
 
     private fun startPreprocess() = viewModelScope.launch {
         with(uiState.value) {
+            Log.d("SplashViewModel", "Current Token: ${appPreferences.getCachedToken()}")
             delay(600L)         // Give slight delay to reduce thread workload.
 
             if (syncStatus == SyncStatus.REQUESTED)
