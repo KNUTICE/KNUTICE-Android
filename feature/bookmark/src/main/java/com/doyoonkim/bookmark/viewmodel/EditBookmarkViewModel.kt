@@ -316,23 +316,3 @@ class EditBookmarkViewModel @Inject constructor(
     }
 
 }
-
-data class EditBookmarkState(
-    val isUnableToEdit: Boolean = false,
-    val bookmarkId: Int = 0,
-    val targetNoticeId: Int = 0,
-    val isReminderRequested: Boolean = false,
-    val timeForRemind: Long? = null,
-    val bookmarkNote: String = "",
-    val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = 0,
-    val requireCreation: Boolean = true,
-    val bookmarkInstances: BookmarkVO? = null,
-    val targetNotice: NoticeVO? = null,
-    val datePickerVisible: Boolean = false,
-    val timePickerVisible: Boolean = false,
-    val isProcessing: Boolean = false,
-    val isSuccessful: Boolean = false,
-    val isCompleted: Boolean = false,
-    val alarmPermissionStatus: Boolean = true
-)

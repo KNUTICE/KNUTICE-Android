@@ -22,6 +22,7 @@ data class EditBookmarkState(
     val targetNotice: NoticeVO? = null,
     val datePickerVisible: Boolean = false,
     val timePickerVisible: Boolean = false,
+    val isProcessing: Boolean = false,
     val isSuccessful: Boolean = false,
     val isCompleted: Boolean = false,
     val alarmPermissionStatus: Boolean = true

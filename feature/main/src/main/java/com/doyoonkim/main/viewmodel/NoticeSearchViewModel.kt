@@ -7,6 +7,7 @@ import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.domain.usecases.FetchBookmarkByKeyword
 import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
+import com.doyoonkim.main.contract.FetchingSource
 import com.doyoonkim.main.contract.NoticeSearchEvent
 import com.doyoonkim.main.contract.NoticeSearchSideEffect
 import com.doyoonkim.main.contract.NoticeSearchState
@@ -236,7 +237,7 @@ class NoticeSearchViewModel @Inject constructor(
     }
 
     fun updateSourceStatus(index: Int) {
-        _uiState.update {
+        stateUpdate {
             it.copy(
                 fetchingSource = FetchingSource.entries[index],
                 isError = false,
@@ -248,16 +249,3 @@ class NoticeSearchViewModel @Inject constructor(
     }
 
 }
-
-data class NoticeSearchState(
-    val searchKeyword: String = "",
-    val fetchingSource: FetchingSource = FetchingSource.REMOTE,
-    val isError: Boolean = false,
-    val isFetching: Boolean = false,
-    val isSearchResultEmpty: Boolean = false,
-    val canRequestMoreNotices: Boolean = true,
-    val fetchResult: List<NoticeVO> = emptyList(),
-    val localFetchResult: List<BookmarkAsListElementVO> = emptyList()
-)
-
-enum class FetchingSource { REMOTE, LOCAL }
