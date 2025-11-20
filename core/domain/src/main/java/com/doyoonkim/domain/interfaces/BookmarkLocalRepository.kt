@@ -6,6 +6,7 @@ import com.doyoonkim.model.BookmarkFtsTargetVO
 import com.doyoonkim.model.BookmarkFtsVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.PendingBookmarkFtsVO
 import kotlinx.coroutines.flow.Flow
 
 interface BookmarkLocalRepository {
@@ -33,4 +34,11 @@ interface BookmarkLocalRepository {
     fun updateBookmarkFts(ftsEntry: BookmarkFtsVO): Flow<Boolean>
 
     fun deleteBookmarkFts(ftsEntry: BookmarkFtsVO): Flow<Boolean>
+
+    // Pending FTS Async
+    fun createPendingBookmarkFtsEntity(pendingEntity: PendingBookmarkFtsVO): Flow<Boolean>
+
+    suspend fun queryPendingBookmarkFtsBatched(limit: Int): List<PendingBookmarkFtsVO>
+
+    fun removePendingBookmarkFtsEntry(bookmarkIds: List<Int>): Flow<Boolean>
 }
