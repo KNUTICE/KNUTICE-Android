@@ -1,37 +1,35 @@
 package com.doyoonkim.network.model
 
 import androidx.annotation.Keep
-import com.doyoonkim.model.requestBody.DeviceTokenBody
-import com.doyoonkim.model.requestBody.TokenUpdateBody
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
-import com.doyoonkim.model.requestBody.UserReportBody
-import model.NetworkResult
+import model.Metadata
 
 /**
  * @author kimdoyoon
  * Created 6/3/25 at 12:10 AM
  */
 
+
 @Keep
-data class DeviceTokenRequest(
-    val result: NetworkResult? = NetworkResult(),
-    val body: DeviceTokenBody
+data class FcmTokenSaveRequest(
+    val deviceType: String
 )
 
 @Keep
-data class UserReportRequest(
-    val result: NetworkResult? = NetworkResult(),
-    val body: UserReportBody
+data class FcmTokenUpdateRequest(
+    val oldFcmToken: String,
+    val deviceType: String
 )
 
 @Keep
-data class TopicSubscriptionPreferencesRequest(
-    val result: NetworkResult? = NetworkResult(),
-    val body: TopicSubscriptionPreferencesBody
+data class ReportSaveRequest(
+    val content: String = "",
+    val deviceName: String = "",
+    val version: String = ""
 )
 
 @Keep
-data class TokenUpdateRequest(
-    val result: NetworkResult? = NetworkResult(),
-    val body: TokenUpdateBody
+data class TopicUpdateRequest(
+    val topic: String,
+    val enabled: Boolean
 )

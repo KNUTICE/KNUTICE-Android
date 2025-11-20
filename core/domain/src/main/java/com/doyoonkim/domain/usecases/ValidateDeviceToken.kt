@@ -12,7 +12,6 @@ import javax.inject.Inject
 
 
 interface ValidateDeviceToken {
-    operator fun invoke(requestBody: DeviceTokenBody): Flow<Boolean>
 
     suspend fun register(requestBody: DeviceTokenBody): TokenStatus
 
@@ -22,13 +21,6 @@ interface ValidateDeviceToken {
 class ValidateDeviceTokenImpl @Inject constructor(
     private val remoteRepository: TokenRemoteRepository
 ) : ValidateDeviceToken {
-
-    override operator fun invoke(requestBody: DeviceTokenBody) =
-        remoteRepository.requestTokenValidation(requestBody)
-            .catch {
-                /* Internal Error. Consume values, and never emit values. */
-                emit(false)
-            }.flowOn(Dispatchers.IO)
 
     override suspend fun register(requestBody: DeviceTokenBody) =
         remoteRepository.requestFcmTokenRegistration(requestBody)

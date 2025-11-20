@@ -6,7 +6,6 @@ import com.doyoonkim.model.requestBody.TokenUpdateBody
 import kotlinx.coroutines.flow.Flow
 
 interface TokenRemoteRepository {
-    fun requestTokenValidation(body: DeviceTokenBody): Flow<Boolean>
 
     fun requestUpdateValidatedToken(fcmToken: String)
 

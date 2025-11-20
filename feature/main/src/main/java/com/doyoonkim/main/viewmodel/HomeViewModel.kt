@@ -64,31 +64,29 @@ class HomeViewModel @Inject constructor(
 
     private fun getTopThreeNotices() = viewModelScope.launch {
         fetchTopThreeNotices()
-            .collectLatest { result ->
-                result.fold(
-                    onSuccess = { vo ->
-                        stateUpdate {
-                            it.copy(
-                                isLoading = false,
-                                isError = false,
-                                notificationGeneral = vo.general,
-                                notificationScholarship = vo.scholarship,
-                                notificationAcademic = vo.academic,
-                                notificationEvent = vo.event,
-                                notificationEmployment = vo.employment
-                            )
-                        }
-                    },
-                    onFailure = {
-                        stateUpdate {
-                            it.copy(
-                                isLoading = false,
-                                isError = true
-                            )
-                        }
+            .fold(
+                onSuccess = { vo ->
+                    stateUpdate {
+                        it.copy(
+                            isLoading = false,
+                            isError = false,
+                            notificationGeneral = vo.general,
+                            notificationScholarship = vo.scholarship,
+                            notificationAcademic = vo.academic,
+                            notificationEvent = vo.event,
+                            notificationEmployment = vo.employment
+                        )
                     }
-                )
-            }
+                },
+                onFailure = {
+                    stateUpdate {
+                        it.copy(
+                            isLoading = false,
+                            isError = true
+                        )
+                    }
+                }
+            )
     }
 
     private fun getTips() = viewModelScope.launch {

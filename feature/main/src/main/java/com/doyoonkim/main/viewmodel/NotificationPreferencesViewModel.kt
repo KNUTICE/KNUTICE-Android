@@ -17,6 +17,7 @@ import com.doyoonkim.main.contract.NotificationPrefEvent
 import com.doyoonkim.main.contract.NotificationPrefSideEffect
 import com.doyoonkim.main.contract.NotificationPrefStatus
 import com.doyoonkim.model.NoticeCategory
+import com.doyoonkim.model.TopicType
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -105,6 +106,7 @@ class NotificationPreferencesViewModel @Inject constructor(
                 // Ignore the result.
                 submitNotificationPreferences(
                     TopicSubscriptionPreferencesBody(
+                        topicType = TopicType.NOTICE,
                         noticeName = notificationChannels[index]!!.name,
                         isSubscribed = state
                     )
@@ -134,19 +136,13 @@ class NotificationPreferencesViewModel @Inject constructor(
 
     private fun getTopicSubscriptionStatus() =
         viewModelScope.launch {
-            fetchTopicSubscriptionStatus()
+            fetchTopicSubscriptionStatus(TopicType.NOTICE)
                 .collectLatest { result ->
                     result.fold(
                         onSuccess =  { status ->
                             stateUpdate {
                                 it.copy(
-                                    isEachChannelAllowed = listOf(
-                                        status.general,
-                                        status.academic,
-                                        status.scholarship,
-                                        status.event,
-                                        status.employment
-                                    ),
+                                    isEachChannelAllowed = status,
                                     isSyncCompleted = true,
                                     isError = false
                                 )

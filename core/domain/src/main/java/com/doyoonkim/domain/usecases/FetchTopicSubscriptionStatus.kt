@@ -1,7 +1,8 @@
 package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
-import com.doyoonkim.model.TopicSubscriptionPreferencesVO
+import com.doyoonkim.model.NoticeCategory
+import com.doyoonkim.model.TopicType
 import com.doyoonkim.model.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchTopicSubscriptionStatus {
-    operator fun invoke(): Flow<Result<TopicSubscriptionPreferencesVO>>
+    operator fun invoke(topicType: TopicType): Flow<Result<List<Boolean>>>
 }
 
 class FetchTopicSubscriptionStatusImpl @Inject constructor(
@@ -19,14 +20,22 @@ class FetchTopicSubscriptionStatusImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FetchTopicSubscriptionStatus {
 
-    override operator fun invoke() =
-        remoteRepository.queryTopicSubscriptionStatus().transform { nullable ->
+    override operator fun invoke(topicType: TopicType) =
+        remoteRepository.queryTopicSubscriptionStatus(topicType).transform { nullable ->
             nullable?.let {
-                emit(Result.success(it))
-            } ?: emit(Result.failure(NoSuchElementException()))
+                // TODO: Revise Later
+                val result = listOf(
+                    it.subscribed.contains(NoticeCategory.GENERAL_NEWS.name),
+                    it.subscribed.contains(NoticeCategory.ACADEMIC_NEWS.name),
+                    it.subscribed.contains(NoticeCategory.SCHOLARSHIP_NEWS.name),
+                    it.subscribed.contains(NoticeCategory.EVENT_NEWS.name),
+                    it.subscribed.contains(NoticeCategory.EMPLOYMENT_NEWS.name)
+                )
+                emit(Result.success(result))
+
+            } ?: emit(Result.failure(NoSuchElementException("Subscription Status Not Found")))
         }.catch {
-            /* Internal Error. */
+            // Internal Error
             emit(Result.failure(it))
         }.flowOn(ioDispatcher)
-
 }

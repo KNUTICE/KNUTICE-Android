@@ -4,8 +4,6 @@ import com.doyoonkim.model.TokenStatus
 import kotlinx.coroutines.flow.Flow
 
 interface TokenHandler {
-    fun handleCurrentTokenRequest(): Flow<Boolean>
-
     suspend operator fun invoke(t: String? = null): TokenStatus
 
     suspend fun registerNewToken(newToken: String): TokenStatus

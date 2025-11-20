@@ -6,7 +6,7 @@ import com.doyoonkim.model.TopThreeNoticeVO
 import kotlinx.coroutines.flow.Flow
 
 interface NoticeRemoteRepository {
-    fun queryTopThreeNotices(): Flow<TopThreeNoticeVO?>
+    suspend fun queryTopThreeNotices(category: NoticeCategory): List<NoticeVO>?
 
     fun queryNoticesPerPage(category: NoticeCategory, lastNttId: Int?): Flow<List<NoticeVO>?>
 

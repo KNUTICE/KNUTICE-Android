@@ -20,17 +20,6 @@ class TokenHandlerImpl @Inject constructor(
 ) : TokenHandler {
     private val TAG = this.javaClass.name
 
-    override fun handleCurrentTokenRequest() = flow {
-        runCatching {
-            val deviceToken = Firebase.messaging.token.await()
-            Log.d(TAG, "Received Token: $deviceToken")
-            emitAll(validateDeviceToken(DeviceTokenBody(fcmToken = deviceToken)))
-        }.onFailure {
-            Log.d(TAG, "Failure: ${it.message}")
-            emit(false)
-        }
-    }
-
     override suspend fun invoke(t: String?): TokenStatus {
         val token = t ?: Firebase.messaging.token.await()
         val cached = appPreferences.getCachedToken()
