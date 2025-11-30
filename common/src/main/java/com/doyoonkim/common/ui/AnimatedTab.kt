@@ -80,13 +80,13 @@ fun AnimatedTab(
             shape = RoundedCornerShape(10.dp)
         ) {
             Box(
-                modifier = Modifier.wrapContentSize(),
+                modifier = Modifier.wrapContentSize()
+                    .padding(3.dp),
                 contentAlignment = Alignment.CenterStart
             ) {
                 // Highlight Indicator
                 Box(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(3.dp)
                         .background(Color.Transparent),
                     contentAlignment = Alignment.CenterStart
                 ) {
