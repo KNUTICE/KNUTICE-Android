@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.doyoonkim.common.di.ViewModelKey
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.main.viewmodel.HomeViewModel
+import com.doyoonkim.main.viewmodel.NoticeByMajorViewModel
 import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
 import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
@@ -20,6 +21,14 @@ abstract class HomeSceneModule {
     @IntoMap
     @ViewModelKey(HomeViewModel::class)
     abstract fun bindsViewModel(viewModel: HomeViewModel): ViewModel
+}
+
+@Module
+abstract class NoticeByMajorSceneModule {
+    @Binds
+    @IntoMap
+    @ViewModelKey(NoticeByMajorViewModel::class)
+    abstract fun bindViewModel(viewModel: NoticeByMajorViewModel): ViewModel
 }
 
 @Module

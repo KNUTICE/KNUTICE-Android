@@ -21,6 +21,7 @@ import com.doyoonkim.knutice.di.modules.WorkerModule
 import com.doyoonkim.knutice.di.util.SystemServices
 import com.doyoonkim.main.di.CustomerServiceSceneModule
 import com.doyoonkim.main.di.HomeSceneModule
+import com.doyoonkim.main.di.NoticeByMajorSceneModule
 import com.doyoonkim.main.di.NoticeDetailSceneModule
 import com.doyoonkim.main.di.NoticeInCategorySceneModule
 import com.doyoonkim.main.di.NoticeSearchSceneModule
@@ -51,6 +52,28 @@ interface HomeSceneComponent {
     @Component.Factory
     interface Factory {
         fun create(systemServices: SystemServices): HomeSceneComponent
+    }
+}
+
+@Component(
+    dependencies = [SystemServices::class],
+    modules = [
+        ViewModelFactoryModule::class,
+        DispatcherModule::class,
+        NoticeByMajorSceneModule::class,
+        NoticeUseCaseModule::class,
+        PreferencesUseCaseModule::class,
+        NoticeRemoteModule::class,
+        PreferencesRemoteModule::class,
+        NetworkModule::class
+    ]
+)
+interface NoticeByMajorSceneComponent {
+    fun getViewModelFactory(): ViewModelProvider.Factory
+
+    @Component.Factory
+    interface Factory {
+        fun create(systemServices: SystemServices): NoticeByMajorSceneComponent
     }
 }
 
