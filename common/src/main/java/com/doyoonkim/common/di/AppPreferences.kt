@@ -14,7 +14,10 @@ class AppPreferences @Inject constructor(
     private val DB_SYNC_2_3_STATUS = "DB_SYNC_2_3_STATUS"
 
     // Token Caching
-    private final val DEVICE_TOKEN = "DEVICE_TOKEN"
+    private val DEVICE_TOKEN = "DEVICE_TOKEN"
+
+    // Major Subscription Status
+    private val SUBSCRIBED_MAJOR = "SUBSCRIBED_MAJOR"
 
     /**
      * updateDeviceToken
@@ -26,6 +29,17 @@ class AppPreferences @Inject constructor(
 
     fun getCachedToken(): String? {
         return appPref.getString(DEVICE_TOKEN, null)
+    }
+
+    /**
+     * Major Subscription Status
+     */
+    fun getSubscribedMajor(): String? {
+        return appPref.getString(SUBSCRIBED_MAJOR, null)
+    }
+
+    fun updateSubscribedMajor(newMajor: String) {
+        appPref.edit { putString(SUBSCRIBED_MAJOR, newMajor) }
     }
 
     fun isDatabaseSyncCompleted(): Boolean {
