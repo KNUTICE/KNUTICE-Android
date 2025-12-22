@@ -40,7 +40,7 @@ class NoticesInCategoryViewModel @Inject constructor(
 
     private fun getNoticesPerPageInCategory(category: NoticeCategory) =
         viewModelScope.launch {
-            fetchNoticesPerPage(category, uiState.value.currentLastNttId)
+            fetchNoticesPerPage(category.name, uiState.value.currentLastNttId)
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = { vo ->
