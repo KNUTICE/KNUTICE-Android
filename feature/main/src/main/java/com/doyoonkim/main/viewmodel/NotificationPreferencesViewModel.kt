@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
@@ -34,6 +35,7 @@ class NotificationPreferencesViewModel @Inject constructor(
     private val submitNotificationPreferences: SubmitNotificationPreferences,
     private val fetchTopicSubscriptionStatus: FetchTopicSubscriptionStatus,
     private val notificationManager: NotificationManager,
+    private val appPreferences: AppPreferences,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<NotificationPrefStatus, NotificationPrefEvent, NotificationPrefSideEffect>() {
 
@@ -49,6 +51,11 @@ class NotificationPreferencesViewModel @Inject constructor(
             }
             is NotificationPrefEvent.RequestTopicSubscriptionStatus -> {
                 getTopicSubscriptionStatus()
+            }
+            is NotificationPrefEvent.UpdateMajorSubscriptionStatue -> {
+                with (event) {
+                    updateMajorSubscriptionStatus(value)
+                }
             }
             is NotificationPrefEvent.UpdateSubscriptionStatus -> {
                 with (event) {
@@ -134,6 +141,45 @@ class NotificationPreferencesViewModel @Inject constructor(
         }
     }
 
+    private fun updateMajorSubscriptionStatus(state: Boolean) {
+        val subscribedMajor = appPreferences.getSubscribedMajor() ?: return
+        stateUpdate {
+            it.copy(
+                isSyncCompleted = false
+            )
+        }
+        viewModelScope.launch {
+            submitNotificationPreferences.invoke(
+                TopicSubscriptionPreferencesBody(
+                    topicType = TopicType.MAJOR,
+                    noticeName = subscribedMajor,
+                    isSubscribed = state
+                )
+            ).collectLatest { result ->
+                if (result) {
+                    stateUpdate {
+                        it.copy(
+                            isMajorChannelAllowed = state,
+                            isError = false
+                        )
+                    }
+                } else {
+                    stateUpdate {
+                        it.copy(
+                            isError = true
+                        )
+                    }
+                }
+            }
+        }.invokeOnCompletion {
+            stateUpdate {
+                it.copy(
+                    isSyncCompleted = true
+                )
+            }
+        }
+    }
+
     private fun getTopicSubscriptionStatus() =
         viewModelScope.launch {
             fetchTopicSubscriptionStatus(TopicType.NOTICE)
@@ -142,8 +188,7 @@ class NotificationPreferencesViewModel @Inject constructor(
                         onSuccess =  { status ->
                             stateUpdate {
                                 it.copy(
-                                    isEachChannelAllowed = status,
-                                    isSyncCompleted = true,
+                                    isEachChannelAllowed = status.map { value -> value.second },
                                     isError = false
                                 )
                             }
@@ -151,13 +196,59 @@ class NotificationPreferencesViewModel @Inject constructor(
                         onFailure = {
                             stateUpdate {
                                 it.copy(
-                                    isSyncCompleted = true,
                                     isError = true
                                 )
                             }
                         }
                     )
                 }
+
+            fetchTopicSubscriptionStatus(TopicType.MAJOR)
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess = { status ->
+                            val cachedMajorSelection = appPreferences.getSubscribedMajor()
+                            if (cachedMajorSelection == null) {
+                                stateUpdate {
+                                    it.copy(
+                                        isMajorSubscribed = false,
+                                        isMajorChannelAllowed = false,
+                                        isError = false
+                                    )
+                                }
+                            } else {
+                                var majorStatus = false
+                                if (status.isNotEmpty()) {
+                                    if (cachedMajorSelection != status.first().first) {
+                                        appPreferences.updateSubscribedMajor(status.first().first)
+                                    }
+                                    majorStatus = status.first().second
+                                }
+
+                                stateUpdate {
+                                    it.copy(
+                                        isMajorSubscribed = true,
+                                        isMajorChannelAllowed = majorStatus,
+                                        isError = false
+                                    )
+                                }
+                            }
+                        },
+                        onFailure = {
+                            stateUpdate {
+                                it.copy(
+                                    isError = true
+                                )
+                            }
+                        }
+                    )
+                }
+        }.invokeOnCompletion {
+            stateUpdate {
+                it.copy(
+                    isSyncCompleted = true
+                )
+            }
         }
 
     private fun List<Boolean>.updateValueByIndex(index: Int, value: Boolean) =

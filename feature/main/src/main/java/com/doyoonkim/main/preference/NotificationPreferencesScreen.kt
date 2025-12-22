@@ -44,6 +44,8 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.PlaceholderScreen
+import com.doyoonkim.common.ui.RoundedCornerColumn
+import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
 import com.doyoonkim.common.ui.SingleRoundedCornerItem
 import com.doyoonkim.common.ui.TopAppBarWithBackButton
 import com.doyoonkim.main.contract.NotificationPrefEvent
@@ -138,113 +140,145 @@ fun NotificationPreferencesScreen(
                     )
                 }
 
-                SingleRoundedCornerItem(
-                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
-                    primaryColor = MaterialTheme.colorScheme.title,
-                    secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    titleText = stringResource(R.string.general_notificaiton_channel_name),
-                    descriptionText = stringResource(R.string.general_notification_channel_description)
+                RoundedCornerColumn(
+                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground
                 ) {
-                    Switch(
-                        checked = uiStatus.isEachChannelAllowed[0],
-                        colors = SwitchDefaults.colors().copy(
-                            checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
-                            checkedThumbColor = Color.White
-                        ),
-                        onCheckedChange = {
-                            viewModel.sendUiEvent(
-                                NotificationPrefEvent.UpdateSubscriptionStatus(0, it)
-                            )
-                        },
-                        enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
-                    )
+                    RoundedCornerColumnTextItemWithExtraOnRight(
+                        verticalPadding = 15.dp,
+                        titleText = stringResource(R.string.general_notificaiton_channel_name),
+                        subTitleText = stringResource(R.string.general_notification_channel_description),
+                        primaryColor = MaterialTheme.colorScheme.title,
+                        secondaryColor = MaterialTheme.colorScheme.subTitle,
+                        hasBottomDivider = true
+                    ) {
+                        Switch(
+                            checked = uiStatus.isEachChannelAllowed[0],
+                            colors = SwitchDefaults.colors().copy(
+                                checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
+                                checkedThumbColor = Color.White
+                            ),
+                            onCheckedChange = {
+                                viewModel.sendUiEvent(
+                                    NotificationPrefEvent.UpdateSubscriptionStatus(0, it)
+                                )
+                            },
+                            enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+                        )
+                    }
+
+                    RoundedCornerColumnTextItemWithExtraOnRight(
+                        verticalPadding = 15.dp,
+                        primaryColor = MaterialTheme.colorScheme.title,
+                        secondaryColor = MaterialTheme.colorScheme.subTitle,
+                        titleText = stringResource(R.string.academic_notification_channel_name),
+                        subTitleText = stringResource(R.string.academic_notification_channel_description)
+                    ) {
+                        Switch(
+                            checked = uiStatus.isEachChannelAllowed[1],
+                            colors = SwitchDefaults.colors().copy(
+                                checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
+                                checkedThumbColor = Color.White
+                            ),
+                            onCheckedChange = {
+                                viewModel.sendUiEvent(
+                                    NotificationPrefEvent.UpdateSubscriptionStatus(1, it)
+                                )
+                            },
+                            enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+                        )
+                    }
+
+                    RoundedCornerColumnTextItemWithExtraOnRight(
+                        verticalPadding = 15.dp,
+                        primaryColor = MaterialTheme.colorScheme.title,
+                        secondaryColor = MaterialTheme.colorScheme.subTitle,
+                        titleText = stringResource(R.string.scholarship_notification_channel_name),
+                        subTitleText = stringResource(R.string.scholarship_notification_channel_description)
+                    ) {
+                        Switch(
+                            checked = uiStatus.isEachChannelAllowed[2],
+                            colors = SwitchDefaults.colors().copy(
+                                checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
+                                checkedThumbColor = Color.White
+                            ),
+                            onCheckedChange = {
+                                viewModel.sendUiEvent(
+                                    NotificationPrefEvent.UpdateSubscriptionStatus(2, it)
+                                )
+                            },
+                            enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+                        )
+                    }
+
+                    RoundedCornerColumnTextItemWithExtraOnRight(
+                        verticalPadding = 15.dp,
+                        primaryColor = MaterialTheme.colorScheme.title,
+                        secondaryColor = MaterialTheme.colorScheme.subTitle,
+                        titleText = stringResource(R.string.event_notification_channel_name),
+                        subTitleText = stringResource(R.string.event_notification_channel_description)
+                    ) {
+                        Switch(
+                            checked = uiStatus.isEachChannelAllowed[3],
+                            colors = SwitchDefaults.colors().copy(
+                                checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
+                                checkedThumbColor = Color.White
+                            ),
+                            onCheckedChange = {
+                                viewModel.sendUiEvent(
+                                    NotificationPrefEvent.UpdateSubscriptionStatus(3, it)
+                                )
+                            },
+                            enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+                        )
+                    }
+
+                    RoundedCornerColumnTextItemWithExtraOnRight(
+                        verticalPadding = 15.dp,
+                        primaryColor = MaterialTheme.colorScheme.title,
+                        secondaryColor = MaterialTheme.colorScheme.subTitle,
+                        titleText = stringResource(R.string.employment_notification_channel_name),
+                        subTitleText = stringResource(R.string.employment_notification_channel_descrption),
+                        hasBottomDivider = false
+                    ) {
+                        Switch(
+                            checked = uiStatus.isEachChannelAllowed[4],
+                            colors = SwitchDefaults.colors().copy(
+                                checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
+                                checkedThumbColor = Color.White
+                            ),
+                            onCheckedChange = {
+                                viewModel.sendUiEvent(
+                                    NotificationPrefEvent.UpdateSubscriptionStatus(4, it)
+                                )
+                            },
+                            enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+                        )
+                    }
                 }
 
-                SingleRoundedCornerItem(
-                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
-                    primaryColor = MaterialTheme.colorScheme.title,
-                    secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    titleText = stringResource(R.string.academic_notification_channel_name),
-                    descriptionText = stringResource(R.string.academic_notification_channel_description)
-                ) {
-                    Switch(
-                        checked = uiStatus.isEachChannelAllowed[1],
-                        colors = SwitchDefaults.colors().copy(
-                            checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
-                            checkedThumbColor = Color.White
-                        ),
-                        onCheckedChange = {
-                            viewModel.sendUiEvent(
-                                NotificationPrefEvent.UpdateSubscriptionStatus(1, it)
-                            )
-                        },
-                        enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
-                    )
-                }
 
                 SingleRoundedCornerItem(
+                    modifier = Modifier.padding(top = 10.dp),
                     backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
                     primaryColor = MaterialTheme.colorScheme.title,
                     secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    titleText = stringResource(R.string.scholarship_notification_channel_name),
-                    descriptionText = stringResource(R.string.scholarship_notification_channel_description)
+                    titleText = stringResource(R.string.title_major_notification_channel_name),
+                    descriptionText = stringResource(R.string.description_major_notification_channel)
                 ) {
                     Switch(
-                        checked = uiStatus.isEachChannelAllowed[2],
+                        checked = uiStatus.isMajorChannelAllowed,
                         colors = SwitchDefaults.colors().copy(
                             checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
                             checkedThumbColor = Color.White
                         ),
                         onCheckedChange = {
                             viewModel.sendUiEvent(
-                                NotificationPrefEvent.UpdateSubscriptionStatus(2, it)
+                                NotificationPrefEvent.UpdateMajorSubscriptionStatue(it)
                             )
                         },
-                        enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
-                    )
-                }
-
-                SingleRoundedCornerItem(
-                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
-                    primaryColor = MaterialTheme.colorScheme.title,
-                    secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    titleText = stringResource(R.string.event_notification_channel_name),
-                    descriptionText = stringResource(R.string.event_notification_channel_description)
-                ) {
-                    Switch(
-                        checked = uiStatus.isEachChannelAllowed[3],
-                        colors = SwitchDefaults.colors().copy(
-                            checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
-                            checkedThumbColor = Color.White
-                        ),
-                        onCheckedChange = {
-                            viewModel.sendUiEvent(
-                                NotificationPrefEvent.UpdateSubscriptionStatus(3, it)
-                            )
-                        },
-                        enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
-                    )
-                }
-
-                SingleRoundedCornerItem(
-                    backgroundColor = MaterialTheme.colorScheme.secondaryBackground,
-                    primaryColor = MaterialTheme.colorScheme.title,
-                    secondaryColor = MaterialTheme.colorScheme.subTitle,
-                    titleText = stringResource(R.string.employment_notification_channel_name),
-                    descriptionText = stringResource(R.string.employment_notification_channel_descrption)
-                ) {
-                    Switch(
-                        checked = uiStatus.isEachChannelAllowed[4],
-                        colors = SwitchDefaults.colors().copy(
-                            checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
-                            checkedThumbColor = Color.White
-                        ),
-                        onCheckedChange = {
-                            viewModel.sendUiEvent(
-                                NotificationPrefEvent.UpdateSubscriptionStatus(4, it)
-                            )
-                        },
-                        enabled = uiStatus.isMainNotificationPermissionGranted && uiStatus.isSyncCompleted
+                        enabled = uiStatus.isMainNotificationPermissionGranted &&
+                                uiStatus.isSyncCompleted &&
+                                uiStatus.isMajorSubscribed
                     )
                 }
             }
