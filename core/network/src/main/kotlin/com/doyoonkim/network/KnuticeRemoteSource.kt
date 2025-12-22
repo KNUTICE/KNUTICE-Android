@@ -24,12 +24,8 @@ class KnuticeRemoteSource @Inject constructor(
 ) {
     private val TAG = "KnuticeRemoteSource"
 
-    suspend fun getTopThreeNotices() = runCatching {
-            knuticeApi.getTopThreeNotices()
-        }
-
     suspend fun getNoticesPerPage(
-        category: NoticeCategory,
+        category: String,
         size: Int = 20,
         lastNttId: Int? = null
     ) = runCatching {

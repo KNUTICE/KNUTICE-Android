@@ -28,13 +28,10 @@ import retrofit2.http.Query
  */
 
 interface KnuticeService {
-    // To be removed.
-    @GET("open-api/notices/latest")
-    suspend fun getTopThreeNotices(): TopThreeNoticeResults
 
     @GET("open-api/v1/notices")
     suspend fun getNoticesPerPage(
-        @Query("topic") category: NoticeCategory,
+        @Query("topic") category: String,
         @Query("size") size: Int,
         @Query("nttId") lastNttId: Int? = null
     ): NoticesPerPageResult

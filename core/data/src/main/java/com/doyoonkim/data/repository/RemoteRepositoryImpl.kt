@@ -40,7 +40,7 @@ class RemoteRepositoryImpl @Inject constructor(
     private val TAG = "RemoteRepositoryImpl"
 
     override suspend fun queryTopThreeNotices(category: NoticeCategory): List<NoticeVO>? {
-        remoteSource.getNoticesPerPage(category = category, size = 3).fold(
+        remoteSource.getNoticesPerPage(category = category.name, size = 3).fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) return it.body?.map { it.toVO() }
                 else it.result?.printLog().also { return emptyList<NoticeVO>() }
@@ -55,7 +55,7 @@ class RemoteRepositoryImpl @Inject constructor(
 
 
 
-    override fun queryNoticesPerPage(category: NoticeCategory, lastNttId: Int?) = flow {
+    override fun queryNoticesPerPage(category: String, lastNttId: Int?) = flow {
         remoteSource.getNoticesPerPage(category = category, lastNttId = lastNttId).fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
