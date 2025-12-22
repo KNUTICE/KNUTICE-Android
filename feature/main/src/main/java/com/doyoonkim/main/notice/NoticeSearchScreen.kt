@@ -29,6 +29,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -128,6 +130,24 @@ fun NoticeSearchScreen(
                             tint = MaterialTheme.colorScheme.onAnyBackground
                         )
                     },
+                    trailingIcon = {
+                        if (uiState.searchKeyword.isNotBlank()) {
+                            IconButton(
+                                onClick = {
+                                    viewModel.sendUiEvent(NoticeSearchEvent.UpdateSearchKeyword(""))
+                                },
+                                colors = IconButtonDefaults.iconButtonColors().copy(
+                                    containerColor = MaterialTheme.colorScheme.onAnyBackground,
+                                    contentColor = MaterialTheme.colorScheme.containerGray
+                                )
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Rounded.Clear,
+                                    contentDescription = "Clear Search Keyword"
+                                )
+                            }
+                        }
+                    },
                     onValueChange = {
                         viewModel.sendUiEvent(NoticeSearchEvent.UpdateSearchKeyword(it))
                     },
@@ -143,29 +163,6 @@ fun NoticeSearchScreen(
                     shape = RoundedCornerShape(15.dp),
                     singleLine = true
                 )
-
-                if (uiState.searchKeyword.isNotBlank()) {
-                    Button(
-                        onClick = {
-                            viewModel.sendUiEvent(NoticeSearchEvent.UpdateSearchKeyword(""))
-                        },
-                        shape = CircleShape,
-                        colors = ButtonDefaults.buttonColors().copy(
-                            containerColor = MaterialTheme.colorScheme.onAnyBackground,
-                            contentColor = MaterialTheme.colorScheme.containerGray
-                        ),
-                        contentPadding = PaddingValues(0.dp),
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .align(Alignment.CenterEnd)
-                            .padding(end = 10.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Rounded.Clear,
-                            contentDescription = "Clear"
-                        )
-                    }
-                }
             }
 
             Box(
