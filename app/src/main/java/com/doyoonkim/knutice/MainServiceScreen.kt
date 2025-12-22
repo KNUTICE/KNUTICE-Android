@@ -37,14 +37,15 @@ fun MainServiceScreen(
     onExit: () -> Unit
 ) {
 
-    var bottomBarSelectionState: Triple<Boolean, Boolean, Boolean>
+    var bottomBarSelectionState: BooleanArray
     val backStackEntryState by navController.currentBackStackEntryAsState()
     backStackEntryState?.destination?.route.let {
         bottomBarSelectionState = when(it) {
-            NavRoutes.Home.route -> Triple(true, false, false)
-            NavRoutes.Bookmark.route -> Triple(false, true, false)
-            NavRoutes.NoticeSearch.route -> Triple(false, false, true)
-            else -> Triple(false, false, false)
+            NavRoutes.Home.route -> booleanArrayOf(true, false, false, false)
+            NavRoutes.MajorNotices.route -> booleanArrayOf(false, true, false, false)
+            NavRoutes.Bookmark.route -> booleanArrayOf(false, false, true, false)
+            NavRoutes.NoticeSearch.route -> booleanArrayOf(false, false, false, true)
+            else -> booleanArrayOf(false, false, false, false)
         }
     }
 
@@ -60,10 +61,10 @@ fun MainServiceScreen(
                     actions = {
                         // https://developer.android.com/develop/ui/compose/navigation#bottom-nav
                         BottomNavigationItem(
-                            selected = bottomBarSelectionState.first,
+                            selected = bottomBarSelectionState[0],
                             enabled = true,
                             onClick = {
-                                if (!bottomBarSelectionState.first) {
+                                if (!bottomBarSelectionState[0]) {
                                     navController.navigate(NavRoutes.Home.route)
                                 }
                             },
@@ -81,10 +82,32 @@ fun MainServiceScreen(
                             unselectedContentColor = MaterialTheme.colorScheme.subTitle
                         )
                         BottomNavigationItem(
-                            selected = bottomBarSelectionState.second,
+                            selected = bottomBarSelectionState[1],
                             enabled = true,
                             onClick = {
-                                if (!bottomBarSelectionState.second) {
+                                if (!bottomBarSelectionState[1]) {
+                                    navController.navigate(NavRoutes.MajorNotices.route)
+                                }
+                            },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.outline_school_24),
+                                    contentDescription = "Notice By Major",
+                                    modifier = Modifier.padding(bottom = 5.dp)
+                                )
+                            },
+                            label = {
+                                Text("학과 공지")
+                            },
+                            selectedContentColor = MaterialTheme.colorScheme.title,
+                            unselectedContentColor = MaterialTheme.colorScheme.subTitle
+                        )
+
+                        BottomNavigationItem(
+                            selected = bottomBarSelectionState[2],
+                            enabled = true,
+                            onClick = {
+                                if (!bottomBarSelectionState[2]) {
                                     navController.navigate(NavRoutes.Bookmark.route)
                                 }
                             },
@@ -102,10 +125,10 @@ fun MainServiceScreen(
                             unselectedContentColor = MaterialTheme.colorScheme.subTitle
                         )
                         BottomNavigationItem(
-                            selected = bottomBarSelectionState.third,
+                            selected = bottomBarSelectionState[3],
                             enabled = true,
                             onClick = {
-                                if (!bottomBarSelectionState.third) {
+                                if (!bottomBarSelectionState[3]) {
                                     navController.navigate(NavRoutes.NoticeSearch.route)
                                 }
                             },
@@ -139,3 +162,8 @@ fun MainServiceScreen(
 }
 
 fun Triple<Boolean, Boolean, Boolean>.atLeastOneSelected() = this.first || this.second || this.third
+
+fun BooleanArray.atLeastOneSelected(): Boolean {
+    this.forEach { if (it) return true }
+    return false
+}
