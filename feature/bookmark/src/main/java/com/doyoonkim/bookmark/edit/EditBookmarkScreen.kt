@@ -54,10 +54,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.doyoonkim.bookmark.contract.BookmarkListSideEffect
 import com.doyoonkim.bookmark.contract.EditBookmarkEvent
 import com.doyoonkim.bookmark.contract.EditBookmarkSideEffect
 import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
+import com.doyoonkim.common.CollegeResource
 import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NoticeDetail
@@ -134,7 +134,11 @@ fun EditBookmarkScreen(
                 isLoading = false,
                 notificationTitle = bookmarkInfo.noticeTitle,
                 notificationInfo = stringResource(
-                    NoticeResources.getStringResourcesByCategory(bookmarkInfo.noticeInfo)
+                    NoticeResources.getStringResourcesByCategory(bookmarkInfo.noticeInfo).let {
+                        if (it == R.string.text_category_not_found)
+                            CollegeResource.getLocalizedCollegeStringByMajor(bookmarkInfo.noticeInfo)
+                        else it
+                    }
                 )
             ) {
                 // Request Full Content
