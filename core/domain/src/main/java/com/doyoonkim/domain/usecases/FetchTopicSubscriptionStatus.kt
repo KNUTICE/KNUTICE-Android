@@ -12,7 +12,8 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchTopicSubscriptionStatus {
-    operator fun invoke(topicType: TopicType): Flow<Result<List<Boolean>>>
+    // Change Return Type to either Map<String, Boolean> or Pair<String.Boolean>
+    operator fun invoke(topicType: TopicType): Flow<Result<List<Pair<String, Boolean>>>>
 }
 
 class FetchTopicSubscriptionStatusImpl @Inject constructor(
@@ -23,15 +24,29 @@ class FetchTopicSubscriptionStatusImpl @Inject constructor(
     override operator fun invoke(topicType: TopicType) =
         remoteRepository.queryTopicSubscriptionStatus(topicType).transform { nullable ->
             nullable?.let {
-                // TODO: Revise Later
-                val result = listOf(
-                    it.subscribed.contains(NoticeCategory.GENERAL_NEWS.name),
-                    it.subscribed.contains(NoticeCategory.ACADEMIC_NEWS.name),
-                    it.subscribed.contains(NoticeCategory.SCHOLARSHIP_NEWS.name),
-                    it.subscribed.contains(NoticeCategory.EVENT_NEWS.name),
-                    it.subscribed.contains(NoticeCategory.EMPLOYMENT_NEWS.name)
-                )
-                emit(Result.success(result))
+                when(topicType) {
+                    TopicType.NOTICE -> {
+                        // TODO: Revise Later (Change Return Type to either Map<String, Boolean> or Pair<String, Boolean>
+                        val result = listOf(
+                            Pair(NoticeCategory.GENERAL_NEWS.name, it.subscribed.contains(NoticeCategory.GENERAL_NEWS.name)),
+                            Pair(NoticeCategory.ACADEMIC_NEWS.name, it.subscribed.contains(NoticeCategory.ACADEMIC_NEWS.name)),
+                            Pair(NoticeCategory.SCHOLARSHIP_NEWS.name, it.subscribed.contains(NoticeCategory.SCHOLARSHIP_NEWS.name)),
+                            Pair(NoticeCategory.EVENT_NEWS.name, it.subscribed.contains(NoticeCategory.EVENT_NEWS.name)),
+                            Pair(NoticeCategory.EMPLOYMENT_NEWS.name, it.subscribed.contains(NoticeCategory.EMPLOYMENT_NEWS.name))
+                        )
+                        emit(Result.success(result))
+                    }
+                    TopicType.MAJOR -> {
+                        val result = it.subscribed.map { major ->
+                            Pair(major, true)
+                        }
+                        emit(Result.success(result))
+                    }
+                    TopicType.MEAL -> {
+                        val result = emptyList<Pair<String, Boolean>>()
+                        emit(Result.success(result))
+                    }
+                }
 
             } ?: emit(Result.failure(NoSuchElementException("Subscription Status Not Found")))
         }.catch {
