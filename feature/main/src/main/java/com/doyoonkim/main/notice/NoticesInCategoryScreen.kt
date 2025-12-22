@@ -174,7 +174,9 @@ fun NoticesInCategoryScreen(
                         .align(Alignment.TopCenter)
                         .padding(top = 10.dp),
                     refreshing = uiState.isRefreshRequested,
-                    state = pullRefreshState
+                    state = pullRefreshState,
+                    backgroundColor = MaterialTheme.colorScheme.onAnyBackground,
+                    contentColor = MaterialTheme.colorScheme.variantPurple
                 )
             }
         }
