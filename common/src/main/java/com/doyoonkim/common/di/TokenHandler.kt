@@ -9,4 +9,6 @@ interface TokenHandler {
     suspend fun registerNewToken(newToken: String): TokenStatus
 
     suspend fun updateRegisteredToken(oldToken: String, newToken: String): TokenStatus
+
+    suspend fun validation(): Boolean
 }

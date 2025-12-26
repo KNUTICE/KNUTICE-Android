@@ -49,4 +49,11 @@ class TokenHandlerImpl @Inject constructor(
                 newFcmToken = newToken
             )
         )
+
+    override suspend fun validation(): Boolean {
+        val token = Firebase.messaging.token.await()
+        val cached = appPreferences.getCachedToken()
+
+        return token == cached
+    }
 }

@@ -42,6 +42,9 @@ class SplashViewModel @Inject constructor(
     private fun startPreprocess() = viewModelScope.launch {
         with(uiState.value) {
             Log.d("SplashViewModel", "Current Token: ${appPreferences.getCachedToken()}")
+            // Entry Token Validation
+            val tokenResult = tokenHandler.validation()
+            if (!tokenResult) tokenHandler.invoke()
             delay(600L)         // Give slight delay to reduce thread workload.
 
             if (syncStatus == SyncStatus.REQUESTED)
