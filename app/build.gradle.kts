@@ -29,7 +29,7 @@ android {
         applicationId = "com.doyoonkim.knutice"
         minSdk = 31
         targetSdk = 35
-        versionCode = 31
+        versionCode = 32
         versionName = "1.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
