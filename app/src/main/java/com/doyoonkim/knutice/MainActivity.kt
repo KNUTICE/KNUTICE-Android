@@ -78,7 +78,7 @@ class MainActivity : ComponentActivity() {
         // Periodic Token Registration Event
         // Interval: 30-ish days, Backoff: 12 hours Linear
         val workRequest = PeriodicWorkRequestBuilder<PeriodicTokenRegistration>(
-            730, TimeUnit.DAYS
+            730, TimeUnit.HOURS
         ).setConstraints(
             Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
