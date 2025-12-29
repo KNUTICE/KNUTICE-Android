@@ -3,14 +3,19 @@ package com.doyoonkim.data.repository
 import android.util.Log
 import com.doyoonkim.data.model.Bookmark
 import com.doyoonkim.data.model.BookmarkAsListElement
+import com.doyoonkim.data.model.BookmarkFts
 import com.doyoonkim.data.model.NoticeEntity
+import com.doyoonkim.data.model.PendingBookmarkFtsAsync
 import com.doyoonkim.data.room.MainDatabaseDao
 import com.doyoonkim.domain.SortOption
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.model.BookmarkAsListElementVO
+import com.doyoonkim.model.BookmarkFtsVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.PendingBookmarkFtsVO
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
@@ -74,6 +79,59 @@ class LocalRepositoryImpl @Inject constructor(
         )
     }
 
+    override fun queryBookmarkFtsTarget() = flow {
+        runCatching {
+            localDao.getFtsEntriesFromExistingTables()
+        }.fold(
+            onSuccess = { dto -> emit(dto.map { it.toVO() }) },
+            onFailure = { emit(null) }
+        )
+    }
+
+    override fun createPendingBookmarkFtsEntity(pendingEntity: PendingBookmarkFtsVO): Flow<Boolean> = flow {
+        runCatching {
+            localDao.createAsyncFtsEntity(
+                PendingBookmarkFtsAsync(
+                    bookmarkId = pendingEntity.bookmarkId,
+                    bookmarkNotes = pendingEntity.notes,
+                    noticeTitle = pendingEntity.title
+                )
+            )
+        }.fold(
+            onSuccess = { emit(true) },
+            onFailure = { it.printLog().also { emit(false) } }
+        )
+    }
+
+    override suspend fun queryPendingBookmarkFtsBatched(limit: Int): List<PendingBookmarkFtsVO> {
+        runCatching {
+            localDao.getPendingBookmarkFtsAsyncBatch(limit)
+        }.fold(
+            onSuccess = { result ->
+                return result.map {
+                    PendingBookmarkFtsVO(
+                        bookmarkId = it.bookmarkId,
+                        notes = it.bookmarkNotes,
+                        title = it.noticeTitle
+                    )
+                }
+            },
+            onFailure = {
+                it.printLog().also { return emptyList() }
+            }
+        )
+        return emptyList()
+    }
+
+    override fun removePendingBookmarkFtsEntry(bookmarkIds: List<Int>): Flow<Boolean> = flow {
+        runCatching {
+            localDao.removePendingBookmarkFtsAsync(bookmarkIds)
+        }.fold(
+            onSuccess = { emit(true) },
+            onFailure = { it.printLog().also { emit(false) } }
+        )
+    }
+
     override fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption) = flow {
         runCatching {
             with (localDao) {
@@ -116,10 +174,75 @@ class LocalRepositoryImpl @Inject constructor(
         )
     }
 
+    override fun queryBookmarkByKeyword(
+        keyword: String,
+        size: Int,
+        pageNumber: Int
+    ): Flow<List<BookmarkAsListElementVO>?> = flow {
+        runCatching {
+            val fts = localDao.getBookmarkListByKeywordFts(keyword, size, pageNumber)
+            fts.ifEmpty { localDao.getBookmarkListByKeyword(keyword, size, pageNumber) }
+        }.fold(
+            onSuccess = { result ->
+                emit(result.map { it.toVO() })
+            },
+            onFailure = { emit(null) }
+        )
+    }
+
     override fun requestBookmarkDeletion(bookmark: BookmarkVO) = flow {
         runCatching {
             localDao.deleteBookmark(bookmark.toBookmark())
         }.onFailure { throw it }.fold(
+            onSuccess = { emit(true) },
+            onFailure = { emit(false) }
+        )
+    }
+
+    override fun createBookmarkFts(ftsEntry: BookmarkFtsVO) = flow {
+        Log.d("LocalRepositoryImpl", "Create FTS entry using ${ftsEntry.toString()}")
+        runCatching {
+            localDao.createBookmarkFts(
+                with(ftsEntry) {
+                    BookmarkFts(
+                        id = ftsId,
+                        bookmarkNotes = bookmarkNote,
+                        noticeTitle = noticeTitle,
+                        bookmarkNoteTokenized = bookmarkNoteTokenized,
+                        noticeTitleTokenized = noticeTitleTokenized
+                    )
+                }
+            )
+        }.fold(
+            onSuccess = {
+                emit(true)
+                        },
+            onFailure = {
+                it.printLog()
+                emit(false)
+            }
+        )
+    }
+
+    override fun updateBookmarkFts(ftsEntry: BookmarkFtsVO) = flow {
+        runCatching {
+            localDao.updateBookmarkFts(
+                id = ftsEntry.ftsId,
+                notes = ftsEntry.bookmarkNote,
+                title = ftsEntry.noticeTitle,
+                notesTokenized = ftsEntry.bookmarkNoteTokenized,
+                titleTokenized = ftsEntry.noticeTitleTokenized
+            )
+        }.fold(
+            onSuccess = { emit(true) },
+            onFailure = { emit(false) }
+        )
+    }
+
+    override fun deleteBookmarkFts(ftsEntry: BookmarkFtsVO) = flow {
+        runCatching {
+            localDao.deleteBookmarkFts(ftsEntry.ftsId)
+        }.fold(
             onSuccess = { emit(true) },
             onFailure = { emit(false) }
         )

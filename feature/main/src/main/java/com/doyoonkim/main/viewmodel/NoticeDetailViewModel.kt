@@ -1,30 +1,55 @@
 package com.doyoonkim.main.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.domain.usecases.FetchNoticeById
-import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.main.contract.NoticeDetailEvent
+import com.doyoonkim.main.contract.NoticeDetailSideEffect
+import com.doyoonkim.main.contract.NoticeDetailState
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticeDetailViewModel @Inject constructor(
     private val fetchNoticeById: FetchNoticeById
-) : ViewModel() {
+) : BaseViewModel<NoticeDetailState, NoticeDetailEvent, NoticeDetailSideEffect>() {
 
-    private var _uiState = MutableStateFlow(NoticeDetailState())
-    val uiState = _uiState.asStateFlow()
+    override fun setInitialState(): NoticeDetailState = NoticeDetailState()
 
-    fun getTargetNoticeById(nttId:Int) =
+    override fun handleEvent(event: NoticeDetailEvent) {
+        when (event) {
+            is NoticeDetailEvent.RequestNotice -> {
+                getTargetNoticeById(event.nttId)
+            }
+            is NoticeDetailEvent.UpdateLoadingStatus -> {
+                updateLoadingStatus(event.status)
+            }
+            is NoticeDetailEvent.RequestBookmarkCreation -> {
+                with (uiState.value) {
+                    if (isReceived) receivedNotice?.let {
+                        sendSideEffect(
+                            NoticeDetailSideEffect.NavToEditBookmark(it)
+                        )
+                    }
+                }
+            }
+            is NoticeDetailEvent.RequestDownloadAttachment -> {
+                sendSideEffect(NoticeDetailSideEffect.ShowDownloadToast)
+                sendSideEffect(NoticeDetailSideEffect.NavToDownload)
+            }
+            is NoticeDetailEvent.GoBack -> {
+                sendSideEffect(NoticeDetailSideEffect.NavToBack)
+            }
+        }
+    }
+
+    private fun getTargetNoticeById(nttId:Int) =
         viewModelScope.launch {
             fetchNoticeById(nttId)
                 .collectLatest { result ->
                     result.onSuccess { vo ->
-                        _uiState.update {
+                        stateUpdate {
                             it.copy(
                                 receivedNotice = vo,
                                 isReceived = true
@@ -34,9 +59,9 @@ class NoticeDetailViewModel @Inject constructor(
                 }
         }
 
-    fun updateLoadingStatus(newStatus: Int) {
+    private fun updateLoadingStatus(newStatus: Int) {
         viewModelScope.launch {
-            _uiState.update {
+            stateUpdate {
                 it.copy(
                     loadingStatus = (newStatus / 100).toFloat()
                 )
@@ -44,7 +69,7 @@ class NoticeDetailViewModel @Inject constructor(
 
             if (newStatus == 100) {
                 delay(1000L)
-                _uiState.update {
+                stateUpdate {
                     it.copy(
                         isLoadingCompleted = true
                     )
@@ -52,12 +77,4 @@ class NoticeDetailViewModel @Inject constructor(
             }
         }
     }
-
 }
-
-data class NoticeDetailState(
-    val receivedNotice: NoticeVO? = null,
-    val isReceived: Boolean = false,
-    val loadingStatus: Float = 0.0f,
-    val isLoadingCompleted: Boolean = false
-)

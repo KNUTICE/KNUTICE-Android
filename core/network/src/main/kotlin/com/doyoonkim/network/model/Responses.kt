@@ -2,7 +2,7 @@ package model
 
 import androidx.annotation.Keep
 import com.doyoonkim.network.model.dto.TipDTO
-import com.doyoonkim.network.model.dto.TopicSubscriptionPreferencesDTO
+import com.doyoonkim.network.model.dto.TopicSubscriptionStatusDTO
 import com.google.gson.annotations.SerializedName
 import model.dto.NoticeDTO
 import model.dto.TopThreeNoticeDTO
@@ -13,50 +13,56 @@ import model.dto.TopThreeNoticeDTO
  */
 
 @Keep
-data class NetworkResult(
-    @SerializedName("resultCode") var resultCode: Int? = null,
-    @SerializedName("resultMessage") var resultMessage: String? = null,
-    @SerializedName("resultDescription") var resultDescription: String? = null
+data class Metadata(
+    @SerializedName("success") var isSuccessful: Boolean? = null,
+    @SerializedName("code") var resultCode: Int? = null,
+    @SerializedName("message") var resultMessage: String? = null
 )
 
 @Keep
 data class TopThreeNoticeResults(
-    @SerializedName("result") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: TopThreeNoticeDTO? = TopThreeNoticeDTO()
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: TopThreeNoticeDTO? = TopThreeNoticeDTO()
 )
 
 @Keep
 data class NoticesPerPageResult(
-    @SerializedName("result") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: ArrayList<NoticeDTO>?
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: ArrayList<NoticeDTO>?
 )
 
 @Keep
 data class NoticeByIdResult(
-    @SerializedName("result") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: NoticeDTO? = NoticeDTO()
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: NoticeDTO? = NoticeDTO()
 )
 
 @Keep
 data class NoticesByKeywordResult(
-    @SerializedName("result") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: ArrayList<NoticeDTO>?
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: ArrayList<NoticeDTO>?
 )
 
 @Keep
 data class TopicSubscriptionPreferencesResult(
-    @SerializedName("reuslt") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: TopicSubscriptionPreferencesDTO? = TopicSubscriptionPreferencesDTO()
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: TopicSubscriptionStatusDTO? = TopicSubscriptionStatusDTO()
 )
 
 @Keep
 data class PostResult(
-    @SerializedName("result") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: Boolean? = null
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: Boolean? = null
+)
+
+@Keep
+data class PatchResult(
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: Boolean? = null
 )
 
 @Keep
 data class TipResult(
-    @SerializedName("result") var result: NetworkResult? = NetworkResult(),
-    @SerializedName("body") var body: ArrayList<TipDTO>? = null
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: ArrayList<TipDTO>? = null
 )

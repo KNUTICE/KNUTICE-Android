@@ -1,12 +1,14 @@
 package com.doyoonkim.network.retrofit
 
 import com.doyoonkim.model.NoticeCategory
-import com.doyoonkim.network.model.DeviceTokenRequest
-import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
-import com.doyoonkim.network.model.UserReportRequest
+import com.doyoonkim.network.model.FcmTokenSaveRequest
+import com.doyoonkim.network.model.FcmTokenUpdateRequest
+import com.doyoonkim.network.model.ReportSaveRequest
+import com.doyoonkim.network.model.TopicUpdateRequest
 import model.NoticeByIdResult
 import model.NoticesByKeywordResult
 import model.NoticesPerPageResult
+import model.PatchResult
 import model.PostResult
 import model.TipResult
 import model.TopThreeNoticeResults
@@ -15,6 +17,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -25,52 +28,62 @@ import retrofit2.http.Query
  */
 
 interface KnuticeService {
-    @GET("open-api/notices/latest")
-    suspend fun getTopThreeNotices(): TopThreeNoticeResults
 
-    @GET("open-api/notices")
+    @GET("open-api/v1/notices")
     suspend fun getNoticesPerPage(
-        @Query("noticeName") category: NoticeCategory,
+        @Query("topic") category: String,
+        @Query("size") size: Int,
         @Query("nttId") lastNttId: Int? = null
     ): NoticesPerPageResult
 
-    @GET("open-api/notices/{nttId}")
+    @GET("open-api/v1/notices/{nttId}")
     suspend fun getNoticeById(
         @Path("nttId") nttId: String
     ): NoticeByIdResult
 
-    @GET("open-api/notices/search")
+    @GET("open-api/v1/notices")
     suspend fun getNoticesByKeyword(
         @Query("keyword") keyword: String,
         @Query("nttId") lastNttId: Int? = null
     ): NoticesByKeywordResult
 
-    @GET("open-api/topics/status")
+    @GET("open-api/v1/topics")
     suspend fun getTopicSubscriptionStatus(
-        @Header("fcmToken") token: String
+        @Header("fcmToken") token: String,
+        @Query("type") topicType: String
     ): TopicSubscriptionPreferencesResult
 
-    @GET("open-api/tips")
+    @GET("open-api/v1/tips")
     suspend fun getAllTips(
         @Query("deviceType") deviceType: String
     ): TipResult
 
     @Headers("Content-Type: application/json")
-    @POST("open-api/fcm/tokens")
+    @POST("open-api/v1/fcm-tokens")
     suspend fun validateToken(
-        @Body request: DeviceTokenRequest
+        @Header("fcmToken") token: String,
+        @Body request: FcmTokenSaveRequest
     ): PostResult
 
     @Headers("Content-Type: application/json")
-    @POST("open-api/reports")
+    @PATCH("open-api/v1/fcm-tokens")
+    suspend fun updateFcmToken(
+        @Header("fcmToken") token: String,
+        @Body request: FcmTokenUpdateRequest
+    ): PatchResult
+
+    @Headers("Content-Type: application/json")
+    @POST("open-api/v1/reports")
     suspend fun submitUserReport(
-        @Body request: UserReportRequest
+        @Header("fcmToken") token: String,
+        @Body request: ReportSaveRequest
     ): PostResult
 
     @Headers("Content-Type: application/json")
-    @POST("open-api/topics/subscription")
+    @PATCH("open-api/v1/topics")
     suspend fun submitTopicSubscriptionPreferences(
-        @Body request: TopicSubscriptionPreferencesRequest
+        @Header("fcmToken") token: String,
+        @Query("type") type: String,
+        @Body request: TopicUpdateRequest
     ): PostResult
-
 }

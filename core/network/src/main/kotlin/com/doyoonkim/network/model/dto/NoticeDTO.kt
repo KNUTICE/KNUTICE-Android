@@ -13,10 +13,11 @@ data class NoticeDTO(
     @SerializedName("nttId") var nttId: Int? = null,
     @SerializedName("title") var title: String? = null,
     @SerializedName("contentUrl") var contentUrl: String? = null,
-    @SerializedName("contentImage") var contentImage: String? = null,
-    @SerializedName("departmentName") var departName: String? = null,
-    @SerializedName("registeredAt") var registeredAt: String? = null,
-    @SerializedName("noticeName") var noticeCategory: String? = null
+    @SerializedName("contentImageUrl") var contentImage: String? = null,
+    @SerializedName("department") var departName: String? = null,
+    @SerializedName("registrationDate") var registeredAt: String? = null,
+    @SerializedName("topic") var topic: String? = null,
+    @SerializedName("isAttachment") var hasAttachment: Boolean? = null
 ) {
     fun toVO() =
         NoticeVO(
@@ -26,6 +27,16 @@ data class NoticeDTO(
             imageUrl = this.contentImage,
             departName = this.departName ?: "",
             timestamp = this.registeredAt ?: "",
-            noticeName = this.noticeCategory ?: ""
+            noticeName = this.topic ?: ""
         )
 }
+
+//@Keep
+//data class Topic(
+//    @SerializedName("bbsPath") var bbsPath: String? = null,
+//    @SerializedName("category") var category: String? = null,
+//    @SerializedName("noticeUrl") var noticeUrl: String? = null,
+//    @SerializedName("rootDomain") var rootDomain: String? = null,
+//    @SerializedName("topicName") var topicName: String? = null
+//)
+

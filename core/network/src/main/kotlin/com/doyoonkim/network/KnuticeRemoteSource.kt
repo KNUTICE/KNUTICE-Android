@@ -1,13 +1,15 @@
 package com.doyoonkim.network
 
 import android.util.Log
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.model.NoticeCategory
-import com.doyoonkim.network.model.DeviceTokenRequest
-import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
-import com.doyoonkim.network.model.UserReportRequest
+import com.doyoonkim.model.TopicType
+import com.doyoonkim.network.model.FcmTokenSaveRequest
+import com.doyoonkim.network.model.FcmTokenUpdateRequest
+import com.doyoonkim.network.model.ReportSaveRequest
+import com.doyoonkim.network.model.TopicUpdateRequest
 import com.doyoonkim.network.retrofit.KnuticeService
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * @author kimdoyoon
@@ -17,16 +19,17 @@ import javax.inject.Singleton
 // This class should be provided/injected as Singleton Instance.
 class KnuticeRemoteSource @Inject constructor(
     private val knuticeApi: KnuticeService,
-    private val deviceToken: DeviceToken
+    private val deviceToken: DeviceToken,
+    private val appPreference: AppPreferences
 ) {
     private val TAG = "KnuticeRemoteSource"
 
-    suspend fun getTopThreeNotices() = runCatching {
-            knuticeApi.getTopThreeNotices()
-        }
-
-    suspend fun getNoticesPerPage(category: NoticeCategory, lastNttId: Int?) = runCatching {
-            knuticeApi.getNoticesPerPage(category, lastNttId)
+    suspend fun getNoticesPerPage(
+        category: String,
+        size: Int = 20,
+        lastNttId: Int? = null
+    ) = runCatching {
+            knuticeApi.getNoticesPerPage(category, size, lastNttId)
         }
 
     suspend fun getNoticeById(nttId: Int) = runCatching {
@@ -39,10 +42,13 @@ class KnuticeRemoteSource @Inject constructor(
             knuticeApi.getNoticesByKeyword(keyword, nttId)
         }
 
-    suspend fun getTopicSubscriptionStatus() = runCatching {
-            if (deviceToken.validatedToken().isBlank()) throw Exception("No validated token found")
+    suspend fun getTopicSubscriptionStatus(topicType: String) = runCatching {
+            if (appPreference.getCachedToken().isNullOrBlank()) throw Exception("No validated token found")
             else {
-                knuticeApi.getTopicSubscriptionStatus(deviceToken.validatedToken())
+                knuticeApi.getTopicSubscriptionStatus(
+                    appPreference.getCachedToken()!!,
+                    topicType
+                )
             }
         }
 
@@ -50,22 +56,42 @@ class KnuticeRemoteSource @Inject constructor(
         knuticeApi.getAllTips(deviceType = "AOS")
     }
 
-    suspend fun validateToken(request: DeviceTokenRequest) = runCatching {
-            knuticeApi.validateToken(request)
+    suspend fun validateToken(token: String, request: FcmTokenSaveRequest) = runCatching {
+            if (appPreference.getCachedToken().isNullOrBlank() || appPreference.getCachedToken() != token) {
+                throw Exception("Token Mismatch\nReceived: $token Cached: ${appPreference.getCachedToken()}")
+            }
+            knuticeApi.validateToken(appPreference.getCachedToken()!!, request)
         }
 
     fun updateValidatedToken(fcmToken: String) {
         deviceToken.updateValidatedToken(fcmToken)
     }
 
-    suspend fun submitUserReport(request: UserReportRequest) = runCatching {
-        val body = request.body.copy(fcmToken = deviceToken.validatedToken())
-        knuticeApi.submitUserReport(request.copy(body = body))
+    suspend fun submitUserReport(request: ReportSaveRequest) = runCatching {
+        if (appPreference.getCachedToken().isNullOrBlank()) throw Exception("No validated token found")
+        else {
+            knuticeApi.submitUserReport(
+                appPreference.getCachedToken()!!, request
+            )
+        }
     }
 
-    suspend fun submitTopicSubscriptionPreferences(request: TopicSubscriptionPreferencesRequest) =
+    suspend fun submitTopicSubscriptionPreferences(type: TopicType, request: TopicUpdateRequest) =
         runCatching {
-            val body = request.body.copy(fcmToken = deviceToken.validatedToken())
-            knuticeApi.submitTopicSubscriptionPreferences(request.copy(body = body))
+            if (appPreference.getCachedToken().isNullOrBlank()) throw Exception("No validated token found")
+
+            knuticeApi.submitTopicSubscriptionPreferences(
+                appPreference.getCachedToken()!!,
+                type.name,
+                request
+            )
+        }
+
+    suspend fun updateDeviceToken(newToken: String, request: FcmTokenUpdateRequest) =
+        runCatching {
+            if (appPreference.getCachedToken().isNullOrBlank() || appPreference.getCachedToken() != newToken) {
+                throw Exception("Token mismatch\nReceived: $newToken Cached: ${appPreference.getCachedToken()}")
+            }
+            knuticeApi.updateFcmToken(newToken, request)
         }
 }

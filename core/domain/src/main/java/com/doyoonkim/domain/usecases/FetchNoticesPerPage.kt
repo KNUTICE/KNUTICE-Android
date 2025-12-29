@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchNoticesPerPage {
-    operator fun invoke(category: NoticeCategory, lastNttId: Int): Flow<Result<List<NoticeVO>>>
+    operator fun invoke(category: String, lastNttId: Int): Flow<Result<List<NoticeVO>>>
 }
 
 class FetchNoticesPerPageImpl @Inject constructor(
@@ -20,7 +20,7 @@ class FetchNoticesPerPageImpl @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FetchNoticesPerPage {
 
-    override operator fun invoke(category: NoticeCategory, lastNttId: Int) =
+    override operator fun invoke(category: String, lastNttId: Int) =
         remoteRepository.run {
             if (lastNttId == 0) queryNoticesPerPage(category, null)
             else queryNoticesPerPage(category, lastNttId)

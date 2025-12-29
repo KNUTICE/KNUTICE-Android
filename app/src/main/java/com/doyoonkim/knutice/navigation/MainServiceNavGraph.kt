@@ -25,6 +25,7 @@ import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerCustomerServiceSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerHomeSceneComponent
+import com.doyoonkim.knutice.di.components.DaggerNoticeByMajorSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNoticeDetailSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNoticeInCategorySceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNoticeSearchSceneComponent
@@ -32,6 +33,7 @@ import com.doyoonkim.knutice.di.components.DaggerNotificationPreferencesSceneCom
 import com.doyoonkim.knutice.di.components.DaggerSettingsSceneComponent
 import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.main.home.HomeScreen
+import com.doyoonkim.main.notice.NoticeByMajorScreen
 import com.doyoonkim.main.notice.NoticeDetailScreen
 import com.doyoonkim.main.notice.NoticeSearchScreen
 import com.doyoonkim.main.notice.NoticesInCategoryScreen
@@ -42,6 +44,7 @@ import com.doyoonkim.main.preference.UserPreferenceScreen
 import com.doyoonkim.main.tip.TipDetailScreen
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.main.viewmodel.HomeViewModel
+import com.doyoonkim.main.viewmodel.NoticeByMajorViewModel
 import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
 import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
@@ -101,6 +104,23 @@ fun NavGraphBuilder.mainServiceNavGraph(
     }
 
     composable(
+        route = NavRoutes.MajorNotices.route
+    ) {
+        val sceneComponent = remember(appComponent) {
+            DaggerNoticeByMajorSceneComponent.factory().create(DefaultSystemService(appComponent))
+        }
+
+        NoticeByMajorScreen(
+            modifier = Modifier,
+            viewModel = viewModel<NoticeByMajorViewModel>(factory = sceneComponent.getViewModelFactory()),
+            bottomPadding = contentPadding.calculateBottomPadding(),
+            onGoBackRequested = { navController.popBackStack() },
+            onSettingRequested = { navController.navigate(NavRoutes.Settings.route) },
+            onNoticeDetailRequested = { id, url -> onNoticeDetailRequested(NoticeDetail(id, url)) }
+        )
+    }
+
+    composable(
         route = NavRoutes.NoticeSearch.route
     ) {
         val sceneComponent = remember(appComponent) {
@@ -114,6 +134,15 @@ fun NavGraphBuilder.mainServiceNavGraph(
             onBackPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
+            },
+            onBookmarkSelected = { id, title, category ->
+                onBookmarkServiceRequested(
+                    BookmarkInfo(
+                        noticeId = id,
+                        noticeTitle = title,
+                        noticeInfo = category
+                    )
+                )
             }
         )
     }
@@ -417,7 +446,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
             onBookmarkCreate = { onBookmarkServiceRequested(BookmarkInfo(
                 noticeId = it.nttId,
                 noticeTitle = it.title,
-                noticeInfo = it.noticeName
+                noticeInfo = it.noticeName.ifBlank { it.departName }
             )) },
             onBackPressed = { navController.popBackStack() }
         )

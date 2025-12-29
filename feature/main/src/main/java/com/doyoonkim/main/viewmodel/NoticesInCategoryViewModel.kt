@@ -1,32 +1,50 @@
 package com.doyoonkim.main.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
+import com.doyoonkim.main.contract.NoticesInCategoryEvent
+import com.doyoonkim.main.contract.NoticesInCategorySideEffect
+import com.doyoonkim.main.contract.NoticesInCategoryState
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticesInCategoryViewModel @Inject constructor(
     private val fetchNoticesPerPage: FetchNoticesPerPage
-) : ViewModel() {
+) : BaseViewModel<NoticesInCategoryState, NoticesInCategoryEvent, NoticesInCategorySideEffect>() {
+    override fun setInitialState(): NoticesInCategoryState = NoticesInCategoryState()
 
-    // uiStates
-    private var _uiState = MutableStateFlow(NoticesInCategoryStates())
-    val uiState = _uiState.asStateFlow()
+    override fun handleEvent(event: NoticesInCategoryEvent) {
+        when (event) {
+            is NoticesInCategoryEvent.RequestNotices -> {
+                getNoticesPerPageInCategory(event.category)
+            }
+            is NoticesInCategoryEvent.RequestNoticeDetail -> {
+                if (!uiState.value.isLoading) {
+                    with(event) {
+                        sendSideEffect(NoticesInCategorySideEffect.NavToNoticeDetail(id, url))
+                    }
+                }
+            }
+            is NoticesInCategoryEvent.RequestRefresh -> {
+                requestRefresh()
+            }
+            is NoticesInCategoryEvent.GoBack -> {
+                sendSideEffect(NoticesInCategorySideEffect.NavToBack)
+            }
+        }
+    }
 
-    fun getNoticesPerPageInCategory(category: NoticeCategory) =
+    private fun getNoticesPerPageInCategory(category: NoticeCategory) =
         viewModelScope.launch {
-            fetchNoticesPerPage(category, uiState.value.currentLastNttId)
+            fetchNoticesPerPage(category.name, uiState.value.currentLastNttId)
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = { vo ->
-                            _uiState.update {
+                            stateUpdate {
                                 it.copy(
                                     currentLastNttId = vo.last().nttId,
                                     notices =
@@ -41,7 +59,7 @@ class NoticesInCategoryViewModel @Inject constructor(
                             }
                         },
                         onFailure = {
-                            _uiState.update {
+                            stateUpdate {
                                 it.copy(
                                     isError = true,
                                     isNoticesRequested = false,
@@ -54,8 +72,8 @@ class NoticesInCategoryViewModel @Inject constructor(
                 }
         }
 
-    fun requestRefresh() =
-        _uiState.update {
+    private fun requestRefresh() =
+        stateUpdate {
             it.copy(
                 currentLastNttId = 0,
                 notices = emptyList(),
@@ -64,26 +82,10 @@ class NoticesInCategoryViewModel @Inject constructor(
             )
         }
 
-    // TODO Subject to be removed.
-    fun requestMoreNotices() {
-        // TODO Need to fix the way to pass the NoticeCategory parameter.
-        if (!uiState.value.isLoading) _uiState.update { it.copy(isNoticesRequested = true) }
-    }
-
 
     private fun List<NoticeVO>.addAll(extra: List<NoticeVO>) =
         List(this.size + extra.size) {
             if (it < this.size) this[it]
             else extra[it - this.size]
         }
-
 }
-
-data class NoticesInCategoryStates(
-    val currentLastNttId: Int = 0,
-    val notices: List<NoticeVO> = List(20) { NoticeVO() },
-    val isNoticesRequested: Boolean = true,
-    val isError: Boolean = false,
-    val isLoading: Boolean = true,
-    val isRefreshRequested: Boolean = false
-)

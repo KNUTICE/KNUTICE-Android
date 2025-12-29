@@ -50,3 +50,11 @@ abstract class NotificationModule {
     ): TokenHandler
 
 }
+
+@Module
+abstract class FcmTokenModule {
+    @Binds
+    abstract fun bindsTokenHandler(
+        impl: TokenHandlerImpl
+    ): TokenHandler
+}

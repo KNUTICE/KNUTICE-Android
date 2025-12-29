@@ -2,6 +2,8 @@ package com.doyoonkim.domain.di
 
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
 import com.doyoonkim.domain.usecases.FetchAllBookmarksImpl
+import com.doyoonkim.domain.usecases.FetchBookmarkByKeyword
+import com.doyoonkim.domain.usecases.FetchBookmarkByKeywordImpl
 import com.doyoonkim.domain.usecases.FetchNoticeById
 import com.doyoonkim.domain.usecases.FetchNoticeByIdFromLocal
 import com.doyoonkim.domain.usecases.FetchNoticeByIdFromLocalImpl
@@ -16,6 +18,8 @@ import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.domain.usecases.FetchTopThreeNoticesImpl
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatusImpl
+import com.doyoonkim.domain.usecases.InsertPendingFtsEntries
+import com.doyoonkim.domain.usecases.InsertPendingFtsEntriesImpl
 import com.doyoonkim.domain.usecases.ModifyBookmark
 import com.doyoonkim.domain.usecases.ModifyBookmarkImpl
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
@@ -69,6 +73,11 @@ abstract class BookmarkUseCaseModule {
     abstract fun bindsModifyBookmark(
         impl: ModifyBookmarkImpl
     ): ModifyBookmark
+
+    @Binds
+    abstract fun bindsFetchBookmarkByKeyword(
+        impl: FetchBookmarkByKeywordImpl
+    ): FetchBookmarkByKeyword
 }
 
 @Module
@@ -108,4 +117,20 @@ abstract class PreProcessingUseCaseModule {
     abstract fun bindsSyncDataWithUpdatedDatabase(
         impl: SyncDataWithUpdatedDatabaseImpl
     ): SyncDataWithUpdateDatabase
+}
+
+@Module
+abstract class TokenUseCaseModule {
+    @Binds
+    abstract fun bindsValidateDeviceToken(
+        impl: ValidateDeviceTokenImpl
+    ): ValidateDeviceToken
+}
+
+@Module
+abstract class AsyncFtsEntryInsertionModule {
+    @Binds
+    abstract fun bindsInsertPendingFtsEntries(
+        impl: InsertPendingFtsEntriesImpl
+    ): InsertPendingFtsEntries
 }

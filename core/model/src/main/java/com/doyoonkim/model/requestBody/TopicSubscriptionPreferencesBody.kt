@@ -1,7 +1,9 @@
 package com.doyoonkim.model.requestBody
 
+import com.doyoonkim.model.TopicType
+
 data class TopicSubscriptionPreferencesBody(
-    val fcmToken: String? = null,
+    val topicType: TopicType = TopicType.NOTICE,
     val noticeName: String = "Unspecified",
     val isSubscribed: Boolean = false
 )

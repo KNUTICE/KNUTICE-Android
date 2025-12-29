@@ -93,4 +93,80 @@
     <string name="employment_notification_channel_descrption">新しい就職公知があればアラムを取りたい</string>
     <string name="text_updated_newest">更新が新しい順</string>
     <string name="text_updated_oldest">更新が古い順</string>
+
+    <!-- Majors -->
+    <!-- 融合技術大学 -->
+    <string name="college_convergence_technology">融合技術大学</string>
+    <string name="major_mechanical_engineering">機械工学科</string>
+    <string name="major_automotive_engineering">自動車工学科</string>
+    <string name="major_aeronautical_and_mechanical_design_engineering">航空・機械設計学科</string>
+    <string name="major_electrical_engineering">電気工学科</string>
+    <string name="major_electronic_engineering">電子工学科</string>
+    <string name="major_computer_engineering">コンピュータ工学科</string>
+    <string name="major_computer_science">コンピュータソフトウェア学科</string>
+    <string name="major_ai_robotics_engineering">AIロボット工学科</string>
+    <string name="major_biomedical_engineering">バイオメディカル融合学科</string>
+    <string name="major_precision_medicine_medical_device">精密医療・医療機器学科</string>
+
+    <!-- 工学部 -->
+    <string name="college_engineering">工学部</string>
+    <string name="major_civil_engineering">社会基盤工学専攻</string>
+    <string name="major_environmental_engineering">環境工学専攻</string>
+    <string name="major_urban_and_transportation_engineering">都市・交通工学専攻</string>
+    <string name="major_chemical_and_biological_engineering">化学・生物工学科</string>
+    <string name="major_materials_science_and_engineering">半導体新素材工学科</string>
+    <string name="major_polymer_science_and_engineering">ナノ化学素材工学科</string>
+    <string name="major_industrial_and_management_engineering">産業経営工学科</string>
+    <string name="major_safety_engineering">安全工学科</string>
+    <string name="major_architectural_engineering">建築工学科</string>
+    <string name="major_architecture">建築学科(5年制)</string>
+    <string name="major_industrial_design">産業デザイン学科</string>
+    <string name="major_communication_design">コミュニケーションデザイン学科</string>
+
+    <!-- 人文社会学部 -->
+    <string name="college_humanities">人文社会学部</string>
+    <string name="major_english_language_and_literature">英語英文学科</string>
+    <string name="major_chinese_language">中国語学科</string>
+    <string name="major_korean_language_and_literature">韓国語文学科</string>
+    <string name="major_music">音楽学科</string>
+    <string name="major_sports_medicine">スポーツ医学科</string>
+    <string name="major_sports_industry">スポーツ産業学科</string>
+
+    <!-- 社会科学部 -->
+    <string name="college_social_science">社会科学部</string>
+    <string name="major_public_administration">行政学科</string>
+    <string name="major_public_administration_and_information_convergence">行政情報融合学科</string>
+    <string name="major_business_administration">経営学科</string>
+    <string name="major_convergence_management">融合経営学科</string>
+    <string name="major_international_trade_and_business">国際貿易学科</string>
+    <string name="major_social_welfare">社会福祉学科</string>
+    <string name="major_airline_service">航空サービス学科</string>
+    <string name="major_aeronautical_science_and_flight_operation">航空運航学科</string>
+    <string name="major_early_childhood_education">幼児教育学科</string>
+    <string name="major_media_and_contents">メディア＆コンテンツ学科</string>
+
+    <!-- 保健生命学部 -->
+    <string name="college_health_and_life_science">保健生命学部</string>
+    <string name="major_nursing">看護学科</string>
+    <string name="major_physical_therapy">理学療法学科</string>
+    <string name="major_paramedicine">救急救命学科</string>
+    <string name="major_food_science_and_technology">食品工学専攻</string>
+    <string name="major_food_and_nutrition">食品栄養学専攻</string>
+    <string name="major_biotechnology">生命工学専攻</string>
+    <string name="major_early_childhood_special_education">幼児特別教育学科</string>
+
+    <!-- 鉄道大学 -->
+    <string name="college_railroad">鉄道大学</string>
+    <string name="major_railroad_management_and_logistics">鉄道経営・物流学科</string>
+    <string name="major_data_science">データサイエンス専攻</string>
+    <string name="major_artificial_intelligence">人工知能専攻</string>
+    <string name="major_railroad_operation_systems_engineering">鉄道運転システム工学科</string>
+    <string name="major_railway_vehicle_system_engineering">鉄道車両システム工学科</string>
+    <string name="major_railroad_infrastructure_engineering">鉄道インフラ工学科</string>
+    <string name="major_railroad_electrical_and_information_engineering">鉄道電気情報工学科</string>
+    <string name="title_major_select">専攻を選ぶ</string>
+    <string name="text_major_select">専攻を選んでください</string>
+    <string name="text_no_major_notice">選んだ専攻のお知らせがありません</string>
+    <string name="title_major_notification_channel_name">専攻アラム</string>
+    <string name="description_major_notification_channel">選んだ専攻の新しいお知らせがあればアラムを取りたい</string>
 </resources>

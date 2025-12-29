@@ -5,6 +5,7 @@ sealed class NavRoutes(val route: String) {
 
     data object Home : NavRoutes(Destination.HOME.name)
     data object Bookmark: NavRoutes(Destination.BOOKMARKS.name)
+    data object MajorNotices: NavRoutes(Destination.MAJOR_NOTICES.name)
 
     data object Settings: NavRoutes(Destination.SETTINGS.name)
     data object NotificationPreferences: NavRoutes(Destination.NOTIFICATION.name)
@@ -21,4 +22,4 @@ sealed class NavRoutes(val route: String) {
 }
 
 enum class Destination { HOME, MORE_GENERAL, MORE_ACADEMIC, MORE_SCHOLARSHIP, MORE_EVENT,
-    MORE_EMPLOYMENT, SETTINGS, OSS, CS, SEARCH, NOTIFICATION, BOOKMARKS, Unspecified }
+    MORE_EMPLOYMENT, SETTINGS, OSS, CS, SEARCH, NOTIFICATION, BOOKMARKS, MAJOR_NOTICES, Unspecified }

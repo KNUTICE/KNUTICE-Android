@@ -3,7 +3,12 @@ package com.doyoonkim.main.viewmodel
 import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.base.BaseViewModel
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.domain.usecases.SubmitUserReport
+import com.doyoonkim.main.contract.CustomerServiceEvent
+import com.doyoonkim.main.contract.CustomerServiceSideEffect
+import com.doyoonkim.main.contract.CustomerServiceStatus
 import com.doyoonkim.model.requestBody.UserReportBody
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -13,14 +18,30 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CustomerServiceViewModel @Inject constructor(
-    private val submitUserReport: SubmitUserReport
-) : ViewModel() {
+    private val submitUserReport: SubmitUserReport,
+    private val appPreferences: AppPreferences
+) : BaseViewModel<CustomerServiceStatus, CustomerServiceEvent, CustomerServiceSideEffect>() {
+    override fun setInitialState(): CustomerServiceStatus = CustomerServiceStatus()
 
-    private var _uiState = MutableStateFlow(CustomerServiceStatus())
-    val uiState = _uiState.asStateFlow()
+    override fun handleEvent(event: CustomerServiceEvent) {
+        when (event) {
+            is CustomerServiceEvent.UpdateUserReport -> {
+                updateUserReportContent(event.value)
+            }
+            is CustomerServiceEvent.SubmitUserReport -> {
+                submitUserReport(event.version)
+            }
+            is CustomerServiceEvent.ResetSubmissionStatus -> {
+                resetSubmissionStatus()
+            }
+            is CustomerServiceEvent.GoBack -> {
+                sendSideEffect(CustomerServiceSideEffect.NavToBack)
+            }
+        }
+    }
 
-    fun updateUserReportContent(content: String) =
-        _uiState.update {
+    private fun updateUserReportContent(content: String) =
+        stateUpdate {
             it.copy(
                 userReport = content,
                 exceedMinCharacters = content.length >= 5,
@@ -28,16 +49,17 @@ class CustomerServiceViewModel @Inject constructor(
             )
         }
 
-    fun submitUserReport(versionInfo: String) =
+    private fun submitUserReport(versionInfo: String) =
         viewModelScope.launch {
             submitUserReport(
                 UserReportBody(
                     content = uiState.value.userReport,
                     deviceName = "${Build.BRAND} ${Build.MODEL}",
-                    version = versionInfo
+                    version = versionInfo,
+//                    fcmToken = appPreferences.getCachedToken()
                 )
             ).collectLatest { result ->
-                    _uiState.update {
+                    stateUpdate {
                         if (result) {
                             it.copy(
                                 userReport = "",
@@ -55,8 +77,8 @@ class CustomerServiceViewModel @Inject constructor(
                 }
         }
 
-    fun resetSubmissionStatus() =
-        _uiState.update {
+    private fun resetSubmissionStatus() =
+        stateUpdate {
             it.copy(
                 isSubmissionFailed = false,
                 isSubmissionCompleted = false
@@ -64,11 +86,3 @@ class CustomerServiceViewModel @Inject constructor(
         }
 
 }
-
-data class CustomerServiceStatus(
-    val userReport: String = "",
-    val reachedMaxCharacters: Boolean = false,
-    val exceedMinCharacters: Boolean = false,
-    val isSubmissionFailed: Boolean = false,
-    val isSubmissionCompleted: Boolean = false
-)

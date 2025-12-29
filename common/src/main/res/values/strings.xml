@@ -11,7 +11,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code" translatable="false">1.5.1</string>
+    <string name="version_code" translatable="false">1.6.1</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -104,4 +104,81 @@
     <string name="employment_notification_channel_descrption">Get push notification when new career notice is being posted.</string>
     <string name="text_updated_newest">Newest Updated</string>
     <string name="text_updated_oldest">Oldest Updated</string>
+
+    <!-- MAJORS -->
+    <!-- Convergence Technology College -->
+    <string name="college_convergence_technology">College of Convergence Technology</string>
+    <string name="major_mechanical_engineering">Mechanical Engineering</string>
+    <string name="major_automotive_engineering">Automotive Engineering</string>
+    <string name="major_aeronautical_and_mechanical_design_engineering">Aeronautical &amp; Mechanical Design Engineering</string>
+    <string name="major_electrical_engineering">Electrical Engineering</string>
+    <string name="major_electronic_engineering">Electronic Engineering</string>
+    <string name="major_computer_engineering">Computer Engineering</string>
+    <string name="major_computer_science">Computer Software Engineering</string>
+    <string name="major_ai_robotics_engineering">AI &amp; Robotics Engineering</string>
+    <string name="major_biomedical_engineering">Biomedical Convergence Engineering</string>
+    <string name="major_precision_medicine_medical_device">Precision Medicine &amp; Medical Device</string>
+
+    <!-- College of Engineering -->
+    <string name="college_engineering">College of Engineering</string>
+    <string name="major_civil_engineering">Civil Engineering</string>
+    <string name="major_environmental_engineering">Environmental Engineering</string>
+    <string name="major_urban_and_transportation_engineering">Urban &amp; Transportation Engineering</string>
+    <string name="major_chemical_and_biological_engineering">Chemical &amp; Biological Engineering</string>
+    <string name="major_materials_science_and_engineering">Semiconductor &amp; New Materials Engineering</string>
+    <string name="major_polymer_science_and_engineering">Nano Chemical Materials Engineering</string>
+    <string name="major_industrial_and_management_engineering">Industrial &amp; Management Engineering</string>
+    <string name="major_safety_engineering">Safety Engineering</string>
+    <string name="major_architectural_engineering">Architectural Engineering</string>
+    <string name="major_architecture">Architecture (5-year)</string>
+    <string name="major_industrial_design">Industrial Design</string>
+    <string name="major_communication_design">Communication Design</string>
+
+    <!-- College of Humanities -->
+    <string name="college_humanities">College of Humanities</string>
+    <string name="major_english_language_and_literature">English Language &amp; Literature</string>
+    <string name="major_chinese_language">Chinese Language</string>
+    <string name="major_korean_language_and_literature">Korean Language &amp; Literature</string>
+    <string name="major_music">Music</string>
+    <string name="major_sports_medicine">Sports Medicine</string>
+    <string name="major_sports_industry">Sports Industry</string>
+
+    <!-- College of Social Sciences -->
+    <string name="college_social_science">College of Social Science</string>
+    <string name="major_public_administration">Public Administration</string>
+    <string name="major_public_administration_and_information_convergence">Public Administration &amp; Information Convergence</string>
+    <string name="major_business_administration">Business Administration</string>
+    <string name="major_convergence_management">Convergence Management</string>
+    <string name="major_international_trade_and_business">International Trade &amp; Business</string>
+    <string name="major_social_welfare">Social Welfare</string>
+    <string name="major_airline_service">Airline Service</string>
+    <string name="major_aeronautical_science_and_flight_operation">Aeronautical Science &amp; Flight Operation</string>
+    <string name="major_early_childhood_education">Early Childhood Education</string>
+    <string name="major_media_and_contents">Media &amp; Contents</string>
+
+    <!-- College of Health & Life Sciences -->
+    <string name="college_health_and_life_science">College of Health &amp; Life Science</string>
+    <string name="major_nursing">Nursing</string>
+    <string name="major_physical_therapy">Physical Therapy</string>
+    <string name="major_paramedicine">Paramedicine</string>
+    <string name="major_food_science_and_technology">Food Science &amp; Technology</string>
+    <string name="major_food_and_nutrition">Food &amp; Nutrition</string>
+    <string name="major_biotechnology">Biotechnology</string>
+    <string name="major_early_childhood_special_education">Early Childhood Special Education</string>
+
+    <!-- Railroad College -->
+    <string name="college_railroad">College of Railroad</string>
+    <string name="major_railroad_management_and_logistics">Railroad Management &amp; Logistics</string>
+    <string name="major_data_science">Data Science</string>
+    <string name="major_artificial_intelligence">Artificial Intelligence</string>
+    <string name="major_railroad_operation_systems_engineering">Railroad Operation Systems Engineering</string>
+    <string name="major_railway_vehicle_system_engineering">Railway Vehicle Systems Engineering</string>
+    <string name="major_railroad_infrastructure_engineering">Railroad Infrastructure Engineering</string>
+    <string name="major_railroad_electrical_and_information_engineering">Railroad Electrical &amp; Information Engineering</string>
+    <string name="title_major_select">Select Major</string>
+    <string name="text_value_not_found" translatable="false">Value Not Found</string>
+    <string name="text_major_select">Please select the major</string>
+    <string name="text_no_major_notice">There are no notices from the selected major</string>
+    <string name="title_major_notification_channel_name">Notice by Major</string>
+    <string name="description_major_notification_channel">Get notification when new notice from the selected major is being posted.</string>
 </resources>

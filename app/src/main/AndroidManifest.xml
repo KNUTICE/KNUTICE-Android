@@ -53,6 +53,17 @@
             </intent-filter>
         </service>
         <receiver android:name="com.doyoonkim.notification.local.AlarmReceiver" />
-    </application>
 
+        <!--Prevent Default initialization of WorkManager instance-->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="com.doyoonkim.knutice.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+    </application>
 </manifest>

@@ -9,18 +9,24 @@ import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.TipVO
+import com.doyoonkim.model.TokenStatus
 import com.doyoonkim.model.TopThreeNoticeVO
+import com.doyoonkim.model.TopicType
 import com.doyoonkim.model.requestBody.DeviceTokenBody
+import com.doyoonkim.model.requestBody.TokenUpdateBody
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import com.doyoonkim.model.requestBody.UserReportBody
 import com.doyoonkim.network.KnuticeRemoteSource
-import com.doyoonkim.network.model.DeviceTokenRequest
-import com.doyoonkim.network.model.TopicSubscriptionPreferencesRequest
-import com.doyoonkim.network.model.UserReportRequest
+import com.doyoonkim.network.model.FcmTokenSaveRequest
+import com.doyoonkim.network.model.FcmTokenUpdateRequest
+import com.doyoonkim.network.model.ReportSaveRequest
+import com.doyoonkim.network.model.TopicUpdateRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import model.NetworkResult
+import model.Metadata
+import java.net.ConnectException
+import java.net.SocketTimeoutException
 import javax.inject.Inject
 
 class RemoteRepositoryImpl @Inject constructor(
@@ -33,21 +39,24 @@ class RemoteRepositoryImpl @Inject constructor(
 {
     private val TAG = "RemoteRepositoryImpl"
 
-    override fun queryTopThreeNotices() = flow {
-        remoteSource.getTopThreeNotices().fold(
+    override suspend fun queryTopThreeNotices(category: NoticeCategory): List<NoticeVO>? {
+        remoteSource.getNoticesPerPage(category = category.name, size = 3).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(it.body?.toVO())
-                else it.result.printLog().also { emit(TopThreeNoticeVO()) }
+                if (it.result?.resultCode == 200) return it.body?.map { it.toVO() }
+                else it.result?.printLog().also { return emptyList<NoticeVO>() }
             },
             onFailure = {
                 it.printLog()
-                emit(null)
+                return null
             }
         )
-    }.flowOn(Dispatchers.IO)
+        return null
+    }
 
-    override fun queryNoticesPerPage(category: NoticeCategory, lastNttId: Int?) = flow {
-        remoteSource.getNoticesPerPage(category, lastNttId).fold(
+
+
+    override fun queryNoticesPerPage(category: String, lastNttId: Int?) = flow {
+        remoteSource.getNoticesPerPage(category = category, lastNttId = lastNttId).fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
                 else it.result.printLog().also { emit(emptyList<NoticeVO>()) }
@@ -86,12 +95,13 @@ class RemoteRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun queryTopicSubscriptionStatus() = flow {
-        remoteSource.getTopicSubscriptionStatus().fold(
+    override fun queryTopicSubscriptionStatus(topicType: TopicType) = flow {
+        remoteSource.getTopicSubscriptionStatus(topicType.name).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(it.body?.toVO())
+                Log.d(TAG, it.toString())
+                if (it.result?.resultCode == 200) emit(it.body?.toVO(topicType))
                 else {
-                    if (it.body != null) emit(it.body?.toVO())
+                    if (it.body != null) emit(it.body?.toVO(topicType))
                     else it.result.printLog().also { emit(null) }
                 }
             },
@@ -116,31 +126,65 @@ class RemoteRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun requestTokenValidation(body: DeviceTokenBody) = flow {
-        remoteSource.validateToken(
-            DeviceTokenRequest(body = body)
-        ).fold(
-            onSuccess = {
-                if (it.result?.resultCode == 200) emit(true).also {
-                    remoteSource.updateValidatedToken(body.fcmToken)
-                }
-                else it.result.printLog().also { emit(false) }
-            },
-            onFailure = {
-                it.printLog()
-                emit(false)
-            }
-        )
-    }
-
+    @Deprecated("Use requestUpdateFcmToken instead.")
     override fun requestUpdateValidatedToken(fcmToken: String) {
         remoteSource.updateValidatedToken(fcmToken)
     }
 
+    override suspend fun requestUpdateFcmToken(body: TokenUpdateBody): TokenStatus {
+        remoteSource.updateDeviceToken(
+            newToken = body.newFcmToken,
+            request = FcmTokenUpdateRequest(
+                oldFcmToken = body.oldFcmToken,
+                deviceType = body.deviceType
+            )
+        ).fold(
+            onSuccess = {
+                if (it.result?.resultCode == 200) return TokenStatus.SUCCESS
+                else it.result.printLog().also { return TokenStatus.RETRY }
+            },
+            onFailure = {
+                it.printLog()
+                return when(it) {
+                    is ConnectException -> TokenStatus.RETRY
+                    is SocketTimeoutException -> TokenStatus.RETRY
+                    else -> TokenStatus.FAILURE
+                }
+            }
+        )
+        // Default
+        return TokenStatus.FAILURE
+    }
+
+    override suspend fun requestFcmTokenRegistration(body: DeviceTokenBody): TokenStatus {
+        remoteSource.validateToken(
+            token = body.fcmToken,
+            request = FcmTokenSaveRequest(body.deviceType)
+        ).fold(
+            onSuccess = {
+                if (it.result?.resultCode == 200) return TokenStatus.SUCCESS
+                else it.result.printLog().also { return TokenStatus.RETRY }
+            },
+            onFailure = {
+                it.printLog()
+                when(it) {
+                    is ConnectException -> return TokenStatus.RETRY
+                    is SocketTimeoutException -> return TokenStatus.RETRY
+                    else -> return TokenStatus.FAILURE
+                }
+            }
+        )
+        // Default
+        return TokenStatus.FAILURE
+    }
+
     override fun requestUserReportSubmission(body: UserReportBody) = flow {
         remoteSource.submitUserReport(
-            // Should be revised.
-            UserReportRequest(body = body)
+            ReportSaveRequest(
+                content = body.content,
+                deviceName = body.deviceName,
+                version = body.version
+            )
         ).fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(true)
@@ -158,7 +202,11 @@ class RemoteRepositoryImpl @Inject constructor(
     ) = flow {
         remoteSource.run {
             submitTopicSubscriptionPreferences(
-                TopicSubscriptionPreferencesRequest(body = body)
+                type = body.topicType,
+                request = TopicUpdateRequest(
+                    topic = body.noticeName,
+                    enabled = body.isSubscribed
+                )
             )
         }.fold(
             onSuccess = {
@@ -175,7 +223,7 @@ class RemoteRepositoryImpl @Inject constructor(
     private fun Throwable.printLog() =
         Log.d(TAG, "Failed to receive data\nREASON: ${this.stackTraceToString()}")
 
-    private fun NetworkResult?.printLog() =
+    private fun Metadata?.printLog() =
         Log.d(TAG, "Failed to receive data (${this?.resultCode})" +
                 "\nREASON:${this?.resultMessage}")
 }

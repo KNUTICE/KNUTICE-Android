@@ -13,11 +13,15 @@ import com.doyoonkim.domain.di.NoticeUseCaseModule
 import com.doyoonkim.domain.di.PreProcessingUseCaseModule
 import com.doyoonkim.domain.di.PreferencesUseCaseModule
 import com.doyoonkim.domain.di.TipUseCaseModule
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.knutice.di.modules.DispatcherModule
 import com.doyoonkim.knutice.di.modules.ViewModelFactoryModule
+import com.doyoonkim.knutice.di.modules.WorkSchedulerModule
+import com.doyoonkim.knutice.di.modules.WorkerModule
 import com.doyoonkim.knutice.di.util.SystemServices
 import com.doyoonkim.main.di.CustomerServiceSceneModule
 import com.doyoonkim.main.di.HomeSceneModule
+import com.doyoonkim.main.di.NoticeByMajorSceneModule
 import com.doyoonkim.main.di.NoticeDetailSceneModule
 import com.doyoonkim.main.di.NoticeInCategorySceneModule
 import com.doyoonkim.main.di.NoticeSearchSceneModule
@@ -27,6 +31,7 @@ import com.doyoonkim.main.di.SplashSceneModule
 import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.NotificationModule
 import dagger.Component
+import javax.inject.Singleton
 
 @Component(
     dependencies = [SystemServices::class],
@@ -50,6 +55,28 @@ interface HomeSceneComponent {
     }
 }
 
+@Component(
+    dependencies = [SystemServices::class],
+    modules = [
+        ViewModelFactoryModule::class,
+        DispatcherModule::class,
+        NoticeByMajorSceneModule::class,
+        NoticeUseCaseModule::class,
+        PreferencesUseCaseModule::class,
+        NoticeRemoteModule::class,
+        PreferencesRemoteModule::class,
+        NetworkModule::class
+    ]
+)
+interface NoticeByMajorSceneComponent {
+    fun getViewModelFactory(): ViewModelProvider.Factory
+
+    @Component.Factory
+    interface Factory {
+        fun create(systemServices: SystemServices): NoticeByMajorSceneComponent
+    }
+}
+
 
 @Component(
     dependencies = [SystemServices::class],
@@ -70,11 +97,12 @@ interface BookmarkListSceneComponent {
     }
 }
 
-
+@Singleton
 @Component(
     dependencies = [SystemServices::class],
     modules = [
         ViewModelFactoryModule::class,
+        WorkSchedulerModule::class,
         DispatcherModule::class,
         EditBookmarkSceneModule::class,
         BookmarkUseCaseModule::class,
@@ -122,7 +150,9 @@ interface NoticeDetailSceneComponent {
         DispatcherModule::class,
         NoticeSearchSceneModule::class,
         NoticeUseCaseModule::class,
+        BookmarkUseCaseModule::class,
         NoticeRemoteModule::class,
+        LocalModule::class,
         NetworkModule::class
     ]
 )
