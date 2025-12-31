@@ -61,7 +61,7 @@ fun NoticesInCategoryScreen(
 
      // Pull-to-Refresh
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isRefreshRequested,
+        refreshing = uiState.isRefreshing,
         onRefresh = {
             viewModel.run {
                 sendUiEvent(NoticesInCategoryEvent.RequestRefresh)
@@ -142,7 +142,7 @@ fun NoticesInCategoryScreen(
                                 }
                         ) {
                             NotificationPreview(
-                                isLoading = uiState.isLoading,
+                                isLoading = notice.title.isBlank(),
                                 notificationTitle = notice.title,
                                 notificationInfo = "[${notice.departName}] ${notice.timestamp}",
                                 isImageContained = notice.imageUrl != null,
@@ -151,7 +151,7 @@ fun NoticesInCategoryScreen(
                         }
                     }
 
-                    if (uiState.isNoticesRequested) {
+                    if (uiState.isLoading && uiState.currentLastNttId != 0) {
                         item {
                             Row(
                                 modifier = Modifier
@@ -173,7 +173,7 @@ fun NoticesInCategoryScreen(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .padding(top = 10.dp),
-                    refreshing = uiState.isRefreshRequested,
+                    refreshing = uiState.isRefreshing,
                     state = pullRefreshState,
                     backgroundColor = MaterialTheme.colorScheme.onAnyBackground,
                     contentColor = MaterialTheme.colorScheme.variantPurple
