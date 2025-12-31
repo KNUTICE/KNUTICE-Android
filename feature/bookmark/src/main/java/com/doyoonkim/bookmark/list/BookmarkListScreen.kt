@@ -77,6 +77,7 @@ fun BookmarkListScreen(
                 is BookmarkListSideEffect.NavTo -> {
                     onBookmarkSelected(sideEffect.dest)
                 }
+                is BookmarkListSideEffect.Settings -> onSettingsRequested()
             }
         }
     }
@@ -104,7 +105,7 @@ fun BookmarkListScreen(
                     }
                 )
                 IconButton(
-                    onClick = onSettingsRequested
+                    onClick = { viewModel.sendUiEvent(BookmarkListEvent.RequestSettings) }
                 ) {
                     Image(
                         painter = painterResource(R.drawable.baseline_settings_24),
@@ -132,7 +133,7 @@ fun BookmarkListScreen(
                         .wrapContentSize()
                         .weight(1f)
                 ) {
-                    if (uiState.isRequested) {
+                    if (uiState.isLoading) {
                         Surface(
                             modifier = Modifier
                                 .wrapContentSize()

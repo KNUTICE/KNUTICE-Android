@@ -1,8 +1,10 @@
 package com.doyoonkim.bookmark.viewmodel
 
+import android.util.Log
 import com.doyoonkim.domain.SortOption
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.bookmark.contract.BookmarkListEvent
+import com.doyoonkim.bookmark.contract.BookmarkListMutation
 import com.doyoonkim.bookmark.contract.BookmarkListSideEffect
 import com.doyoonkim.bookmark.contract.BookmarkListState
 import com.doyoonkim.common.base.BaseViewModel
@@ -17,7 +19,7 @@ import javax.inject.Inject
 class BookmarkListViewModel @Inject constructor(
     private val appPreferences: AppPreferences,
     private val fetchAllBookmarks: FetchAllBookmarks
-) : BaseViewModel<BookmarkListState, BookmarkListEvent, BookmarkListSideEffect>() {
+) : BaseViewModel<BookmarkListState, BookmarkListEvent, BookmarkListSideEffect, BookmarkListMutation>() {
 
     init {
         // Preprocessing
@@ -25,6 +27,7 @@ class BookmarkListViewModel @Inject constructor(
         sendUiEvent(BookmarkListEvent.RequestBookmark)
     }
 
+    private val TAG = this.javaClass.name
     override fun setInitialState(): BookmarkListState {
         return BookmarkListState()
     }
@@ -33,9 +36,7 @@ class BookmarkListViewModel @Inject constructor(
         when (event) {
             is BookmarkListEvent.CheckSyncStatus -> {
                 if (appPreferences.isPartialFailedDuringDatabaseSync()) {
-                    stateUpdate {
-                        it.copy(isSyncRequired = true)
-                    }
+                    mutate(BookmarkListMutation.SyncNeeded)
                 }
             }
             is BookmarkListEvent.RequestBookmark -> requestBookmarks()
@@ -50,6 +51,7 @@ class BookmarkListViewModel @Inject constructor(
                 }
                 sendSideEffect(BookmarkListSideEffect.NavTo(dest))
             }
+            is BookmarkListEvent.RequestSettings -> sendSideEffect(BookmarkListSideEffect.Settings)
             is BookmarkListEvent.UpdateSortOption -> {
                 if (uiState.value.bookmarks.isNotEmpty()) {
                     updateSortOption(event.option)
@@ -65,7 +67,7 @@ class BookmarkListViewModel @Inject constructor(
         pageNumber: Int = 0
     ) {
         viewModelScope.launch {
-            updateFetchingStatus(false).also { delay(200L) }
+            mutate(BookmarkListMutation.Loading).also { delay(200L) }
 
             fetchAllBookmarks(
                 size = size,
@@ -74,42 +76,56 @@ class BookmarkListViewModel @Inject constructor(
             ).collectLatest { result ->
                     result.fold(
                         onSuccess = { vo ->
-                            stateUpdate {
-                                it.copy(
-                                    bookmarks = it.bookmarks.toMutableList().apply {
-                                        this.addAll(vo)
-                                    }.distinctBy { i -> i.bookmarkId }.toList(),
-                                    pageNumber = it.pageNumber + 1,
-                                    isRequested = false,
-                                    isReachEnd = vo.size < size
-                                )
-                            }
+                            mutate(BookmarkListMutation.Success(vo))
                         },
-                        onFailure = {
-                            updateFetchingStatus(true)
+                        onFailure = { reason ->
+                            mutate(BookmarkListMutation.Failure(reason.stackTraceToString()))
                         }
                     )
                 }
         }
     }
 
-
-    private fun updateFetchingStatus(status: Boolean) =
-        stateUpdate {
-            it.copy(
-                isFetchingCompleted = status
-            )
-        }
-
     private fun updateSortOption(index: Int) {
         // When sort option is changed -> Fetch bookmark again from page 0.
-        stateUpdate {
-            it.copy(
-                sortOption = SortOption.entries[index],
-                bookmarks = emptyList(),
-                isRequested = true,
-                pageNumber = 0
-            )
+        mutate(BookmarkListMutation.Sort(SortOption.entries[index]))
+    }
+
+    // Main Reducer
+    override fun reduce(
+        currentState: BookmarkListState,
+        mutation: BookmarkListMutation
+    ): BookmarkListState {
+        return when (mutation) {
+            is BookmarkListMutation.SyncNeeded -> { currentState.copy(isSyncRequired = true) }
+            is BookmarkListMutation.Loading -> { currentState.copy(isLoading = true) }
+            is BookmarkListMutation.Refreshing -> { currentState.copy(isRefreshing = true) }
+            is BookmarkListMutation.Sort -> {
+                currentState.copy(
+                    sortOption = mutation.option,
+                    bookmarks = emptyList(),
+                    pageNumber = 0
+                )
+            }
+            is BookmarkListMutation.Success -> {
+                currentState.copy(
+                    bookmarks = currentState.bookmarks.toMutableList().apply {
+                        addAll(mutation.result)
+                    }.distinctBy { e -> e.bookmarkId }.toList(),
+                    pageNumber = currentState.pageNumber + 1,
+                    isReachEnd = mutation.result.size < 20,
+                    isLoading = false,
+                    isRefreshing = false,
+                    isError = false
+                )
+            }
+            is BookmarkListMutation.Failure -> {
+                currentState.copy(
+                    isLoading = false,
+                    isRefreshing = false,
+                    isError = true
+                ).also { Log.d(TAG, "FAILURE: ${mutation.reason}") }
+            }
         }
     }
 }
