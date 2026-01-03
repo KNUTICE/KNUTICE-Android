@@ -1,6 +1,7 @@
 package com.doyoonkim.main.contract
 
 import com.doyoonkim.common.base.UiEvent
+import com.doyoonkim.common.base.UiMutation
 import com.doyoonkim.common.base.UiSideEffect
 import com.doyoonkim.common.base.UiState
 import com.doyoonkim.common.navigation.Destination
@@ -8,8 +9,15 @@ import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.TipVO
+import com.doyoonkim.model.TopThreeNoticeVO
 
 data class HomeViewState(
+    val mainContentState: MainContentState = MainContentState(),
+    val tipState: TipState = TipState()
+) : UiState
+
+// Child State: Main Content (TopThreeNotices)
+data class MainContentState(
     val isLoading: Boolean = true,
     val isError: Boolean = false,
     val notificationGeneral: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
@@ -17,16 +25,22 @@ data class HomeViewState(
     val notificationScholarship: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
     val notificationEvent: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
     val notificationEmployment: List<NoticeVO> = listOf(NoticeVO(), NoticeVO(), NoticeVO()),
-    val tips: List<TipVO> = emptyList()
-): UiState
+)
 
-sealed class HomeEvent : UiEvent {
-    data object RequestMainContents: HomeEvent()
-    data class RequestNoticeDetail(val id: Int, val url: String): HomeEvent()
-    data class RequestMore(val category: NoticeCategory): HomeEvent()
-    data object RequestSettings: HomeEvent()
-    data class RequestTipDetail(val category: TipCategory, val url: String): HomeEvent()
-    data object GoBack: HomeEvent()
+// Child State: Tip Content (Tips)
+data class TipState(
+    val isLoading: Boolean = true,
+    val isError: Boolean = false,
+    val tips: List<TipVO> = emptyList()
+)
+
+sealed interface HomeEvent : UiEvent {
+    data object RequestMainContents: HomeEvent
+    data class RequestNoticeDetail(val id: Int, val url: String): HomeEvent
+    data class RequestMore(val category: NoticeCategory): HomeEvent
+    data object RequestSettings: HomeEvent
+    data class RequestTipDetail(val category: TipCategory, val url: String): HomeEvent
+    data object GoBack: HomeEvent
 }
 
 sealed class HomeSideEffect : UiSideEffect {
@@ -35,4 +49,20 @@ sealed class HomeSideEffect : UiSideEffect {
     data class NavToTipDetail(val category: TipCategory, val url: String): HomeSideEffect()
     data object NavToSettings: HomeSideEffect()
     data object NavToBack: HomeSideEffect()
+}
+
+sealed interface HomeMutation: UiMutation {
+    // Main Contents Processing
+    sealed interface MainContent: HomeMutation {
+        data object Loading: MainContent
+        data class Success(val topThreeNotices: TopThreeNoticeVO): MainContent
+        data class Failure(val reason: String): MainContent
+    }
+
+    // Tip Processing
+    sealed interface Tip: HomeMutation {
+        data object Loading: Tip
+        data class Success(val tips: List<TipVO>): Tip
+        data class Failure(val reason: String): Tip
+    }
 }

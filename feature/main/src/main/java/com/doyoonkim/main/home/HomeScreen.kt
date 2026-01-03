@@ -128,7 +128,7 @@ fun HomeScreen(
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
 
-        if (uiState.isError) {
+        if (uiState.mainContentState.isError) {
             PlaceholderScreen(
                 modifier = modifier
                     .padding(innerPadding)
@@ -143,13 +143,13 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (uiState.tips.isNotEmpty()) {
+                if (uiState.tipState.tips.isNotEmpty()) {
                     item(key = "header") {
                         TipPager(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(50.dp),
-                            tips = uiState.tips
+                            tips = uiState.tipState.tips
                         ) {
                             viewModel.sendUiEvent(
                                 HomeEvent.RequestTipDetail(TipCategory.UPDATES, it)
@@ -162,8 +162,8 @@ fun HomeScreen(
                     NotificationPreviewList (
                         listTitle = stringResource(R.string.general_news),
                         titleColor = MaterialTheme.colorScheme.notificationType1,
-                        isContentLoading = uiState.isLoading,
-                        contents = uiState.notificationGeneral,
+                        isContentLoading = uiState.mainContentState.isLoading,
+                        contents = uiState.mainContentState.notificationGeneral,
                         onMoreClicked = {
                             viewModel.sendUiEvent(
                                 HomeEvent.RequestMore(NoticeCategory.GENERAL_NEWS)
@@ -178,8 +178,8 @@ fun HomeScreen(
                     NotificationPreviewList(
                         listTitle = stringResource(R.string.academic_news),
                         titleColor = MaterialTheme.colorScheme.notificationType2,
-                        isContentLoading = uiState.isLoading,
-                        contents = uiState.notificationAcademic,
+                        isContentLoading = uiState.mainContentState.isLoading,
+                        contents = uiState.mainContentState.notificationAcademic,
                         onMoreClicked = {
                             viewModel.sendUiEvent(
                                 HomeEvent.RequestMore(NoticeCategory.ACADEMIC_NEWS)
@@ -194,8 +194,8 @@ fun HomeScreen(
                     NotificationPreviewList(
                         listTitle = stringResource(R.string.scholarship_news),
                         titleColor = MaterialTheme.colorScheme.notificationType3,
-                        isContentLoading = uiState.isLoading,
-                        contents = uiState.notificationScholarship,
+                        isContentLoading = uiState.mainContentState.isLoading,
+                        contents = uiState.mainContentState.notificationScholarship,
                         onMoreClicked = {
                             viewModel.sendUiEvent(
                                 HomeEvent.RequestMore(NoticeCategory.SCHOLARSHIP_NEWS)
@@ -210,8 +210,8 @@ fun HomeScreen(
                     NotificationPreviewList(
                         listTitle = stringResource(R.string.event_news),
                         titleColor = MaterialTheme.colorScheme.notificationType4,
-                        isContentLoading = uiState.isLoading,
-                        contents = uiState.notificationEvent,
+                        isContentLoading = uiState.mainContentState.isLoading,
+                        contents = uiState.mainContentState.notificationEvent,
                         onMoreClicked = {
                             viewModel.sendUiEvent(
                                 HomeEvent.RequestMore(NoticeCategory.EVENT_NEWS)
@@ -226,8 +226,8 @@ fun HomeScreen(
                     NotificationPreviewList(
                         listTitle = stringResource(R.string.employment_news),
                         titleColor = MaterialTheme.colorScheme.notificationType5,
-                        isContentLoading = uiState.isLoading,
-                        contents = uiState.notificationEmployment,
+                        isContentLoading = uiState.mainContentState.isLoading,
+                        contents = uiState.mainContentState.notificationEmployment,
                         onMoreClicked = {
                             viewModel.sendUiEvent(
                                 HomeEvent.RequestMore(NoticeCategory.EMPLOYMENT_NEWS)

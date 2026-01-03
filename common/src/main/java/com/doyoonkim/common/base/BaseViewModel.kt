@@ -16,8 +16,9 @@ import kotlinx.coroutines.launch
 interface UiState
 interface UiEvent
 interface UiSideEffect
+interface UiMutation
 
-abstract class BaseViewModel<S: UiState, E: UiEvent, SE: UiSideEffect>: ViewModel() {
+abstract class BaseViewModel<S: UiState, E: UiEvent, SE: UiSideEffect, M: UiMutation>: ViewModel() {
     // Function for initial state set.
     private val initialState by lazy { setInitialState() }
     abstract fun setInitialState(): S
@@ -49,9 +50,20 @@ abstract class BaseViewModel<S: UiState, E: UiEvent, SE: UiSideEffect>: ViewMode
      * stateUpdate
      * Function to update current UiState to renewed UiState.
      */
+    @Deprecated("Deprecated. Use mutate instead.")
     protected fun stateUpdate(update: (S) -> S) {
         _uiState.update {
             update(it)
+        }
+    }
+
+    /**
+     * mutate
+     * Function that enforces to use reducer function to update state.
+     */
+    protected fun mutate(mutation: M) {
+        _uiState.update { currentState ->
+            reduce(currentState, mutation)
         }
     }
 
@@ -91,4 +103,10 @@ abstract class BaseViewModel<S: UiState, E: UiEvent, SE: UiSideEffect>: ViewMode
      * Function to process received event
      */
     protected abstract fun handleEvent(event: E)
+
+    /**
+     * reducer
+     * Pure Function that mutate the state based on the given mutation.
+     */
+    protected abstract fun reduce(currentState: S, mutation: M): S
 }

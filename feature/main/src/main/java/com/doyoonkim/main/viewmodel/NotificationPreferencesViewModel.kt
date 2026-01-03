@@ -13,21 +13,14 @@ import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
-import com.doyoonkim.main.R
 import com.doyoonkim.main.contract.NotificationPrefEvent
+import com.doyoonkim.main.contract.NotificationPrefMutation
 import com.doyoonkim.main.contract.NotificationPrefSideEffect
 import com.doyoonkim.main.contract.NotificationPrefStatus
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.TopicType
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -37,8 +30,8 @@ class NotificationPreferencesViewModel @Inject constructor(
     private val notificationManager: NotificationManager,
     private val appPreferences: AppPreferences,
     @ApplicationContext private val context: Context
-) : BaseViewModel<NotificationPrefStatus, NotificationPrefEvent, NotificationPrefSideEffect>() {
-
+) : BaseViewModel<NotificationPrefStatus, NotificationPrefEvent, NotificationPrefSideEffect, NotificationPrefMutation>() {
+    private val TAG = this.javaClass.name
     override fun setInitialState(): NotificationPrefStatus = NotificationPrefStatus()
 
     override fun handleEvent(event: NotificationPrefEvent) {
@@ -80,9 +73,7 @@ class NotificationPreferencesViewModel @Inject constructor(
                 context.getString(com.doyoonkim.common.R.string.inapp_notification_channel_id)
             ).importance > 0
 
-        updateMainNotificationPermissionStatus(
-            isNotificationAllowed && isChannelAllowed
-        )
+        mutate(NotificationPrefMutation.MainPermission(isNotificationAllowed && isChannelAllowed))
     }
 
     private val notificationChannels = hashMapOf(
@@ -93,61 +84,31 @@ class NotificationPreferencesViewModel @Inject constructor(
         4 to NoticeCategory.EMPLOYMENT_NEWS
     )
 
-    private fun updateMainNotificationPermissionStatus(status: Boolean) =
-        stateUpdate {
-            it.copy(
-                isMainNotificationPermissionGranted = status
-            )
-        }
-
     private fun updateChannelPreferenceState(index: Int, state: Boolean) {
-        stateUpdate {
-            it.copy(
-                isSyncCompleted = false
-            )
-        }
+        mutate(NotificationPrefMutation.Syncing)
 
-        // TODO: Consider using viewModelScope + Dispatcher Injection in Usecase.
-        CoroutineScope(Dispatchers.IO).launch {
-            val jobSubmit = launch {
-                // Ignore the result.
-                submitNotificationPreferences(
-                    TopicSubscriptionPreferencesBody(
-                        topicType = TopicType.NOTICE,
-                        noticeName = notificationChannels[index]!!.name,
-                        isSubscribed = state
-                    )
-                ).collectLatest { result ->
-                    if (!result) {
-                        stateUpdate {
-                            it.copy(
-                                isSyncCompleted = true,
-                                isError = true
-                            )
-                        }
-                    } else {
-                        stateUpdate {
-                            it.copy(
-                                isEachChannelAllowed = it.isEachChannelAllowed.updateValueByIndex(index, state),
-                                isSyncCompleted = true,
-                                isError = false
-                            )
-                        }
-                    }
+        viewModelScope.launch {
+            // Ignore the result.
+            submitNotificationPreferences(
+                TopicSubscriptionPreferencesBody(
+                    topicType = TopicType.NOTICE,
+                    noticeName = notificationChannels[index]!!.name,
+                    isSubscribed = state
+                )
+            ).collectLatest { result ->
+                if (result) {
+                    mutate(NotificationPrefMutation.Notice.UpdateSuccess(index, state))
+                } else {
+                    mutate(NotificationPrefMutation.Notice.Failure("Submit Failed"))
                 }
             }
-            delay(5000L)
-            if (!jobSubmit.isCompleted) jobSubmit.cancelAndJoin()
-        }
+        }.invokeOnCompletion { mutate(NotificationPrefMutation.Synced) }
     }
 
     private fun updateMajorSubscriptionStatus(state: Boolean) {
         val subscribedMajor = appPreferences.getSubscribedMajor() ?: return
-        stateUpdate {
-            it.copy(
-                isSyncCompleted = false
-            )
-        }
+        mutate(NotificationPrefMutation.Syncing)
+
         viewModelScope.launch {
             submitNotificationPreferences.invoke(
                 TopicSubscriptionPreferencesBody(
@@ -157,48 +118,31 @@ class NotificationPreferencesViewModel @Inject constructor(
                 )
             ).collectLatest { result ->
                 if (result) {
-                    stateUpdate {
-                        it.copy(
-                            isMajorChannelAllowed = state,
-                            isError = false
-                        )
-                    }
+                    mutate(NotificationPrefMutation.Major.UpdateSuccess(state))
                 } else {
-                    stateUpdate {
-                        it.copy(
-                            isError = true
-                        )
-                    }
+                    mutate(NotificationPrefMutation.Major.Failure("Submit Failed"))
                 }
             }
-        }.invokeOnCompletion {
-            stateUpdate {
-                it.copy(
-                    isSyncCompleted = true
-                )
-            }
-        }
+        }.invokeOnCompletion { mutate(NotificationPrefMutation.Synced) }
     }
 
     private fun getTopicSubscriptionStatus() =
         viewModelScope.launch {
+            mutate(NotificationPrefMutation.Syncing)
             fetchTopicSubscriptionStatus(TopicType.NOTICE)
                 .collectLatest { result ->
                     result.fold(
                         onSuccess =  { status ->
-                            stateUpdate {
-                                it.copy(
-                                    isEachChannelAllowed = status.map { value -> value.second },
-                                    isError = false
+                            mutate(
+                                NotificationPrefMutation.Notice.FetchSuccess(
+                                    status.map { value -> value.second }
                                 )
-                            }
+                            )
                         },
-                        onFailure = {
-                            stateUpdate {
-                                it.copy(
-                                    isError = true
-                                )
-                            }
+                        onFailure = { reason ->
+                            mutate(
+                                NotificationPrefMutation.Notice.Failure(reason.stackTraceToString())
+                            )
                         }
                     )
                 }
@@ -208,15 +152,7 @@ class NotificationPreferencesViewModel @Inject constructor(
                     result.fold(
                         onSuccess = { status ->
                             val cachedMajorSelection = appPreferences.getSubscribedMajor()
-                            if (cachedMajorSelection == null) {
-                                stateUpdate {
-                                    it.copy(
-                                        isMajorSubscribed = false,
-                                        isMajorChannelAllowed = false,
-                                        isError = false
-                                    )
-                                }
-                            } else {
+                            if (cachedMajorSelection != null) {
                                 var majorStatus = false
                                 if (status.isNotEmpty()) {
                                     if (cachedMajorSelection != status.first().first) {
@@ -224,36 +160,85 @@ class NotificationPreferencesViewModel @Inject constructor(
                                     }
                                     majorStatus = status.first().second
                                 }
-
-                                stateUpdate {
-                                    it.copy(
-                                        isMajorSubscribed = true,
-                                        isMajorChannelAllowed = majorStatus,
-                                        isError = false
-                                    )
-                                }
+                                mutate(NotificationPrefMutation.Major.FetchSuccess(majorStatus))
                             }
                         },
-                        onFailure = {
-                            stateUpdate {
-                                it.copy(
-                                    isError = true
-                                )
-                            }
+                        onFailure = { reason ->
+                            mutate(
+                                NotificationPrefMutation.Major.Failure(reason.stackTraceToString())
+                            )
                         }
                     )
                 }
-        }.invokeOnCompletion {
-            stateUpdate {
-                it.copy(
-                    isSyncCompleted = true
-                )
-            }
-        }
+        }.invokeOnCompletion { mutate(NotificationPrefMutation.Synced) }
 
     private fun List<Boolean>.updateValueByIndex(index: Int, value: Boolean) =
         List(this.size) {
             if (it == index) value
             else this[it]
+        }
+
+    // Main Reducer
+    override fun reduce(
+        currentState: NotificationPrefStatus,
+        mutation: NotificationPrefMutation
+    ): NotificationPrefStatus {
+        return when (mutation) {
+            is NotificationPrefMutation.Syncing ->  { currentState.copy(isSyncCompleted = false) }
+            is NotificationPrefMutation.Synced -> { currentState.copy(isSyncCompleted = true) }
+            is NotificationPrefMutation.MainPermission -> {
+                currentState.copy(
+                    isMainNotificationPermissionGranted = mutation.status
+                )
+            }
+            is NotificationPrefMutation.Notice -> { mutation.reducer(currentState) }
+            is NotificationPrefMutation.Major -> { mutation.reducer(currentState) }
+        }
+    }
+
+    // Specialized Reducer
+    private fun NotificationPrefMutation.Notice.reducer(state: NotificationPrefStatus) =
+        when (this) {
+            is NotificationPrefMutation.Notice.FetchSuccess -> {
+                state.copy(
+                    isEachChannelAllowed = status,
+                    isError = false
+                )
+            }
+            is NotificationPrefMutation.Notice.UpdateSuccess -> {
+                state.copy(
+                    isEachChannelAllowed = state.isEachChannelAllowed.updateValueByIndex(
+                        index, status
+                    ),
+                    isError = false
+                )
+            }
+            is NotificationPrefMutation.Notice.Failure -> {
+                state.copy(
+                    isError = true
+                ).also { Log.d(TAG, "FAILURE: $reason") }
+            }
+        }
+
+    private fun NotificationPrefMutation.Major.reducer(state: NotificationPrefStatus) =
+        when (this) {
+            is NotificationPrefMutation.Major.FetchSuccess -> {
+                state.copy(
+                    isMajorSubscribed = true,
+                    isMajorChannelAllowed = status,
+                    isError = false
+                )
+            }
+            is NotificationPrefMutation.Major.UpdateSuccess -> {
+                state.copy(
+                    isMajorChannelAllowed = status,
+                    isError = false
+                )
+            }
+            is NotificationPrefMutation.Major.Failure -> {
+                state.copy(
+                    isError = true
+                ).also { Log.d(TAG, "FAILURE: $reason") }
+            }
         }
 }

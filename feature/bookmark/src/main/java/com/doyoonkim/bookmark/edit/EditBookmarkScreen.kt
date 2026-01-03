@@ -167,7 +167,7 @@ fun EditBookmarkScreen(
                             checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
                             checkedThumbColor = Color.White
                         ),
-                        onCheckedChange = { viewModel.sendUiEvent(EditBookmarkEvent.UpdateReminderOption) }
+                        onCheckedChange = { viewModel.sendUiEvent(EditBookmarkEvent.UpdateReminderOption(it)) }
                     )
                 }
 

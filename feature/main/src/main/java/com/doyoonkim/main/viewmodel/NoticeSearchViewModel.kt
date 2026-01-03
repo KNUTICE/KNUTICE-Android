@@ -9,10 +9,9 @@ import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
 import com.doyoonkim.main.contract.FetchingSource
 import com.doyoonkim.main.contract.NoticeSearchEvent
+import com.doyoonkim.main.contract.NoticeSearchMutation
 import com.doyoonkim.main.contract.NoticeSearchSideEffect
 import com.doyoonkim.main.contract.NoticeSearchState
-import com.doyoonkim.model.BookmarkAsListElementVO
-import com.doyoonkim.model.NoticeVO
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -27,7 +26,8 @@ class NoticeSearchViewModel @Inject constructor(
     private val fetchNoticesByKeyword: FetchNoticesByKeyword,
     private val fetchBookmarkByKeyword: FetchBookmarkByKeyword,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
-) : BaseViewModel<NoticeSearchState, NoticeSearchEvent, NoticeSearchSideEffect>() {
+) : BaseViewModel<NoticeSearchState, NoticeSearchEvent, NoticeSearchSideEffect, NoticeSearchMutation>() {
+    private val TAG = this.javaClass.name
     override fun setInitialState(): NoticeSearchState = NoticeSearchState()
 
     override fun handleEvent(event: NoticeSearchEvent) {
@@ -53,11 +53,7 @@ class NoticeSearchViewModel @Inject constructor(
     }
 
     private fun fetchMoreNotices() {
-        stateUpdate {
-            it.copy(
-                isFetching = true
-            )
-        }
+        mutate(NoticeSearchMutation.Loading)
 
         viewModelScope.launch {
             when (uiState.value.fetchingSource) {
@@ -68,25 +64,12 @@ class NoticeSearchViewModel @Inject constructor(
                     ).collectLatest { result ->
                         result.fold(
                             onSuccess = { vo ->
-                                stateUpdate {
-                                    it.copy(
-                                        fetchResult = it.fetchResult.toMutableList().apply {
-                                            addAll(vo)
-                                        }.toList(),
-                                        isError = false,
-                                        isFetching = false,
-                                        canRequestMoreNotices = vo.size == 20
-                                    )
-                                }
+                                mutate(NoticeSearchMutation.Remote.Success(vo))
                             },
-                            onFailure = {
-                                stateUpdate {
-                                    it.copy(
-                                        isError = true,
-                                        isFetching = false,
-                                        canRequestMoreNotices = false
-                                    )
-                                }
+                            onFailure = { reason ->
+                                mutate(
+                                    NoticeSearchMutation.Remote.Failure(reason.stackTraceToString())
+                                )
                             }
                         )
                     }
@@ -99,25 +82,12 @@ class NoticeSearchViewModel @Inject constructor(
                     ).collectLatest { result ->
                         result.fold(
                             onSuccess = { vo ->
-                                stateUpdate {
-                                    it.copy(
-                                        localFetchResult = it.localFetchResult.toMutableList().apply {
-                                            addAll(vo)
-                                        }.toList(),
-                                        isError = false,
-                                        isFetching = false,
-                                        canRequestMoreNotices = vo.size == 20
-                                    )
-                                }
+                                mutate(NoticeSearchMutation.Local.Success(vo))
                             },
-                            onFailure = {
-                                stateUpdate {
-                                    it.copy(
-                                        isError = true,
-                                        isFetching = false,
-                                        canRequestMoreNotices = false
-                                    )
-                                }
+                            onFailure = { reason ->
+                                mutate(
+                                    NoticeSearchMutation.Local.Failure(reason.stackTraceToString())
+                                )
                             }
                         )
                     }
@@ -128,13 +98,7 @@ class NoticeSearchViewModel @Inject constructor(
 
     // Need to have separate function for fetching notices when keyword changes and more notices requested.
     private fun searchNoticeUsingKeyword(keyword: String) {
-        stateUpdate {
-            it.copy(
-                fetchResult = emptyList(),
-                localFetchResult = emptyList(),
-                isFetching = true
-            )
-        }
+        mutate(NoticeSearchMutation.Initialize)
 
         viewModelScope.launch {
             when (uiState.value.fetchingSource) {
@@ -143,23 +107,14 @@ class NoticeSearchViewModel @Inject constructor(
                         .collectLatest { result ->
                             result.fold(
                                 onSuccess = { vo ->
-                                    stateUpdate {
-                                        it.copy(
-                                            fetchResult = vo,
-                                            isError = false,
-                                            isFetching = false,
-                                            canRequestMoreNotices = vo.size == 20
-                                        )
-                                    }
+                                    mutate(NoticeSearchMutation.Remote.Success(vo))
                                 },
-                                onFailure = {
-                                    stateUpdate {
-                                        it.copy(
-                                            isError = true,
-                                            isFetching = false,
-                                            canRequestMoreNotices = false
+                                onFailure = { reason ->
+                                    mutate(
+                                        NoticeSearchMutation.Remote.Failure(
+                                            reason.stackTraceToString()
                                         )
-                                    }
+                                    )
                                 }
                             )
                         }
@@ -169,40 +124,25 @@ class NoticeSearchViewModel @Inject constructor(
                         .collectLatest { result ->
                             result.fold(
                                 onSuccess =  { vo ->
-                                    Log.d("NoticeSearchViewModel", "Received Local Search Result: ${vo.size}")
-                                    vo.forEach { Log.d("NoticeSearchViewModel", it.toString()) }
-                                    stateUpdate {
-                                        it.copy(
-                                            localFetchResult = vo,
-                                            isError = false,
-                                            isFetching = false,
-                                            canRequestMoreNotices = vo.size == 20
-                                        )
-                                    }
+                                    Log.d(TAG, "Received Local Search Result: ${vo.size}")
+                                    vo.forEach { Log.d("TAG", it.toString()) }
+                                    mutate(NoticeSearchMutation.Local.Success(vo))
                                 },
-                                onFailure = {
-                                    stateUpdate {
-                                        it.copy(
-                                            isError = true,
-                                            isFetching = false,
-                                            canRequestMoreNotices = false
+                                onFailure = { reason ->
+                                    mutate(
+                                        NoticeSearchMutation.Local.Failure(
+                                            reason.stackTraceToString()
                                         )
-                                    }
+                                    )
                                 }
                             )
                         }
                 }
             }
-        }.invokeOnCompletion {
-            stateUpdate {
-                it.copy(
-                    isSearchResultEmpty = isSearchResultEmpty()
-                )
-            }
-        }
+        }.invokeOnCompletion { mutate(NoticeSearchMutation.Emptiness(isSearchResultEmpty())) }
     }
 
-    fun isSearchResultEmpty(): Boolean {
+    private fun isSearchResultEmpty(): Boolean {
         return when (uiState.value.fetchingSource) {
             FetchingSource.REMOTE -> uiState.value.fetchResult.isEmpty()
             FetchingSource.LOCAL -> uiState.value.localFetchResult.isEmpty()
@@ -220,32 +160,86 @@ class NoticeSearchViewModel @Inject constructor(
         }
 
     private fun updateSearchKeyword(newKeyword: String) {
-        stateUpdate {
-            it.run {
-                if (fetchResult.isNotEmpty()) {
-                    copy(
-                        fetchResult = emptyList(),
-                        searchKeyword = newKeyword
-                    )
-                } else {
-                    copy(
-                        searchKeyword = newKeyword
-                    )
-                }
-            }
-        }
+        mutate(NoticeSearchMutation.Keyword(newKeyword))
     }
 
     fun updateSourceStatus(index: Int) {
-        stateUpdate {
-            it.copy(
-                fetchingSource = FetchingSource.entries[index],
-                isError = false,
-                isFetching = false,
-                canRequestMoreNotices = true
-            )
-        }
+        mutate(NoticeSearchMutation.Source(FetchingSource.entries[index]))
         searchNoticeUsingKeyword(uiState.value.searchKeyword)
     }
 
+    // Main Reducer
+    override fun reduce(
+        currentState: NoticeSearchState,
+        mutation: NoticeSearchMutation
+    ): NoticeSearchState {
+        return when (mutation) {
+            is NoticeSearchMutation.Keyword -> {
+                currentState.copy(searchKeyword = mutation.keyword)
+            }
+            is NoticeSearchMutation.Source -> {
+                currentState.copy(
+                    fetchingSource = mutation.source,
+                    isFetching = false,
+                    isError = false,
+                    canRequestMoreNotices = true
+                )
+            }
+            is NoticeSearchMutation.Emptiness -> {
+                currentState.copy(isSearchResultEmpty = mutation.status)
+            }
+            is NoticeSearchMutation.Initialize -> {
+                currentState.copy(
+                    fetchResult = emptyList(),
+                    localFetchResult = emptyList()
+                )
+            }
+            is NoticeSearchMutation.Loading -> { currentState.copy(isFetching = true) }
+            is NoticeSearchMutation.Remote -> { mutation.reducer(currentState) }
+            is NoticeSearchMutation.Local -> { mutation.reducer(currentState) }
+        }
+    }
+
+    // Specialized Reducer
+    private fun NoticeSearchMutation.Remote.reducer(state: NoticeSearchState) =
+        when (this) {
+            is NoticeSearchMutation.Remote.Success -> {
+                state.copy(
+                    isFetching = false,
+                    isError = false,
+                    fetchResult = state.fetchResult.toMutableList().apply {
+                        addAll(result)
+                    }.toList(),
+                    canRequestMoreNotices = result.size == 20,
+                )
+            }
+            is NoticeSearchMutation.Remote.Failure -> {
+                state.copy(
+                    isFetching = false,
+                    isError = true,
+                    canRequestMoreNotices = false
+                ).also { Log.d(TAG, "FAILURE: $reason") }
+            }
+        }
+
+    private fun NoticeSearchMutation.Local.reducer(state: NoticeSearchState) =
+        when (this) {
+            is NoticeSearchMutation.Local.Success -> {
+                state.copy(
+                    isFetching = false,
+                    isError = false,
+                    localFetchResult = state.localFetchResult.toMutableList().apply {
+                        addAll(result)
+                    }.toList(),
+                    canRequestMoreNotices = result.size == 20
+                )
+            }
+            is NoticeSearchMutation.Local.Failure -> {
+                state.copy(
+                    isFetching = false,
+                    isError = true,
+                    canRequestMoreNotices = false
+                ).also { Log.d(TAG, "FAILURE: $reason") }
+            }
+        }
 }

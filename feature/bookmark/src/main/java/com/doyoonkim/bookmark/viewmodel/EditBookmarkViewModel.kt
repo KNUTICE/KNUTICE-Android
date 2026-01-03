@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.bookmark.contract.EditBookmarkEvent
+import com.doyoonkim.bookmark.contract.EditBookmarkMutation
 import com.doyoonkim.bookmark.contract.EditBookmarkSideEffect
 import com.doyoonkim.bookmark.contract.EditBookmarkState
 import com.doyoonkim.common.base.BaseViewModel
@@ -12,12 +13,8 @@ import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.domain.usecases.FetchNoticeByIdFromLocal
 import com.doyoonkim.domain.usecases.ModifyBookmark
 import com.doyoonkim.model.BookmarkVO
-import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.notification.local.AlarmScheduler
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.util.Calendar
@@ -27,8 +24,8 @@ class EditBookmarkViewModel @Inject constructor(
     private val modifyBookmark: ModifyBookmark,
     private val fetchNoticeByIdLocal: FetchNoticeByIdFromLocal,
     private val alarmScheduler: AlarmScheduler
-) : BaseViewModel<EditBookmarkState, EditBookmarkEvent, EditBookmarkSideEffect>() {
-
+) : BaseViewModel<EditBookmarkState, EditBookmarkEvent, EditBookmarkSideEffect, EditBookmarkMutation>() {
+    private val TAG = this.javaClass.name
     override fun setInitialState(): EditBookmarkState = EditBookmarkState()
 
     private var bookmarkNav: BookmarkInfo? = null
@@ -44,16 +41,18 @@ class EditBookmarkViewModel @Inject constructor(
         when (event) {
             is EditBookmarkEvent.CheckAlarmPermissionState -> {
                 if (!alarmScheduler.canScheduleExactAlarms()) {
-                    stateUpdate { it.copy(alarmPermissionStatus = false) }
+                    mutate(EditBookmarkMutation.AlarmPermissionDenied)
                 }
             }
             is EditBookmarkEvent.GetBookmarkInformation -> {
                 createBookmarkInfo(event.info)
+                mutate(EditBookmarkMutation.Edit.NoticeId(event.info.noticeId))
+
                 getBookmarkByNoticeId(event.info.noticeId)
                 getNoticeById(event.info.noticeId)
             }
             is EditBookmarkEvent.UpdateReminderOption -> {
-                updateReminderOptions()
+                mutate(EditBookmarkMutation.Edit.Reminder(event.status))
             }
             is EditBookmarkEvent.UpdateReminderDate -> {
                 with(event) {
@@ -93,7 +92,7 @@ class EditBookmarkViewModel @Inject constructor(
             }
             is EditBookmarkEvent.ValidateProcessResult -> {
                 if (uiState.value.isSuccessful) sendSideEffect(EditBookmarkSideEffect.ExitOnCompletion)
-                else updateCompletionStatus(false) // Set false for completion status for marking a new transaction is ready to start.
+                else mutate(EditBookmarkMutation.Edit.Ready) // Set false for completion status for marking a new transaction is ready to start.
             }
             is EditBookmarkEvent.GoBack -> sendSideEffect(EditBookmarkSideEffect.NavToBack)
         }
@@ -106,57 +105,27 @@ class EditBookmarkViewModel @Inject constructor(
                 withTimeout(3000L) {
                     modifyBookmark.query(nttId)
                         .collectLatest { result ->
-                            stateUpdate {
-                                it.copy(
-                                    bookmarkId = result.bookmarkId,
-                                    isReminderRequested = result.isScheduled,
-                                    timeForRemind = result.reminderSchedule,
-                                    bookmarkNote = result.bookmarkNote,
-                                    createdAt = result.createdAt,
-                                    updatedAt = result.updatedAt,
-                                    requireCreation = false,
-                                    bookmarkInstances = result
-                                )
-                            }.also {
+                            mutate(EditBookmarkMutation.BookmarkFetched(result)).also {
                                 calendar.timeInMillis = result.reminderSchedule
                             }
                         }
                 }
             }.onFailure {
-                stateUpdate {
-                    it.copy(
-                        requireCreation = true
-                    )
-                }
+                mutate(EditBookmarkMutation.CreationNeeded)
             }
         }
 
     private fun getNoticeById(nttId: Int) {
-        stateUpdate {
-            it.copy(
-                targetNoticeId = nttId
-            )
-        }
-
         viewModelScope.launch {
             withTimeout(2000L) {
                 fetchNoticeByIdLocal(nttId)
                     .collectLatest { notice ->
-                        stateUpdate {
-                            it.copy(
-                                targetNotice = notice,
-                                requireCreation = false
-                            )
-                        }
+                        mutate(EditBookmarkMutation.NoticeFetched(notice))
                     }
             }.runCatching {
                 /* DO NOTHING (PROCESS COMPLETED ON TIME) */
             }.onFailure {
-                stateUpdate {
-                    it.copy(
-                        requireCreation = true
-                    )
-                }
+                mutate(EditBookmarkMutation.CreationNeeded)
             }
         }
     }
@@ -165,29 +134,9 @@ class EditBookmarkViewModel @Inject constructor(
         bookmarkNav = info
     }
 
-    private fun updateCompletionStatus(status: Boolean) =
-        stateUpdate {
-            it.copy(
-                isCompleted = status
-            )
-        }
-
-    private fun updateReminderOptions() {
-        stateUpdate {
-            it.copy(
-                // Set Direct Opposite.
-                isReminderRequested = !it.isReminderRequested
-            )
-        }
-    }
-
     private fun updateBookmarkNotes(notes: String) {
         if (notes.length < 500) {
-            stateUpdate {
-                it.copy(
-                    bookmarkNote = notes
-                )
-            }
+            mutate(EditBookmarkMutation.Edit.Notes(notes))
         }
     }
 
@@ -215,11 +164,8 @@ class EditBookmarkViewModel @Inject constructor(
     @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     private fun submitBookmark() =
         viewModelScope.launch {
-            stateUpdate {
-                it.copy(
-                    isProcessing = true
-                )
-            }
+            mutate(EditBookmarkMutation.Edit.Processing)
+
             // Bookmark creation requires getting Notice Instance.
             val bookmark = uiState.value.run {
                 if (this.requireCreation) {
@@ -254,13 +200,9 @@ class EditBookmarkViewModel @Inject constructor(
                             if (bookmark.isScheduled) alarmScheduler.schedule(bookmark, it)
                             else alarmScheduler.cancel(bookmark, it)
                         }
-                    }
-                    stateUpdate {
-                        it.copy(
-                            isProcessing = false,
-                            isSuccessful = result,
-                            isCompleted = true
-                        )
+                        mutate(EditBookmarkMutation.Edit.Success)
+                    } else {
+                        mutate(EditBookmarkMutation.Edit.Failure("Unable to create or update."))
                     }
                 }
         }
@@ -268,11 +210,8 @@ class EditBookmarkViewModel @Inject constructor(
     @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     private fun removeBookmark() {
         viewModelScope.launch {
-            stateUpdate {
-                it.copy(
-                    isProcessing = true
-                )
-            }
+            mutate(EditBookmarkMutation.Edit.Processing)
+
             val bookmark = uiState.value.run {
                 BookmarkVO(
                     bookmarkId = bookmarkId,
@@ -286,12 +225,7 @@ class EditBookmarkViewModel @Inject constructor(
             }
 
             if (uiState.value.targetNotice == null) {
-                stateUpdate {
-                    it.copy(
-                        isSuccessful = false,
-                        isCompleted = true
-                    )
-                }
+                mutate(EditBookmarkMutation.Edit.Failure("Related notice not found. Unable to remove."))
             } else {
                 modifyBookmark.delete(bookmark, uiState.value.targetNotice!!)
                     .collectLatest { result ->
@@ -301,18 +235,69 @@ class EditBookmarkViewModel @Inject constructor(
                                 // Cancel Alarm Anyways
                                 alarmScheduler.cancel(bookmark, it)
                             }
-                        }
-                        stateUpdate {
-                            it.copy(
-                                requireCreation = true,
-                                isProcessing = false,
-                                isSuccessful = result,
-                                isCompleted = true
-                            )
+                            mutate(EditBookmarkMutation.Edit.Success)
+                        } else {
+                            mutate(EditBookmarkMutation.Edit.Failure("Unable to remove target"))
                         }
                     }
             }
+        }.invokeOnCompletion { mutate(EditBookmarkMutation.CreationNeeded) }
+    }
+
+    // Main Reducer
+    override fun reduce(
+        currentState: EditBookmarkState,
+        mutation: EditBookmarkMutation
+    ): EditBookmarkState {
+        return when (mutation) {
+            is EditBookmarkMutation.AlarmPermissionDenied -> {
+                currentState.copy(alarmPermissionStatus = false)
+            }
+            is EditBookmarkMutation.CreationNeeded -> { currentState.copy(requireCreation = true) }
+            is EditBookmarkMutation.BookmarkFetched -> {
+                with (mutation) {
+                    currentState.copy(
+                        bookmarkId = bookmark.bookmarkId,
+                        isReminderRequested = bookmark.isScheduled,
+                        timeForRemind = bookmark.reminderSchedule,
+                        bookmarkNote = bookmark.bookmarkNote,
+                        createdAt = bookmark.createdAt,
+                        updatedAt = bookmark.updatedAt,
+                        requireCreation = false
+                    )
+                }
+            }
+            is EditBookmarkMutation.NoticeFetched -> {
+                currentState.copy(
+                    targetNotice = mutation.notice,
+                    requireCreation = false
+                )
+            }
+            is EditBookmarkMutation.Edit -> mutation.reducer(currentState)
         }
     }
 
+    // Specialized Reducer
+    private fun EditBookmarkMutation.Edit.reducer(state: EditBookmarkState) =
+        when (this) {
+            is EditBookmarkMutation.Edit.NoticeId -> { state.copy(targetNoticeId = nttId) }
+            is EditBookmarkMutation.Edit.Notes -> { state.copy(bookmarkNote = notes) }
+            is EditBookmarkMutation.Edit.Reminder -> { state.copy(isReminderRequested = requested) }
+            is EditBookmarkMutation.Edit.Ready -> { state.copy(isCompleted = false) }
+            is EditBookmarkMutation.Edit.Processing -> { state.copy(isProcessing = true) }
+            is EditBookmarkMutation.Edit.Success -> {
+                state.copy(
+                    isProcessing = false,
+                    isSuccessful = true,
+                    isCompleted = true
+                )
+            }
+            is EditBookmarkMutation.Edit.Failure -> {
+                state.copy(
+                    isProcessing = false,
+                    isSuccessful = false,
+                    isCompleted = true
+                )
+            }
+        }
 }

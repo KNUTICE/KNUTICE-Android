@@ -1,9 +1,11 @@
 package com.doyoonkim.main.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.main.contract.NoticesInCategoryEvent
+import com.doyoonkim.main.contract.NoticesInCategoryMutation
 import com.doyoonkim.main.contract.NoticesInCategorySideEffect
 import com.doyoonkim.main.contract.NoticesInCategoryState
 import com.doyoonkim.model.NoticeCategory
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 class NoticesInCategoryViewModel @Inject constructor(
     private val fetchNoticesPerPage: FetchNoticesPerPage
-) : BaseViewModel<NoticesInCategoryState, NoticesInCategoryEvent, NoticesInCategorySideEffect>() {
+) : BaseViewModel<NoticesInCategoryState, NoticesInCategoryEvent, NoticesInCategorySideEffect, NoticesInCategoryMutation>() {
+    private val TAG = this.javaClass.name
     override fun setInitialState(): NoticesInCategoryState = NoticesInCategoryState()
 
     override fun handleEvent(event: NoticesInCategoryEvent) {
@@ -30,7 +33,7 @@ class NoticesInCategoryViewModel @Inject constructor(
                 }
             }
             is NoticesInCategoryEvent.RequestRefresh -> {
-                requestRefresh()
+                mutate(NoticesInCategoryMutation.Refreshing)
             }
             is NoticesInCategoryEvent.GoBack -> {
                 sendSideEffect(NoticesInCategorySideEffect.NavToBack)
@@ -44,48 +47,55 @@ class NoticesInCategoryViewModel @Inject constructor(
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = { vo ->
-                            stateUpdate {
-                                it.copy(
-                                    currentLastNttId = vo.last().nttId,
-                                    notices =
-                                        if (uiState.value.currentLastNttId == 0)
-                                            vo
-                                        else
-                                            it.notices.addAll(vo),
-                                    isNoticesRequested = false,
-                                    isLoading = false,
-                                    isRefreshRequested = false
-                                )
-                            }
+                            mutate(NoticesInCategoryMutation.Success(vo))
                         },
-                        onFailure = {
-                            stateUpdate {
-                                it.copy(
-                                    isError = true,
-                                    isNoticesRequested = false,
-                                    isLoading = false,
-                                    isRefreshRequested = false
-                                )
-                            }
+                        onFailure = { reason ->
+                            mutate(NoticesInCategoryMutation.Failure(reason.stackTraceToString()))
                         }
                     )
                 }
         }
-
-    private fun requestRefresh() =
-        stateUpdate {
-            it.copy(
-                currentLastNttId = 0,
-                notices = emptyList(),
-                isRefreshRequested = true,
-                isError = false
-            )
-        }
-
 
     private fun List<NoticeVO>.addAll(extra: List<NoticeVO>) =
         List(this.size + extra.size) {
             if (it < this.size) this[it]
             else extra[it - this.size]
         }
+
+    // Main Reducer
+    override fun reduce(
+        currentState: NoticesInCategoryState,
+        mutation: NoticesInCategoryMutation
+    ): NoticesInCategoryState {
+        return when (mutation) {
+            is NoticesInCategoryMutation.Loading -> { currentState.copy(isLoading = true) }
+            is NoticesInCategoryMutation.Refreshing -> {
+                currentState.copy(
+                    isRefreshing = true,
+                    currentLastNttId = 0,
+                    notices = List(20) { NoticeVO() }
+                )
+            }
+            is NoticesInCategoryMutation.Success -> {
+                currentState.copy(
+                    isLoading = false,
+                    isError = false,
+                    isRefreshing = false,
+                    currentLastNttId = mutation.notices.last().nttId,
+                    notices = if (currentState.currentLastNttId == 0) {
+                        mutation.notices
+                    } else {
+                        currentState.notices.addAll(mutation.notices)
+                    }
+                )
+            }
+            is NoticesInCategoryMutation.Failure -> {
+                currentState.copy(
+                    isLoading = false,
+                    isError = true,
+                    isRefreshing = false
+                ).also { Log.d(TAG, "FAILURE: ${mutation.reason}") }
+            }
+        }
+    }
 }

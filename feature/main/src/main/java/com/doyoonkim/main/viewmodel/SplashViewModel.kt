@@ -8,6 +8,7 @@ import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.di.TokenHandler
 import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
 import com.doyoonkim.main.contract.SplashEvent
+import com.doyoonkim.main.contract.SplashMutation
 import com.doyoonkim.main.contract.SplashSideEffect
 import com.doyoonkim.main.contract.SplashState
 import com.doyoonkim.main.contract.SyncStatus
@@ -20,7 +21,8 @@ class SplashViewModel @Inject constructor(
     private val appPreferences: AppPreferences,
     private val syncDataWithUpdateDatabase: SyncDataWithUpdateDatabase,
     private val tokenHandler: TokenHandler
-) : BaseViewModel<SplashState, SplashEvent, SplashSideEffect>() {
+) : BaseViewModel<SplashState, SplashEvent, SplashSideEffect, SplashMutation>() {
+    private val TAG = this.javaClass.name
     override fun setInitialState(): SplashState = SplashState()
 
     override fun handleEvent(event: SplashEvent) {
@@ -34,14 +36,12 @@ class SplashViewModel @Inject constructor(
 
     private fun checkDatabaseSyncStatus() {
         if (appPreferences.isDatabaseSyncCompleted())
-            stateUpdate {
-                it.copy(syncStatus = SyncStatus.COMPLETED)
-            }
+            mutate(SplashMutation.DatabaseSync.Completed)
     }
 
     private fun startPreprocess() = viewModelScope.launch {
         with(uiState.value) {
-            Log.d("SplashViewModel", "Current Token: ${appPreferences.getCachedToken()}")
+            Log.d(TAG, "Current Token: ${appPreferences.getCachedToken()}")
             // Entry Token Validation
             val tokenResult = tokenHandler.validation()
             if (!tokenResult) tokenHandler.invoke()
@@ -55,11 +55,8 @@ class SplashViewModel @Inject constructor(
     }
 
     private suspend fun syncDatabase() {
-        stateUpdate {
-            it.copy(
-                syncStatus = SyncStatus.PROCESSING
-            )
-        }
+        mutate(SplashMutation.DatabaseSync.Processing)
+
         syncDataWithUpdateDatabase.entrySync()
             .collectLatest { result ->
                 // result: Pair<Boolean, Boolean> (SyncCompleted, PartialFailed)
@@ -67,13 +64,7 @@ class SplashViewModel @Inject constructor(
                 appPreferences.setSyncStatus_2_3(result.completed)
                 appPreferences.setDatabaseSyncPartialFailedStatus(result.withError)
 
-                if (result.completed) {
-                    stateUpdate {
-                        it.copy(
-                            syncStatus = SyncStatus.COMPLETED
-                        )
-                    }
-                }
+                if (result.completed) mutate(SplashMutation.DatabaseSync.Completed)
             }
     }
 
@@ -92,4 +83,25 @@ class SplashViewModel @Inject constructor(
             }
         }
     }
+
+    // Main Reducer
+    override fun reduce(currentState: SplashState, mutation: SplashMutation): SplashState {
+        return when (mutation) {
+            is SplashMutation.DatabaseSync -> mutation.reducer(currentState)
+        }
+    }
+
+    // Specialized Reducer
+    private fun SplashMutation.DatabaseSync.reducer(state: SplashState) =
+        when (this) {
+            is SplashMutation.DatabaseSync.Request -> {
+                state.copy(syncStatus = SyncStatus.REQUESTED)
+            }
+            is SplashMutation.DatabaseSync.Processing -> {
+                state.copy(syncStatus = SyncStatus.PROCESSING)
+            }
+            is SplashMutation.DatabaseSync.Completed -> {
+                state.copy(syncStatus = SyncStatus.COMPLETED)
+            }
+        }
 }
