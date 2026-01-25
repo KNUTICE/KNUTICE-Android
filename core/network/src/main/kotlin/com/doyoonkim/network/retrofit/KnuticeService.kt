@@ -1,17 +1,16 @@
 package com.doyoonkim.network.retrofit
 
-import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.network.model.FcmTokenSaveRequest
 import com.doyoonkim.network.model.FcmTokenUpdateRequest
 import com.doyoonkim.network.model.ReportSaveRequest
 import com.doyoonkim.network.model.TopicUpdateRequest
 import model.NoticeByIdResult
+import model.NoticeSummaryResult
 import model.NoticesByKeywordResult
 import model.NoticesPerPageResult
 import model.PatchResult
 import model.PostResult
 import model.TipResult
-import model.TopThreeNoticeResults
 import model.TopicSubscriptionPreferencesResult
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -46,6 +45,11 @@ interface KnuticeService {
         @Query("keyword") keyword: String,
         @Query("nttId") lastNttId: Int? = null
     ): NoticesByKeywordResult
+
+    @GET("open-api/v1/notices/summary/{nttId}")
+    suspend fun getNoticeSummary(
+        @Path("nttId") nttId: String
+    ): NoticeSummaryResult
 
     @GET("open-api/v1/topics")
     suspend fun getTopicSubscriptionStatus(
