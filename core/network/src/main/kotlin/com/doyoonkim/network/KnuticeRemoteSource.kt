@@ -42,6 +42,11 @@ class KnuticeRemoteSource @Inject constructor(
             knuticeApi.getNoticesByKeyword(keyword, nttId)
         }
 
+    suspend fun getNoticeSummary(nttId: Int) = runCatching {
+        Log.d(TAG, "Summary Request for Notice $nttId")
+        knuticeApi.getNoticeSummary(nttId.toString())
+    }
+
     suspend fun getTopicSubscriptionStatus(topicType: String) = runCatching {
             if (appPreference.getCachedToken().isNullOrBlank()) throw Exception("No validated token found")
             else {
