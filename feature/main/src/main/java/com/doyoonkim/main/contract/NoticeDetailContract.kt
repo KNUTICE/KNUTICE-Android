@@ -4,20 +4,26 @@ import com.doyoonkim.common.base.UiEvent
 import com.doyoonkim.common.base.UiMutation
 import com.doyoonkim.common.base.UiSideEffect
 import com.doyoonkim.common.base.UiState
+import com.doyoonkim.model.MarkdownString
 import com.doyoonkim.model.NoticeVO
 
 data class NoticeDetailState(
     val receivedNotice: NoticeVO? = null,
     val isReceived: Boolean = false,
     val loadingStatus: Float = 0.0f,
-    val isLoadingCompleted: Boolean = false
+    val isLoadingCompleted: Boolean = false,
+    val isSummarizationVisible: Boolean = false,
+    val isSummaryProcessing: Boolean = false,
+    val summarizedContent: List<MarkdownString>? = null
 ) : UiState
 
 sealed interface NoticeDetailEvent: UiEvent {
     data class RequestNotice(val nttId: Int): NoticeDetailEvent
     data class UpdateLoadingStatus(val status: Int): NoticeDetailEvent
     data object RequestBookmarkCreation: NoticeDetailEvent
+    data object RequestNoticeSummary: NoticeDetailEvent
     data object RequestDownloadAttachment: NoticeDetailEvent
+    data object DismissBottomSheet: NoticeDetailEvent
     data object GoBack: NoticeDetailEvent
 }
 
@@ -37,5 +43,11 @@ sealed interface NoticeDetailMutation: UiMutation {
         data class Loading(val statue: Float): Content
         data object Success: Content
         data class Failure(val reason: String): Content
+    }
+    sealed interface Summary: NoticeDetailMutation {
+        data class Success(val content: List<MarkdownString>): Summary
+        data class Failure(val reason: String): Summary
+        data object Loading: Summary
+        data object Dismiss: Summary
     }
 }

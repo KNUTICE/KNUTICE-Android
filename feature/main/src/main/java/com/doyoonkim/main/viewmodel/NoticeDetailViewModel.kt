@@ -36,6 +36,22 @@ class NoticeDetailViewModel @Inject constructor(
                     }
                 }
             }
+            is NoticeDetailEvent.RequestNoticeSummary -> {
+                with (uiState.value) {
+                    if (!summarizedContent.isNullOrEmpty()) {
+                        // TODO: Need to be revised.
+                        mutate(NoticeDetailMutation.Summary.Success(summarizedContent))
+                    } else {
+                        if (isReceived)
+                            receivedNotice?.let {
+                                getNoticeSummary(receivedNotice.nttId)
+                            }
+                    }
+                }
+            }
+            is NoticeDetailEvent.DismissBottomSheet -> {
+                mutate(NoticeDetailMutation.Summary.Dismiss)
+            }
             is NoticeDetailEvent.RequestDownloadAttachment -> {
                 sendSideEffect(NoticeDetailSideEffect.ShowDownloadToast)
                 sendSideEffect(NoticeDetailSideEffect.NavToDownload)
@@ -72,6 +88,23 @@ class NoticeDetailViewModel @Inject constructor(
         }
     }
 
+    private fun getNoticeSummary(nttId: Int) {
+        viewModelScope.launch {
+            with(uiState.value) {
+                if (!isSummaryProcessing) {
+                    fetchNoticeById.getNoticeSummary(nttId).fold(
+                        onSuccess = {
+                            mutate(NoticeDetailMutation.Summary.Success(it))
+                        },
+                        onFailure = {
+                            mutate(NoticeDetailMutation.Summary.Failure(it.stackTraceToString()))
+                        }
+                    )
+                }
+            }
+        }
+    }
+
     // Main Reducer
     override fun reduce(
         currentState: NoticeDetailState,
@@ -80,6 +113,7 @@ class NoticeDetailViewModel @Inject constructor(
         return when (mutation) {
             is NoticeDetailMutation.Notice -> { mutation.reducer(currentState) }
             is NoticeDetailMutation.Content -> { mutation.reducer(currentState) }
+            is NoticeDetailMutation.Summary -> { mutation.reducer(currentState) }
         }
     }
 
@@ -116,6 +150,34 @@ class NoticeDetailViewModel @Inject constructor(
                 state.copy(
                     isLoadingCompleted = false
                 ).also { Log.d(TAG, "LOADING FAILED on ${state.loadingStatus}\n$reason") }
+            }
+        }
+
+    private fun NoticeDetailMutation.Summary.reducer(state: NoticeDetailState) =
+        when (this) {
+            is NoticeDetailMutation.Summary.Success -> {
+                state.copy(
+                    isSummaryProcessing = false,
+                    isSummarizationVisible = true,
+                    summarizedContent = content
+                )
+            }
+            is NoticeDetailMutation.Summary.Failure -> {
+                state.copy(
+                    isSummaryProcessing = false,
+                    isSummarizationVisible = false,
+                    summarizedContent = null
+                )
+            }
+            is NoticeDetailMutation.Summary.Loading -> {
+                state.copy(
+                    isSummaryProcessing = true
+                )
+            }
+            is NoticeDetailMutation.Summary.Dismiss -> {
+                state.copy(
+                    isSummarizationVisible = false
+                )
             }
         }
 }
