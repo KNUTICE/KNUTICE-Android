@@ -264,7 +264,7 @@ fun NoticeDetailScreen(
                                         screenHeightDp * 0.6
                                     }.dp
                                 ).verticalScroll(rememberScrollState()),
-                                icon = R.drawable.ai_logo,
+                                icon = R.drawable.knutice_ai_logo,
                                 header = stringResource(R.string.header_ai_summary),
                                 attribution = stringResource(R.string.attribution_knutice_ai),
                                 footer = stringResource(R.string.footer_ai_disclaimer),
