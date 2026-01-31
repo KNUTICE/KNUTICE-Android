@@ -183,5 +183,5 @@
     <string name="description_major_notification_channel">Get notification when new notice from the selected major is being posted.</string>
     <string name="header_ai_summary">AI Summary</string>
     <string name="footer_ai_disclaimer">KNUTICE AI can make mistakes.</string>
-    <string name="attribution_knutice_ai">KNUTICE AI powered by Google Gemini</string>
+    <string name="attribution_knutice_ai" translatable="false">KNUTICE AI powered by Google Gemini</string>
 </resources>
