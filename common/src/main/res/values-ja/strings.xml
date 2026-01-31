@@ -169,4 +169,6 @@
     <string name="text_no_major_notice">選んだ専攻のお知らせがありません</string>
     <string name="title_major_notification_channel_name">専攻アラム</string>
     <string name="description_major_notification_channel">選んだ専攻の新しいお知らせがあればアラムを取りたい</string>
+    <string name="header_ai_summary">AI要約</string>
+    <string name="footer_ai_disclaimer">AI生成の要約には誤りが含まれる可能性があります。</string>
 </resources>
