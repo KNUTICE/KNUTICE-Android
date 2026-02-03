@@ -53,7 +53,76 @@ To ensure long-term maintainability and scalability beyond simple feature implem
 - **Multi-Module Strategy:** Decomposed the codebase into `app`, `core`, `feature`, `domain`, and `data` modules. This separation of concerns reduced code coupling and significantly improved build efficiency.
     
 - **MVI Pattern:** Explicitly separated `State`, `Event`, and `SideEffect` to manage data flow unidirectionally. This made the UI state predictable and greatly simplified the debugging process.
+
+### Dependency Graph
+```mermaid
+graph TD
+    %% --- Styling Definitions ---
+    %% Green for Domain (The Heart)
+    classDef domain fill:#d4edda,stroke:#155724,stroke-width:2px,color:#155724;
+    %% Blue for Features
+    classDef feature fill:#cce5ff,stroke:#004085,stroke-width:2px,color:#004085;
+    %% Orange for Data/Network
+    classDef data fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#856404;
+    %% Grey for Shared/Infrastructure (Low visual impact)
+    classDef shared fill:#f8f9fa,stroke:#6c757d,stroke-width:1px,stroke-dasharray: 5 5,color:#6c757d;
+    %% Standard App Root
+    classDef app fill:#e9ecef,stroke:#343a40,stroke-width:2px,color:#343a40;
+
+    %% --- Nodes ---
+    App(":app"):::app
+
+    subgraph Presentation ["Presentation Layer"]
+        FeatMain(":feature:main"):::feature
+        FeatBookmark(":feature:bookmark"):::feature
+    end
+
+    subgraph Business ["Domain Layer"]
+        %% The core is isolated
+        Domain(":core:domain"):::domain
+    end
     
+    subgraph DataInfra ["Data & Infrastructure"]
+        Data(":core:data"):::data
+        Network(":core:network"):::data
+        Notif(":core:notification"):::data
+    end
+
+    subgraph SharedKernel ["Shared Modules (Ubiquitous)"]
+        %% Placed at bottom to catch all downward arrows neatly
+        Common(":common"):::shared
+        Model(":core:model"):::shared
+    end
+
+    %% --- Critical Architecture Flows (Thick Lines) ---
+    %% These show the logic flow
+    FeatMain ==> Domain
+    FeatBookmark ==> Domain
+    Data ==> Domain
+    
+    %% --- Structural Wiring (Standard Lines) ---
+    App --> FeatMain
+    App --> FeatBookmark
+    App --> Data
+    App --> Network
+    App --> Notif
+    
+    %% Data internal wiring
+    Data --> Network
+    
+    %% --- Shared Dependencies (Dotted/Subtle Lines) ---
+    %% Using dotted lines prevents the 'Messy Web' effect
+    FeatMain -.-> Common & Model
+    FeatBookmark -.-> Common & Model
+    Domain -.-> Model
+    Data -.-> Common & Model
+    Network -.-> Common & Model
+    Notif -.-> Common & Model
+    
+    %% Specific Cross-Module Dependencies
+    FeatBookmark -.-> Notif
+```
+
 
 # 🚀 Technical Challenges & Solutions
 
