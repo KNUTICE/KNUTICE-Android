@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -20,12 +21,13 @@ fun LazyText(
     fontSize: TextUnit = 12.sp,
     fontWeight: FontWeight = FontWeight.Normal,
     fontFamily: FontFamily = FontFamily.Default,
+    fontColor: Color = Color.Black,
     textAlign: TextAlign = TextAlign.Unspecified,
     maxLine: Int = Int.MAX_VALUE,
     overflow: TextOverflow = TextOverflow.Visible,
-    completion: Boolean = false
+    isLoading: Boolean = false
 ) {
-    if (!completion) {
+    if (isLoading) {
         AnimatedGradient(
             modifier = modifier.fillMaxWidth().height(
                 with(LocalDensity.current) {
@@ -38,6 +40,7 @@ fun LazyText(
             modifier = modifier,
             text = text,
             fontSize = fontSize,
+            color = fontColor,
             fontWeight = fontWeight,
             fontFamily = fontFamily,
             textAlign = textAlign,
