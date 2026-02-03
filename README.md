@@ -51,7 +51,75 @@ KNUTICE는 학교 홈페이지에 새 공지사항이 올라오면, 푸시 알�
 - **Multi-Module Strategy:** `app`, `core`, `feature`, `domain`, `data` 등 역할별로 모듈을 분리하여 코드 결합도를 낮추고 빌드 효율을 높였어요.
     
 - **MVI Pattern:** `State`, `Event`, `SideEffect`를 명확히 분리하여 데이터 흐름을 단방향으로 관리함으로써, UI 상태 예측 가능성을 높이고 디버깅을 쉽게 만들었어요.
+
+### Dependency Graph
+```mermaid
+graph TD
+    %% --- Styling Definitions ---
+    %% Green for Domain (The Heart)
+    classDef domain fill:#d4edda,stroke:#155724,stroke-width:2px,color:#155724;
+    %% Blue for Features
+    classDef feature fill:#cce5ff,stroke:#004085,stroke-width:2px,color:#004085;
+    %% Orange for Data/Network
+    classDef data fill:#fff3cd,stroke:#856404,stroke-width:2px,color:#856404;
+    %% Grey for Shared/Infrastructure (Low visual impact)
+    classDef shared fill:#f8f9fa,stroke:#6c757d,stroke-width:1px,stroke-dasharray: 5 5,color:#6c757d;
+    %% Standard App Root
+    classDef app fill:#e9ecef,stroke:#343a40,stroke-width:2px,color:#343a40;
+
+    %% --- Nodes ---
+    App(":app"):::app
+
+    subgraph Presentation ["Presentation Layer"]
+        FeatMain(":feature:main"):::feature
+        FeatBookmark(":feature:bookmark"):::feature
+    end
+
+    subgraph Business ["Domain Layer"]
+        %% The core is isolated
+        Domain(":core:domain"):::domain
+    end
     
+    subgraph DataInfra ["Data & Infrastructure"]
+        Data(":core:data"):::data
+        Network(":core:network"):::data
+        Notif(":core:notification"):::data
+    end
+
+    subgraph SharedKernel ["Shared Modules (Ubiquitous)"]
+        %% Placed at bottom to catch all downward arrows neatly
+        Common(":common"):::shared
+        Model(":core:model"):::shared
+    end
+
+    %% --- Critical Architecture Flows (Thick Lines) ---
+    %% These show the logic flow
+    FeatMain ==> Domain
+    FeatBookmark ==> Domain
+    Data ==> Domain
+    
+    %% --- Structural Wiring (Standard Lines) ---
+    App --> FeatMain
+    App --> FeatBookmark
+    App --> Data
+    App --> Network
+    App --> Notif
+    
+    %% Data internal wiring
+    Data --> Network
+    
+    %% --- Shared Dependencies (Dotted/Subtle Lines) ---
+    %% Using dotted lines prevents the 'Messy Web' effect
+    FeatMain -.-> Common & Model
+    FeatBookmark -.-> Common & Model
+    Domain -.-> Model
+    Data -.-> Common & Model
+    Network -.-> Common & Model
+    Notif -.-> Common & Model
+    
+    %% Specific Cross-Module Dependencies
+    FeatBookmark -.-> Notif
+```
 
 # 🚀 Technical Challenges & Solutions
 
