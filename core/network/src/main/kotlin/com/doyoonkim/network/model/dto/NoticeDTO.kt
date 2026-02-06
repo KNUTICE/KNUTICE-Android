@@ -15,6 +15,7 @@ data class NoticeDTO(
     @SerializedName("contentUrl") var contentUrl: String? = null,
     @SerializedName("contentImageUrl") var contentImage: String? = null,
     @SerializedName("department") var departName: String? = null,
+    @SerializedName("isContentSummary") var isSummaryAvailable: Boolean? = null,
     @SerializedName("registrationDate") var registeredAt: String? = null,
     @SerializedName("topic") var topic: String? = null,
     @SerializedName("isAttachment") var hasAttachment: Boolean? = null
@@ -27,7 +28,8 @@ data class NoticeDTO(
             imageUrl = this.contentImage,
             departName = this.departName ?: "",
             timestamp = this.registeredAt ?: "",
-            noticeName = this.topic ?: ""
+            noticeName = this.topic ?: "",
+            isSummaryAvailable = this.isSummaryAvailable ?: false
         )
 }
 

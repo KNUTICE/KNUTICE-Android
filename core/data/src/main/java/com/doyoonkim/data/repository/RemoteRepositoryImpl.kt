@@ -95,6 +95,20 @@ class RemoteRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun getNoticeSummary(nttId: Int): String? {
+        remoteSource.getNoticeSummary(nttId).fold(
+            onSuccess = {
+                if (it.result?.resultCode == 200) return it.body?.rawSummary
+                else it.result.printLog().also { return null }
+            },
+            onFailure = {
+                it.printLog()
+                return null
+            }
+        )
+        return null
+    }
+
     override fun queryTopicSubscriptionStatus(topicType: TopicType) = flow {
         remoteSource.getTopicSubscriptionStatus(topicType.name).fold(
             onSuccess = {

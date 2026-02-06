@@ -13,4 +13,6 @@ interface NoticeRemoteRepository {
     fun queryNoticeById(nttId: Int): Flow<NoticeVO?>
 
     fun queryNoticesByKeyword(keyword: String, lastNttId: Int?): Flow<List<NoticeVO>?>
+
+    suspend fun getNoticeSummary(nttId: Int): String?
 }

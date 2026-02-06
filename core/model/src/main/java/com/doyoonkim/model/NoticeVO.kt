@@ -8,5 +8,6 @@ data class NoticeVO(
     val imageUrl: String? = null,
     val departName: String = "",
     val timestamp: String = "",
-    val noticeName: String = ""
+    val noticeName: String = "",
+    val isSummaryAvailable: Boolean = false
 )

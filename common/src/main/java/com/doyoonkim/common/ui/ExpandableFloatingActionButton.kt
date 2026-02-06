@@ -46,16 +46,20 @@ import com.doyoonkim.common.theme.title
 data class ExpandableFabItem(
     val icon: ImageVector,
     val text: String,
+    val textColorEnabled: Color,
+    val textColorDisabled: Color,
+    val isEnabled: Boolean = true
 )
 
 @Composable
 fun ExpandableFloatingActionButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     textWhenExpanded: String = "close",
     items: List<ExpandableFabItem>,
     primaryContentColor: Color,
     secondaryContainerColor: Color,
-    onItemClicked: (ExpandableFabItem) -> Unit
+    onItemClicked: (Int) -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
@@ -89,20 +93,30 @@ fun ExpandableFloatingActionButton(
                                     interactionSource = interactionSource,
                                     indication = null
                                 ) {
-                                    onItemClicked(item)
-                                    isExpanded = !isExpanded
+                                    if (item.isEnabled) {
+                                        onItemClicked(index)
+                                        isExpanded = !isExpanded
+                                    }
                                 },
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
                                 imageVector = item.icon,
                                 contentDescription = item.text,
-                                tint = MaterialTheme.colorScheme.title
+                                tint = if (item.isEnabled) {
+                                    item.textColorEnabled
+                                } else {
+                                    item.textColorDisabled
+                                }
                             )
                             Spacer(Modifier.width(20.dp))
                             Text(
                                 text = item.text,
-                                color = MaterialTheme.colorScheme.title
+                                color = if (item.isEnabled) {
+                                    item.textColorEnabled
+                                } else {
+                                    item.textColorDisabled
+                                }
                             )
                         }
 
@@ -120,9 +134,11 @@ fun ExpandableFloatingActionButton(
                 modifier = Modifier.background(Color.Transparent)
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(16.dp))
-                    .clickable { isExpanded = !isExpanded },
+                    .clickable {
+                        if (enabled) isExpanded = !isExpanded
+                    },
                 shape = RoundedCornerShape(16.dp),
-                color = primaryContentColor
+                color = if (enabled) primaryContentColor else secondaryContainerColor
             ) {
                 val rotateAngle by animateFloatAsState(
                     targetValue = if (isExpanded) 45f else 0f,
