@@ -32,7 +32,7 @@ import com.doyoonkim.knutice.di.components.DaggerNoticeSearchSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationPreferencesSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerSettingsSceneComponent
 import com.doyoonkim.knutice.di.util.DefaultSystemService
-import com.doyoonkim.main.home.HomeScreen
+import com.doyoonkim.main.home.HomeDashboard
 import com.doyoonkim.main.notice.NoticeByMajorScreen
 import com.doyoonkim.main.notice.NoticeDetailScreen
 import com.doyoonkim.main.notice.NoticeSearchScreen
@@ -69,7 +69,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
             DaggerHomeSceneComponent.factory().create(DefaultSystemService(appComponent))
         }
 
-        HomeScreen(
+        HomeDashboard(
             modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<HomeViewModel>(factory = sceneComponent.viewModelFactory()),
             bottomPadding = contentPadding.calculateBottomPadding(),
@@ -79,13 +79,14 @@ fun NavGraphBuilder.mainServiceNavGraph(
             },
             onMoreNoticeRequested = { dest ->
                 navController.run {
-                    when(dest) {
+                    when (dest) {
                         Destination.MORE_GENERAL -> navigate(NavRoutes.GeneralNotices.route)
                         Destination.MORE_ACADEMIC -> navigate(NavRoutes.AcademicNotices.route)
                         Destination.MORE_SCHOLARSHIP -> navigate(NavRoutes.ScholarshipNotices.route)
                         Destination.MORE_EVENT -> navigate(NavRoutes.EventNotices.route)
                         Destination.MORE_EMPLOYMENT -> navigate(NavRoutes.EmploymentNotices.route)
-                        else -> { /* DO NOTHING. */ }
+                        else -> { /* DO NOTHING. */
+                        }
                     }
                 }
             },
@@ -99,7 +100,10 @@ fun NavGraphBuilder.mainServiceNavGraph(
                     putString(FirebaseAnalytics.Param.DESTINATION, url)
                 })
                 navController.navigate("tipDetail/${category.name}/${Uri.encode(url)}")
-            }
+            },
+            onMoreMajorNoticeRequested = {
+                navController.navigate(NavRoutes.MajorNotices.route)
+            },
         )
     }
 

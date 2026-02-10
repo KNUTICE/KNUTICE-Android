@@ -3,7 +3,9 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.navigation.Destination
+import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.domain.usecases.FetchTips
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.main.contract.HomeEvent
@@ -11,7 +13,9 @@ import com.doyoonkim.main.contract.HomeMutation
 import com.doyoonkim.main.contract.HomeSideEffect
 import com.doyoonkim.main.contract.HomeViewState
 import com.doyoonkim.main.contract.MainContentState
+import com.doyoonkim.main.contract.MajorNoticesState
 import com.doyoonkim.main.contract.TipState
+import com.doyoonkim.model.MajorCategory
 import com.doyoonkim.model.NoticeCategory
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -19,7 +23,8 @@ import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
     private val fetchTopThreeNotices: FetchTopThreeNotices,
-    private val fetchTips: FetchTips
+    private val fetchTips: FetchTips,
+    private val appPreferences: AppPreferences
 ) : BaseViewModel<HomeViewState, HomeEvent, HomeSideEffect, HomeMutation>() {
     override fun setInitialState(): HomeViewState = HomeViewState()
 
@@ -27,6 +32,8 @@ class HomeViewModel @Inject constructor(
         when (event) {
             is HomeEvent.RequestMainContents -> {
                 getTopThreeNotices()
+                // get Major Notices
+                getMajorSubscriptionStatus()
                 getTips()
             }
             is HomeEvent.RequestNoticeDetail -> {
@@ -52,6 +59,13 @@ class HomeViewModel @Inject constructor(
                     )
                 }
             }
+            is HomeEvent.RequestMoreMajorNotices -> {
+                with(uiState.value.majorNoticesState) {
+                    if (!isError && subscribed != MajorCategory.UNSPECIFIED) {
+                        sendSideEffect(HomeSideEffect.NavToMoreMajorNotices)
+                    }
+                }
+            }
             is HomeEvent.RequestSettings -> {
                 sendSideEffect(HomeSideEffect.NavToSettings)
             }
@@ -71,7 +85,11 @@ class HomeViewModel @Inject constructor(
         fetchTopThreeNotices()
             .fold(
                 onSuccess = { vo ->
-                    mutate(HomeMutation.MainContent.Success(vo))
+                    if (vo.isEmpty()) {
+                        mutate(HomeMutation.MainContent.Failure("Received Empty List"))
+                    } else {
+                        mutate(HomeMutation.MainContent.Success(vo))
+                    }
                 },
                 onFailure = {
                     mutate(HomeMutation.MainContent.Failure(it.stackTraceToString()))
@@ -94,6 +112,28 @@ class HomeViewModel @Inject constructor(
             }
     }
 
+    // Side Effect (Access SharedPreference)
+    private fun getMajorSubscriptionStatus() = viewModelScope.launch {
+        val subscribed = appPreferences.getSubscribedMajor()?.let {
+            MajorCategory.valueOf(it)
+        }
+        Log.d(this.javaClass.name, "Subscription: $subscribed")
+
+        subscribed?.let {
+            fetchTopThreeNotices.getMajorNotices(subscribed)
+                .fold(
+                    onSuccess = { result ->
+                        Log.d(this.javaClass.name, "Result: ${result.toString()}")
+                        mutate(HomeMutation.MajorNotices.Success(subscribed, result))
+                    },
+                    onFailure = { error ->
+                        Log.d(this.javaClass.name, "Result: ${error.stackTraceToString()}")
+                        mutate(HomeMutation.MajorNotices.Failure(error.stackTraceToString()))
+                    }
+                )
+        }
+    }
+
     // Main Reducer
     override fun reduce(currentState: HomeViewState, mutation: HomeMutation): HomeViewState {
         return when (mutation) {
@@ -102,6 +142,9 @@ class HomeViewModel @Inject constructor(
             )
             is HomeMutation.Tip -> currentState.copy(
                 tipState = mutation.reducer(currentState.tipState)
+            )
+            is HomeMutation.MajorNotices -> currentState.copy(
+                majorNoticesState = mutation.reducer(currentState.majorNoticesState)
             )
         }
     }
@@ -139,6 +182,22 @@ class HomeViewModel @Inject constructor(
                 tips = tips
             )
             is HomeMutation.Tip.Failure -> state.copy(
+                isLoading = false,
+                isError = true
+            )
+        }
+    }
+
+    private fun HomeMutation.MajorNotices.reducer(state: MajorNoticesState): MajorNoticesState {
+        return when (this) {
+            is HomeMutation.MajorNotices.Loading -> state.copy(isLoading = true)
+            is HomeMutation.MajorNotices.Success -> state.copy(
+                isLoading = false,
+                isError = false,
+                subscribed = category,
+                majorNotices = notices
+            )
+            is HomeMutation.MajorNotices.Failure -> state.copy(
                 isLoading = false,
                 isError = true
             )

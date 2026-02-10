@@ -1,11 +1,11 @@
 [versions]
-agp = "8.11.0"
+agp = "9.0.0"
 coilCompose = "2.4.0"
 converterGson = "2.11.0"
 datastorePreferences = "1.1.7"
 firebaseMessagingDirectboot = "24.0.2"
 javaxInject = "1"
-kotlin = "2.1.20"
+kotlin = "2.2.10"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
