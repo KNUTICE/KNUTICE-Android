@@ -36,7 +36,7 @@ fun NotificationPreview(
     imageUrl: String = ""
 ) {
     Column(
-        Modifier.padding(10.dp),
+        modifier.padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         if (isLoading) {

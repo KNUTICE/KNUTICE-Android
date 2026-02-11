@@ -3,6 +3,7 @@ package com.doyoonkim.common.ui
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,10 +30,11 @@ import com.doyoonkim.common.theme.subTitle
 fun PlaceholderScreen(
     modifier: Modifier = Modifier,
     imageResource: Int,
+    imageColor: Color? = null,
     contentText: String
 ) {
     Column(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -38,7 +42,8 @@ fun PlaceholderScreen(
             painter = painterResource(imageResource),
             contentDescription = contentText,
             modifier = Modifier.wrapContentSize()
-                .padding(bottom = 20.dp)
+                .padding(bottom = 20.dp),
+            colorFilter = if (imageColor != null) ColorFilter.tint(imageColor) else null
         )
 
         Text(
@@ -49,6 +54,37 @@ fun PlaceholderScreen(
             color = MaterialTheme.colorScheme.subTitle,
             modifier = Modifier.fillMaxWidth().wrapContentHeight()
         )
+    }
+}
+
+@Composable
+fun DashboardPlaceholder(
+    modifier: Modifier = Modifier,
+    imageResources: Int,
+    imageColor: Color,
+    contentText: String,
+    optionalElements: @Composable () -> Unit = {  }
+) {
+    Box(
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize()
+                .fillMaxWidth()
+                .padding(25.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            PlaceholderScreen(
+                modifier = Modifier.wrapContentHeight()
+                    .fillMaxWidth(),
+                imageResource = imageResources,
+                imageColor = imageColor,
+                contentText = contentText
+            )
+            optionalElements()
+        }
     }
 }
 
