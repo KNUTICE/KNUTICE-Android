@@ -12,6 +12,8 @@ internal fun Project.configureDaggerCommon() {
 
     // Common Dagger Dependencies (Pure Dagger)
     dependencies {
+        // Explicit implementation of JSR-330 Standard
+        add("implementation", libs.findLibrary("javax-inject").get())
         add("implementation", libs.findLibrary("dagger").get())
         add("kapt", libs.findLibrary("dagger-compiler").get())
 
