@@ -36,6 +36,10 @@ gradlePlugin {
             id = "knutice.jvm.library"
             implementationClass = "plugins.JvmLibraryConventionPlugin"
         }
+        register("jvmDagger") {
+            id = "knutice.jvm.dagger"
+            implementationClass = "plugins.JvmDaggerConventionPlugin"
+        }
     }
 }
 
