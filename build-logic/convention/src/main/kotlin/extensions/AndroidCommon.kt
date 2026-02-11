@@ -9,11 +9,10 @@ import org.gradle.kotlin.dsl.getByType
 
 // Project Extension for Android Common
 
-internal fun Project.configureAndroidCommon() =
+internal fun Project.configureAndroidCommon() {
+    // Version Catalog Access Helper
+    val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
     extensions.getByType<CommonExtension>().apply {
-        // Version Catalog Access Helper
-        val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
-
         // Compile SDK
         compileSdk = 35
 
@@ -46,3 +45,4 @@ internal fun Project.configureAndroidCommon() =
             add("androidTestImplementation", libs.findLibrary("mockk-android").get())
         }
     }
+}
