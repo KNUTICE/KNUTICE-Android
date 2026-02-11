@@ -289,6 +289,10 @@ fun HomeDashboard(
                         }
                     } else {
                         NotificationPreviewList(
+                            modifier = Modifier
+                                .padding(7.dp)
+                                .clip(RoundedCornerShape(15.dp))
+                                .background(MaterialTheme.colorScheme.secondaryBackground),
                             listTitle = stringResource(
                                 MajorResources.getLocalizedString(
                                     uiState.majorNoticesState.subscribed.name
