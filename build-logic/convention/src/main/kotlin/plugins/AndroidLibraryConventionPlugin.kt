@@ -5,6 +5,7 @@ import extensions.configureAndroidCommon
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 
 /**
@@ -29,6 +30,16 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                  */
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
+            }
+
+            // Default BuildTypes Configuration
+            extensions.configure<LibraryExtension> {
+                buildTypes {
+                    release {
+                        // Prevent Accidental Obfuscation.
+                        isMinifyEnabled = false
+                    }
+                }
             }
 
             // Android Common Extension
