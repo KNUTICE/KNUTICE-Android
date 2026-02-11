@@ -176,7 +176,9 @@ fun NoticeSearchScreen(
             ) {
                 if (uiState.searchKeyword.isBlank()) {
                     PlaceholderScreen(
-                        modifier = Modifier.padding(bottom = bottomPadding),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = bottomPadding),
                         imageResource = R.drawable.magnifying_glasses,
                         contentText = stringResource(R.string.text_search_greeting)
                     )
@@ -206,7 +208,9 @@ fun NoticeSearchScreen(
                             // Target to be revised in better way.
                             if (!uiState.isFetching && uiState.isSearchResultEmpty) {
                                 PlaceholderScreen(
-                                    modifier = Modifier.padding(bottom = bottomPadding),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(bottom = bottomPadding),
                                     imageResource = R.drawable.question_mark,
                                     contentText = stringResource(R.string.error_no_search_result)
                                 )
