@@ -61,7 +61,7 @@ class HomeViewModel @Inject constructor(
             }
             is HomeEvent.RequestMoreMajorNotices -> {
                 with(uiState.value.majorNoticesState) {
-                    if (!isError && subscribed != MajorCategory.UNSPECIFIED) {
+                    if (!isError || subscribed == MajorCategory.UNSPECIFIED) {
                         sendSideEffect(HomeSideEffect.NavToMoreMajorNotices)
                     }
                 }
@@ -131,7 +131,7 @@ class HomeViewModel @Inject constructor(
                         mutate(HomeMutation.MajorNotices.Failure(error.stackTraceToString()))
                     }
                 )
-        }
+        } ?: mutate(HomeMutation.MajorNotices.Failure("Unable to find subscribed major"))
     }
 
     // Main Reducer

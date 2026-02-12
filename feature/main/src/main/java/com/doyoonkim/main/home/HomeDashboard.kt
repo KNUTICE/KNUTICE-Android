@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,28 +14,41 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.doyoonkim.common.MajorResources
 import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.R
 import com.doyoonkim.common.navigation.Destination
+import com.doyoonkim.common.theme.buttonOnBackground
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.secondaryBackground
+import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
+import com.doyoonkim.common.theme.variantPurple
+import com.doyoonkim.common.ui.DashboardPlaceholder
 import com.doyoonkim.common.ui.EntryPointButton
 import com.doyoonkim.common.ui.HorizontalContentPager
 import com.doyoonkim.common.ui.PlaceholderScreen
@@ -125,7 +139,8 @@ fun HomeDashboard(
     ) { innerPadding ->
         if (uiState.mainContentState.isError) {
             PlaceholderScreen(
-                modifier = modifier.fillMaxSize()
+                modifier = modifier
+                    .fillMaxSize()
                     .padding(innerPadding)
                     .padding(bottom = bottomPadding),
                 imageResource = R.drawable.wifi,
@@ -133,7 +148,8 @@ fun HomeDashboard(
             )
         } else {
             LazyColumn(
-                modifier = modifier.padding(innerPadding)
+                modifier = modifier
+                    .padding(innerPadding)
                     .background(MaterialTheme.colorScheme.displayBackground),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Top
@@ -155,7 +171,8 @@ fun HomeDashboard(
 
                 item("Service Entry points") {
                     Row(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .wrapContentHeight()
                             .padding(horizontal = 7.dp)
                             .background(Color.Transparent),
@@ -217,6 +234,10 @@ fun HomeDashboard(
                         }
 
                         NotificationPreviewList(
+                            modifier = Modifier
+                                .padding(7.dp)
+                                .clip(RoundedCornerShape(15.dp))
+                                .background(MaterialTheme.colorScheme.secondaryBackground),
                             listTitle = stringResource(
                                 NoticeResources.getStringResourcesByCategory(category.toString())
                             ),
@@ -235,14 +256,43 @@ fun HomeDashboard(
 
                 item("notice by selected major") {
                     if (uiState.majorNoticesState.isError) {
-                        PlaceholderScreen(
-                            modifier = modifier
-                                .fillMaxWidth(),
-                            imageResource = R.drawable.question_mark,
+                        DashboardPlaceholder(
+                            modifier = modifier.fillMaxWidth()
+                                .clip(RoundedCornerShape(15.dp))
+                                .background(MaterialTheme.colorScheme.secondaryBackground),
+                            imageResources = R.drawable.outline_school_24,
+                            imageColor = MaterialTheme.colorScheme.subTitle,
                             contentText = stringResource(R.string.title_major_select)
-                        )
+                        ) {
+                            Button(
+                                onClick = {
+                                    viewModel.sendUiEvent(HomeEvent.RequestMoreMajorNotices)
+                                },
+                                modifier = Modifier.wrapContentSize(),
+                                enabled = true,
+                                shape = RoundedCornerShape(15.dp),
+                                colors = ButtonDefaults.buttonColors().copy(
+                                    containerColor = MaterialTheme.colorScheme.buttonOnBackground,
+                                    contentColor = MaterialTheme.colorScheme.title
+                                ),
+                                contentPadding = PaddingValues(20.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.text_major_select),
+                                    style = TextStyle(
+                                        color = MaterialTheme.colorScheme.title,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 16.sp
+                                    )
+                                )
+                            }
+                        }
                     } else {
                         NotificationPreviewList(
+                            modifier = Modifier
+                                .padding(7.dp)
+                                .clip(RoundedCornerShape(15.dp))
+                                .background(MaterialTheme.colorScheme.secondaryBackground),
                             listTitle = stringResource(
                                 MajorResources.getLocalizedString(
                                     uiState.majorNoticesState.subscribed.name

@@ -106,7 +106,9 @@ fun NotificationPreferencesScreen(
     ) { innerPadding ->
         if (uiStatus.isError) {
             PlaceholderScreen(
-                modifier = Modifier.padding(innerPadding),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
                 imageResource = R.drawable.wifi,
                 contentText = stringResource(R.string.error_no_network_connection)
             )

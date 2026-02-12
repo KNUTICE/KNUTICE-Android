@@ -1,6 +1,9 @@
 package com.doyoonkim.common.ui
 
+import android.util.Log
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
+import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.pager.HorizontalPager
@@ -21,11 +24,16 @@ fun HorizontalContentPager(
     progressDelay: Long = 5000L,
     pagerContent: @Composable (Int) -> Unit
 ) {
+    // Allow user to reverse scroll
+    val maxPage = 1000 * size
+    val initialPage = startingPage + (maxPage / 2)
+
     // Pager State
     val pagerState = rememberPagerState(
-        initialPage = startingPage,
-        pageCount = { Int.MAX_VALUE }
+        initialPage = initialPage,
+        pageCount = { maxPage }
     )
+
     val pagerInteractionSource = remember { MutableInteractionSource() }
     val isPagePressed by pagerInteractionSource.collectIsPressedAsState()
 
@@ -35,7 +43,8 @@ fun HorizontalContentPager(
             while (true) {
                 delay(progressDelay)
                 with(pagerState.currentPage) {
-                    if (this < Int.MAX_VALUE) {
+                    if (this < maxPage) {
+                        Log.d("HorizontalPager", "Current Statue: ${this}")
                         pagerState.animateScrollToPage(this + 1)
                     }
                 }
