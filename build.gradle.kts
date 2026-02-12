@@ -6,8 +6,6 @@ plugins {
     // ksp
     alias(libs.plugins.google.devtools.ksp) apply false
 
-    // Dagger Hilt for Dependency Injection
-    id("com.google.dagger.hilt.android") version "2.56.2" apply false
     alias(libs.plugins.google.gms.google.services) apply false
 
     alias(libs.plugins.kotlinSerialization) apply false

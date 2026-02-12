@@ -15,7 +15,7 @@ class FirebaseConventionPlugin : Plugin<Project>{
 
             pluginManager.withPlugin("com.android.application") {
                 // Google Services Plugin (Only for Application Module)
-                apply("com.google.gms.google-services")
+                pluginManager.apply("com.google.gms.google-services")
             }
 
             // Dependency Configuration

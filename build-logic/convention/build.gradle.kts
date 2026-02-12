@@ -17,7 +17,7 @@ gradlePlugin {
             implementationClass = "plugins.AndroidLibraryConventionPlugin"
         }
         register("androidCompose") {
-            id = "knutcie.android.compose"
+            id = "knutice.android.compose"
             implementationClass = "plugins.AndroidComposeConventionPlugin"
         }
         register("androidDagger") {
@@ -35,6 +35,10 @@ gradlePlugin {
         register("jvmLibrary") {
             id = "knutice.jvm.library"
             implementationClass = "plugins.JvmLibraryConventionPlugin"
+        }
+        register("jvmDagger") {
+            id = "knutice.jvm.dagger"
+            implementationClass = "plugins.JvmDaggerConventionPlugin"
         }
     }
 }

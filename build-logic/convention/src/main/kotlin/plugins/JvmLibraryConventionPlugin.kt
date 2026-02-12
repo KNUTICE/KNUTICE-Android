@@ -24,13 +24,6 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
             with(pluginManager) {
                 apply("java-library")
                 apply("org.jetbrains.kotlin.jvm")
-                apply("kotlin-kapt")
-
-                withPlugin("kotlin-kapt") {
-                    extensions.configure<KaptExtension>("kapt") {
-                        correctErrorTypes = true
-                    }
-                }
             }
 
             extensions.configure<JavaPluginExtension> {
@@ -43,9 +36,6 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
                     jvmTarget.set(JvmTarget.JVM_17)
                 }
             }
-
-            // Pure Dagger Configuration
-            configureDaggerCommon()
 
             dependencies {
                 // Kotlin Coroutines Core
