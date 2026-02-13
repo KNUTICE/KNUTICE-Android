@@ -4,6 +4,7 @@ coilCompose = "2.4.0"
 converterGson = "2.11.0"
 datastorePreferences = "1.1.7"
 firebaseMessagingDirectboot = "24.0.2"
+jetpackGlance = "1.1.1"
 javaxInject = "1"
 kotlin = "2.2.10"
 coreKtx = "1.16.0"
@@ -44,6 +45,8 @@ ksp = "2.3.5"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "jetpackGlance" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "jetpackGlance" }
 androidx-material = { module = "androidx.compose.material:material" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
