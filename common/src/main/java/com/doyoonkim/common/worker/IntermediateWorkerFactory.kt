@@ -1,4 +1,4 @@
-package com.doyoonkim.notification.di
+package com.doyoonkim.common.worker
 
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters

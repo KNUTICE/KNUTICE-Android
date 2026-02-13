@@ -1,11 +1,11 @@
 package com.doyoonkim.knutice.di.modules
 
 import androidx.work.ListenableWorker
+import com.doyoonkim.common.di.WorkerKey
 import com.doyoonkim.domain.interfaces.AsyncFtsTaskScheduler
-import com.doyoonkim.knutice.di.util.WorkerKey
 import com.doyoonkim.knutice.task.AsyncFtsTableInsertion
 import com.doyoonkim.knutice.task.AsyncFtsTaskSchedulerImpl
-import com.doyoonkim.notification.di.IntermediateWorkerFactory
+import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
 import dagger.Binds
 import dagger.Module
