@@ -40,7 +40,6 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Constraints
 import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
 import com.doyoonkim.common.theme.KNUTICETheme
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
@@ -66,6 +65,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var navController: NavHostController
     private val activity = this
     private val receivedIntent = mutableStateOf<Intent?>(null)
+
+    private val isDeeplinkInProcess = mutableStateOf<Boolean>(false)
+    private val lastProcessedIntent = mutableStateOf<Int?>(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = (application as MainApplication).appComponent
@@ -103,8 +105,6 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 navController = rememberNavController()
 
-                var lastProcessedIntent by remember { mutableStateOf<Int?>(null) }
-                var isDeeplinkInProcess by remember { mutableStateOf(false) }
 
                 var isPreProcessCompleted by remember { mutableStateOf(false) }
                 if (!isPreProcessCompleted) {
@@ -178,7 +178,7 @@ class MainActivity : ComponentActivity() {
                     }
                 }
 
-                if (isDeeplinkInProcess) {
+                if (isDeeplinkInProcess.value) {
                     Dialog(
                         onDismissRequest = {  }
                     ) {
@@ -200,9 +200,9 @@ class MainActivity : ComponentActivity() {
                 LaunchedEffect(receivedIntent.value, isPreProcessCompleted) {
                     if (isPreProcessCompleted) {
                         receivedIntent.value?.let { intent ->
-                            if (intent.hashCode() != lastProcessedIntent) {
-                                isDeeplinkInProcess = true
-                                lastProcessedIntent = intent.hashCode()
+                            if (intent.hashCode() != lastProcessedIntent.value) {
+                                isDeeplinkInProcess.value = true
+                                lastProcessedIntent.value = intent.hashCode()
 
                                 DeeplinkHandler.processIntent(intent) { service, uri ->
                                     // Analytics
@@ -214,7 +214,7 @@ class MainActivity : ComponentActivity() {
 
                                     navController.navigate(uri)
                                 }
-                                isDeeplinkInProcess = false
+                                isDeeplinkInProcess.value = false
                             }
                         }
                     }
