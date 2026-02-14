@@ -34,6 +34,20 @@ private val LightColorScheme = lightColorScheme(
     */
 )
 
+val DarkWidgetColorScheme = darkColorScheme(
+    primary = TitleWhite,
+    secondary = SubtitleAny,
+    primaryContainer = DarkBackground,
+    secondaryContainer = SecondaryDark,
+)
+
+val LightWidgetColorScheme = lightColorScheme(
+    primary = TitleBlack,
+    secondary = SubtitleAny,
+    primaryContainer = WhiteBackground,
+    secondaryContainer = SecondaryLight
+)
+
 // Define Custom-defined theme based on pre-defined color scheme
 val ColorScheme.notificationType1: Color
     @Composable
