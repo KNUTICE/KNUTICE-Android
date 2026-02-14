@@ -7,7 +7,7 @@ import androidx.work.WorkerParameters
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.common.di.TokenHandler
 import com.doyoonkim.model.TokenStatus
-import com.doyoonkim.notification.di.IntermediateWorkerFactory
+import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import javax.inject.Inject
 
 class PeriodicTokenRegistration(

@@ -19,6 +19,9 @@ class AppPreferences @Inject constructor(
     // Major Subscription Status
     private val SUBSCRIBED_MAJOR = "SUBSCRIBED_MAJOR"
 
+    // Widget Configuration (Category Selection)
+    private val WIDGET_CATEGORY = "WIDGET_CATEGORY"
+
     /**
      * updateDeviceToken
      * @param token: Unique FCM token issued to this device.
@@ -40,6 +43,17 @@ class AppPreferences @Inject constructor(
 
     fun updateSubscribedMajor(newMajor: String) {
         appPref.edit { putString(SUBSCRIBED_MAJOR, newMajor) }
+    }
+
+    /**
+     * Widget Configuration
+     */
+    fun getWidgetCategory(): String? {
+        return appPref.getString(WIDGET_CATEGORY, null)
+    }
+
+    fun updateWidgetCategory(newCategory: String) {
+        appPref.edit { putString(WIDGET_CATEGORY, newCategory) }
     }
 
     fun isDatabaseSyncCompleted(): Boolean {

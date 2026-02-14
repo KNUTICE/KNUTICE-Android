@@ -42,6 +42,7 @@ dependencies {
     implementation(projects.core.notification)
     implementation(projects.feature.main)
     implementation(projects.feature.bookmark)
+    implementation(projects.feature.widget)
     implementation(projects.common)
 
     // Kotlin Serialization

@@ -19,7 +19,9 @@ import com.doyoonkim.knutice.di.modules.FirebaseAnalyticsModule
 import com.doyoonkim.knutice.di.modules.WorkerModule
 import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.FcmTokenModule
-import com.doyoonkim.notification.di.IntermediateWorkerFactory
+import com.doyoonkim.common.worker.IntermediateWorkerFactory
+import com.doyoonkim.data.di.NoticeRemoteModule
+import com.doyoonkim.widget.di.WidgetModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Subcomponent
@@ -62,11 +64,13 @@ interface AppComponent {
     modules = [
         DispatcherModule::class,
         WorkerModule::class,
+        WidgetModule::class,
         FcmTokenModule::class,
         TokenUseCaseModule::class,
         TokenRemoteModule::class,
         AsyncFtsEntryInsertionModule::class,
         LocalModule::class,
+        NoticeRemoteModule::class,
         NetworkModule::class
     ]
 )

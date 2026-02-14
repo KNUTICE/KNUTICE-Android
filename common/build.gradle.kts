@@ -23,4 +23,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     // Kotlin Serialization
     implementation(libs.kotlin.serialization)
+    // WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
 }

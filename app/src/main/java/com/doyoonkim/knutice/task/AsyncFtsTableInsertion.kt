@@ -8,10 +8,7 @@ import androidx.work.WorkerParameters
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.usecases.InsertPendingFtsEntries
-import com.doyoonkim.model.BookmarkFtsVO
-import com.doyoonkim.model.PendingBookmarkFtsVO
-import com.doyoonkim.notification.di.IntermediateWorkerFactory
-import kotlinx.coroutines.flow.collectLatest
+import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
