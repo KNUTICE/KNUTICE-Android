@@ -25,11 +25,10 @@
             android:value="@string/default_notification_channel_id"/>
 
         <activity
-            android:name="com.doyoonkim.knutice.MainActivity"
+            android:name="com.doyoonkim.knutice.SplashActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:launchMode="singleTop"
             android:theme="@style/Theme.KNUTICE">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,6 +45,14 @@
                     android:host="service" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.doyoonkim.knutice.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.KNUTICE" />
+
         <service android:name="com.doyoonkim.notification.fcm.PushNotificationService"
             android:exported="false">
             <intent-filter>
