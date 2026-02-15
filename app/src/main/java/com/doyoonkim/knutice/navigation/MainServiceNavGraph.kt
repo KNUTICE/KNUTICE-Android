@@ -458,11 +458,6 @@ fun NavGraphBuilder.mainServiceNavGraph(
 
     composable(
         route = "tipDetail/{category}/{contentUrl}",
-        deepLinks = listOf(
-            navDeepLink {
-                uriPattern = "knutice://service/tipDetail/{category}/{contentUrl}"
-            }
-        ),
         enterTransition = {
             slideIntoContainer(
                 animationSpec = tween(300, easing = EaseIn),

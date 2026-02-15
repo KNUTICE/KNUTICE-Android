@@ -57,11 +57,6 @@ fun NavGraphBuilder.bookmarkServiceGraph(
 
     composable(
         route = "bookmark/{id}/{title}/{info}",
-        deepLinks = listOf(
-            navDeepLink {
-                uriPattern = "knutice://service/bookmark/{id}/{title}/{info}"
-            }
-        ),
         enterTransition = {
             slideIntoContainer(
                 animationSpec = tween(300, easing = EaseIn),
