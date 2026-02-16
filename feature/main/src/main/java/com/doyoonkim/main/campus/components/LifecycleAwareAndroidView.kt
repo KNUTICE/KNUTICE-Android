@@ -1,6 +1,7 @@
 package com.doyoonkim.main.campus.components
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebView
@@ -78,6 +79,7 @@ fun LifecycleAwareWebView(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
+                setBackgroundColor(Color.TRANSPARENT)
 
                 // WebView Default Settings for seamless UX in Hybrid condition.
                 overScrollMode = View.OVER_SCROLL_NEVER

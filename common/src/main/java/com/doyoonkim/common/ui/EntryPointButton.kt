@@ -2,11 +2,18 @@ package com.doyoonkim.common.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,11 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.doyoonkim.common.R
+import com.doyoonkim.common.theme.secondaryBackground
+import com.doyoonkim.common.theme.title
 
 @Composable
 fun EntryPointButton(
@@ -28,16 +40,24 @@ fun EntryPointButton(
     painter: Painter,
     containerColor: Color,
     textColor: Color,
-    size: Dp
+    size: Dp,
+    onClicked: () -> Unit
 ) {
-    Surface(
-        modifier = modifier
-            .background(Color.Transparent),
+    Button(
+        modifier = modifier,
+        onClick = { onClicked() },
+        enabled = true,
         shape = RoundedCornerShape(15.dp),
-        color = containerColor
+        contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = textColor
+        )
     ) {
         Box(
-            modifier = Modifier.size(size)
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(size)
         ) {
             Text(
                 text = text,
@@ -61,4 +81,18 @@ fun EntryPointButton(
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun EntryPointButton_Preview() {
+    EntryPointButton(
+        modifier = Modifier
+            .fillMaxWidth(),
+        text = "학식 조회",
+        painter = painterResource(R.drawable.icon_dining_menu),
+        containerColor = MaterialTheme.colorScheme.secondaryBackground,
+        textColor = MaterialTheme.colorScheme.title,
+        size = 140.dp
+    ) {  }
 }
