@@ -3,6 +3,7 @@ package com.doyoonkim.main.home
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -33,7 +34,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -47,7 +47,6 @@ import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
-import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.DashboardPlaceholder
 import com.doyoonkim.common.ui.EntryPointButton
 import com.doyoonkim.common.ui.HorizontalContentPager
@@ -71,7 +70,8 @@ fun HomeDashboard(
     onMoreNoticeRequested: (Destination) -> Unit,
     onMoreMajorNoticeRequested: () -> Unit,
     onFullContentRequested: (Int, String) -> Unit,
-    onTipClicked: (TipCategory, String) -> Unit
+    onTipClicked: (TipCategory, String) -> Unit,
+    onCarrelStatusRequested: () -> Unit
 ) {
     // UiState
     val uiState by viewModel.uiState.collectAsState()
@@ -108,6 +108,9 @@ fun HomeDashboard(
                 }
                 is HomeSideEffect.NavToSettings -> {
                     onSettingsRequested()
+                }
+                is HomeSideEffect.NavToCarrelStatus -> {
+                    onCarrelStatusRequested()
                 }
                 is HomeSideEffect.NavToBack -> {
                     onGoBackAction()
@@ -193,7 +196,11 @@ fun HomeDashboard(
                         EntryPointButton(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(1f),
+                                .weight(1f)
+                                .clickable {
+                                    viewModel.sendUiEvent(HomeEvent.RequestCarrelStatus)
+                                }
+                            ,
                             text = "열람실 현황",
                             painter = painterResource(R.drawable.icon_study_area),
                             containerColor = MaterialTheme.colorScheme.secondaryBackground,

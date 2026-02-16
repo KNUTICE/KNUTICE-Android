@@ -19,7 +19,11 @@ sealed class NavRoutes(val route: String) {
     data object EmploymentNotices: NavRoutes(Destination.MORE_EMPLOYMENT.name)
 
     data object NoticeSearch: NavRoutes(Destination.SEARCH.name)
+
+    data object CarrelStatus: NavRoutes(Destination.CARREL_STATUS.name)
 }
 
-enum class Destination { HOME, MORE_GENERAL, MORE_ACADEMIC, MORE_SCHOLARSHIP, MORE_EVENT,
-    MORE_EMPLOYMENT, SETTINGS, OSS, CS, SEARCH, NOTIFICATION, BOOKMARKS, MAJOR_NOTICES, Unspecified }
+enum class Destination {
+    HOME, MORE_GENERAL, MORE_ACADEMIC, MORE_SCHOLARSHIP, MORE_EVENT, MORE_EMPLOYMENT,
+    SETTINGS, OSS, CS, SEARCH, NOTIFICATION, BOOKMARKS, MAJOR_NOTICES, CARREL_STATUS, Unspecified
+}
