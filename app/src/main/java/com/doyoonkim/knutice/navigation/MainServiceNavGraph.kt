@@ -104,7 +104,8 @@ fun NavGraphBuilder.mainServiceNavGraph(
             onMoreMajorNoticeRequested = {
                 navController.navigate(NavRoutes.MajorNotices.route)
             },
-            onCarrelStatusRequested = { navController.navigate(NavRoutes.CarrelStatus.route) }
+            onCarrelStatusRequested = { navController.navigate(NavRoutes.CarrelStatus.route) },
+            onDiningMenuRequested = { navController.navigate(NavRoutes.DiningMenu.route) }
         )
     }
 

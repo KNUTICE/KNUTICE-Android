@@ -71,7 +71,8 @@ fun HomeDashboard(
     onMoreMajorNoticeRequested: () -> Unit,
     onFullContentRequested: (Int, String) -> Unit,
     onTipClicked: (TipCategory, String) -> Unit,
-    onCarrelStatusRequested: () -> Unit
+    onCarrelStatusRequested: () -> Unit,
+    onDiningMenuRequested: () -> Unit
 ) {
     // UiState
     val uiState by viewModel.uiState.collectAsState()
@@ -111,6 +112,9 @@ fun HomeDashboard(
                 }
                 is HomeSideEffect.NavToCarrelStatus -> {
                     onCarrelStatusRequested()
+                }
+                is HomeSideEffect.NavToDiningMenu -> {
+                    onDiningMenuRequested()
                 }
                 is HomeSideEffect.NavToBack -> {
                     onGoBackAction()
@@ -191,22 +195,18 @@ fun HomeDashboard(
                             containerColor = MaterialTheme.colorScheme.secondaryBackground,
                             textColor = MaterialTheme.colorScheme.title,
                             size = 140.dp
-                        )
+                        ) { viewModel.sendUiEvent(HomeEvent.RequestDiningMenu) }
 
                         EntryPointButton(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .weight(1f)
-                                .clickable {
-                                    viewModel.sendUiEvent(HomeEvent.RequestCarrelStatus)
-                                }
-                            ,
+                                .weight(1f),
                             text = "열람실 현황",
                             painter = painterResource(R.drawable.icon_study_area),
                             containerColor = MaterialTheme.colorScheme.secondaryBackground,
                             textColor = MaterialTheme.colorScheme.title,
                             size = 140.dp
-                        )
+                        ) { viewModel.sendUiEvent(HomeEvent.RequestCarrelStatus) }
                     }
                 }
 
