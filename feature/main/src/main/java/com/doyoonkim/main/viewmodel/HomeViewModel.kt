@@ -69,6 +69,9 @@ class HomeViewModel @Inject constructor(
             is HomeEvent.RequestSettings -> {
                 sendSideEffect(HomeSideEffect.NavToSettings)
             }
+            is HomeEvent.RequestCarrelStatus -> {
+                sendSideEffect(HomeSideEffect.NavToCarrelStatus)
+            }
             is HomeEvent.RequestTipDetail -> {
                 with (event) {
                     sendSideEffect(HomeSideEffect.NavToTipDetail(category, url))

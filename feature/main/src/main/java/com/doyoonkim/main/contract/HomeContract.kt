@@ -50,6 +50,7 @@ sealed interface HomeEvent : UiEvent {
     data class RequestMore(val category: NoticeCategory): HomeEvent
     data object RequestMoreMajorNotices: HomeEvent
     data object RequestSettings: HomeEvent
+    data object RequestCarrelStatus: HomeEvent
     data class RequestTipDetail(val category: TipCategory, val url: String): HomeEvent
     data object GoBack: HomeEvent
 }
@@ -60,6 +61,7 @@ sealed class HomeSideEffect : UiSideEffect {
     data object NavToMoreMajorNotices: HomeSideEffect()
     data class NavToTipDetail(val category: TipCategory, val url: String): HomeSideEffect()
     data object NavToSettings: HomeSideEffect()
+    data object NavToCarrelStatus: HomeSideEffect()
     data object NavToBack: HomeSideEffect()
 }
 

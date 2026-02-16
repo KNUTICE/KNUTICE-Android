@@ -62,5 +62,11 @@ fun AppNavHost(
             },
             onExit = onExit
         )
+
+        campusServiceGraph(
+            navController = navController,
+            appComponent = appComponent,
+            contentPadding = contentPadding
+        )
     }
 }
