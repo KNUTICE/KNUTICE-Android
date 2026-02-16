@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.work.ListenableWorker
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.data.di.LocalModule
 import com.doyoonkim.data.di.TokenRemoteModule
@@ -45,6 +46,9 @@ interface AppComponent {
 
     // Analytics
     fun analytics(): AnalyticsLogger
+
+    // AppPref Instance
+    fun appPreference(): AppPreferences
 
     // Worker Subcomponent
     fun workerComponent(): WorkerSubcomponent.Factory
