@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.doyoonkim.common.R
 import com.doyoonkim.common.ui.TipCategory
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 
 @Composable
 fun TipDetailScreen(
@@ -37,7 +37,7 @@ fun TipDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = title,
                 onBackPressed = onBackPressed
             )
