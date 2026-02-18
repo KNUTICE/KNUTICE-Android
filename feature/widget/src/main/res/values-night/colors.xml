@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_preview_bg">#000000</color>
+    <color name="widget_preview_text_primary">#FFFFFF</color>
+    <color name="widget_preview_text_secondary">#B0B0B0</color>
+    <color name="widget_preview_divider">#424242</color>
+</resources>
