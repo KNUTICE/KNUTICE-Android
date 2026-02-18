@@ -185,7 +185,6 @@ class MainActivity : ComponentActivity() {
                         isDeeplinkInProcess.value = true
                         lastProcessedIntent.value = intent.hashCode()
                         DeeplinkHandler.processDeeplink(intent) { host, destination ->
-                            Log.d("MainActivity", "Deeplink Handler Starts")
                             // Analytics
                             analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
                                 putString(FirebaseAnalytics.Param.CONTENT_TYPE, host)
