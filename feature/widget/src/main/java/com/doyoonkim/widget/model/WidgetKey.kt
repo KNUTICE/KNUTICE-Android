@@ -4,5 +4,5 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 
 object WidgetKey {
     // Key to access Widget's Preference (DataStore)
-    val PREF_STATE_KEY = stringPreferencesKey("PREF_STATE_KEY")
+    val NOTICE_WIDGET_PREF_STATE_KEY = stringPreferencesKey("NOTICE_WIDGET_PREF_STATE_KEY")
 }
