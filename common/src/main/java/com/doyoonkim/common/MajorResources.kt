@@ -63,5 +63,8 @@ class MajorResources {
                 else -> R.string.title_major_select
             }
         }
+
+        @Composable
+        fun getDrawable(): Int = R.drawable.college_notice
     }
 }

@@ -36,5 +36,17 @@ class NoticeResources {
                 else -> MaterialTheme.colorScheme.containerGray
             }
         }
+
+        @Composable
+        fun getDrawableResourceByCategory(category: String): Int {
+            return when(category) {
+                NoticeCategory.GENERAL_NEWS.name -> R.drawable.general_notice
+                NoticeCategory.ACADEMIC_NEWS.name -> R.drawable.academic_notice
+                NoticeCategory.SCHOLARSHIP_NEWS.name -> R.drawable.scholarship_notice
+                NoticeCategory.EVENT_NEWS.name -> R.drawable.event_notice
+                NoticeCategory.EMPLOYMENT_NEWS.name -> R.drawable.employment_notice
+                else -> R.drawable.app_icon
+            }
+        }
     }
 }
