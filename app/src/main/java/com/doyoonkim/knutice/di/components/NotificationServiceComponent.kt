@@ -6,6 +6,8 @@ import com.doyoonkim.data.di.NoticeRemoteModule
 import com.doyoonkim.data.di.TokenRemoteModule
 import com.doyoonkim.domain.di.TokenUseCaseModule
 import com.doyoonkim.knutice.di.modules.DispatcherModule
+import com.doyoonkim.knutice.di.modules.WorkSchedulerModule
+import com.doyoonkim.knutice.di.modules.WorkerModule
 import com.doyoonkim.knutice.di.util.SystemServices
 import com.doyoonkim.network.di.NotificationNetworkModule
 import com.doyoonkim.notification.di.NotificationModule
@@ -17,6 +19,7 @@ import dagger.Component
     modules = [
         NotificationModule::class,
         DispatcherModule::class,
+        WorkSchedulerModule::class,
         TokenUseCaseModule::class,
         TokenRemoteModule::class,
         NoticeRemoteModule::class,
