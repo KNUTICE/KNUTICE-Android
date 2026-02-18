@@ -28,7 +28,7 @@ class KnuticeWidget : GlanceAppWidget() {
         provideContent {
             // UiState
             val preference = currentState<Preferences>()
-            val stateJson = preference[WidgetKey.PREF_STATE_KEY]
+            val stateJson = preference[WidgetKey.NOTICE_WIDGET_PREF_STATE_KEY]
 
             // Retrieve Saved State from the preference (Local Cache/DataStore)
             val widgetState = stateJson?.let {
