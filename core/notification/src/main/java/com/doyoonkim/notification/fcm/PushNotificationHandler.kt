@@ -73,21 +73,26 @@ class PushNotificationHandler @Inject constructor(
             setAutoCancel(true)
         }
 
-        // Create Pending Intent (For access push notification while the app is in foreground)
-        val nttId = data["nttId"]
-        val url = data["contentUrl"]
-        val fabVisible = true
-
-        val uri = if (nttId != null && url != null) {
-            "knutice://service/noticeDetail/$nttId/${Uri.encode(url)}/$fabVisible".toUri()
-        } else {
-            "".toUri()
+        var uri = ""
+        // Host Validation
+        val host = data["deeplink"]?.toUri()?.host
+        if (!host.isNullOrBlank()) {
+            when (host) {
+                "notice" -> {
+                    val nttId = data["nttId"] ?: ""
+                    val url = data["contentUrl"] ?: ""
+                    uri = "knutice://notice?nttId=$nttId&contentUrl=${Uri.encode(url)}&FabVisible=true"
+                }
+                else -> {
+                    uri = data["deeplink"] ?: ""
+                }
+            }
         }
 
-        // Deeplink featured by Jetpack Navigation won't work because notification payload consumes custom-defined deeplink intent using ACTION_VIEW
+        // Create Pending Intent (For access push notification while the app is in foreground)
         val deeplinkIntent = Intent(
             Intent.ACTION_VIEW,
-            uri
+            uri.toUri()
         ).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK
         }

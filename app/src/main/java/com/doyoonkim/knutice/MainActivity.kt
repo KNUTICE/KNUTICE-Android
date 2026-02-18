@@ -184,15 +184,16 @@ class MainActivity : ComponentActivity() {
                     if (intent.hashCode() != lastProcessedIntent.value) {
                         isDeeplinkInProcess.value = true
                         lastProcessedIntent.value = intent.hashCode()
-                        DeeplinkHandler.processIntent(intent) { service, uri ->
+                        DeeplinkHandler.processDeeplink(intent) { host, destination ->
+                            Log.d("MainActivity", "Deeplink Handler Starts")
                             // Analytics
-                                analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
-                                    putString(FirebaseAnalytics.Param.CONTENT_TYPE, service)
-                                    putString(FirebaseAnalytics.Param.SOURCE, "PUSH")
-                                    putString(FirebaseAnalytics.Param.DESTINATION, uri)
-                                })
+                            analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
+                                putString(FirebaseAnalytics.Param.CONTENT_TYPE, host)
+                                putString(FirebaseAnalytics.Param.SOURCE, "PUSH")
+                                putString(FirebaseAnalytics.Param.DESTINATION, destination)
+                            })
+                            navController.navigate(destination)
 
-                            navController.navigate(uri)
                         }
                         isDeeplinkInProcess.value = false
                     }
