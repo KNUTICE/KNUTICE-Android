@@ -11,6 +11,7 @@ import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
 import com.doyoonkim.main.viewmodel.SettingsViewModel
 import com.doyoonkim.main.viewmodel.SplashViewModel
+import com.doyoonkim.main.viewmodel.WidgetConfigViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -85,4 +86,12 @@ abstract class SplashSceneModule {
     @IntoMap
     @ViewModelKey(SplashViewModel::class)
     abstract fun bindsViewModel(viewModel: SplashViewModel): ViewModel
+}
+
+@Module
+abstract class WidgetConfigSceneModule {
+    @Binds
+    @IntoMap
+    @ViewModelKey(WidgetConfigViewModel::class)
+    abstract fun bindsViewModel(viewModel: WidgetConfigViewModel): ViewModel
 }

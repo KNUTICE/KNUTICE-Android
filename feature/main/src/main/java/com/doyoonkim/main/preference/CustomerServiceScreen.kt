@@ -1,9 +1,6 @@
 package com.doyoonkim.main.preference
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -48,7 +45,7 @@ import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.CustomerServiceEvent
 import com.doyoonkim.main.contract.CustomerServiceSideEffect
 
@@ -76,7 +73,7 @@ fun CustomerServiceScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = stringResource(R.string.title_customer_service),
                 onBackPressed = {
                     viewModel.sendUiEvent(CustomerServiceEvent.GoBack)

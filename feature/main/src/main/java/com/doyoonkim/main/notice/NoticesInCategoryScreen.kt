@@ -32,7 +32,7 @@ import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.common.ui.PlaceholderScreen
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.NoticesInCategoryEvent
 import com.doyoonkim.main.contract.NoticesInCategorySideEffect
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
@@ -88,7 +88,7 @@ fun NoticesInCategoryScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = stringResource(scaffoldTitle),
                 onBackPressed = {
                     viewModel.sendUiEvent(NoticesInCategoryEvent.GoBack)

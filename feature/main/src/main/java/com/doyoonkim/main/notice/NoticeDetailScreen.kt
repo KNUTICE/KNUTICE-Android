@@ -62,7 +62,7 @@ import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.AiSummaryDialog
 import com.doyoonkim.common.ui.markdown.MarkdownView
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.NoticeDetailEvent
 import com.doyoonkim.main.contract.NoticeDetailSideEffect
 
@@ -104,7 +104,7 @@ fun NoticeDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = uiState.receivedNotice?.title ?: "",
                 onBackPressed = { viewModel.sendUiEvent(NoticeDetailEvent.GoBack) }
             )

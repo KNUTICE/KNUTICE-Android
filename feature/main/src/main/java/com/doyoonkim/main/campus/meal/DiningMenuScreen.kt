@@ -7,7 +7,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.doyoonkim.common.theme.displayBackground
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.BuildConfig
 import com.doyoonkim.main.campus.components.LifecycleAwareWebView
 
@@ -19,7 +19,7 @@ fun DiningMenuScreen(
     Scaffold(
         modifier = modifier,
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = "학식 조회"
             ) {
                 // Top App Bar back button press

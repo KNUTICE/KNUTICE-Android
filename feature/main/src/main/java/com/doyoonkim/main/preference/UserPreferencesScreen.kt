@@ -52,7 +52,7 @@ import com.doyoonkim.common.ui.CircleGoButton
 import com.doyoonkim.common.ui.RoundedCornerColumn
 import com.doyoonkim.common.ui.RoundedCornerColumnTextItem
 import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.SettingsEvent
 import com.doyoonkim.main.contract.SettingsSideEffect
 import com.doyoonkim.main.viewmodel.SettingsViewModel
@@ -92,7 +92,7 @@ fun UserPreferenceScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = stringResource(R.string.title_preference),
                 onBackPressed = { viewModel.sendUiEvent(SettingsEvent.GoBack) }
             )

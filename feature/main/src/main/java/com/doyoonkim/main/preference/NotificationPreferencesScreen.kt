@@ -1,11 +1,6 @@
 package com.doyoonkim.main.preference
 
-import android.Manifest
-import android.app.NotificationManager
-import android.content.Context
-import android.content.Context.NOTIFICATION_SERVICE
 import android.content.Intent
-import android.content.pm.PackageManager
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,7 +41,7 @@ import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.RoundedCornerColumn
 import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
 import com.doyoonkim.common.ui.SingleRoundedCornerItem
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.NotificationPrefEvent
 import com.doyoonkim.main.contract.NotificationPrefSideEffect
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
@@ -95,7 +89,7 @@ fun NotificationPreferencesScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = stringResource(R.string.title_notification_pref),
                 onBackPressed = {
                     viewModel.sendUiEvent(NotificationPrefEvent.GoBack)
