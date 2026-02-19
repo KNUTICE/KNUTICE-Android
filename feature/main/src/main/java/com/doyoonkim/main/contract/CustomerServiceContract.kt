@@ -9,8 +9,9 @@ data class CustomerServiceStatus(
     val userReport: String = "",
     val reachedMaxCharacters: Boolean = false,
     val exceedMinCharacters: Boolean = false,
-    val isSubmissionFailed: Boolean = false,
-    val isSubmissionCompleted: Boolean = false
+    val isSubmissionProcessing: Boolean = false,
+    val isSubmissionCompleted: Boolean = false,
+    val isSubmissionSuccess: Boolean = false
 ): UiState
 
 sealed interface CustomerServiceEvent : UiEvent {
@@ -26,7 +27,12 @@ sealed class CustomerServiceSideEffect: UiSideEffect {
 
 sealed interface CustomerServiceMutation: UiMutation {
     data class UpdateReportContent(val content: String): CustomerServiceMutation
-    data object SubmissionSuccess: CustomerServiceMutation
-    data object SubmissionFailure: CustomerServiceMutation
-    data object SubmissionStatusReset: CustomerServiceMutation
+
+    sealed interface Submit: CustomerServiceMutation {
+        data object Processing: Submit
+        data object Success: Submit
+        data object Failure: Submit
+        data object SubmissionStatusReset: Submit
+    }
+
 }
