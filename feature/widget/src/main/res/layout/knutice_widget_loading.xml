@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/widget_preview_bg"
     android:gravity="center"
     android:orientation="vertical"
     android:padding="16dp">
@@ -11,14 +11,15 @@
         android:id="@+id/loading_spinner"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:indeterminate="true" />
+        android:indeterminate="true"
+        android:indeterminateTint="@color/widget_variant_purple" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="Loading KNUTICE..."
-        android:textColor="@android:color/black"
+        android:text="위젯이 로딩중이에요"
+        android:textColor="@color/widget_preview_text_primary"
         android:textSize="12sp" />
 
 </LinearLayout>

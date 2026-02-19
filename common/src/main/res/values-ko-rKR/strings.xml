@@ -171,4 +171,6 @@
     <string name="description_major_notification_channel">선택한 학과의 소식을 알려드려요</string>
     <string name="header_ai_summary">AI 핵심 요약</string>
     <string name="footer_ai_disclaimer">KNUTICE AI는 실수를 할 수 있습니다.</string>
+    <string name="widget_preview_title">최신 공지</string>
+    <string name="widget_preview_description">선택한 카테고리의 최신 공지를 확인하세요</string>
 </resources>

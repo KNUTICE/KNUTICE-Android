@@ -22,6 +22,7 @@ import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.doyoonkim.common.CollegeResource
+import com.doyoonkim.common.MajorResources
 import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.R
 
@@ -38,7 +39,7 @@ fun NoticeWidgetContainer(
 
     val categoryTextRes = NoticeResources.getStringResourcesByCategory(title).let {
         if (it == R.string.text_category_not_found)
-            CollegeResource.getLocalizedCollegeStringByMajor(title)
+            MajorResources.getLocalizedString(title)
         else it
     }
     val categoryText = context.getString(categoryTextRes)

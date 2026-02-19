@@ -1,5 +1,7 @@
 plugins {
     id("knutice.jvm.library")
+
+    alias(libs.plugins.kotlinSerialization)
 }
 
 dependencies {

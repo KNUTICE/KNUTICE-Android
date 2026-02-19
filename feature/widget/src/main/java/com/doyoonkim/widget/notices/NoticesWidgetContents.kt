@@ -1,17 +1,21 @@
 package com.doyoonkim.widget.notices
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.action.actionStartActivity
-import androidx.glance.layout.wrapContentSize
+import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.padding
+import androidx.glance.text.FontWeight
+import androidx.glance.text.Text
+import androidx.glance.text.TextAlign
+import androidx.glance.text.TextStyle
 import com.doyoonkim.widget.model.WidgetState
 import com.doyoonkim.widget.notices.components.NoticeWidgetContainer
-import com.doyoonkim.widget.notices.components.WidgetButton
 import com.doyoonkim.widget.notices.components.WidgetHorizontalDivider
 import com.doyoonkim.widget.notices.components.WidgetNoticeContainer
 import com.doyoonkim.widget.notices.components.WidgetPlaceholder
@@ -36,20 +40,17 @@ fun NoticeWidgetContents(
                 textColor = GlanceTheme.colors.primary,
                 containerColor = GlanceTheme.colors.primaryContainer
             ) {
-                WidgetButton(
-                    modifier = modifier.wrapContentSize(),
-                    text = "위젯 설정하기",
-                    textColor = GlanceTheme.colors.primary,
-                    containerColor = GlanceTheme.colors.secondaryContainer
-                ) {
-                    actionStartActivity(
-                        // Access Application via DeepLink
-                        NoticeWidgetUtil.createDeeplinkIntent(
-                            packageName = context.packageName,
-                            type = "WIDGET_SETTINGS"
-                        )
-                    ).also { Log.d("Widget", "Click Event") }
-                }
+                Text(
+                    text = "위젯을 길게 누르면 설정으로 이동할 수 있어요.",
+                    style = TextStyle(
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
+                        color = GlanceTheme.colors.primary,
+                        textAlign = TextAlign.Center
+                    ),
+                    maxLines = 2,
+                    modifier = GlanceModifier.fillMaxWidth().padding(15.dp)
+                )
             }
         }
         is NoticeWidgetPhase.FetchFailure -> {
