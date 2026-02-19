@@ -12,7 +12,8 @@ import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.di.ApplicationContext
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
-import com.doyoonkim.model.NoticeCategory
+import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.WidgetCategoryPolicy
 import com.doyoonkim.widget.model.WidgetKey
 import com.doyoonkim.widget.model.WidgetNoticeVO
 import com.doyoonkim.widget.model.WidgetState
@@ -28,19 +29,21 @@ class KnuticeWidgetSync(
     private val remoteRepository: NoticeRemoteRepository
 ) : CoroutineWorker(appContext, workerParam) {
     private val TAG = "KnuticeWidgetSync"
+    private lateinit var category: String
 
     override suspend fun doWork(): Result {
         Log.d(TAG, "Worker Start")
          // Overall Logic: Fetch -> Debounce -> Validate -> Update -> Complete
-         // Get Current Widget Category Configuration
-         val widgetCategory = appPreferences.getWidgetCategory()
+         // Get Current Widget Category Policy
+         val widgetCategoryPolicy = appPreferences.getWidgetCategoryPolicy()
 
         // If widgetCategory == null -> Set Widget State to Onboarding
-        if (widgetCategory.isNullOrEmpty()) return Result.failure().also { Log.d(TAG, "No selected widget category found.") }
+        if (widgetCategoryPolicy is WidgetCategoryPolicy.Unconfigured)
+            return Result.failure().also { Log.d(TAG, "No selected widget category found.") }
 
         return try {
-            // Get Top Three Notices.
-            val notices = remoteRepository.queryTopThreeNotices(widgetCategory)
+            // Get Top Three Notices, based on the given policy
+            val notices = fetchTopThreeNotice(widgetCategoryPolicy)
 
             Log.d(TAG, "Received: ${notices.toString()}")
             // Unable to fetch notices (receive null or empty)
@@ -60,12 +63,29 @@ class KnuticeWidgetSync(
             }
 
             // Update Widget State (by update cached notices)
-            updateWidgetState(widgetCategory, widgetNotices)
+            updateWidgetState(category, widgetNotices)
             Result.success()
         } catch (e: Exception) {
             Log.d(TAG, "Exception Thrown: ${e.message}")
             // Exception Caught. Terminate Worker.
             if (runAttemptCount < 3) Result.retry() else Result.failure()
+        }
+    }
+
+    // Fetch Corresponding Data
+    private suspend fun fetchTopThreeNotice(policy: WidgetCategoryPolicy): List<NoticeVO>? {
+        when (policy) {
+            is WidgetCategoryPolicy.Main -> {
+                category = policy.categoryKey
+                return remoteRepository.queryTopThreeNotices(policy.categoryKey)
+            }
+            is WidgetCategoryPolicy.Major -> {
+                // Get current subscription status.
+                val subscribedMajor = appPreferences.getSubscribedMajor() ?: return null
+                category = subscribedMajor
+                return remoteRepository.queryTopThreeNotices(subscribedMajor)
+            }
+            else -> { return null }
         }
     }
 
@@ -78,26 +98,49 @@ class KnuticeWidgetSync(
         // Retrieve all glance instance of KnuticeWidget.
         val glanceIds = widgetManager.getGlanceIds(KnuticeWidget::class.java)
 
+        // State Serialization. Serialize it to Json.
+        val currentState = WidgetState(category = category, notices = notices)
+
+        // Flag Variable
+        var isStateChanged = false
+
         glanceIds.forEach { glanceId ->
             // Ensure Thread-safe write to Preference (DataStore)
             updateAppWidgetState(
                 context = appContext,
                 glanceId = glanceId
             ) { preference ->
-                // Serialize to Json
+
+                // Retrieve current state saved in DataStore. (Defensive Json Parsing)
+                val previousState = try {
+                    preference[WidgetKey.NOTICE_WIDGET_PREF_STATE_KEY]?.run {
+                        Json.decodeFromString<WidgetState>(this)
+                            .copy(lastUpdated = 0L)
+                    }
+                } catch (e: Exception) {
+                    // Prevent potential exception when deserialize saved Json after the potential
+                    // structural changes of WidgetState
+                    null
+                }
+                // If there's no state change, terminate function and don't update widget.
+                if (previousState == currentState) return@updateAppWidgetState
+
                 val stateJson = Json.encodeToString(
-                    WidgetState(
-                        category = category,
-                        notices = notices,
-                        lastUpdated = System.currentTimeMillis()
-                    )
+                    currentState.copy(lastUpdated = System.currentTimeMillis())
                 )
+
                 // Update state to Pref (Local Cache)
-                preference[WidgetKey.PREF_STATE_KEY] = stateJson
+                preference[WidgetKey.NOTICE_WIDGET_PREF_STATE_KEY] = stateJson
+                isStateChanged = true
             }
         }
-        // Force Update Glance (Batch Update) (via Inter-Process Communication (IPC) call)
-        KnuticeWidget().updateAll(appContext)
+
+        if (isStateChanged) {
+            // Force Update Glance (Batch Update) (via Inter-Process Communication (IPC) call)
+            KnuticeWidget().updateAll(appContext)
+        } else {
+            Log.d("KnuticeWidgetSync", "No state changes. Update Widget suppressed")
+        }
     }
 
     // Factory
