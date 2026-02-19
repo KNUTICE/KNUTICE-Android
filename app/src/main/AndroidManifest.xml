@@ -40,9 +40,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:scheme="knutice"
-                    android:host="service" />
+                <data android:scheme="knutice" />
+                <data android:host="service" />
+                <data android:host="notice" />
+                <data android:host="bookmark" />
+                <data android:host="meal" />
+                <data android:host="reading-room" />
+
             </intent-filter>
         </activity>
 

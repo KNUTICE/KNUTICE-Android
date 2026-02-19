@@ -413,13 +413,9 @@ fun NavGraphBuilder.mainServiceNavGraph(
     }
 
     // DeepLinks for NoticeDetailScreen
+    // notice?nttId=1234&contentUrl=https://ut.ac.kr/...&FabVisible=true
     composable(
-        route = "noticeDetail/{nttId}/{contentUrl}/{isFabVisible}",
-        deepLinks = listOf(
-            navDeepLink {
-                uriPattern = "knutice://service/noticeDetail/{nttId}/{contentUrl}/{isFabVisible}"
-            }
-        ),
+        route = "notice?nttId={nttId}&contentUrl={contentUrl}&FabVisible={isFabVisible}",
         enterTransition = {
             slideIntoContainer(
                 animationSpec = tween(300, easing = EaseIn),

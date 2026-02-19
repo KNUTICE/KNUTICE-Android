@@ -87,7 +87,7 @@ fun NoticeWidgetContents(
                                 // "noticeDetail/$id/${Uri.encode(url)}/${true}"
                                 NoticeWidgetUtil.createDeeplinkIntent(
                                     packageName = context.packageName,
-                                    deeplink = "noticeDetail/${vo.id}/${Uri.encode(vo.contentUrl)}/${true}",
+                                    deeplink = "notice?nttId=${vo.id}&contentUrl=${Uri.encode(vo.contentUrl)}&FabVisible=${true}",
                                     type = null
                                 )
                             )

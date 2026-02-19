@@ -37,7 +37,7 @@ class NotificationAlarmScheduler @Inject constructor(
     // Context: ApplicationContext
 
     override fun createPendingIntent(target: BookmarkVO, nav: BookmarkInfo): PendingIntent {
-        val uri = "knutice://service/bookmark/${nav.noticeId}/${Uri.encode(nav.noticeTitle)}/${Uri.encode(nav.noticeInfo)}"
+        val uri = "knutice://bookmark?id=${nav.noticeId}&title=${Uri.encode(nav.noticeTitle)}&info=${Uri.encode(nav.noticeInfo)}"
         val intent = Intent(context, AlarmReceiver::class.java)
             .apply {
                 putExtra("content", target.bookmarkNote)

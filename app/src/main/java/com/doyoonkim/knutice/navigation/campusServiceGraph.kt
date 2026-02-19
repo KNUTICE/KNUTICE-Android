@@ -1,5 +1,6 @@
 package com.doyoonkim.knutice.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -43,6 +44,35 @@ fun NavGraphBuilder.campusServiceGraph(
         }
     }
 
+    // Carrel Status by Deeplink
+    // reading-room?roomId=ROOM3&seat=531
+    composable(
+        route = "reading-room?roomId={roomId}&seat={seatNo}",
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) { backStackEntry ->
+        val room = backStackEntry.arguments?.getString("roomId")
+        val seat = backStackEntry.arguments?.getString("seatNo")
+        Log.d("Navigation", "ROOM:$room SEAT: $seat ")
+
+        CarrelStatusScreen(
+            modifier = Modifier,
+            appPreferences = appComponent.appPreference()   // Access via Provision function
+        ) {
+            navController.popBackStack()
+        }
+    }
+
     composable(
         route = NavRoutes.DiningMenu.route,
         enterTransition = {
@@ -58,6 +88,33 @@ fun NavGraphBuilder.campusServiceGraph(
             )
         }
     ) {
+        DiningMenuScreen(
+            modifier = Modifier
+        ) {
+            navController.popBackStack()
+        }
+    }
+
+    // DiningHall by Deeplink
+    // meal?topic=STUDENT_CAFETERIA
+    composable(
+        route = "meal?topic={mealTopic}",
+        enterTransition = {
+            slideIntoContainer(
+                animationSpec = tween(300, easing = EaseIn),
+                towards = AnimatedContentTransitionScope.SlideDirection.Start
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                animationSpec = tween(300, easing = EaseOut),
+                towards = AnimatedContentTransitionScope.SlideDirection.End
+            )
+        }
+    ) { backStackEntry ->
+        val selection = backStackEntry.arguments?.getString("mealTopic")
+        Log.d("Navigation", "Dining Hall Selection: ")
+
         DiningMenuScreen(
             modifier = Modifier
         ) {

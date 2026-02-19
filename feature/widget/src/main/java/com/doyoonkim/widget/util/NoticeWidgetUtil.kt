@@ -34,8 +34,7 @@ class NoticeWidgetUtil {
             packageName: String,
             deeplink: String = "",
             type: String? = null
-        ) = Intent(Intent.ACTION_VIEW, "knutice://service/$deeplink".toUri()).apply {
-            type?.let { putExtra("type", it) }
+        ) = Intent(Intent.ACTION_VIEW, "knutice://$deeplink".toUri()).apply {
             setPackage(packageName)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }

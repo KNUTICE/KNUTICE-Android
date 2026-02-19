@@ -56,7 +56,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
     }
 
     composable(
-        route = "bookmark/{id}/{title}/{info}",
+        route = "bookmark?id={id}&title={title}&info={info}",
         enterTransition = {
             slideIntoContainer(
                 animationSpec = tween(300, easing = EaseIn),
