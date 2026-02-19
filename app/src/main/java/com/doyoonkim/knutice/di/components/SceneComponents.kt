@@ -28,6 +28,7 @@ import com.doyoonkim.main.di.NoticeSearchSceneModule
 import com.doyoonkim.main.di.NotificationPreferencesSceneModule
 import com.doyoonkim.main.di.SettingsSceneModule
 import com.doyoonkim.main.di.SplashSceneModule
+import com.doyoonkim.main.di.WidgetConfigSceneModule
 import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.NotificationModule
 import dagger.Component
@@ -271,5 +272,24 @@ interface SplashSceneComponent {
     @Component.Factory
     interface Factory {
         fun create(systemServices: SystemServices): SplashSceneComponent
+    }
+}
+
+@Component(
+    dependencies = [SystemServices::class],
+    modules = [
+        ViewModelFactoryModule::class,
+        DispatcherModule::class,
+        WidgetConfigSceneModule::class,
+        WorkSchedulerModule::class,
+    ]
+)
+interface WidgetConfigSceneComponent {
+
+    fun viewModelFactory(): ViewModelProvider.Factory
+
+    @Component.Factory
+    interface Factory {
+        fun create(systemService: SystemServices): WidgetConfigSceneComponent
     }
 }
