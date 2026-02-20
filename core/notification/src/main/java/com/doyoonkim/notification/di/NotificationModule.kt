@@ -24,14 +24,12 @@ abstract class NotificationModule {
         // Considered to be removed.
         @Provides
         fun providesPushNotificationHandler(
-            remoteRepository: NoticeRemoteRepository,
             imageRepository: ImageRemoteRepository,
             bitmapHandler: BitmapHandler,
             @IoDispatcher dispatcher: CoroutineDispatcher,
             @ApplicationContext context: Context
         ) =
             PushNotificationHandler(
-                remoteRepository,
                 imageRepository,
                 bitmapHandler,
                 dispatcher,
