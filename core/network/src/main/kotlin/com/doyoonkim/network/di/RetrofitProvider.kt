@@ -1,14 +1,11 @@
 package com.doyoonkim.network.di
 
-import android.util.Log
 import com.doyoonkim.network.BuildConfig
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.Duration
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
-import javax.inject.Singleton
 
 class RetrofitProvider @Inject constructor() {
 
@@ -20,6 +17,14 @@ class RetrofitProvider @Inject constructor() {
                     .connectTimeout(timeout, TimeUnit.SECONDS)
                     .readTimeout(timeout, TimeUnit.SECONDS)
                     .writeTimeout(timeout, TimeUnit.SECONDS)
+                    .addInterceptor { chain ->
+                        // User-Agent Interceptor
+                        val req = chain.request()
+                            .newBuilder()
+                            .header("User-Agent", "android")
+                            .build()
+                        chain.proceed(req)
+                    }
                     .build()
             )
             .addConverterFactory(GsonConverterFactory.create())
