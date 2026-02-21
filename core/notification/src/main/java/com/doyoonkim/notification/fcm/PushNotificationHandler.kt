@@ -29,7 +29,6 @@ import javax.inject.Inject
 import kotlin.random.Random
 
 class PushNotificationHandler @Inject constructor(
-    private val remoteRepository: NoticeRemoteRepository,
     private val imageRepository: ImageRemoteRepository,
     private val bitMapHandler: BitmapHandler,
     private val ioDispatcher: CoroutineDispatcher,
@@ -156,22 +155,6 @@ class PushNotificationHandler @Inject constructor(
                 }
             }.invokeOnCompletion { notify(notificationId, notificationBuilder.build()) }
 
-        }
-    }
-
-    private fun localizedTitle(noticeCategory: String): String {
-        return with(context) {
-            when (noticeCategory) {
-                NoticeCategory.GENERAL_NEWS.name -> getString(R.string.general_news)
-                NoticeCategory.ACADEMIC_NEWS.name -> getString(R.string.academic_news)
-                NoticeCategory.SCHOLARSHIP_NEWS.name -> getString(R.string.scholarship_news)
-                NoticeCategory.EVENT_NEWS.name -> getString(R.string.event_news)
-                NoticeCategory.EMPLOYMENT_NEWS.name -> getString(R.string.employment_news)
-                else -> null
-            }?.let {
-                "${getString(R.string.push_title_new)} " +
-                        "$it ${getString(R.string.push_title_arrived)}"
-            } ?: "${getString(R.string.push_title_new)} ${getString(R.string.push_title_arrived)}"
         }
     }
 }
