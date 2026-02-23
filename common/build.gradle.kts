@@ -5,7 +5,7 @@ plugins {
     id("knutice.android.compose")
     id("knutice.android.dagger")
 
-//    alias(libs.plugins.kotlinSerialization)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 configure<LibraryExtension>() {

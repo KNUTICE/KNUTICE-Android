@@ -8,6 +8,10 @@ plugins {
 
 configure<LibraryExtension>() {
     namespace = "com.doyoonkim.data"
+
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {

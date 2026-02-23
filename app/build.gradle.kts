@@ -41,6 +41,7 @@ dependencies {
     implementation(projects.core.data)
     implementation(projects.core.network)
     implementation(projects.core.notification)
+    implementation(projects.core.infrastructure)
     implementation(projects.feature.main)
     implementation(projects.feature.bookmark)
     implementation(projects.feature.widget)
@@ -55,8 +56,6 @@ dependencies {
     // WorkManager
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.work.runtime.ktx)
-    // Firebase Analytics
-    implementation(libs.firebase.analytics)
 
     // Manual Implementation (Heavy Dependency)
     testImplementation(libs.robolectric)
