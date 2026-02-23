@@ -12,19 +12,32 @@ data class NoticeDetailState(
     val isReceived: Boolean = false,
     val loadingStatus: Float = 0.0f,
     val isLoadingCompleted: Boolean = false,
+    val isBookmarkButtonVisible: Boolean = false,
     val isSummarizationVisible: Boolean = false,
     val isSummaryProcessing: Boolean = false,
-    val summarizedContent: List<MarkdownString>? = null
+    val summarizedContent: List<MarkdownString>? = null,
+    val abTestLayoutState: AiFeatureAbTestLayoutState = AiFeatureAbTestLayoutState()
 ) : UiState
 
+// AB TEST related State. (To be removed once test is completed)
+// Defined with default value (layout_a)
+data class AiFeatureAbTestLayoutState(
+    val layoutType: String = "",
+    val isAiFabBottomStart: Boolean = true,
+    val isAiFabBottomEnd: Boolean = false
+)
+
 sealed interface NoticeDetailEvent: UiEvent {
-    data class RequestNotice(val nttId: Int): NoticeDetailEvent
+    data class RequestNotice(val nttId: Int, val canBookmark: Boolean): NoticeDetailEvent
     data class UpdateLoadingStatus(val status: Int): NoticeDetailEvent
     data object RequestBookmarkCreation: NoticeDetailEvent
     data object RequestNoticeSummary: NoticeDetailEvent
     data object RequestDownloadAttachment: NoticeDetailEvent
     data object DismissBottomSheet: NoticeDetailEvent
     data object GoBack: NoticeDetailEvent
+
+    // AB TEST related event (To be removed once test is completed)
+    data object ActivateAbTest: NoticeDetailEvent
 }
 
 sealed class NoticeDetailSideEffect: UiSideEffect {
@@ -36,7 +49,7 @@ sealed class NoticeDetailSideEffect: UiSideEffect {
 
 sealed interface NoticeDetailMutation: UiMutation {
     sealed interface Notice: NoticeDetailMutation {
-        data class Success(val notice: NoticeVO): Notice
+        data class Success(val notice: NoticeVO, val canBookmark: Boolean): Notice
         data class Failure(val reason: String): Notice
     }
     sealed interface Content: NoticeDetailMutation {
@@ -50,4 +63,8 @@ sealed interface NoticeDetailMutation: UiMutation {
         data object Loading: Summary
         data object Dismiss: Summary
     }
+
+    // AB Test related Feature. TO BE REMOVED once Test is completed.
+    data class TestLayoutVariantA(val name: String): NoticeDetailMutation
+    data class TestLayoutVariantB(val name: String): NoticeDetailMutation
 }

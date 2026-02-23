@@ -5,13 +5,16 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.common.di.ApplicationScope
 import com.doyoonkim.common.di.TokenHandler
+import com.doyoonkim.domain.interfaces.abtest.FirebaseRemoteConfigRepository
 import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
 import com.doyoonkim.main.contract.SplashEvent
 import com.doyoonkim.main.contract.SplashMutation
 import com.doyoonkim.main.contract.SplashSideEffect
 import com.doyoonkim.main.contract.SplashState
 import com.doyoonkim.main.contract.SyncStatus
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -20,7 +23,9 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor(
     private val appPreferences: AppPreferences,
     private val syncDataWithUpdateDatabase: SyncDataWithUpdateDatabase,
-    private val tokenHandler: TokenHandler
+    private val tokenHandler: TokenHandler,
+    private val remoteConfigRepository: FirebaseRemoteConfigRepository,
+    private val applicationScope: CoroutineScope
 ) : BaseViewModel<SplashState, SplashEvent, SplashSideEffect, SplashMutation>() {
     private val TAG = this.javaClass.name
     override fun setInitialState(): SplashState = SplashState()
@@ -28,9 +33,17 @@ class SplashViewModel @Inject constructor(
     override fun handleEvent(event: SplashEvent) {
         when (event) {
             is SplashEvent.InitiatePreprocess -> {
+                fetchAndActivateRemoteConfig()
                 checkDatabaseSyncStatus()
                 startPreprocess()
             }
+        }
+    }
+
+    // Fire and Forget
+    private fun fetchAndActivateRemoteConfig() {
+        applicationScope.launch {
+            remoteConfigRepository.fetchAndActivate()
         }
     }
 
