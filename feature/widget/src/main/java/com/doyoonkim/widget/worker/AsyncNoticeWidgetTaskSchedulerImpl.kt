@@ -5,7 +5,7 @@ import androidx.work.BackoffPolicy
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.domain.interfaces.AsyncNoticeWidgetTaskScheduler
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject

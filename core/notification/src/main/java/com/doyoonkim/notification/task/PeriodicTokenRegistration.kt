@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.common.di.TokenHandler
 import com.doyoonkim.model.TokenStatus
 import com.doyoonkim.common.worker.IntermediateWorkerFactory

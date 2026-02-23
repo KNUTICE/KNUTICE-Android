@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.AppPreferences
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.main.contract.NotificationPrefEvent

@@ -1,11 +1,12 @@
 package com.doyoonkim.main.viewmodel
 
+import android.os.Bundle
 import android.util.Log
 import androidx.lifecycle.viewModelScope
+import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.navigation.Destination
-import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.domain.usecases.FetchTips
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.main.contract.HomeEvent
@@ -24,7 +25,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val fetchTopThreeNotices: FetchTopThreeNotices,
     private val fetchTips: FetchTips,
-    private val appPreferences: AppPreferences
+    private val appPreferences: AppPreferences,
+    private val analytics: AnalyticsLogger
 ) : BaseViewModel<HomeViewState, HomeEvent, HomeSideEffect, HomeMutation>() {
     override fun setInitialState(): HomeViewState = HomeViewState()
 
@@ -77,6 +79,12 @@ class HomeViewModel @Inject constructor(
             }
             is HomeEvent.RequestTipDetail -> {
                 with (event) {
+                    analytics.logEvent("BROWSE_TIP", Bundle().apply {
+                        putString("ITEM_CATEGORY", category.name)
+                        putString("SOURCE", "HomeScreen")
+                        putString("DESTINATION", url)
+                    })
+
                     sendSideEffect(HomeSideEffect.NavToTipDetail(category, url))
                 }
             }

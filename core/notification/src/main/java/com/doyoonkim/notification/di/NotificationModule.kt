@@ -2,11 +2,10 @@ package com.doyoonkim.notification.di
 
 import android.content.Context
 import com.doyoonkim.common.BitmapHandler
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.model.di.IoDispatcher
 import com.doyoonkim.common.di.TokenHandler
 import com.doyoonkim.domain.interfaces.ImageRemoteRepository
-import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.notification.fcm.PushNotificationHandler
 import com.doyoonkim.notification.fcm.TokenHandlerImpl
 import com.doyoonkim.notification.local.AlarmScheduler

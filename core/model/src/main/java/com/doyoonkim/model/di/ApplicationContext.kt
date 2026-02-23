@@ -1,4 +1,4 @@
-package com.doyoonkim.common.di
+package com.doyoonkim.model.di
 
 import javax.inject.Qualifier
 

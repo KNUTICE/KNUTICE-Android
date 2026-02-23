@@ -9,7 +9,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.doyoonkim.common.di.AppPreferences
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeVO
