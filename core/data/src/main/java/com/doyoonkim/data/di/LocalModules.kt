@@ -1,7 +1,7 @@
 package com.doyoonkim.data.di
 
 import android.content.Context
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.data.repository.LocalRepositoryImpl
 import com.doyoonkim.data.room.LocalDatabase
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
@@ -9,23 +9,10 @@ import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
+import javax.inject.Singleton
 
 @Module
 abstract class LocalModule {
-    // Provides
-    companion object {
-        // Database
-        @Provides
-        fun provideLocalDatabase(
-            @ApplicationContext context: Context
-        ): LocalDatabase {
-            return LocalDatabase.getInstance(context)
-        }
-
-        @Provides
-        fun provideMainDatabaseDao(db: LocalDatabase) = db.getDao()
-    }
-
     @Binds
     abstract fun bindsBookmarkLocalRepository(
         impl: LocalRepositoryImpl
@@ -35,4 +22,20 @@ abstract class LocalModule {
     abstract fun bindsNoticeLocalRepository(
         impl: LocalRepositoryImpl
     ) : NoticeLocalRepository
+}
+
+@Module
+object RoomDatabaseModule {
+    @Provides
+    @Singleton
+    fun provideLocalDatabase(
+        @ApplicationContext context: Context
+    ): LocalDatabase {
+        return LocalDatabase.getInstance(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMainDatabaseDao(db: LocalDatabase) = db.getDao()
+
 }

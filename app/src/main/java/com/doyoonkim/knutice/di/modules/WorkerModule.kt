@@ -1,6 +1,5 @@
 package com.doyoonkim.knutice.di.modules
 
-import androidx.work.ListenableWorker
 import com.doyoonkim.common.di.WorkerKey
 import com.doyoonkim.domain.interfaces.AsyncFtsTaskScheduler
 import com.doyoonkim.knutice.task.AsyncFtsTableInsertion

@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.work.BackoffPolicy
@@ -35,21 +36,17 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Constraints
-import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import com.doyoonkim.common.theme.KNUTICETheme
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
+import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.common.navigation.DeeplinkHandler
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
-import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
-import com.doyoonkim.widget.worker.KnuticeWidgetSync
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -57,6 +54,7 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
      @Inject lateinit var alarmManager: AlarmManager
+     @Inject lateinit var analytics: AnalyticsLogger
 
     // NavController
     private lateinit var navController: NavHostController
@@ -68,9 +66,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = (application as MainApplication).appComponent
-        DaggerMainActivityComponent.factory().create(DefaultSystemService(appComponent))
+        DaggerMainActivityComponent.factory().create(appComponent, appComponent)
             .inject(this)
-        val analytics = appComponent.analytics()
 
         super.onCreate(savedInstanceState)
 
@@ -187,9 +184,9 @@ class MainActivity : ComponentActivity() {
                         DeeplinkHandler.processDeeplink(intent) { host, destination ->
                             // Analytics
                             analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
-                                putString(FirebaseAnalytics.Param.CONTENT_TYPE, host)
-                                putString(FirebaseAnalytics.Param.SOURCE, "PUSH")
-                                putString(FirebaseAnalytics.Param.DESTINATION, destination)
+                                putString("CONTENT_TYPE", host)
+                                putString("SOURCE", "PUSH")
+                                putString("DESTINATION", destination)
                             })
                             navController.navigate(destination)
 

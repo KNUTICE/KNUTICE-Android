@@ -14,7 +14,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.navDeepLink
 import com.doyoonkim.bookmark.edit.EditBookmarkScreen
 import com.doyoonkim.bookmark.list.BookmarkListScreen
 import com.doyoonkim.bookmark.viewmodel.BookmarkListViewModel
@@ -25,7 +24,6 @@ import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerBookmarkListSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerEditBookmarkSceneComponent
-import com.doyoonkim.knutice.di.util.DefaultSystemService
 
 fun NavGraphBuilder.bookmarkServiceGraph(
     navController: NavController,
@@ -38,7 +36,10 @@ fun NavGraphBuilder.bookmarkServiceGraph(
 
     composable(NavRoutes.Bookmark.route) {
         val sceneComponent = remember(appComponent) {
-            DaggerBookmarkListSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerBookmarkListSceneComponent.factory().create(
+                systemServices = appComponent,
+                localStorageProvider = appComponent
+            )
         }
 
         BookmarkListScreen(
@@ -79,7 +80,11 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         } ?: BookmarkInfo(0, "", "")
 
         val sceneComponent = remember(appComponent) {
-            DaggerEditBookmarkSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerEditBookmarkSceneComponent.factory().create(
+                systemService = appComponent,
+                networkProvider = appComponent,
+                localStorageProvider = appComponent
+            )
         }
 
         EditBookmarkScreen(
