@@ -9,7 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.model.BookmarkVO
 import javax.inject.Inject

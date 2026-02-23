@@ -2,12 +2,12 @@ import com.android.build.api.dsl.LibraryExtension
 
 plugins {
     id("knutice.android.library")
+    id("knutice.android.firebase")
     id("knutice.android.dagger")
-    id("knutice.android.room")
 }
 
 configure<LibraryExtension>() {
-    namespace = "com.doyoonkim.data"
+    namespace = "com.doyoonkim.infrastructure"
 
     buildFeatures {
         buildConfig = true
@@ -15,8 +15,10 @@ configure<LibraryExtension>() {
 }
 
 dependencies {
-    implementation(projects.core.model)
-    implementation(projects.core.network)
-    implementation(projects.core.domain)            // Dependency Inversion
+    implementation(projects.core.domain)
     implementation(projects.common)
+    implementation(projects.core.model)
+
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.config)
 }

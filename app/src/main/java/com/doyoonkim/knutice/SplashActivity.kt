@@ -3,9 +3,7 @@ package com.doyoonkim.knutice
 import android.annotation.SuppressLint
 import android.app.ActivityOptions
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -14,10 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.doyoonkim.common.theme.KNUTICETheme
 import com.doyoonkim.knutice.di.components.DaggerSplashSceneComponent
-import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.main.splash.KnuticeSplashScreen
 import com.doyoonkim.main.viewmodel.SplashViewModel
-import com.doyoonkim.common.R
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : ComponentActivity() {
@@ -50,7 +46,10 @@ class SplashActivity : ComponentActivity() {
             KNUTICETheme {
                 val appComponent = (application as MainApplication).appComponent
                 val splashSceneComponent = DaggerSplashSceneComponent.factory().create(
-                    DefaultSystemService(appComponent)
+                    systemServices = appComponent,
+                    networkProvider = appComponent,
+                    localStorageProvider = appComponent,
+                    firebaseInfrastructureProvider = appComponent
                 )
 
                 KnuticeSplashScreen(

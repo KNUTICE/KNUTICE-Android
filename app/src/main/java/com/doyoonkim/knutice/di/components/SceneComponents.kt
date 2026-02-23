@@ -3,7 +3,6 @@ package com.doyoonkim.knutice.di.components
 import androidx.lifecycle.ViewModelProvider
 import com.doyoonkim.bookmark.di.BookmarkListSceneModule
 import com.doyoonkim.bookmark.di.EditBookmarkSceneModule
-import com.doyoonkim.data.di.LocalModule
 import com.doyoonkim.data.di.NoticeRemoteModule
 import com.doyoonkim.data.di.PreferencesRemoteModule
 import com.doyoonkim.data.di.TipRemoteModule
@@ -13,11 +12,11 @@ import com.doyoonkim.domain.di.NoticeUseCaseModule
 import com.doyoonkim.domain.di.PreProcessingUseCaseModule
 import com.doyoonkim.domain.di.PreferencesUseCaseModule
 import com.doyoonkim.domain.di.TipUseCaseModule
-import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
-import com.doyoonkim.knutice.di.modules.DispatcherModule
 import com.doyoonkim.knutice.di.modules.ViewModelFactoryModule
 import com.doyoonkim.knutice.di.modules.WorkSchedulerModule
-import com.doyoonkim.knutice.di.modules.WorkerModule
+import com.doyoonkim.knutice.di.util.FirebaseInfrastructureProvider
+import com.doyoonkim.knutice.di.util.LocalStorageProvider
+import com.doyoonkim.knutice.di.util.NetworkProvider
 import com.doyoonkim.knutice.di.util.SystemServices
 import com.doyoonkim.main.di.CustomerServiceSceneModule
 import com.doyoonkim.main.di.HomeSceneModule
@@ -29,22 +28,23 @@ import com.doyoonkim.main.di.NotificationPreferencesSceneModule
 import com.doyoonkim.main.di.SettingsSceneModule
 import com.doyoonkim.main.di.SplashSceneModule
 import com.doyoonkim.main.di.WidgetConfigSceneModule
-import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.NotificationModule
 import dagger.Component
 import javax.inject.Singleton
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [
+        SystemServices::class,
+        NetworkProvider::class,
+        FirebaseInfrastructureProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         HomeSceneModule::class,
         NoticeUseCaseModule::class,
         TipUseCaseModule::class,
         NoticeRemoteModule::class,
         TipRemoteModule::class,
-        NetworkModule::class
     ]
 )
 interface HomeSceneComponent {
@@ -52,21 +52,23 @@ interface HomeSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): HomeSceneComponent
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider,
+            firebaseInfrastructureProvider: FirebaseInfrastructureProvider
+        ): HomeSceneComponent
     }
 }
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [SystemServices::class, NetworkProvider::class],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         NoticeByMajorSceneModule::class,
         NoticeUseCaseModule::class,
         PreferencesUseCaseModule::class,
         NoticeRemoteModule::class,
-        PreferencesRemoteModule::class,
-        NetworkModule::class
+        PreferencesRemoteModule::class
     ]
 )
 interface NoticeByMajorSceneComponent {
@@ -74,19 +76,20 @@ interface NoticeByMajorSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): NoticeByMajorSceneComponent
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider
+        ): NoticeByMajorSceneComponent
     }
 }
 
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [SystemServices::class, LocalStorageProvider::class],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         BookmarkListSceneModule::class,
         BookmarkUseCaseModule::class,
-        LocalModule::class
     ]
 )
 interface BookmarkListSceneComponent {
@@ -94,24 +97,28 @@ interface BookmarkListSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): BookmarkListSceneComponent
+        fun create(
+            systemServices: SystemServices,
+            localStorageProvider: LocalStorageProvider
+        ): BookmarkListSceneComponent
     }
 }
 
 @Singleton
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [
+        SystemServices::class,
+        NetworkProvider::class,
+        LocalStorageProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
         WorkSchedulerModule::class,
-        DispatcherModule::class,
         EditBookmarkSceneModule::class,
         BookmarkUseCaseModule::class,
         NoticeUseCaseModule::class,
         NotificationModule::class,
-        LocalModule::class,
         NoticeRemoteModule::class,
-        NetworkModule::class
     ]
 )
 interface EditBookmarkSceneComponent {
@@ -119,19 +126,25 @@ interface EditBookmarkSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemService: SystemServices): EditBookmarkSceneComponent
+        fun create(
+            systemService: SystemServices,
+            networkProvider: NetworkProvider,
+            localStorageProvider: LocalStorageProvider
+        ): EditBookmarkSceneComponent
     }
 }
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [
+        SystemServices::class,
+        NetworkProvider::class,
+        FirebaseInfrastructureProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         NoticeDetailSceneModule::class,
         NoticeUseCaseModule::class,
         NoticeRemoteModule::class,
-        NetworkModule::class
     ]
 )
 interface NoticeDetailSceneComponent {
@@ -139,22 +152,23 @@ interface NoticeDetailSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): NoticeDetailSceneComponent
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider,
+            firebaseInfrastructureProvider: FirebaseInfrastructureProvider
+        ): NoticeDetailSceneComponent
     }
 }
 
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [SystemServices::class, NetworkProvider::class, LocalStorageProvider::class],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         NoticeSearchSceneModule::class,
         NoticeUseCaseModule::class,
         BookmarkUseCaseModule::class,
-        NoticeRemoteModule::class,
-        LocalModule::class,
-        NetworkModule::class
+        NoticeRemoteModule::class
     ]
 )
 interface NoticeSearchSceneComponent {
@@ -162,20 +176,22 @@ interface NoticeSearchSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): NoticeSearchSceneComponent
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider,
+            localStorageProvider: LocalStorageProvider
+        ): NoticeSearchSceneComponent
     }
 }
 
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [SystemServices::class, NetworkProvider::class],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         NoticeInCategorySceneModule::class,
         NoticeUseCaseModule::class,
-        NoticeRemoteModule::class,
-        NetworkModule::class
+        NoticeRemoteModule::class
     ]
 )
 interface NoticeInCategorySceneComponent {
@@ -183,20 +199,21 @@ interface NoticeInCategorySceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): NoticeInCategorySceneComponent
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider
+        ): NoticeInCategorySceneComponent
     }
 }
 
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [SystemServices::class, NetworkProvider::class],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         CustomerServiceSceneModule::class,
         PreferencesUseCaseModule::class,
-        PreferencesRemoteModule::class,
-        NetworkModule::class
+        PreferencesRemoteModule::class
     ]
 )
 interface CustomerServiceSceneComponent {
@@ -204,20 +221,21 @@ interface CustomerServiceSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemService: SystemServices): CustomerServiceSceneComponent
+        fun create(
+            systemService: SystemServices,
+            networkProvider: NetworkProvider
+        ): CustomerServiceSceneComponent
     }
 }
 
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [SystemServices::class, NetworkProvider::class],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         NotificationPreferencesSceneModule::class,
         PreferencesUseCaseModule::class,
-        PreferencesRemoteModule::class,
-        NetworkModule::class
+        PreferencesRemoteModule::class
     ]
 )
 interface NotificationPreferencesSceneComponent {
@@ -225,21 +243,21 @@ interface NotificationPreferencesSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): NotificationPreferencesSceneComponent
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider
+        ): NotificationPreferencesSceneComponent
     }
 }
 
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [SystemServices::class, NetworkProvider::class, LocalStorageProvider::class ],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         SettingsSceneModule::class,
         PreProcessingUseCaseModule::class,
-        LocalModule::class,
-        NoticeRemoteModule::class,
-        NetworkModule::class
+        NoticeRemoteModule::class
     ]
 )
 interface SettingsSceneComponent {
@@ -247,23 +265,29 @@ interface SettingsSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): SettingsSceneComponent
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider,
+            localStorageProvider: LocalStorageProvider
+        ): SettingsSceneComponent
     }
 }
 
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [
+        SystemServices::class,
+        NetworkProvider::class,
+        LocalStorageProvider::class,
+        FirebaseInfrastructureProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         SplashSceneModule::class,
         NotificationModule::class,
         PreProcessingUseCaseModule::class,
-        LocalModule::class,
         NoticeRemoteModule::class,
         TokenRemoteModule::class,
-        NetworkModule::class
     ]
 )
 interface SplashSceneComponent {
@@ -271,7 +295,12 @@ interface SplashSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemServices: SystemServices): SplashSceneComponent
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider,
+            localStorageProvider: LocalStorageProvider,
+            firebaseInfrastructureProvider: FirebaseInfrastructureProvider
+        ): SplashSceneComponent
     }
 }
 
@@ -279,7 +308,6 @@ interface SplashSceneComponent {
     dependencies = [SystemServices::class],
     modules = [
         ViewModelFactoryModule::class,
-        DispatcherModule::class,
         WidgetConfigSceneModule::class,
         WorkSchedulerModule::class,
     ]

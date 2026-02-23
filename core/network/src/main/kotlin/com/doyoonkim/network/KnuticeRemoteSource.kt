@@ -19,7 +19,6 @@ import javax.inject.Inject
 // This class should be provided/injected as Singleton Instance.
 class KnuticeRemoteSource @Inject constructor(
     private val knuticeApi: KnuticeService,
-    private val deviceToken: DeviceToken,
     private val appPreference: AppPreferences
 ) {
     private val TAG = "KnuticeRemoteSource"
@@ -67,10 +66,6 @@ class KnuticeRemoteSource @Inject constructor(
             }
             knuticeApi.validateToken(appPreference.getCachedToken()!!, request)
         }
-
-    fun updateValidatedToken(fcmToken: String) {
-        deviceToken.updateValidatedToken(fcmToken)
-    }
 
     suspend fun submitUserReport(request: ReportSaveRequest) = runCatching {
         if (appPreference.getCachedToken().isNullOrBlank()) throw Exception("No validated token found")

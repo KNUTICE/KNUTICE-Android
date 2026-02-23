@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.doyoonkim.common.theme.KNUTICETheme
 import com.doyoonkim.knutice.di.components.DaggerWidgetConfigSceneComponent
-import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.main.preference.WidgetPreferencesScreen
 import com.doyoonkim.main.viewmodel.WidgetConfigViewModel
 
@@ -37,7 +36,7 @@ class WidgetConfigurationActivity : ComponentActivity() {
                 // Dependency Injection
                 val appComponent = (application as MainApplication).appComponent
                 val sceneComponent = DaggerWidgetConfigSceneComponent.factory().create(
-                    DefaultSystemService(appComponent)
+                    systemService = appComponent
                 )
 
                 WidgetPreferencesScreen(
