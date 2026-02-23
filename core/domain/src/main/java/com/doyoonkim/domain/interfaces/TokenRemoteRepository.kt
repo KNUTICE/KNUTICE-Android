@@ -7,8 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface TokenRemoteRepository {
 
-    fun requestUpdateValidatedToken(fcmToken: String)
-
     suspend fun requestUpdateFcmToken(body: TokenUpdateBody): TokenStatus
 
     suspend fun requestFcmTokenRegistration(body: DeviceTokenBody): TokenStatus
