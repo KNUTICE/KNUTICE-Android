@@ -108,3 +108,46 @@ fun TopAppBarWithActions(
         )
     )
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ConfigurableTopAppBar(
+    modifier: Modifier = Modifier,
+    titleText: String,
+    navButtonType: NavButtonType = NavButtonType.BACK,
+    onBackPressed: () -> Unit,
+    actions: @Composable (RowScope.() -> Unit)
+) {
+    TopAppBar(
+        title = {
+            Text(
+                modifier = modifier.fillMaxWidth(),
+                text = titleText,
+                textAlign = TextAlign.Left,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = { onBackPressed() }
+            ) {
+                Icon(
+                    imageVector = when(navButtonType) {
+                        NavButtonType.BACK -> Icons.AutoMirrored.Filled.KeyboardArrowLeft
+                        NavButtonType.CLOSE -> Icons.Filled.Clear
+                    },
+                    contentDescription = null
+                )
+            }
+        },
+        actions = actions,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.displayBackground,
+            titleContentColor = MaterialTheme.colorScheme.title,
+            navigationIconContentColor = MaterialTheme.colorScheme.title
+        )
+    )
+}

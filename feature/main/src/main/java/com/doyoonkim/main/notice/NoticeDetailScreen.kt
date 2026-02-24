@@ -14,6 +14,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -42,9 +44,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +65,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.AiSummaryDialog
+import com.doyoonkim.common.ui.ConfigurableTopAppBar
 import com.doyoonkim.common.ui.markdown.MarkdownView
 import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.NoticeDetailEvent
@@ -80,8 +85,13 @@ fun NoticeDetailScreen(
 
     BackHandler { viewModel.sendUiEvent(NoticeDetailEvent.GoBack) }
 
+    LaunchedEffect(uiState.abTestLayoutState) {
+        // Activate AB Test
+        viewModel.sendUiEvent(NoticeDetailEvent.ActivateAbTest)
+    }
+
     LaunchedEffect(Unit) {
-        viewModel.sendUiEvent(NoticeDetailEvent.RequestNotice(noticeInfo.first))
+        viewModel.sendUiEvent(NoticeDetailEvent.RequestNotice(noticeInfo.first, noticeInfo.third))
 
         viewModel.uiSideEffect.collect { effect ->
             when (effect) {
@@ -104,10 +114,24 @@ fun NoticeDetailScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithNavButton(
+            ConfigurableTopAppBar(
                 titleText = uiState.receivedNotice?.title ?: "",
                 onBackPressed = { viewModel.sendUiEvent(NoticeDetailEvent.GoBack) }
-            )
+            ) {
+                // Layout_B (Bookmark Button on TopAppBar
+                if (uiState.isBookmarkButtonVisible && uiState.abTestLayoutState.isAiFabBottomEnd) {
+                    IconButton(
+                        onClick = { viewModel.sendUiEvent(NoticeDetailEvent.RequestBookmarkCreation) }
+                    ) {
+                        Image(
+                            painter = painterResource(R.drawable.outline_bookmark_24),
+                            contentDescription = "Add Bookmark",
+                            modifier = Modifier.wrapContentSize(),
+                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.title)
+                        )
+                    }
+                }
+            }
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
@@ -206,32 +230,31 @@ fun NoticeDetailScreen(
                         }
                     )
 
-                    if (noticeInfo.third) {
-                        Column(
-                            modifier = Modifier.wrapContentSize()
-                                .padding(end = 10.dp, bottom = 30.dp)
-                                .align(Alignment.BottomEnd),
-                            verticalArrangement = Arrangement.spacedBy(5.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            if (uiState.receivedNotice?.isSummaryAvailable == true) {
-                                FloatingActionButton(
-                                    modifier = Modifier.wrapContentSize(),
-                                    onClick = {
-                                        viewModel.sendUiEvent(NoticeDetailEvent.RequestNoticeSummary)
-                                    },
-                                    containerColor = MaterialTheme.colorScheme.variantPurple
-                                ) {
-                                    Icon(
-                                        imageVector = ImageVector.vectorResource(R.drawable.outline_wand_stars_24),
-                                        contentDescription = "Summary",
-                                        tint = Color.White
-                                    )
-                                }
+                    Box(
+                        modifier = Modifier.fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(start = 10.dp, end = 10.dp, bottom = 30.dp)
+                            .align(Alignment.BottomCenter)
+                    ) {
+                        if (uiState.abTestLayoutState.isAiFabBottomStart && uiState.isBookmarkButtonVisible) {
+                            FloatingActionButton(
+                                modifier = Modifier.wrapContentSize()
+                                    .align(Alignment.CenterStart),
+                                onClick = {
+                                    viewModel.sendUiEvent(NoticeDetailEvent.RequestNoticeSummary)
+                                },
+                                containerColor = MaterialTheme.colorScheme.variantPurple
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.outline_wand_stars_24),
+                                    contentDescription = "Summary",
+                                    tint = Color.White
+                                )
                             }
 
                             FloatingActionButton(
-                                modifier = Modifier.wrapContentSize(),
+                                modifier = Modifier.wrapContentSize()
+                                    .align(Alignment.CenterEnd),
                                 onClick = {
                                     viewModel.sendUiEvent(NoticeDetailEvent.RequestBookmarkCreation)
                                 },
@@ -244,6 +267,23 @@ fun NoticeDetailScreen(
                                 Icon(
                                     imageVector = Icons.Filled.Add,
                                     contentDescription = "Add to bookmark",
+                                    tint = Color.White
+                                )
+                            }
+                        }
+
+                        if (uiState.abTestLayoutState.isAiFabBottomEnd) {
+                            FloatingActionButton(
+                                modifier = Modifier.wrapContentSize()
+                                    .align(Alignment.CenterEnd),
+                                onClick = {
+                                    viewModel.sendUiEvent(NoticeDetailEvent.RequestNoticeSummary)
+                                },
+                                containerColor = MaterialTheme.colorScheme.variantPurple
+                            ) {
+                                Icon(
+                                    imageVector = ImageVector.vectorResource(R.drawable.outline_wand_stars_24),
+                                    contentDescription = "Summary",
                                     tint = Color.White
                                 )
                             }
@@ -271,7 +311,7 @@ fun NoticeDetailScreen(
                                 containerColor = MaterialTheme.colorScheme.secondaryBackground,
                                 primaryTextColor = MaterialTheme.colorScheme.title,
                                 secondaryTextColor = MaterialTheme.colorScheme.subTitle,
-                                isContentAvailable = uiState.summarizedContent.isNullOrEmpty()
+                                isContentAvailable = !uiState.summarizedContent.isNullOrEmpty()
                             ) {
                                 MarkdownView(
                                     modifier = Modifier.wrapContentSize()
