@@ -26,6 +26,18 @@ class NoticeResources {
         }
 
         @Composable
+        fun getChannelDescription(category: String): Int {
+            return when (category) {
+                NoticeCategory.GENERAL_NEWS.name -> R.string.general_notification_channel_description
+                NoticeCategory.ACADEMIC_NEWS.name -> R.string.academic_notification_channel_description
+                NoticeCategory.SCHOLARSHIP_NEWS.name -> R.string.scholarship_notification_channel_description
+                NoticeCategory.EVENT_NEWS.name -> R.string.event_notification_channel_description
+                NoticeCategory.EMPLOYMENT_NEWS.name -> R.string.employment_notification_channel_descrption
+                else -> R.string.text_category_not_found
+            }
+        }
+
+        @Composable
         fun getColorResourceByCategory(category: String): Color {
             return when (category) {
                 NoticeCategory.GENERAL_NEWS.name -> MaterialTheme.colorScheme.notificationType1
