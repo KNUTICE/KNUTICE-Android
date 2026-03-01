@@ -113,10 +113,10 @@ fun NavGraphBuilder.campusServiceGraph(
         }
     ) { backStackEntry ->
         val selection = backStackEntry.arguments?.getString("mealTopic")
-        Log.d("Navigation", "Dining Hall Selection: ")
 
         DiningMenuScreen(
-            modifier = Modifier
+            modifier = Modifier,
+            hallSelection = selection ?: ""
         ) {
             navController.popBackStack()
         }
