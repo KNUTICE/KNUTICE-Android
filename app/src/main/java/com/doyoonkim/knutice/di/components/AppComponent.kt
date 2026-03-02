@@ -14,6 +14,7 @@ import com.doyoonkim.knutice.di.modules.WorkerModule
 import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.FcmTokenModule
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
+import com.doyoonkim.data.di.CampusRemoteModule
 import com.doyoonkim.data.di.NoticeRemoteModule
 import com.doyoonkim.data.di.RoomDatabaseModule
 import com.doyoonkim.data.di.SystemCoroutineModule
@@ -77,6 +78,7 @@ interface AppComponent :
         TokenRemoteModule::class,
         AsyncFtsEntryInsertionModule::class,
         NoticeRemoteModule::class,
+        CampusRemoteModule::class
     ]
 )
 interface WorkerSubcomponent {

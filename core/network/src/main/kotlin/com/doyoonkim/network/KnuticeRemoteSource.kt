@@ -60,6 +60,15 @@ class KnuticeRemoteSource @Inject constructor(
         knuticeApi.getAllTips(deviceType = "AOS")
     }
 
+    suspend fun getCarrelRoomStatus() = runCatching {
+        if (appPreference.getCachedToken().isNullOrBlank()) throw Exception("No validated token found")
+        else {
+            knuticeApi.getReadingRoomStatus(
+                appPreference.getCachedToken()!!
+            )
+        }
+    }
+
     suspend fun validateToken(token: String, request: FcmTokenSaveRequest) = runCatching {
             if (appPreference.getCachedToken().isNullOrBlank() || appPreference.getCachedToken() != token) {
                 throw Exception("Token Mismatch\nReceived: $token Cached: ${appPreference.getCachedToken()}")
