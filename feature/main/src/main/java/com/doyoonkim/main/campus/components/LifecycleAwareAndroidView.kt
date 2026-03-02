@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
@@ -103,6 +104,8 @@ fun LifecycleAwareWebView(
                     @SuppressLint("SetJavaScriptEnabled")
                     javaScriptEnabled = true
                     domStorageEnabled = true
+                    // Enable Global Cache Policy
+                    cacheMode = WebSettings.LOAD_DEFAULT
 
                     // Ensure responsiveness
                     useWideViewPort = true          // support HTML viewport tag.
