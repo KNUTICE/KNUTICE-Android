@@ -28,6 +28,10 @@ dependencies {
     // Jetpack Glance Dependencies
     api(libs.androidx.glance.appwidget)
     api(libs.androidx.glance.material3)
+    // For AppWidget preview support in the IDE
+    implementation(libs.androidx.glance.appwidget.preview)
+    implementation(libs.androidx.glance.preview)
+
     // Material3 Implementation
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.material3)

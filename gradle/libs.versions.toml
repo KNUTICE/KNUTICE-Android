@@ -47,7 +47,9 @@ ksp = "2.3.5"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "jetpackGlance" }
+androidx-glance-appwidget-preview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "jetpackGlance" }
 androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "jetpackGlance" }
+androidx-glance-preview = { module = "androidx.glance:glance-preview", version.ref = "jetpackGlance" }
 androidx-material = { module = "androidx.compose.material:material" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
