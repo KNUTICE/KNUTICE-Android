@@ -187,4 +187,6 @@
     <string name="widget_preview_title">Notice Widget</string>
     <string name="widget_preview_description">Check the most recent notices in chosen category.</string>
     <string name="bottom_bar_major_title">Dept Notice</string>
+    <string name="knutice_carrel_widget_title">Carrel Roon Status</string>
+    <string name="knutice_carrel_widget_description">Check Carrel Room Occupancy Statue</string>
 </resources>

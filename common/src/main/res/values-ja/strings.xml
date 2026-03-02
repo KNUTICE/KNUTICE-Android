@@ -174,4 +174,6 @@
     <string name="widget_preview_title">お知らせウィジェット</string>
     <string name="widget_preview_description">選んだカテゴリーの最新おしらせを確認できます</string>
     <string name="bottom_bar_major_title">専攻アラム</string>
+    <string name="knutice_carrel_widget_title">閲覧室の空き状況</string>
+    <string name="knutice_carrel_widget_description">閲覧室の空き状況をひと目でチェックしましょう</string>
 </resources>

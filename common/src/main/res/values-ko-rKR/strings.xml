@@ -174,4 +174,6 @@
     <string name="widget_preview_title">최신 공지</string>
     <string name="widget_preview_description">선택한 카테고리의 최신 공지를 확인하세요</string>
     <string name="bottom_bar_major_title">학과 공지</string>
+    <string name="knutice_carrel_widget_title">열람실 현황</string>
+    <string name="knutice_carrel_widget_description">현재 열람실 현황을 빠르게 확인하세요</string>
 </resources>
