@@ -89,6 +89,19 @@
                 android:resource="@xml/knutice_notices_widget_info" />
         </receiver>
 
+        <receiver
+            android:name="com.doyoonkim.widget.KnuticeCarrelWidgetReceiver"
+            android:label="@string/knutice_carrel_widget_title"
+            android:exported="true">
+
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/knutice_carrel_widget_info" />
+        </receiver>
+
         <!--Prevent Default initialization of WorkManager instance-->
         <provider
             android:name="androidx.startup.InitializationProvider"
