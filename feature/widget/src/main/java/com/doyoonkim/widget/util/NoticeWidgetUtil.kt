@@ -36,7 +36,7 @@ class NoticeWidgetUtil {
             type: String? = null
         ) = Intent(Intent.ACTION_VIEW, "knutice://$deeplink".toUri()).apply {
             setPackage(packageName)
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
     }
 }

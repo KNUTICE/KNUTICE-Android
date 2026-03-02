@@ -19,6 +19,14 @@ class DeeplinkHandler {
                 // use uri from intent.data directly.
                 with(intent.data) {
                     val host = this?.host ?: return      // Unknown Host; Cancel Navigation
+
+                    // Temporary Handling
+                    if (host == "reading-room") {
+                        // Bypass Deeplink-based resolver.
+                        onReady(host, NavRoutes.CarrelStatus.route)
+                        return
+                    }
+
                     // Query Validation
                     if (this.encodedQuery.isNullOrBlank()) return    // Unknown/empty path; Cancel Navigation
 
