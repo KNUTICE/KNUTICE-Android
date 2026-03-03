@@ -28,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.work.BackoffPolicy
@@ -46,7 +45,6 @@ import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
-import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -188,7 +186,9 @@ class MainActivity : ComponentActivity() {
                                 putString("SOURCE", "PUSH")
                                 putString("DESTINATION", destination)
                             })
-                            navController.navigate(destination)
+                            navController.navigate(destination) {
+                                launchSingleTop = true
+                            }
 
                         }
                         isDeeplinkInProcess.value = false
@@ -201,7 +201,6 @@ class MainActivity : ComponentActivity() {
     // Called when intent is being sent while the onCreate() is already called.
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
         Log.d("MainActivity", "Intent received onNewIntent: ${intent?.data}")
         receivedIntent.value = intent
     }
