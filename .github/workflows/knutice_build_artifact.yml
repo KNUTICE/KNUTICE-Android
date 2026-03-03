@@ -40,7 +40,7 @@ jobs:
 
       - name: Sign Production APK
         id: sign_apk
-        uses: r0adkll/sign-android-release@v1
+        uses: ilharp/sign-android-release@v2
         with:
           releaseDirectory: app/build/outputs/apk/release
           signingKeyBase64: ${{ secrets.PROD_KEYSTORE_BASE64 }}
@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: KNUTICE-QA-APK
-          path: ${{ steps.sign_apk.outputs.signedReleaseFile }}
+          path: ${{ steps.sign_apk.outputs.signedFile }}
 
   build-production-aab:
     name: Build & Sign Production AAB
@@ -87,7 +87,7 @@ jobs:
 
       - name: Sign Production AAB
         id: sign_aab
-        uses: r0adkll/sign-android-release@v1
+        uses: ilharp/sign-android-release@v2
         with:
           releaseDirectory: app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.PROD_KEYSTORE_BASE64 }}
@@ -99,4 +99,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: KNUTICE-Production-AAB
-          path: ${{ steps.sign_aab.outputs.signedReleaseFile }}
+          path: ${{ steps.sign_aab.outputs.signedFile }}
