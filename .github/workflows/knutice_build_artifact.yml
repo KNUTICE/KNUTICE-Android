@@ -1,0 +1,102 @@
+name: KNUTICE Automated CI CD Pipeline
+
+on:
+  push:
+    branches:
+      - development
+      - release
+
+jobs:
+  build-qa-apk:
+    name: Build Artifact for QA and Test
+    if: github.ref == 'refs/heads/development'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
+
+      - name: Generate Local Properties
+        env:
+          ENCODED_PROPERTIES: ${{ secrets.BASE64_LOCAL_PROPERTIES }}
+        run: echo "$ENCODED_PROPERTIES" | base64 --decode > ./local.properties
+
+      - name: Provide Necessary Configuration File.
+        env:
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$DATA" | base64 --decode > app/google-services.json
+
+      - name: Grant Execute Permission to Gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build Release APK
+        run: ./gradlew assembleRelease
+
+      - name: Sign Production APK
+        id: sign_apk
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/apk/release
+          signingKeyBase64: ${{ secrets.PROD_KEYSTORE_BASE64 }}
+          alias: ${{ secrets.PROD_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.PROD_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.PROD_KEY_PASSWORD }}
+
+      - name: Upload Generated Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KNUTICE-QA-APK
+          path: ${{ steps.sign_apk.outputs.signedReleaseFile }}
+
+  build-production-aab:
+    name: Build & Sign Production AAB
+    if: github.ref == 'refs/heads/release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+          cache: 'gradle'
+
+      - name: Generate Local Properties
+        env:
+          ENCODED_PROPERTIES: ${{ secrets.BASE64_LOCAL_PROPERTIES }}
+        run: echo "$ENCODED_PROPERTIES" | base64 --decode > ./local.properties
+
+      - name: Provide Necessary Configuration File.
+        env:
+          DATA: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        run: echo "$DATA" | base64 --decode > app/google-services.json
+
+      - name: Grant Execute Permission to Gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build Release AAB
+        run: ./gradlew bundleRelease
+
+      - name: Sign Production AAB
+        id: sign_aab
+        uses: r0adkll/sign-android-release@v1
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.PROD_KEYSTORE_BASE64 }}
+          alias: ${{ secrets.PROD_KEY_ALIAS }}
+          keyStorePassword: ${{ secrets.PROD_KEYSTORE_PASSWORD }}
+          keyPassword: ${{ secrets.PROD_KEY_PASSWORD }}
+
+      - name: Upload Signed Production AAB Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KNUTICE-Production-AAB
+          path: ${{ steps.sign_aab.outputs.signedReleaseFile }}
