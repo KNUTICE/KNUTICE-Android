@@ -42,9 +42,9 @@ jobs:
         id: sign_apk
         uses: ilharp/sign-android-release@v2
         with:
-          releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.PROD_KEYSTORE_BASE64 }}
-          alias: ${{ secrets.PROD_KEY_ALIAS }}
+          releaseDir: app/build/outputs/apk/release
+          signingKey: ${{ secrets.PROD_KEYSTORE_BASE64 }}
+          keyAlias: ${{ secrets.PROD_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.PROD_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.PROD_KEY_PASSWORD }}
 
@@ -89,9 +89,9 @@ jobs:
         id: sign_aab
         uses: ilharp/sign-android-release@v2
         with:
-          releaseDirectory: app/build/outputs/bundle/release
-          signingKeyBase64: ${{ secrets.PROD_KEYSTORE_BASE64 }}
-          alias: ${{ secrets.PROD_KEY_ALIAS }}
+          releaseDir: app/build/outputs/bundle/release
+          signingKey: ${{ secrets.PROD_KEYSTORE_BASE64 }}
+          keyAlias: ${{ secrets.PROD_KEY_ALIAS }}
           keyStorePassword: ${{ secrets.PROD_KEYSTORE_PASSWORD }}
           keyPassword: ${{ secrets.PROD_KEY_PASSWORD }}
 
