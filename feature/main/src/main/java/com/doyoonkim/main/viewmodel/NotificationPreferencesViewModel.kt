@@ -17,6 +17,7 @@ import com.doyoonkim.main.contract.NotificationPrefEvent
 import com.doyoonkim.main.contract.NotificationPrefMutation
 import com.doyoonkim.main.contract.NotificationPrefSideEffect
 import com.doyoonkim.main.contract.NotificationPrefStatus
+import com.doyoonkim.model.MealCategory
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.TopicType
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
@@ -45,14 +46,19 @@ class NotificationPreferencesViewModel @Inject constructor(
             is NotificationPrefEvent.RequestTopicSubscriptionStatus -> {
                 getTopicSubscriptionStatus()
             }
+            is NotificationPrefEvent.UpdateSubscriptionStatus -> {
+                with (event) {
+                    updateChannelPreferenceState(index, value)
+                }
+            }
             is NotificationPrefEvent.UpdateMajorSubscriptionStatue -> {
                 with (event) {
                     updateMajorSubscriptionStatus(value)
                 }
             }
-            is NotificationPrefEvent.UpdateSubscriptionStatus -> {
-                with (event) {
-                    updateChannelPreferenceState(index, value)
+            is NotificationPrefEvent.UpdateMealSubscriptionStatus -> {
+                with(event) {
+                    updateMealSubscriptionStatus(idx, value)
                 }
             }
             is NotificationPrefEvent.GoBack -> {
@@ -76,14 +82,6 @@ class NotificationPreferencesViewModel @Inject constructor(
         mutate(NotificationPrefMutation.MainPermission(isNotificationAllowed && isChannelAllowed))
     }
 
-    private val notificationChannels = hashMapOf(
-        0 to NoticeCategory.GENERAL_NEWS,
-        1 to NoticeCategory.ACADEMIC_NEWS,
-        2 to NoticeCategory.SCHOLARSHIP_NEWS,
-        3 to NoticeCategory.EVENT_NEWS,
-        4 to NoticeCategory.EMPLOYMENT_NEWS
-    )
-
     private fun updateChannelPreferenceState(index: Int, state: Boolean) {
         mutate(NotificationPrefMutation.Syncing)
 
@@ -92,7 +90,7 @@ class NotificationPreferencesViewModel @Inject constructor(
             submitNotificationPreferences(
                 TopicSubscriptionPreferencesBody(
                     topicType = TopicType.NOTICE,
-                    noticeName = notificationChannels[index]!!.name,
+                    noticeName = NoticeCategory.entries[index].name,
                     isSubscribed = state
                 )
             ).collectLatest { result ->
@@ -124,6 +122,24 @@ class NotificationPreferencesViewModel @Inject constructor(
                 }
             }
         }.invokeOnCompletion { mutate(NotificationPrefMutation.Synced) }
+    }
+
+    // Meal
+    private fun updateMealSubscriptionStatus(idx: Int, state: Boolean) {
+        mutate(NotificationPrefMutation.Syncing)
+
+        viewModelScope.launch {
+            submitNotificationPreferences.invoke(
+                TopicSubscriptionPreferencesBody(
+                    topicType = TopicType.MEAL,
+                    noticeName = MealCategory.entries[idx].name,
+                    isSubscribed = state
+                )
+            ).collectLatest { result ->
+                if (result) mutate(NotificationPrefMutation.Meal.UpdateSuccess(idx, state))
+                else mutate(NotificationPrefMutation.Meal.Failure("Update Failed."))
+            }
+        }.invokeOnCompletion{ mutate(NotificationPrefMutation.Synced) }
     }
 
     private fun getTopicSubscriptionStatus() =
@@ -170,6 +186,20 @@ class NotificationPreferencesViewModel @Inject constructor(
                         }
                     )
                 }
+
+            fetchTopicSubscriptionStatus(TopicType.MEAL)
+                .collectLatest { result ->
+                    result.fold(
+                        onSuccess = {
+                            mutate(NotificationPrefMutation.Meal.FetchSuccess(
+                                status = it.map { value -> value.second }
+                            ))
+                        },
+                        onFailure = {
+                            mutate(NotificationPrefMutation.Meal.Failure(it.stackTraceToString()))
+                        }
+                    )
+                }
         }.invokeOnCompletion { mutate(NotificationPrefMutation.Synced) }
 
     private fun List<Boolean>.updateValueByIndex(index: Int, value: Boolean) =
@@ -193,6 +223,7 @@ class NotificationPreferencesViewModel @Inject constructor(
             }
             is NotificationPrefMutation.Notice -> { mutation.reducer(currentState) }
             is NotificationPrefMutation.Major -> { mutation.reducer(currentState) }
+            is NotificationPrefMutation.Meal -> { mutation.reducer(currentState) }
         }
     }
 
@@ -239,6 +270,27 @@ class NotificationPreferencesViewModel @Inject constructor(
                 state.copy(
                     isError = true
                 ).also { Log.d(TAG, "FAILURE: $reason") }
+            }
+        }
+
+    private fun NotificationPrefMutation.Meal.reducer(state: NotificationPrefStatus) =
+        when (this) {
+            is NotificationPrefMutation.Meal.FetchSuccess -> {
+                state.copy(
+                    isMealChannelAllowed = status,
+                    isError = false
+                )
+            }
+            is NotificationPrefMutation.Meal.UpdateSuccess -> {
+                state.copy(
+                    isMealChannelAllowed = state.isMealChannelAllowed.updateValueByIndex(
+                        idx, status
+                    ),
+                    isError = false
+                )
+            }
+            is NotificationPrefMutation.Meal.Failure -> {
+                state.copy(isError = true).also { Log.d(TAG, "FAILURE: $reason") }
             }
         }
 }

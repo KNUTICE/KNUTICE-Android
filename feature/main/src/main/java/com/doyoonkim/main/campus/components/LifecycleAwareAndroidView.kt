@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.Composable
@@ -21,12 +22,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 @Composable
 fun LifecycleAwareWebView(
     modifier: Modifier = Modifier,
+    dynamicThemeEnabled: Boolean = true,
     url: String,
     onWebViewCreate: (WebView) -> Unit = {  },
     onWebViewDestroy: (WebView) -> Unit = {  },
     onLeaveWebView: () -> Unit
 ) {
     var webViewInstance by remember { mutableStateOf<WebView?>(null) }
+    var lastLoadedUrl by remember { mutableStateOf("") }
 
     // WebView BackHandler
     BackHandler {
@@ -63,8 +66,17 @@ fun LifecycleAwareWebView(
             val target = webViewInstance
             if (target != null) {
                 onWebViewDestroy(target)
+
+                // Chromium Memory Tear Down
+                target.stopLoading()
+                target.clearHistory()
+                target.removeAllViews()
+                target.loadUrl("about:blank")       // Clear Rendering Process.
+                // Remove Taget WebView from its ViewTree. (Allow GC collects it)
+                (target.parent as? ViewGroup)?.removeView(target)
                 target.destroy()
             }
+            webViewInstance = null
         }
     }
 
@@ -79,7 +91,8 @@ fun LifecycleAwareWebView(
                     ViewGroup.LayoutParams.MATCH_PARENT,
                     ViewGroup.LayoutParams.MATCH_PARENT
                 )
-                setBackgroundColor(Color.TRANSPARENT)
+
+                if (dynamicThemeEnabled) setBackgroundColor(Color.TRANSPARENT)
 
                 // WebView Default Settings for seamless UX in Hybrid condition.
                 overScrollMode = View.OVER_SCROLL_NEVER
@@ -91,6 +104,8 @@ fun LifecycleAwareWebView(
                     @SuppressLint("SetJavaScriptEnabled")
                     javaScriptEnabled = true
                     domStorageEnabled = true
+                    // Enable Global Cache Policy
+                    cacheMode = WebSettings.LOAD_DEFAULT
 
                     // Ensure responsiveness
                     useWideViewPort = true          // support HTML viewport tag.
@@ -103,10 +118,16 @@ fun LifecycleAwareWebView(
                 // Additional Configuration injected (Client, Listener)
                 onWebViewCreate(this)
 
-                // Load WebApp
-                loadUrl(url)
+                // allocate the Instance
+                webViewInstance = this
             }
         },
-        update = { view -> webViewInstance = view }
+        update = { view ->
+            // Load WebApp
+            if (lastLoadedUrl != url) {
+                view.loadUrl(url)
+                lastLoadedUrl = url
+            }
+        }
     )
 }

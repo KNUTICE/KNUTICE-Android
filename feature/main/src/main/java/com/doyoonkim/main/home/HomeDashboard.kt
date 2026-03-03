@@ -158,7 +158,7 @@ fun HomeDashboard(
                     .padding(innerPadding)
                     .background(MaterialTheme.colorScheme.displayBackground),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Top
+                verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 if (!uiState.tipState.isError && uiState.tipState.tips.isNotEmpty()) {
                     item("tip") {
@@ -241,7 +241,7 @@ fun HomeDashboard(
 
                         NotificationPreviewList(
                             modifier = Modifier
-                                .padding(7.dp)
+                                .padding(horizontal = 7.dp)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(MaterialTheme.colorScheme.secondaryBackground),
                             listTitle = stringResource(
@@ -263,7 +263,8 @@ fun HomeDashboard(
                 item("notice by selected major") {
                     if (uiState.majorNoticesState.isError) {
                         DashboardPlaceholder(
-                            modifier = modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth()
+                                .padding(horizontal = 7.dp)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(MaterialTheme.colorScheme.secondaryBackground),
                             imageResources = R.drawable.outline_school_24,
@@ -296,7 +297,7 @@ fun HomeDashboard(
                     } else {
                         NotificationPreviewList(
                             modifier = Modifier
-                                .padding(7.dp)
+                                .padding(horizontal = 7.dp)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(MaterialTheme.colorScheme.secondaryBackground),
                             listTitle = stringResource(

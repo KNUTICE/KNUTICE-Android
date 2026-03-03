@@ -10,6 +10,7 @@ data class NotificationPrefStatus(
     val isEachChannelAllowed: List<Boolean> = listOf(false, false, false, false, false),
     val isMajorSubscribed: Boolean = false,
     val isMajorChannelAllowed: Boolean = false,
+    val isMealChannelAllowed: List<Boolean> = listOf(false, false),
     val isSyncCompleted: Boolean = true,
     val isError: Boolean = false
 ): UiState
@@ -18,8 +19,9 @@ sealed interface NotificationPrefEvent: UiEvent {
     data object CheckMainPermissionStatus: NotificationPrefEvent
     data object RequestSystemSettings: NotificationPrefEvent
     data object RequestTopicSubscriptionStatus: NotificationPrefEvent
-    data class UpdateMajorSubscriptionStatue(val value: Boolean): NotificationPrefEvent
     data class UpdateSubscriptionStatus(val index: Int, val value: Boolean): NotificationPrefEvent
+    data class UpdateMajorSubscriptionStatue(val value: Boolean): NotificationPrefEvent
+    data class UpdateMealSubscriptionStatus(val idx: Int, val value: Boolean): NotificationPrefEvent
     data object GoBack: NotificationPrefEvent
 }
 
@@ -43,5 +45,11 @@ sealed interface NotificationPrefMutation: UiMutation {
         data class FetchSuccess(val status: Boolean): Major
         data class UpdateSuccess(val status: Boolean): Major
         data class Failure(val reason: String): Major
+    }
+
+    sealed interface Meal: NotificationPrefMutation {
+        data class FetchSuccess(val status: List<Boolean>): Meal
+        data class UpdateSuccess(val idx: Int, val status: Boolean): Meal
+        data class Failure(val reason: String): Meal
     }
 }

@@ -174,6 +174,10 @@
     <string name="widget_preview_title">お知らせウィジェット</string>
     <string name="widget_preview_description">選んだカテゴリーの最新おしらせを確認できます</string>
     <string name="bottom_bar_major_title">専攻アラム</string>
+    <string name="title_student_cafeteria">学生食堂</string>
+    <string name="title_staff_cafeteria">教職員食堂</string>
+    <string name="description_student_cafeteria_channel">学生食堂のメニューをもらいたい</string>
+    <string name="description_staff_cafeteria_channel">教職員食堂のメニューをもらいたい</string>
     <string name="knutice_carrel_widget_title">閲覧室の空き状況</string>
     <string name="knutice_carrel_widget_description">閲覧室の空き状況をひと目でチェックしましょう</string>
 </resources>

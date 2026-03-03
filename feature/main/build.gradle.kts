@@ -27,12 +27,14 @@ configure<LibraryExtension>() {
     val carrelBridge = properties["carrel_bridge"] ?: ""
 
     val diningPath = properties["dining_path"] ?: ""
+    val diningBridge = properties["dining_bridge"] ?: ""
 
     defaultConfig {
         buildConfigField("String", "KNUTICE_ORIGIN", "\"$origin\"")
         buildConfigField("String", "CARREL_PATH", "\"$carrelPath\"")
         buildConfigField("String", "CARREL_BRIDGE", "\"$carrelBridge\"")
         buildConfigField("String", "DINING_PATH", "\"$diningPath\"")
+        buildConfigField("String", "DINING_BRIDGE", "\"$diningBridge\"")
     }
 
     buildFeatures {

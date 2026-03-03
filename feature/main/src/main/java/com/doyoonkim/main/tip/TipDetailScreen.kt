@@ -1,6 +1,5 @@
 package com.doyoonkim.main.tip
 
-import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,10 +13,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import com.doyoonkim.common.R
 import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.common.ui.TopAppBarWithNavButton
+import com.doyoonkim.main.campus.components.LifecycleAwareWebView
 
 @Composable
 fun TipDetailScreen(
@@ -50,14 +49,14 @@ fun TipDetailScreen(
                 .background(Color.Transparent),
             contentAlignment = Alignment.Center
         ) {
-            AndroidView(
-                modifier = modifier.fillMaxSize().padding(innerPadding),
-                factory = { context ->
-                    WebView(context).apply {
-                        loadUrl(contentUrl)
-                    }
-                }
-            )
+            LifecycleAwareWebView(
+                modifier = modifier.fillMaxSize()
+                    .padding(innerPadding),
+                dynamicThemeEnabled = false,
+                url = contentUrl
+            ) {
+                onBackPressed()
+            }
         }
     }
 }

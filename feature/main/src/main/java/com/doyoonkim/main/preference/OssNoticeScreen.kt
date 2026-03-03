@@ -1,6 +1,5 @@
 package com.doyoonkim.main.preference
 
-import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,9 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.viewinterop.AndroidView
 import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.common.R
+import com.doyoonkim.main.campus.components.LifecycleAwareWebView
 
 @Composable
 fun OssNoticeScreen(
@@ -29,13 +28,10 @@ fun OssNoticeScreen(
         },
         containerColor = Color.White
     ) { innerPadding ->
-        AndroidView(
+        LifecycleAwareWebView(
             modifier = modifier.fillMaxSize().padding(innerPadding),
-            factory = { context ->
-                WebView(context).apply {
-                    loadUrl("https://knutice.github.io/KNUTICE-OpenSourceLicense/Android/opensource.html")
-                }
-            }
-        )
+            dynamicThemeEnabled = false,
+            url = "https://knutice.github.io/KNUTICE-OpenSourceLicense/Android/opensource.html"
+        ) { onBackPressed() }
     }
 }
