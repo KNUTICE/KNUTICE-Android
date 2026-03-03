@@ -191,4 +191,6 @@
     <string name="title_staff_cafeteria">Staff Dining Hall</string>
     <string name="description_student_cafeteria_channel">Get push notificaiton for daily student dining menu</string>
     <string name="description_staff_cafeteria_channel">Get push notification for daily staff dining menu</string>
+    <string name="knutice_carrel_widget_title">Carrel Roon Status</string>
+    <string name="knutice_carrel_widget_description">Check Carrel Room Occupancy Statue</string>
 </resources>
