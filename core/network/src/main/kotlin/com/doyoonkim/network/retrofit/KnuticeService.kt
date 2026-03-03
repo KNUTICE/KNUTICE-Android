@@ -4,12 +4,14 @@ import com.doyoonkim.network.model.FcmTokenSaveRequest
 import com.doyoonkim.network.model.FcmTokenUpdateRequest
 import com.doyoonkim.network.model.ReportSaveRequest
 import com.doyoonkim.network.model.TopicUpdateRequest
+import com.doyoonkim.network.model.dto.CarrelRoomStatusDTO
 import model.NoticeByIdResult
 import model.NoticeSummaryResult
 import model.NoticesByKeywordResult
 import model.NoticesPerPageResult
 import model.PatchResult
 import model.PostResult
+import model.ReadingRoomStatusResult
 import model.TipResult
 import model.TopicSubscriptionPreferencesResult
 import retrofit2.http.Body
@@ -61,6 +63,11 @@ interface KnuticeService {
     suspend fun getAllTips(
         @Query("deviceType") deviceType: String
     ): TipResult
+
+    @GET("open-api/v1/reading-rooms/status")
+    suspend fun getReadingRoomStatus(
+        @Header("fcmToken") token: String
+    ): ReadingRoomStatusResult
 
     @Headers("Content-Type: application/json")
     @POST("open-api/v1/fcm-tokens")
