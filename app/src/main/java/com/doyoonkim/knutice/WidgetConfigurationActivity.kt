@@ -29,6 +29,11 @@ class WidgetConfigurationActivity : ComponentActivity() {
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
+        if (widgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
+            finish()
+            return
+        }
+
         // Composable Screen
         setContent {
             KNUTICETheme {
