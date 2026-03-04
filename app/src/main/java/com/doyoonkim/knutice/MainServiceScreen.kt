@@ -87,7 +87,8 @@ fun MainServiceScreen(
             modifier = Modifier.fillMaxSize()
                 .padding(
                     start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    end = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
+                    end = contentPadding.calculateEndPadding(LayoutDirection.Ltr),
+                    bottom = contentPadding.calculateBottomPadding()
                 ),
             contentAlignment = Alignment.TopCenter
         ) {
