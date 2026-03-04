@@ -13,7 +13,7 @@
         android:fullBackupContent="@xml/backup_rules"
         android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="${appLabel}"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.KNUTICE"
@@ -105,7 +105,7 @@
         <!--Prevent Default initialization of WorkManager instance-->
         <provider
             android:name="androidx.startup.InitializationProvider"
-            android:authorities="com.doyoonkim.knutice.androidx-startup"
+            android:authorities="${applicationId}.androidx-startup"
             android:exported="false"
             tools:node="merge">
             <meta-data

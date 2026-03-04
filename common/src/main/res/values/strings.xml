@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">KNUTICE</string>
+    <string name="app_name_debug" translatable="false">KNUTICE (DEBUG)</string>
     <string name="general_news">General</string>
     <string name="academic_news">Academic</string>
     <string name="scholarship_news">Scholarship</string>

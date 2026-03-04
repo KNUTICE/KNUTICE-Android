@@ -16,15 +16,22 @@ configure<ApplicationExtension>() {
     defaultConfig {
         applicationId = "com.doyoonkim.knutice"
         versionCode = 34
-        versionName = "1.7.0_RC1"
+        versionName = "@string/version_code"
     }
     buildTypes {
+        // Set application id prefix for Debug Build
+        debug {
+            applicationIdSuffix = ".debug"
+            manifestPlaceholders["appLabel"] = "@string/app_name_debug"
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["appLabel"] = "@string/app_name"
         }
     }
     packaging {
