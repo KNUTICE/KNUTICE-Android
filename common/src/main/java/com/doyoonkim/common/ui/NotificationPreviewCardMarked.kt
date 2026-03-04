@@ -31,7 +31,6 @@ fun NotificationPreviewCardMarked(
         contentAlignment = Alignment.TopEnd
     ) {
         NotificationPreviewCard(
-            modifier = Modifier.padding(end = 10.dp),
             isLoading = isLoading,
             notificationTitle = noticeTitle,
             notificationInfo = noticeSubtitle,
@@ -41,8 +40,7 @@ fun NotificationPreviewCardMarked(
         Image(
             painter = painterResource(R.drawable.baseline_bookmarks_24),
             contentDescription = "Bookmark Image",
-            colorFilter = ColorFilter.tint(iconTint),
-            modifier = Modifier.padding(end = 10.dp)
+            colorFilter = ColorFilter.tint(iconTint)
         )
     }
 }
