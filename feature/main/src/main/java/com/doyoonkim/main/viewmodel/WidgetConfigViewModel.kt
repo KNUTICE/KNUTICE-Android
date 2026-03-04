@@ -37,10 +37,6 @@ class WidgetConfigViewModel @Inject constructor(
             }
             is WidgetConfigEvent.SaveSelection -> {
                 updateWidgetConfiguration()
-//                mutate(WidgetConfigMutation.Dialog.Show)
-            }
-            is WidgetConfigEvent.DismissDialog -> {
-                mutate(WidgetConfigMutation.Dialog.Dismiss)
             }
             is WidgetConfigEvent.Exit -> sendSideEffect(WidgetConfigSideEffect.CloseSettings)
         }
@@ -67,6 +63,7 @@ class WidgetConfigViewModel @Inject constructor(
             // Execute worker to update widget.
             noticeWidgetTaskScheduler()
             mutate(WidgetConfigMutation.Configuration.Processed)
+            sendSideEffect(WidgetConfigSideEffect.ShowProcessedSnackBark)
         }
     }
 
@@ -76,7 +73,6 @@ class WidgetConfigViewModel @Inject constructor(
     ): WidgetConfigState {
         return when (mutation) {
             is WidgetConfigMutation.Configuration -> mutation.reducer(currentState)
-            is WidgetConfigMutation.Dialog -> mutation.reducer(currentState)
         }
     }
 
@@ -103,14 +99,4 @@ class WidgetConfigViewModel @Inject constructor(
             }
         }
     }
-
-    private fun WidgetConfigMutation.Dialog.reducer(
-        currentState: WidgetConfigState
-    ) : WidgetConfigState {
-        return when(this) {
-            is WidgetConfigMutation.Dialog.Show -> { currentState.copy(isDialogVisible = true) }
-            is WidgetConfigMutation.Dialog.Dismiss -> { currentState.copy(isDialogVisible = false) }
-        }
-    }
-
 }
