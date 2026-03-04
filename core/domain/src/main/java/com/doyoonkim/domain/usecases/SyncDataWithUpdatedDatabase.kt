@@ -101,7 +101,7 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                             if (bookmark.updatedAt > 0) bookmark.updatedAt
                             else noticeLocal.timestamp.toLong()
                     ).also { println("Synced Bookmark: ${it.toString()}") }
-                    bookmarkLocalRepository.updateBookmark(syncedBookmark).firstOrNull()
+                    bookmarkLocalRepository.updateBookmark(syncedBookmark)
                 }
 
                 if (!noticeLocal.isSynced()) {
