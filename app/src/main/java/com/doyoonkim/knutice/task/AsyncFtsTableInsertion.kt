@@ -32,7 +32,7 @@ class AsyncFtsTableInsertion(
             for (e in batchResult) {
                 val insertionResult = insertPendingFtsEntries.execute(e)
                 if (insertionResult) {
-                    processedId.add(e.bookmarkId)
+                    processedId.add(e.stagingId)
                 }
             }
             val result = localRepository.removePendingBookmarkFtsEntry(processedId).first()

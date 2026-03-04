@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Fts4
 import androidx.room.PrimaryKey
+import com.doyoonkim.model.StagingPolicy
 
 @Entity
 data class Bookmark(
@@ -30,8 +31,11 @@ data class BookmarkFts(
 // Temporary Table for Asynchronous FTS table insertion
 @Entity
 data class PendingBookmarkFtsAsync(
-    @PrimaryKey val bookmarkId: Int,
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(defaultValue = "0") val stagingId: Int = 0,
+    val bookmarkId: Int,
     val bookmarkNotes: String,
     val noticeTitle: String,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    @ColumnInfo(defaultValue = "INSERT")val stagingPolicy: StagingPolicy
 )

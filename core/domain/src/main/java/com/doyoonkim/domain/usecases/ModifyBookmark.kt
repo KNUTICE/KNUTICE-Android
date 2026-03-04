@@ -2,27 +2,19 @@ package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.interfaces.AsyncFtsTaskScheduler
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
-import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
-import com.doyoonkim.domain.util.KoreanTokenizer
-import com.doyoonkim.model.BookmarkFtsVO
 import com.doyoonkim.model.BookmarkVO
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.PendingBookmarkFtsVO
-import com.doyoonkim.model.di.DefaultDispatcher
+import com.doyoonkim.model.StagingPolicy
 import com.doyoonkim.model.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.transform
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface ModifyBookmark {
@@ -35,12 +27,10 @@ interface ModifyBookmark {
 }
 
 class ModifyBookmarkImpl @Inject constructor(
-    private val noticeLocalRepository: NoticeLocalRepository,
     private val bookmarkLocalRepository: BookmarkLocalRepository,
     private val remoteRepository: NoticeRemoteRepository,
     private val pendingWorkScheduler: AsyncFtsTaskScheduler,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : ModifyBookmark {
 
     override fun query(nttId: Int): Flow<BookmarkVO> =
@@ -51,83 +41,56 @@ class ModifyBookmarkImpl @Inject constructor(
         }.flowOn(ioDispatcher)
 
     override fun createOrUpdate(bookmark: BookmarkVO, notice: NoticeVO?) = flow {
-        println("ModifyBookmarkImpl\t\tCreate: ${notice == null}")
         if (notice == null) {
-            println("ModifyBookmarkImpl\t\tQuery RemoteSource")
+            // Creation
             // Need creation. Request notice instance from the remote source first.
             val vo = remoteRepository.queryNoticeById(bookmark.targetNoticeNttId)
                 .firstOrNull()
-            vo?.let {
-                val bookmarkCreation = bookmarkLocalRepository.createBookmark(bookmark, vo)
-                    .first()
+            if (vo == null) emit(false).also { return@flow }
 
-                if (bookmarkCreation) {
-                    val savedBookmark = bookmarkLocalRepository.queryBookmarkByNttId(vo.nttId)
-                        .firstOrNull()
+            // Bookmark Entity Creation (Sequential DB Operation)
+            val result = bookmarkLocalRepository.createBookmark(
+                bookmark, vo, PendingBookmarkFtsVO(
+                    bookmarkId = bookmark.bookmarkId,
+                    notes = bookmark.bookmarkNote,
+                    title = vo.title,
+                    policy = StagingPolicy.INSERT
+                )
+            )
 
-                    savedBookmark?.let {
-//                        val ftsCreation = bookmarkLocalRepository.createBookmarkFts(
-//                            generateBookmarkFtsEntry(it, vo)
-//                        ).first()
-                        val enqueueResult = bookmarkLocalRepository.createPendingBookmarkFtsEntity(
-                            PendingBookmarkFtsVO(
-                                bookmarkId = it.bookmarkId,
-                                notes = it.bookmarkNote,
-                                title = vo.title
-                            )
-                        ).first()
-                        pendingWorkScheduler.execute()
+            if (result) pendingWorkScheduler.execute()
 
-                        emit(enqueueResult)
-                    } ?: emit(false)
-                } else {
-                    emit(false)
-                }
-            } ?: emit(false)
+            emit(result)
         } else {
-            val updateBookmark = bookmarkLocalRepository.updateBookmark(bookmark)
-                .first()
-            val updateFts = bookmarkLocalRepository.updateBookmarkFts(
-                generateBookmarkFtsEntry(bookmark, notice)
-            ).first()
+            // Update
+            val result = bookmarkLocalRepository.updateBookmark(
+                bookmark, PendingBookmarkFtsVO(
+                    bookmarkId = bookmark.bookmarkId,
+                    notes = bookmark.bookmarkNote,
+                    title = notice.title,
+                    policy = StagingPolicy.UPDATE
+                )
+            )
+            if (result) pendingWorkScheduler.execute()
 
-            emit(updateBookmark && updateFts)
+            emit(result)     // Bookmark Entity insertion is already successful.
         }
     }.catch { /* Internal Error */ }.flowOn(ioDispatcher)
 
-    override fun delete(bookmark: BookmarkVO, notice: NoticeVO): Flow<Boolean> =
-        bookmarkLocalRepository.requestBookmarkDeletion(bookmark).transform { result ->
-            if (result) {
-                emitAll(
-                    combine(
-                        noticeLocalRepository.requestNoticeDeletion(notice),
-                        bookmarkLocalRepository.deleteBookmarkFts(
-                            generateBookmarkFtsEntry(bookmark, notice)
-                        )
-                    ) { first, second ->
-                        first && second
-                    }
-                )
-            }
-            else emit(false)
-        }.catch {
-            /* Internal Error. Consume values, and never emit values. */
-        }.flowOn(ioDispatcher)
+    override fun delete(bookmark: BookmarkVO, notice: NoticeVO): Flow<Boolean> = flow {
+        val result = bookmarkLocalRepository.requestBookmarkDeletion(
+            bookmark, notice, PendingBookmarkFtsVO(
+                bookmarkId = bookmark.bookmarkId,
+                notes = bookmark.bookmarkNote,
+                title = notice.title,
+                policy = StagingPolicy.DELETE
+            ))
+        if (result) pendingWorkScheduler.execute()
 
-
-    private suspend fun generateBookmarkFtsEntry(bookmark: BookmarkVO, notice: NoticeVO): BookmarkFtsVO {
-        return BookmarkFtsVO(
-            ftsId = bookmark.bookmarkId,
-            bookmarkNote = bookmark.bookmarkNote,
-            noticeTitle = notice.title,
-            bookmarkNoteTokenized = withContext(defaultDispatcher) {
-                async { KoreanTokenizer.getTokenizedString(bookmark.bookmarkNote) }
-            }.await(),
-            noticeTitleTokenized = withContext(defaultDispatcher) {
-                async { KoreanTokenizer.getTokenizedString(notice.title) }
-            }.await()
-        )
-    }
+        emit(result)
+    }.catch {
+        /* Internal Error. Consume values, and never emit values. */
+    }.flowOn(ioDispatcher)
 
 }
 
