@@ -56,6 +56,6 @@ class InsertPendingFtsEntriesImpl @Inject constructor(
         withContext(defaultDispatcher) {
             async {
                 KoreanTokenizer.getTokenizedString(target)
-            }
-        }.await()
+            }.await()
+        }
 }

@@ -101,7 +101,10 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                             if (bookmark.updatedAt > 0) bookmark.updatedAt
                             else noticeLocal.timestamp.toLong()
                     ).also { println("Synced Bookmark: ${it.toString()}") }
-                    bookmarkLocalRepository.updateBookmark(syncedBookmark)
+                    if (!bookmarkLocalRepository.updateBookmark(syncedBookmark)) {
+                        failureCounts++
+                        continue
+                    }
                 }
 
                 if (!noticeLocal.isSynced()) {
@@ -118,7 +121,10 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                     val syncedNotice = noticeLocal.copy(
                         noticeName = noticeRemote.noticeName
                     ).also { println("Synced Notice: ${it.toString()}") }
-                    noticeLocalRepository.updateNoticeEntity(syncedNotice).firstOrNull()
+                    if (!noticeLocalRepository.updateNoticeEntity(syncedNotice).first()) {
+                        failureCounts++
+                        continue
+                    }
                 }
             } catch (e: Exception) {
                 // Error occurred during synchronization
