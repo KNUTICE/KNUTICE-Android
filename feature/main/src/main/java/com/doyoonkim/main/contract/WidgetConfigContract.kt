@@ -10,19 +10,18 @@ data class WidgetConfigState(
     val defaultCategories: List<String> = emptyList(),
     val selectedCategoryPolicy: WidgetCategoryPolicy = WidgetCategoryPolicy.Unconfigured,
     val majorSubscribed: String? = null,
-    val isProcessing: Boolean = false,
-    val isDialogVisible: Boolean = false
+    val isProcessing: Boolean = false
 ) : UiState
 
 sealed interface WidgetConfigEvent : UiEvent {
     data object FetchStatus : WidgetConfigEvent
     data class SelectPolicy(val policy: WidgetCategoryPolicy): WidgetConfigEvent
     data object SaveSelection : WidgetConfigEvent
-    data object DismissDialog: WidgetConfigEvent
     data object Exit : WidgetConfigEvent
 }
 
 sealed interface WidgetConfigSideEffect : UiSideEffect {
+    data object ShowProcessedSnackBark: WidgetConfigSideEffect
     data object CloseSettings : WidgetConfigSideEffect
 }
 
@@ -32,9 +31,5 @@ sealed interface WidgetConfigMutation : UiMutation {
         data object Processed : Configuration
         data class Selected(val policy: WidgetCategoryPolicy): Configuration
         data class Available(val categories: List<String>, val majorSubscribed: String?): Configuration
-    }
-    sealed interface Dialog: WidgetConfigMutation {
-        data object Show: Dialog
-        data object Dismiss: Dialog
     }
 }

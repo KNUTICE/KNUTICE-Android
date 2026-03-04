@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -18,15 +20,21 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -39,6 +47,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.common.MajorResources
 import com.doyoonkim.common.NoticeResources
+import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.secondaryBackground
@@ -51,6 +60,7 @@ import com.doyoonkim.main.contract.WidgetConfigEvent
 import com.doyoonkim.main.contract.WidgetConfigSideEffect
 import com.doyoonkim.main.viewmodel.WidgetConfigViewModel
 import com.doyoonkim.model.WidgetCategoryPolicy
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,12 +71,24 @@ fun WidgetPreferencesScreen(
     onBackClicked: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    // Confirm Snack Bar State
+    val snackBarState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.sendUiEvent(WidgetConfigEvent.FetchStatus)
         viewModel.uiSideEffect.collect { sideEffect ->
             when (sideEffect) {
                 is WidgetConfigSideEffect.CloseSettings -> onBackClicked()
+                is WidgetConfigSideEffect.ShowProcessedSnackBark -> {
+                    launch {
+                        snackBarState.showSnackbar(
+                            context.getString(R.string.notice_widget_set_confirm),
+                            actionLabel = context.getString(R.string.btn_confirm),
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                }
             }
         }
     }
@@ -78,6 +100,20 @@ fun WidgetPreferencesScreen(
                 navButtonType = NavButtonType.CLOSE
             ) {
                 viewModel.sendUiEvent(WidgetConfigEvent.Exit)
+            }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarState
+            ) {data ->
+                Snackbar(
+                    modifier = Modifier.padding(bottom = 80.dp),
+                    snackbarData = data,
+                    containerColor = MaterialTheme.colorScheme.secondaryBackground,
+                    contentColor = MaterialTheme.colorScheme.title,
+                    actionColor = MaterialTheme.colorScheme.variantPurple,
+                    shape = RoundedCornerShape(16.dp),
+                )
             }
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
@@ -151,6 +187,9 @@ fun WidgetPreferencesScreen(
                         }
                     }
                 }
+
+                // Spacer (prevent Apply Button to overlay the content
+                item { Spacer(Modifier.height(80.dp)) }
             }
 
             Button(

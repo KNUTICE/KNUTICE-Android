@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">KNUTICE</string>
+    <string name="app_name_debug" translatable="false">KNUTICE (DEBUG)</string>
     <string name="general_news">General</string>
     <string name="academic_news">Academic</string>
     <string name="scholarship_news">Scholarship</string>
@@ -193,4 +194,5 @@
     <string name="description_staff_cafeteria_channel">Get push notification for daily staff dining menu</string>
     <string name="knutice_carrel_widget_title">Carrel Roon Status</string>
     <string name="knutice_carrel_widget_description">Check Carrel Room Occupancy Statue</string>
+    <string name="notice_widget_set_confirm">Category Selected!</string>
 </resources>

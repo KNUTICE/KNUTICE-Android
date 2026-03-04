@@ -158,7 +158,8 @@ fun HomeDashboard(
                     .padding(innerPadding)
                     .background(MaterialTheme.colorScheme.displayBackground),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+                contentPadding = PaddingValues(bottom = bottomPadding)
             ) {
                 if (!uiState.tipState.isError && uiState.tipState.tips.isNotEmpty()) {
                     item("tip") {
@@ -315,10 +316,6 @@ fun HomeDashboard(
                             viewModel.sendUiEvent(HomeEvent.RequestNoticeDetail(it.nttId, it.url))
                         }
                     }
-                }
-
-                item {
-                    Spacer(Modifier.height(bottomPadding))
                 }
             }
         }

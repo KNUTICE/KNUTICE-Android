@@ -96,7 +96,7 @@ fun MainServiceScreen(
                     .align(Alignment.Center),
                 contentPadding = PaddingValues(
                     top = contentPadding.calculateTopPadding(),
-                    bottom = contentPadding.calculateBottomPadding() + 90.dp
+                    bottom = contentPadding.calculateBottomPadding() + 100.dp
                 ),
                 navController = navController,
                 onExit = onExit
