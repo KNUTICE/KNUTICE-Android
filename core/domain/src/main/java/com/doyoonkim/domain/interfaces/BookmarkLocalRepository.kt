@@ -10,11 +10,9 @@ import com.doyoonkim.model.PendingBookmarkFtsVO
 import kotlinx.coroutines.flow.Flow
 
 interface BookmarkLocalRepository {
-    fun createBookmark(bookmark: BookmarkVO): Flow<Boolean>
+    suspend fun createBookmark(bookmark: BookmarkVO, targetNotice: NoticeVO, pending: PendingBookmarkFtsVO): Boolean
 
-    fun createBookmark(bookmark: BookmarkVO, targetNotice: NoticeVO): Flow<Boolean>
-
-    fun updateBookmark(bookmark: BookmarkVO): Flow<Boolean>
+    suspend fun updateBookmark(bookmark: BookmarkVO, pending: PendingBookmarkFtsVO? = null): Boolean
 
     fun queryAllBookmarks(): Flow<List<BookmarkVO>?>
 
@@ -26,7 +24,7 @@ interface BookmarkLocalRepository {
 
     fun queryBookmarkByKeyword(keyword: String, size: Int, pageNumber: Int): Flow<List<BookmarkAsListElementVO>?>
 
-    fun requestBookmarkDeletion(bookmark: BookmarkVO): Flow<Boolean>
+    suspend fun requestBookmarkDeletion(bookmark: BookmarkVO, targetNotice: NoticeVO, pending: PendingBookmarkFtsVO): Boolean
 
     // FTS
     fun createBookmarkFts(ftsEntry: BookmarkFtsVO): Flow<Boolean>
@@ -36,9 +34,7 @@ interface BookmarkLocalRepository {
     fun deleteBookmarkFts(ftsEntry: BookmarkFtsVO): Flow<Boolean>
 
     // Pending FTS Async
-    fun createPendingBookmarkFtsEntity(pendingEntity: PendingBookmarkFtsVO): Flow<Boolean>
-
     suspend fun queryPendingBookmarkFtsBatched(limit: Int): List<PendingBookmarkFtsVO>
 
-    fun removePendingBookmarkFtsEntry(bookmarkIds: List<Int>): Flow<Boolean>
+    fun removePendingBookmarkFtsEntry(stagingId: List<Int>): Flow<Boolean>
 }

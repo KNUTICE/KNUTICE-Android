@@ -9,6 +9,4 @@ interface NoticeLocalRepository {
 
     fun updateNoticeEntity(notice: NoticeVO): Flow<Boolean>
 
-    fun requestNoticeDeletion(notice: NoticeVO): Flow<Boolean>
-
 }
