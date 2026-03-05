@@ -195,4 +195,7 @@
     <string name="knutice_carrel_widget_title">Carrel Roon Status</string>
     <string name="knutice_carrel_widget_description">Check Carrel Room Occupancy Statue</string>
     <string name="notice_widget_set_confirm">Category Selected!</string>
+    <string name="notice_widget_config_header">Select Category for Notice Widget</string>
+    <string name="notice_widget_config_title">Notice Widget Settings</string>
+    <string name="notice_widget_config_apply_button">Apply Selected Cateogry</string>
 </resources>
