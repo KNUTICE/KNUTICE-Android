@@ -118,8 +118,12 @@ fun NoticesInCategoryScreen(
                     userScrollEnabled = true
                 ) {
                     items(uiState.notices.size) { index ->
-                        if (index == uiState.notices.size - 1 && !uiState.isError) {
-                            viewModel.sendUiEvent(NoticesInCategoryEvent.RequestNotices(category))
+
+                        LaunchedEffect(index) {
+                            // Safe Execution of request more notice event
+                            if (index == uiState.notices.size - 1 && !uiState.isError) {
+                                viewModel.sendUiEvent(NoticesInCategoryEvent.RequestNotices(category))
+                            }
                         }
 
                         if (index != 0) {

@@ -216,7 +216,16 @@ fun BookmarkListScreen(
                             }
                         )
 
-                        if (index == uiState.bookmarks.size - 1 && !uiState.isReachEnd) {
+                        LaunchedEffect(index) {
+                            // Safe-execution of request more bookmark event
+                            if (index == uiState.bookmarks.size - 1 && !uiState.isReachEnd) {
+                                viewModel.sendUiEvent(BookmarkListEvent.RequestMoreBookmark)
+                            }
+                        }
+                    }
+
+                    if (uiState.isLoading && !uiState.isRefreshing) {
+                        item {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -230,9 +239,7 @@ fun BookmarkListScreen(
                                     trackColor = MaterialTheme.colorScheme.displayBackground
                                 )
                             }
-                            viewModel.sendUiEvent(BookmarkListEvent.RequestMoreBookmark)
                         }
-
                     }
                 }
             }

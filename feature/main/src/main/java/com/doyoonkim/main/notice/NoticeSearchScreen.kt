@@ -230,9 +230,13 @@ fun NoticeSearchScreen(
                                         0 -> {
                                             itemsIndexed(uiState.fetchResult) { index, notice ->
 
-                                                if (index == uiState.fetchResult.size - 1 && uiState.canRequestMoreNotices) {
-                                                    // List reach ends.
-                                                    viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
+                                                LaunchedEffect(index) {
+                                                    // Safe execution of Fetch More Notice Event
+                                                    if (index == uiState.fetchResult.size - 1
+                                                        && uiState.canRequestMoreNotices) {
+                                                        // List reach ends.
+                                                        viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
+                                                    }
                                                 }
 
                                                 HorizontalDivider(
@@ -265,10 +269,13 @@ fun NoticeSearchScreen(
                                         else -> {
                                             itemsIndexed(uiState.localFetchResult) { index, bookmark ->
 
-                                                if (index == uiState.localFetchResult.size - 1
-                                                    && uiState.canRequestMoreNotices) {
-                                                    // List reach ends.
-                                                    viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
+                                                LaunchedEffect(index) {
+                                                    // Safe execution of Fetch More Notice Event
+                                                    if (index == uiState.localFetchResult.size - 1
+                                                        && uiState.canRequestMoreNotices) {
+                                                        // List reach ends.
+                                                        viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
+                                                    }
                                                 }
 
                                                 HorizontalDivider(

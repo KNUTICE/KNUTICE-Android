@@ -273,7 +273,15 @@ fun NoticeByMajorScreen(
                             )
                         }
 
-                        if (index == uiState.notices.size - 1 && uiState.isFetchable) {
+                        LaunchedEffect(index) {
+                            if (index == uiState.notices.size - 1 && uiState.isFetchable) {
+                                viewModel.sendUiEvent(NoticeByMajorEvent.RequestNotice)
+                            }
+                        }
+                    }
+
+                    if (uiState.isLoading && !uiState.isRefreshing) {
+                        item {
                             Row(
                                 modifier = Modifier.fillMaxWidth()
                                     .wrapContentHeight(),
@@ -286,7 +294,6 @@ fun NoticeByMajorScreen(
                                     trackColor = MaterialTheme.colorScheme.displayBackground
                                 )
                             }
-                            viewModel.sendUiEvent(NoticeByMajorEvent.RequestNotice)
                         }
                     }
                 }
