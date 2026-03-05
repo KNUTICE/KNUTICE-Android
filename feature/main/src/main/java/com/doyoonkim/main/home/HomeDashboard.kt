@@ -1,5 +1,6 @@
 package com.doyoonkim.main.home
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,7 +35,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doyoonkim.common.MajorResources
@@ -49,6 +49,7 @@ import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.DashboardPlaceholder
 import com.doyoonkim.common.ui.EntryPointButton
 import com.doyoonkim.common.ui.HorizontalContentPager
+import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.common.ui.TipPager
@@ -63,7 +64,6 @@ import com.doyoonkim.model.NoticeCategory
 fun HomeDashboard(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel,
-    bottomPadding: Dp = 0.dp,
     onSettingsRequested: () -> Unit,
     onGoBackAction: () -> Unit,
     onMoreNoticeRequested: (Destination) -> Unit,
@@ -144,6 +144,9 @@ fun HomeDashboard(
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { innerPadding ->
         if (uiState.mainContentState.isError) {
+            // Read HomeScreen content safe bottom padding
+            val bottomPadding = LocalHomeSafeBottomPadding.current
+
             PlaceholderScreen(
                 modifier = modifier
                     .fillMaxSize()
@@ -153,6 +156,9 @@ fun HomeDashboard(
                 contentText = stringResource(R.string.error_no_network_connection)
             )
         } else {
+            // Read HomeScreen content safe bottom padding
+            val bottomPadding = LocalHomeSafeBottomPadding.current
+            Log.d("HomeScreen", "Safe Padding: $bottomPadding")
             LazyColumn(
                 modifier = modifier
                     .padding(innerPadding)
