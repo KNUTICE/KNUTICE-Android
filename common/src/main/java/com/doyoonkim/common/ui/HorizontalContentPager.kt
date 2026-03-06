@@ -3,6 +3,7 @@ package com.doyoonkim.common.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsDraggedAsState
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,12 +45,13 @@ private const val MAX_PAGE_MULTIPLIER = 1000
 fun HorizontalContentPager(
     modifier: Modifier = Modifier,
     startingPage: Int,
-    size: Int,
+    elements: Int,
     progressDelay: Long = 5000L,
     pagerContent: @Composable (Int) -> Unit
 ) {
     // Allow user to reverse scroll
     // Prevent potential OutOfBounds due to Process Death. (Potential Size Shrink)
+    val size = elements.coerceAtLeast(1)
     val maxPage = remember(size) { size * MAX_PAGE_MULTIPLIER }
     val initialPage = startingPage + (maxPage / 2)
 
@@ -61,10 +63,11 @@ fun HorizontalContentPager(
 
     val pagerInteractionSource = remember { MutableInteractionSource() }
     val isPagePressed by pagerInteractionSource.collectIsPressedAsState()
+    val isPageDragged by pagerInteractionSource.collectIsDraggedAsState()
     val lifecycle = LocalLifecycleOwner.current
 
     // Auto-Advancing
-    if (!isPagePressed && size > 1) {
+    if (!isPagePressed && !isPageDragged && size > 1) {
         LaunchedEffect(pagerState.settledPage, lifecycle) {
             // Prevent potential resource draining when app is in background.
             // Cancel related coroutine when App enters onStop status.
