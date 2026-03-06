@@ -45,13 +45,13 @@ private const val MAX_PAGE_MULTIPLIER = 1000
 fun HorizontalContentPager(
     modifier: Modifier = Modifier,
     startingPage: Int,
-    elements: Int,
+    size: Int,
     progressDelay: Long = 5000L,
     pagerContent: @Composable (Int) -> Unit
 ) {
     // Allow user to reverse scroll
     // Prevent potential OutOfBounds due to Process Death. (Potential Size Shrink)
-    val size = elements.coerceAtLeast(1)
+    val size = size.coerceAtLeast(1)
     val maxPage = remember(size) { size * MAX_PAGE_MULTIPLIER }
     val initialPage = startingPage + (maxPage / 2)
 
