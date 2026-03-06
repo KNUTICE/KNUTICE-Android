@@ -7,7 +7,7 @@
     android:minHeight="110dp"
     android:minResizeWidth="260dp"
     android:minResizeHeight="110dp"
-    android:resizeMode="vertical"
+    android:resizeMode="horizontal"
     android:widgetCategory="home_screen"
     android:previewLayout="@layout/knutice_carrel_widget_preview"
     android:updatePeriodMillis="0"

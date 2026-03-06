@@ -48,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.common.MajorResources
 import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.R
+import com.doyoonkim.common.theme.containerGray
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.secondaryBackground
@@ -96,7 +97,7 @@ fun WidgetPreferencesScreen(
     Scaffold(
         topBar = {
             TopAppBarWithNavButton(
-                titleText = "위젯 설정",
+                titleText = stringResource(R.string.notice_widget_config_title),
                 navButtonType = NavButtonType.CLOSE
             ) {
                 viewModel.sendUiEvent(WidgetConfigEvent.Exit)
@@ -130,7 +131,7 @@ fun WidgetPreferencesScreen(
             ) {
                 item {
                     Text(
-                        text = "구독 카테고리를 선택해 주세요.",
+                        text = stringResource(R.string.notice_widget_config_header),
                         style = TextStyle(
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Bold,
@@ -202,12 +203,14 @@ fun WidgetPreferencesScreen(
                 shape = RoundedCornerShape(15.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = MaterialTheme.colorScheme.variantPurple,
-                    contentColor = Color.White
+                    contentColor = Color.White,
+                    disabledContainerColor = MaterialTheme.colorScheme.containerGray,
+                    disabledContentColor = MaterialTheme.colorScheme.onAnyBackground
                 ),
                 contentPadding = PaddingValues(5.dp)
             ) {
                 Text(
-                    text = "선택한 카테고리 적용하기",
+                    text = stringResource(R.string.notice_widget_config_apply_button),
                     style = TextStyle(
                         fontSize = 16.sp,
                         fontWeight = FontWeight.SemiBold,

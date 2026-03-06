@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.AnimatedBottomBar
 import com.doyoonkim.common.ui.BottomBarButton
+import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
 import com.doyoonkim.knutice.navigation.AppNavHost
 
 @Composable
@@ -83,60 +85,68 @@ fun MainServiceScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.displayBackground
     ) { contentPadding ->
-        Box(
-            modifier = Modifier.fillMaxSize()
-                .padding(
-                    start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    end = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
-                ),
-            contentAlignment = Alignment.TopCenter
-        ) {
-            AppNavHost(
-                modifier = Modifier
-                    .align(Alignment.Center),
-                contentPadding = PaddingValues(
-                    top = contentPadding.calculateTopPadding(),
-                    bottom = contentPadding.calculateBottomPadding() + 100.dp
-                ),
-                navController = navController,
-                onExit = onExit
-            )
+        // Calculate Content-Safe bottom padding
+        val navBarPadding = contentPadding.calculateBottomPadding() + 7.dp
+        val contentSafeBottomPadding = 100.dp
 
-            if (bottomBarSelectionState >= 0) {
-                // Blur Effect in Overlapping Area
-                Spacer(
-                    modifier = Modifier.fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .height(80.dp)
-                        .background(
-                            brush = Brush.verticalGradient(
-                                listOf(
-                                    Color.Transparent,
-                                    scrimColor.copy(alpha = 0.6f),
-                                    scrimColor.copy(alpha = 0.8f),
-                                    scrimColor.copy(alpha = 1f)
+        CompositionLocalProvider(
+            LocalHomeSafeBottomPadding provides contentSafeBottomPadding
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+                    .padding(
+                        start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+                        end = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
+                    ),
+                contentAlignment = Alignment.TopCenter
+            ) {
+                AppNavHost(
+                    modifier = Modifier
+                        .align(Alignment.Center),
+                    contentPadding = PaddingValues(
+                        top = contentPadding.calculateTopPadding(),
+                        bottom = contentPadding.calculateBottomPadding() + 100.dp
+                    ),
+                    navController = navController,
+                    onExit = onExit
+                )
+
+                if (bottomBarSelectionState >= 0) {
+                    // Blur Effect in Overlapping Area
+                    Spacer(
+                        modifier = Modifier.fillMaxWidth()
+                            .align(Alignment.BottomCenter)
+                            .height(80.dp)
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    listOf(
+                                        Color.Transparent,
+                                        scrimColor.copy(alpha = 0.6f),
+                                        scrimColor.copy(alpha = 0.8f),
+                                        scrimColor.copy(alpha = 1f)
+                                    )
                                 )
                             )
-                        )
-                )
+                    )
 
-                AnimatedBottomBar(
-                    modifier = Modifier
-                        .padding(
-                            start = 15.dp,
-                            end = 15.dp,
-                            bottom = 50.dp
-                        )
-                        .align(Alignment.BottomCenter),
-                    items = bottomBarNavItems,
-                    selection = bottomBarSelectionState,
-                    containerColor = MaterialTheme.colorScheme.secondaryBackground,
-                    contentColor = MaterialTheme.colorScheme.title,
-                    colorOnSelect = MaterialTheme.colorScheme.onAnyBackground,
-                    onItemClicked = { _, dest ->
-                        navController.navigate(dest)
-                    }
-                )
+                    AnimatedBottomBar(
+                        modifier = Modifier
+                            .padding(
+                                start = 15.dp,
+                                end = 15.dp,
+                                bottom = navBarPadding
+                            )
+                            .align(Alignment.BottomCenter),
+                        items = bottomBarNavItems,
+                        selection = bottomBarSelectionState,
+                        containerColor = MaterialTheme.colorScheme.secondaryBackground,
+                        contentColor = MaterialTheme.colorScheme.title,
+                        colorOnSelect = MaterialTheme.colorScheme.onAnyBackground,
+                        onItemClicked = { _, dest ->
+                            navController.navigate(dest)
+                        }
+                    )
+                }
             }
         }
     }

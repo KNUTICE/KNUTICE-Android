@@ -54,9 +54,8 @@ fun CarrelWidgetContainer(
 
     Column(
         modifier = GlanceModifier
-            .fillMaxWidth()
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(10.dp)
             .background(Color.Transparent),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -67,7 +66,7 @@ fun CarrelWidgetContainer(
             iconResId = R.drawable.outline_sync_24,
             onRefreshClick = actionRunCallback<CarrelStatusRefreshAction>()
         )
-        Spacer(GlanceModifier.height(10.dp))
+        Spacer(GlanceModifier.height(5.dp))
 
         Row(
             modifier = GlanceModifier.fillMaxWidth()
@@ -79,7 +78,7 @@ fun CarrelWidgetContainer(
             state.status.forEachIndexed { idx, vo ->
                 Box(
                     modifier = GlanceModifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .defaultWeight()
                         .cornerRadius(15.dp)
                         .background(GlanceTheme.colors.secondaryContainer)
@@ -116,14 +115,14 @@ fun CarrelWidgetContainer(
                             context,
                             vo.occupied,
                             vo.total,
-                            widgetSizeDp = 100f
+                            widgetSizeDp = 90f
                         )
 
                         Image(
                             provider = ImageProvider(statusBitmap),
                             contentDescription = null,
                             modifier = GlanceModifier
-                                .size(100.dp)
+                                .size(90.dp)
                                 .padding(vertical = 5.dp)
                         )
 
@@ -155,7 +154,7 @@ fun CarrelWidgetContainer(
                 }
 
                 if (idx < state.status.size - 1) {
-                    Spacer(GlanceModifier.width(10.dp))
+                    Spacer(GlanceModifier.width(7.dp))
                 }
             }
         }

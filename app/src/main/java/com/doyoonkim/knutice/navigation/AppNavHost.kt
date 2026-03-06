@@ -40,7 +40,6 @@ fun AppNavHost(
         mainServiceNavGraph(
             navController = navController,
             appComponent = appComponent,
-            contentPadding = contentPadding,
             onNoticeDetailRequested = { target ->
                 navController.navigate("notice?nttId=${target.nttId}&contentUrl=${Uri.encode(target.contentUrl)}&FabVisible=${target.isFabVisible}")
             },
@@ -53,7 +52,6 @@ fun AppNavHost(
         bookmarkServiceGraph(
             navController = navController,
             appComponent = appComponent,
-            contentPadding = contentPadding,
             onNoticeDetailRequested = { target ->
                 navController.navigate("notice?nttId=${target.nttId}&contentUrl=${Uri.encode(target.contentUrl)}&FabVisible=${target.isFabVisible}")
             },

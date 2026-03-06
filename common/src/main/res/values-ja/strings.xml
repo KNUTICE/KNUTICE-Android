@@ -181,4 +181,7 @@
     <string name="knutice_carrel_widget_title">閲覧室の空き状況</string>
     <string name="knutice_carrel_widget_description">閲覧室の空き状況をひと目でチェックしましょう</string>
     <string name="notice_widget_set_confirm">カテゴーリを設定しました！</string>
+    <string name="notice_widget_config_header">カテゴーリを選んでください</string>
+    <string name="notice_widget_config_title">お知らせウィジェットの設定</string>
+    <string name="notice_widget_config_apply_button">カテゴーリ選択</string>
 </resources>

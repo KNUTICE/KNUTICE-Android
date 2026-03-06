@@ -52,7 +52,6 @@ import com.doyoonkim.model.NoticeCategory
 fun NavGraphBuilder.mainServiceNavGraph(
     navController: NavController,
     appComponent: AppComponent,
-    contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkServiceRequested: (BookmarkInfo) -> Unit,
     onExit: () -> Unit = {  }
@@ -71,7 +70,6 @@ fun NavGraphBuilder.mainServiceNavGraph(
         HomeDashboard(
             modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<HomeViewModel>(factory = sceneComponent.viewModelFactory()),
-            bottomPadding = contentPadding.calculateBottomPadding(),
             onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onGoBackAction = {
                 navController.popBackStack().also { if (!it) onExit() }
@@ -116,7 +114,6 @@ fun NavGraphBuilder.mainServiceNavGraph(
         NoticeByMajorScreen(
             modifier = Modifier,
             viewModel = viewModel<NoticeByMajorViewModel>(factory = sceneComponent.getViewModelFactory()),
-            bottomPadding = contentPadding.calculateBottomPadding(),
             onGoBackRequested = { navController.popBackStack() },
             onSettingRequested = { navController.navigate(NavRoutes.Settings.route) },
             onNoticeDetailRequested = { id, url -> onNoticeDetailRequested(NoticeDetail(id, url)) }
@@ -137,7 +134,6 @@ fun NavGraphBuilder.mainServiceNavGraph(
         NoticeSearchScreen(
             modifier = Modifier,
             viewModel = viewModel<NoticeSearchViewModel>(factory = sceneComponent.viewModelFactory()),
-            bottomPadding = contentPadding.calculateBottomPadding(),
             onBackPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))

@@ -10,6 +10,7 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.Action
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
@@ -21,7 +22,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import com.doyoonkim.common.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -64,6 +64,8 @@ fun WidgetHeader(
             contentDescription = null,
             modifier = GlanceModifier
                 .wrapContentSize()
+                .padding(10.dp)
+                .cornerRadius(7.dp)
                 .clickable(onRefreshClick),
             colorFilter = ColorFilter.tint(GlanceTheme.colors.primary)
         )

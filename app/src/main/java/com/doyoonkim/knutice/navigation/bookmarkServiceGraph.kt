@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -28,7 +27,6 @@ import com.doyoonkim.knutice.di.components.DaggerEditBookmarkSceneComponent
 fun NavGraphBuilder.bookmarkServiceGraph(
     navController: NavController,
     appComponent: AppComponent,
-    contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkRequested: (BookmarkInfo) -> Unit,
     onExit: () -> Unit = {  }
@@ -45,7 +43,6 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         BookmarkListScreen(
             modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<BookmarkListViewModel>(factory = sceneComponent.getViewModelFactory()),
-            bottomPadding = contentPadding.calculateBottomPadding(),
             onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onBookmarkSelected = {
                 onBookmarkRequested(it)
