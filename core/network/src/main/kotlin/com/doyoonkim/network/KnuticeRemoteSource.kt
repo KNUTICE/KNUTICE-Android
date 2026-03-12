@@ -10,7 +10,6 @@ import com.doyoonkim.network.model.ReportSaveRequest
 import com.doyoonkim.network.model.TopicUpdateRequest
 import com.doyoonkim.network.retrofit.KnuticeService
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -31,7 +30,7 @@ class KnuticeRemoteSource @Inject constructor(
         category: String,
         size: Int = 20,
         lastNttId: Int? = null
-    ) = withContext(Dispatchers.IO) {
+    ) = withContext(ioDispatcher) {
         runCatching {
             knuticeApi.getNoticesPerPage(category, size, lastNttId)
         }
