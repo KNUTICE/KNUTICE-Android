@@ -1,9 +1,11 @@
-![Banner](https://github.com/user-attachments/assets/67608836-b085-4d6b-9f6f-faa562e20912)
-[<img width="380px;" src="https://github.com/user-attachments/assets/e49643e6-3e2b-4a33-97fb-d2f94a8ea91e"/>](https://play.google.com/store/apps/details?id=com.doyoonkim.knutice)
-
-<br>
-
-
+<p align="center">
+    <img src="https://github.com/user-attachments/assets/c9da3074-ea37-41b1-9837-6686631c2789" width="1000">
+    <br>
+    <br>
+    <a href="https://play.google.com/store/apps/details?id=com.doyoonkim.knutice">
+        <img src="https://github.com/user-attachments/assets/e49643e6-3e2b-4a33-97fb-d2f94a8ea91e" width="200">
+    </a>
+</p>
 
 # 🔔 KNUTICE [![kor](https://img.shields.io/badge/lang-kr-blue.svg)](https://github.com/KNUTICE/KNUTICE-Android/blob/release/README.md)
 
@@ -177,13 +179,24 @@ Through this project, I gained deep insights into the Android framework and the 
 - **Modern Navigation:** I learned to seamlessly handle screen transitions and argument passing within a Single Activity architecture using `Navigation for Compose`.
 
 # 📱 Preview
-<div style="display: flex; overflow-x: auto; justify-content: center; margin-bottom: 10px;">
-  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/0ff78e0a-1f5c-49fb-a055-ab0eadae7170">
-  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/ef4b72f6-87d0-4b4e-829f-4aff8dce438f">
-  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/bb921b96-6438-4896-b0aa-0c937997b8ca">
-  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/f6cdfe51-50d2-4b47-a977-8d5d6b488287">
-  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/29e3c455-ca07-4aae-bb44-30bab2379418">
-  <img width="130" alt="스크린샷 2024-08-15 23 51 59" src="https://github.com/user-attachments/assets/5c02cb75-0658-4a7b-85ed-4177f0231e12">  
-</div>
+| Home Dashboard | Organized Notice |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/461c4ab5-1945-4c1e-bd64-44b76e9b5b76" width="350"> | <img src="https://github.com/user-attachments/assets/80c75373-8741-48cd-86aa-cc22be37a536" width="350"> |
+
+| AI Notice Summary | Local Notice Search | Notice Bookmark |
+| :---: | :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/06490024-a662-4509-a105-13d73f5064c6" width="230"> | <img src="https://github.com/user-attachments/assets/299ac763-6941-4b3b-8791-d12257b88c46" width="230"> | <img src="https://github.com/user-attachments/assets/2761df37-c3da-41da-bc04-91aea90dfc4a" width="230"> |
+
+| Dining Menu | Study-Room Status |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/3b5bb2ee-4278-4d81-a7d2-eec45ebf6811" width="350"> | <img src="https://github.com/user-attachments/assets/237a5f84-883b-44f8-a367-fd73a9d2bfbe" width="350"> |
+
+| Notice Widget | Study Room Widget |
+| :---: | :---: |
+| <img src="https://github.com/user-attachments/assets/8de16f3d-db70-44be-b663-95fcc8cda1eb" width="350"> | <img src="https://github.com/user-attachments/assets/3c5d8c7e-ff95-4a83-8bbf-a88ddcde8e50" width="350"> |
+
+| Push Notification Preferences |
+| :---: |
+| <img src="https://github.com/user-attachments/assets/d4bfc8db-5481-4d6f-b858-3f3b5f7e8afe" width="350"> |
 
 <br>
