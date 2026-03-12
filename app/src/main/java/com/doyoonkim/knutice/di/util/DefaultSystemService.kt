@@ -6,8 +6,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.work.WorkManager
 import com.doyoonkim.common.analytics.AnalyticsLogger
-import com.doyoonkim.common.di.ApplicationScope
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
+import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.domain.interfaces.abtest.FirebaseRemoteConfigRepository
@@ -44,6 +44,7 @@ interface NetworkProvider {
 interface LocalStorageProvider {
     fun localNoticeRepository(): NoticeLocalRepository
     fun localBookmarkRepository(): BookmarkLocalRepository
+    fun localWidgetCacheRepository(): LocalWidgetCacheRepository
 }
 
 interface FirebaseInfrastructureProvider {

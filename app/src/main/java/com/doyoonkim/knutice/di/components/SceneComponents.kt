@@ -3,6 +3,7 @@ package com.doyoonkim.knutice.di.components
 import androidx.lifecycle.ViewModelProvider
 import com.doyoonkim.bookmark.di.BookmarkListSceneModule
 import com.doyoonkim.bookmark.di.EditBookmarkSceneModule
+import com.doyoonkim.data.di.CampusRemoteModule
 import com.doyoonkim.data.di.NoticeRemoteModule
 import com.doyoonkim.data.di.PreferencesRemoteModule
 import com.doyoonkim.data.di.TipRemoteModule
@@ -18,6 +19,7 @@ import com.doyoonkim.knutice.di.util.FirebaseInfrastructureProvider
 import com.doyoonkim.knutice.di.util.LocalStorageProvider
 import com.doyoonkim.knutice.di.util.NetworkProvider
 import com.doyoonkim.knutice.di.util.SystemServices
+import com.doyoonkim.main.di.CarrelStatusSceneModule
 import com.doyoonkim.main.di.CustomerServiceSceneModule
 import com.doyoonkim.main.di.HomeSceneModule
 import com.doyoonkim.main.di.NoticeByMajorSceneModule
@@ -35,6 +37,7 @@ import javax.inject.Singleton
 @Component(
     dependencies = [
         SystemServices::class,
+        LocalStorageProvider::class,
         NetworkProvider::class,
         FirebaseInfrastructureProvider::class
     ],
@@ -55,6 +58,7 @@ interface HomeSceneComponent {
         fun create(
             systemServices: SystemServices,
             networkProvider: NetworkProvider,
+            localStorageProvider: LocalStorageProvider,
             firebaseInfrastructureProvider: FirebaseInfrastructureProvider
         ): HomeSceneComponent
     }
@@ -319,5 +323,30 @@ interface WidgetConfigSceneComponent {
     @Component.Factory
     interface Factory {
         fun create(systemService: SystemServices): WidgetConfigSceneComponent
+    }
+}
+
+@Component(
+    dependencies = [
+        SystemServices::class,
+        NetworkProvider::class,
+        LocalStorageProvider::class
+    ],
+    modules = [
+        ViewModelFactoryModule::class,
+        CarrelStatusSceneModule::class,
+        CampusRemoteModule::class
+    ]
+)
+interface CarrelStatusSceneComponent {
+    fun viewModelFactory(): ViewModelProvider.Factory
+
+    @Component.Factory
+    interface Factory {
+        fun create(
+            systemServices: SystemServices,
+            networkProvider: NetworkProvider,
+            localStorageProvider: LocalStorageProvider
+        ): CarrelStatusSceneComponent
     }
 }
