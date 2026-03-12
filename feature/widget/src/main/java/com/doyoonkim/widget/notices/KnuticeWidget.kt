@@ -29,6 +29,7 @@ class KnuticeWidget : GlanceAppWidget() {
             // UiState
             val preference = currentState<Preferences>()
             val stateJson = preference[WidgetKey.NOTICE_WIDGET_PREF_STATE_KEY]
+            val lastUpdated = preference[WidgetKey.NOTICE_WIDGET_LAST_SYNC_KEY] ?: System.currentTimeMillis()
 
             // Retrieve Saved State from the preference (Local Cache/DataStore)
             val widgetState = stateJson?.let {
@@ -45,6 +46,7 @@ class KnuticeWidget : GlanceAppWidget() {
             GlanceTheme(colors = KnuticeWidgetTheme.colors) {
                 NoticeWidgetContents(
                     modifier = GlanceModifier.fillMaxSize(),
+                    lastUpdated = lastUpdated,
                     state = widgetState
                 )
             }

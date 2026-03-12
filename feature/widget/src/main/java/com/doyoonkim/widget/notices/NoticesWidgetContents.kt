@@ -14,6 +14,7 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
+import com.doyoonkim.widget.components.WidgetHeader
 import com.doyoonkim.widget.model.WidgetState
 import com.doyoonkim.widget.notices.components.NoticeWidgetContainer
 import com.doyoonkim.widget.notices.components.WidgetHorizontalDivider
@@ -26,6 +27,7 @@ import com.doyoonkim.widget.util.NoticeWidgetUtil.Companion.validatePhase
 @Composable
 fun NoticeWidgetContents(
     modifier: GlanceModifier = GlanceModifier,
+    lastUpdated: Long,
     state: WidgetState
 ) {
     val context = LocalContext.current
@@ -57,6 +59,7 @@ fun NoticeWidgetContents(
             NoticeWidgetContainer(
                 modifier = modifier,
                 title = state.category,
+                lastUpdated = lastUpdated,
                 titleColor = GlanceTheme.colors.primary,
                 containerColor = GlanceTheme.colors.primaryContainer,
                 contentContainerColor = GlanceTheme.colors.secondaryContainer
@@ -73,6 +76,7 @@ fun NoticeWidgetContents(
             NoticeWidgetContainer(
                 modifier = modifier,
                 title = state.category,
+                lastUpdated = lastUpdated,
                 titleColor = GlanceTheme.colors.primary,
                 containerColor = GlanceTheme.colors.primaryContainer,
                 contentContainerColor = GlanceTheme.colors.secondaryContainer
