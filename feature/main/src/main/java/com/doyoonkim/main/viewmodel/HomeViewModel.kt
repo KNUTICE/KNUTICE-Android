@@ -20,9 +20,9 @@ import com.doyoonkim.main.contract.TipState
 import com.doyoonkim.model.MajorCategory
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.WidgetCategoryPolicy
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -38,12 +38,15 @@ class HomeViewModel @Inject constructor(
     // Local Cache Management
     init {
         viewModelScope.launch {
-            uiState.collectLatest { state ->
-                val coreNoticeReady = with(state.mainContentState) { !isLoading && !isError }
-                val majorNoticeReady = with(state.majorNoticesState) { !isLoading && !isError }
+           uiState.map { it.mainContentState to it.majorNoticesState }
+               .distinctUntilChanged()
+               .collectLatest { (core, major) ->
+                   val coreNoticeReady = with(core) { !isLoading && !isError }
+                   val majorNoticeReady = with(major) { !isLoading && !isError }
 
-                if (coreNoticeReady && majorNoticeReady) updateNoticeLocalCache(state)
-            }
+                   if (coreNoticeReady && majorNoticeReady)
+                       updateNoticeLocalCache(uiState.value)
+               }
         }
     }
 

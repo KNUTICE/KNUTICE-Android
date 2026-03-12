@@ -6,6 +6,7 @@ import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -39,9 +40,11 @@ fun NavGraphBuilder.campusServiceGraph(
             )
         }
     ) {
-        val sceneComponent = DaggerCarrelStatusSceneComponent.factory().create(
-            appComponent, appComponent, appComponent
-        )
+        val sceneComponent = remember(appComponent) {
+            DaggerCarrelStatusSceneComponent.factory().create(
+                appComponent, appComponent, appComponent
+            )
+        }
 
         CarrelStatusScreen(
             modifier = Modifier,
@@ -72,9 +75,11 @@ fun NavGraphBuilder.campusServiceGraph(
         val seat = backStackEntry.arguments?.getString("seatNo")
         Log.d("Navigation", "ROOM:$room SEAT: $seat ")
 
-        val sceneComponent = DaggerCarrelStatusSceneComponent.factory().create(
-            appComponent, appComponent, appComponent
-        )
+        val sceneComponent = remember(appComponent) {
+            DaggerCarrelStatusSceneComponent.factory().create(
+                appComponent, appComponent, appComponent
+            )
+        }
 
         CarrelStatusScreen(
             modifier = Modifier,
