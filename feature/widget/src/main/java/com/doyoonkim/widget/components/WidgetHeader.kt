@@ -1,4 +1,4 @@
-package com.doyoonkim.widget.carrel.components
+package com.doyoonkim.widget.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
@@ -16,6 +16,7 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
+import androidx.glance.layout.width
 import androidx.glance.layout.wrapContentHeight
 import androidx.glance.layout.wrapContentSize
 import androidx.glance.text.FontWeight
@@ -42,22 +43,25 @@ fun WidgetHeader(
         Text(
             text = title,
             style = TextStyle(
-                fontSize = 22.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 color = GlanceTheme.colors.primary
-            )
+            ),
+            maxLines = 1,
+            modifier = GlanceModifier.defaultWeight()
         )
-        Spacer(GlanceModifier.defaultWeight())
+        Spacer(GlanceModifier.width(7.dp))
         Text(
             text = "마지막 업데이트: ${lastUpdated.toFormattedDate()}",
             style = TextStyle(
-                fontSize = 14.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,
                 color = GlanceTheme.colors.primary
             ),
-            modifier = GlanceModifier.padding(end = 10.dp)
+            maxLines = 1,
+            modifier = GlanceModifier.padding(end = 3.dp)
         )
         Image(
             provider = ImageProvider(iconResId),

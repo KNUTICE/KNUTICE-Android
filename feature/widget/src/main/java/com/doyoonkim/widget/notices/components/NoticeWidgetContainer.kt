@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.background
 import androidx.glance.layout.Alignment
@@ -25,11 +26,14 @@ import com.doyoonkim.common.CollegeResource
 import com.doyoonkim.common.MajorResources
 import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.R
+import com.doyoonkim.widget.components.WidgetHeader
+import com.doyoonkim.widget.notices.action.NoticeWidgetRefreshAction
 
 @Composable
 fun NoticeWidgetContainer(
     modifier: GlanceModifier = GlanceModifier,
     title: String,
+    lastUpdated: Long,
     titleColor: ColorProvider,
     containerColor: ColorProvider,
     contentContainerColor: ColorProvider,
@@ -57,19 +61,12 @@ fun NoticeWidgetContainer(
             verticalAlignment = Alignment.CenterVertically,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = categoryText,
-                modifier = GlanceModifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp)
-                    .wrapContentHeight(),
-                style = TextStyle(
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = titleColor,
-                    textAlign = TextAlign.Start
-                ),
-                maxLines = 1
+            WidgetHeader(
+                modifier = GlanceModifier.defaultWeight(),
+                title = categoryText,
+                lastUpdated = lastUpdated,
+                iconResId = R.drawable.outline_sync_24,
+                onRefreshClick = actionRunCallback<NoticeWidgetRefreshAction>()
             )
 
             // Notices Container

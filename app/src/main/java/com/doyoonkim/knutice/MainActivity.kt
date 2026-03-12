@@ -85,7 +85,7 @@ class MainActivity : ComponentActivity() {
         ).build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "Token Registration", ExistingPeriodicWorkPolicy.UPDATE, workRequest
+            "Token Registration", ExistingPeriodicWorkPolicy.KEEP, workRequest
         )
 
         receivedIntent.value = intent

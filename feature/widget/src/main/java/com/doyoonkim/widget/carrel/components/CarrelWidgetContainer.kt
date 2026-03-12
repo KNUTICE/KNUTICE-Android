@@ -39,6 +39,7 @@ import androidx.glance.text.TextStyle
 import com.doyoonkim.common.R
 import com.doyoonkim.model.CarrelRoomStatusVO
 import com.doyoonkim.widget.carrel.action.CarrelStatusRefreshAction
+import com.doyoonkim.widget.components.WidgetHeader
 import com.doyoonkim.widget.model.CarrelWidgetState
 import com.doyoonkim.widget.theme.KnuticeWidgetTheme
 import com.doyoonkim.widget.util.CarrelStatusBitmapGenerator
