@@ -7,6 +7,7 @@ import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.navigation.Destination
+import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.usecases.FetchTips
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
 import com.doyoonkim.main.contract.HomeEvent
@@ -18,17 +19,33 @@ import com.doyoonkim.main.contract.MajorNoticesState
 import com.doyoonkim.main.contract.TipState
 import com.doyoonkim.model.MajorCategory
 import com.doyoonkim.model.NoticeCategory
+import com.doyoonkim.model.WidgetCategoryPolicy
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class HomeViewModel @Inject constructor(
+    private val localWidgetCacheRepository: LocalWidgetCacheRepository,
     private val fetchTopThreeNotices: FetchTopThreeNotices,
     private val fetchTips: FetchTips,
     private val appPreferences: AppPreferences,
     private val analytics: AnalyticsLogger
 ) : BaseViewModel<HomeViewState, HomeEvent, HomeSideEffect, HomeMutation>() {
     override fun setInitialState(): HomeViewState = HomeViewState()
+
+    // Local Cache Management
+    init {
+        viewModelScope.launch {
+            uiState.collectLatest { state ->
+                val coreNoticeReady = with(state.mainContentState) { !isLoading && !isError }
+                val majorNoticeReady = with(state.majorNoticesState) { !isLoading && !isError }
+
+                if (coreNoticeReady && majorNoticeReady) updateNoticeLocalCache(state)
+            }
+        }
+    }
 
     override fun handleEvent(event: HomeEvent) {
         when (event) {
@@ -147,6 +164,35 @@ class HomeViewModel @Inject constructor(
                 )
         } ?: mutate(HomeMutation.MajorNotices.Failure("Unable to find subscribed major"))
     }
+
+    private fun updateNoticeLocalCache(snapshot: HomeViewState) =
+        viewModelScope.launch {
+            when (val noticePolicy = appPreferences.getWidgetCategoryPolicy()) {
+                is WidgetCategoryPolicy.Main -> {
+                    localWidgetCacheRepository.updateNoticeCache(
+                        snapshot.mainContentState.get(noticePolicy.categoryKey)
+                    )
+                }
+                is WidgetCategoryPolicy.Major -> {
+                    localWidgetCacheRepository.updateNoticeCache(
+                        snapshot.majorNoticesState.majorNotices
+                    )
+                }
+                else -> {
+                    // Do nothing.
+                }
+            }
+        }
+
+    private fun MainContentState.get(key: String) =
+        when (key) {
+            NoticeCategory.GENERAL_NEWS.name -> this.notificationGeneral
+            NoticeCategory.ACADEMIC_NEWS.name -> this.notificationAcademic
+            NoticeCategory.SCHOLARSHIP_NEWS.name -> this.notificationScholarship
+            NoticeCategory.EVENT_NEWS.name -> this.notificationEvent
+            NoticeCategory.EMPLOYMENT_NEWS.name -> this.notificationEmployment
+            else -> emptyList()
+        }
 
     // Main Reducer
     override fun reduce(currentState: HomeViewState, mutation: HomeMutation): HomeViewState {

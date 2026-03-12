@@ -7,13 +7,16 @@ import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.knutice.di.components.AppComponent
+import com.doyoonkim.knutice.di.components.DaggerCarrelStatusSceneComponent
 import com.doyoonkim.main.campus.carrel.CarrelStatusScreen
 import com.doyoonkim.main.campus.meal.DiningMenuScreen
+import com.doyoonkim.main.viewmodel.CarrelStatusViewModel
 
 fun NavGraphBuilder.campusServiceGraph(
     navController: NavController,
@@ -36,9 +39,13 @@ fun NavGraphBuilder.campusServiceGraph(
             )
         }
     ) {
+        val sceneComponent = DaggerCarrelStatusSceneComponent.factory().create(
+            appComponent, appComponent, appComponent
+        )
+
         CarrelStatusScreen(
             modifier = Modifier,
-            appPreferences = appComponent.appPreference()   // Access via Provision function
+            viewModel = viewModel<CarrelStatusViewModel>(factory = sceneComponent.viewModelFactory())
         ) {
             navController.popBackStack()
         }
@@ -65,9 +72,13 @@ fun NavGraphBuilder.campusServiceGraph(
         val seat = backStackEntry.arguments?.getString("seatNo")
         Log.d("Navigation", "ROOM:$room SEAT: $seat ")
 
+        val sceneComponent = DaggerCarrelStatusSceneComponent.factory().create(
+            appComponent, appComponent, appComponent
+        )
+
         CarrelStatusScreen(
             modifier = Modifier,
-            appPreferences = appComponent.appPreference()   // Access via Provision function
+            viewModel = viewModel<CarrelStatusViewModel>(factory = sceneComponent.viewModelFactory())
         ) {
             navController.popBackStack()
         }

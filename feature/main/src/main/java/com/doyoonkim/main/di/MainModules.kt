@@ -2,6 +2,7 @@ package com.doyoonkim.main.di
 
 import androidx.lifecycle.ViewModel
 import com.doyoonkim.common.di.ViewModelKey
+import com.doyoonkim.main.viewmodel.CarrelStatusViewModel
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.main.viewmodel.HomeViewModel
 import com.doyoonkim.main.viewmodel.NoticeByMajorViewModel
@@ -94,4 +95,12 @@ abstract class WidgetConfigSceneModule {
     @IntoMap
     @ViewModelKey(WidgetConfigViewModel::class)
     abstract fun bindsViewModel(viewModel: WidgetConfigViewModel): ViewModel
+}
+
+@Module
+abstract class CarrelStatusSceneModule {
+    @Binds
+    @IntoMap
+    @ViewModelKey(CarrelStatusViewModel::class)
+    abstract fun bindViewModel(viewModel: CarrelStatusViewModel): ViewModel
 }

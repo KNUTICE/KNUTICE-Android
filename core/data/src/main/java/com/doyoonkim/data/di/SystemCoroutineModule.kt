@@ -12,7 +12,7 @@ import javax.inject.Singleton
 object SystemCoroutineModule {
 
     private val applicationScopeCoroutine =
-        CoroutineScope(SupervisorJob() + Dispatchers.Default)
+        CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     @Provides
     @Singleton

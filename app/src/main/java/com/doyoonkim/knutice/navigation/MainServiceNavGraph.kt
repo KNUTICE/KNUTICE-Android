@@ -63,6 +63,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
             DaggerHomeSceneComponent.factory().create(
                 systemServices = appComponent,
                 networkProvider = appComponent,
+                localStorageProvider = appComponent,
                 firebaseInfrastructureProvider = appComponent
             )
         }

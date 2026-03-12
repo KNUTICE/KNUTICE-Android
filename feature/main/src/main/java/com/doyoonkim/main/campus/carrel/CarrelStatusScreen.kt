@@ -11,26 +11,28 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.webkit.WebViewCompat
-import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.main.BuildConfig
 import com.doyoonkim.main.campus.components.LifecycleAwareWebView
 import com.doyoonkim.main.campus.model.WebAppAction
 import com.doyoonkim.main.campus.model.WebBridgeEnvelop
+import com.doyoonkim.main.viewmodel.CarrelStatusViewModel
 import kotlinx.serialization.json.Json
 
 @Composable
 fun CarrelStatusScreen(
     modifier: Modifier = Modifier,
-    appPreferences: AppPreferences,
+    viewModel: CarrelStatusViewModel,
     onBackClicked: () -> Unit
 ) {
-    val token = appPreferences.getCachedToken() ?: ""
-    val call = "${BuildConfig.CARREL_BRIDGE}('$token');"
+    val tokenState by viewModel.deviceToken.collectAsStateWithLifecycle()
+    val call = "${BuildConfig.CARREL_BRIDGE}('${tokenState}');"
 
     // Configuration State
     val isKeyProvided = remember { mutableStateOf(false) }

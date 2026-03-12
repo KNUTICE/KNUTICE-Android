@@ -3,8 +3,10 @@ package com.doyoonkim.data.di
 import android.content.Context
 import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.data.repository.LocalRepositoryImpl
+import com.doyoonkim.data.repository.LocalWidgetCacheRepositoryImpl
 import com.doyoonkim.data.room.LocalDatabase
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
+import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
 import dagger.Binds
 import dagger.Module
@@ -22,6 +24,12 @@ abstract class LocalModule {
     abstract fun bindsNoticeLocalRepository(
         impl: LocalRepositoryImpl
     ) : NoticeLocalRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindLocalWidgetCacheRepository(
+        impl: LocalWidgetCacheRepositoryImpl
+    ): LocalWidgetCacheRepository
 }
 
 @Module
