@@ -1,6 +1,6 @@
 package com.doyoonkim.domain.interfaces
 
-interface AsyncNoticeWidgetTaskScheduler {
+interface AsyncCarrelWidgetTaskScheduler {
     fun schedulePeriodicTask()
 
     fun unschedulePeriodicTask()

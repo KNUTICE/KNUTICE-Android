@@ -9,24 +9,24 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.doyoonkim.domain.interfaces.AsyncNoticeWidgetTaskScheduler
+import com.doyoonkim.domain.interfaces.AsyncCarrelWidgetTaskScheduler
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-class AsyncNoticeWidgetTaskSchedulerImpl @Inject constructor(
+class CarrelWidgetTaskSchedulerImpl @Inject constructor(
     private val workManager: WorkManager
-) : AsyncNoticeWidgetTaskScheduler {
+) : AsyncCarrelWidgetTaskScheduler {
     companion object {
-        private const val PERIODIC_WORK_KEY = "PERIODIC_WORK_KEY"
-        private const val ONETIME_WORK_KEY = "ONETIME_WORK_KEY"
+        private const val PERIODIC_WORK_KEY = "CARREL_WIDGET_PERIODIC_UPDATE"
+        private const val ONETIME_WORK_KEY = "CARREL_WIDGET_ONETIME_UPDATE"
     }
 
     override fun schedulePeriodicTask() {
-        val periodicTask = PeriodicWorkRequestBuilder<KnuticeWidgetSync>(
-            6, TimeUnit.HOURS
+        val periodicTask = PeriodicWorkRequestBuilder<KnuticeCarrelWidgetSync>(
+            30, TimeUnit.MINUTES
         ).setBackoffCriteria(
             backoffPolicy = BackoffPolicy.EXPONENTIAL,
-            backoffDelay = 30,
+            backoffDelay = 5,
             timeUnit = TimeUnit.MINUTES
         ).setConstraints(
             Constraints.Builder()
@@ -47,24 +47,23 @@ class AsyncNoticeWidgetTaskSchedulerImpl @Inject constructor(
     }
 
     override fun executeImmediateTask() {
-        val noticeWidgetTask = OneTimeWorkRequestBuilder<KnuticeWidgetSync>()
+        val carrelStatusTask = OneTimeWorkRequestBuilder<KnuticeCarrelWidgetSync>()
             .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-            .setConstraints(
+            .setBackoffCriteria(
+                backoffPolicy = BackoffPolicy.EXPONENTIAL,
+                backoffDelay = 30,
+                timeUnit = TimeUnit.SECONDS
+            ).setConstraints(
                 Constraints.Builder()
                     .setRequiredNetworkType(NetworkType.CONNECTED)
                     .build()
-            )
-            .setBackoffCriteria(
-                backoffPolicy = BackoffPolicy.EXPONENTIAL,
-                backoffDelay = 10,
-                timeUnit = TimeUnit.MINUTES
             )
             .build()
 
         workManager.enqueueUniqueWork(
             uniqueWorkName = ONETIME_WORK_KEY,
-            existingWorkPolicy = ExistingWorkPolicy.REPLACE,
-            request = noticeWidgetTask
+            existingWorkPolicy = ExistingWorkPolicy.REPLACE,        // Enable debounce.
+            request = carrelStatusTask
         )
     }
 }

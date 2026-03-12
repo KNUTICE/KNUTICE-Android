@@ -5,9 +5,11 @@ import com.doyoonkim.domain.interfaces.AsyncFtsTaskScheduler
 import com.doyoonkim.knutice.task.AsyncFtsTableInsertion
 import com.doyoonkim.knutice.task.AsyncFtsTaskSchedulerImpl
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
+import com.doyoonkim.domain.interfaces.AsyncCarrelWidgetTaskScheduler
 import com.doyoonkim.domain.interfaces.AsyncNoticeWidgetTaskScheduler
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
 import com.doyoonkim.widget.worker.AsyncNoticeWidgetTaskSchedulerImpl
+import com.doyoonkim.widget.worker.CarrelWidgetTaskSchedulerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -42,4 +44,9 @@ abstract class WorkSchedulerModule {
     abstract fun bindNoticeWidgetWorkScheduler(
         impl: AsyncNoticeWidgetTaskSchedulerImpl
     ): AsyncNoticeWidgetTaskScheduler
+
+    @Binds
+    abstract fun bindCarrelWidgetWorkScheduler(
+        impl: CarrelWidgetTaskSchedulerImpl
+    ): AsyncCarrelWidgetTaskScheduler
 }

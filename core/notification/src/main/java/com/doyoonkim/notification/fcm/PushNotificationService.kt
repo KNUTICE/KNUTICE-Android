@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.annotation.RequiresPermission
 import com.doyoonkim.common.di.AppInjectorProvider
 import com.doyoonkim.common.di.TokenHandler
-import com.doyoonkim.domain.interfaces.AsyncNoticeWidgetTaskScheduler
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import dagger.Lazy
@@ -15,20 +14,12 @@ class PushNotificationService : FirebaseMessagingService() {
     @Inject lateinit var handlerProvider: Lazy<PushNotificationHandler>
     @Inject lateinit var tokenHandler: Lazy<TokenHandler>
 
-    @Inject lateinit var widgetSyncTaskScheduler: Lazy<AsyncNoticeWidgetTaskScheduler>
-
     private val TAG = "PushNotificationHandler"
 
     override fun onCreate() {
         super.onCreate()
         // For Field Injection
         (applicationContext as AppInjectorProvider).appInjector.inject(this)
-        Log.d(TAG, "Initialized?: ${::handlerProvider.isInitialized}")
-        Log.d(TAG, "Scheduler Initialized?: ${::widgetSyncTaskScheduler.isInitialized}")
-        Log.d(TAG, "Called")
-
-        // Trigger WidgetSyncTask once FCM arrives
-        widgetSyncTaskScheduler.get().invoke()
     }
 
     override fun onNewToken(token: String) {

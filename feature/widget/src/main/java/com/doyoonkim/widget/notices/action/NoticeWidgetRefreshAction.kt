@@ -1,4 +1,4 @@
-package com.doyoonkim.widget.carrel.action
+package com.doyoonkim.widget.notices.action
 
 import android.content.Context
 import android.util.Log
@@ -7,15 +7,19 @@ import androidx.glance.action.ActionParameters
 import androidx.glance.appwidget.action.ActionCallback
 import com.doyoonkim.widget.di.WidgetDependencyProvider
 
-class CarrelStatusRefreshAction : ActionCallback {
+/**
+ * @author kimdoyoon
+ * Created 3/11/26 at 1:39 AM
+ */
+class NoticeWidgetRefreshAction: ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
         parameters: ActionParameters
     ) {
-        Log.d("CarrelStatusRefreshAction", "Start Work Scheduling")
+        Log.d("NoticeWidgetRefreshAction", "Start Notice Refresh")
         val provider = (context.applicationContext as WidgetDependencyProvider).provide()
-        provider.carrelWidgetTaskScheduler().executeImmediateTask()
+        provider.noticeWidgetTaskScheduler().executeImmediateTask()
     }
 
 }
