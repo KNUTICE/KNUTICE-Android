@@ -45,7 +45,7 @@ fun NavGraphBuilder.campusServiceGraph(
 
         CarrelStatusScreen(
             modifier = Modifier,
-            appPreferences = appComponent.appPreference()   // Access via Provision function
+            viewModel = viewModel<CarrelStatusViewModel>(factory = sceneComponent.viewModelFactory())
         ) {
             navController.popBackStack()
         }
@@ -78,7 +78,7 @@ fun NavGraphBuilder.campusServiceGraph(
 
         CarrelStatusScreen(
             modifier = Modifier,
-            appPreferences = appComponent.appPreference()   // Access via Provision function
+            viewModel = viewModel<CarrelStatusViewModel>(factory = sceneComponent.viewModelFactory())
         ) {
             navController.popBackStack()
         }
