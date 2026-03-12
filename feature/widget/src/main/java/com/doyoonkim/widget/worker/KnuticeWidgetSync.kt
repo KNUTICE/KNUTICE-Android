@@ -18,14 +18,16 @@ import com.doyoonkim.widget.model.WidgetKey
 import com.doyoonkim.widget.model.WidgetNoticeVO
 import com.doyoonkim.widget.model.WidgetState
 import com.doyoonkim.widget.notices.KnuticeWidget
+import com.doyoonkim.widget.util.WidgetStateUpdater
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class KnuticeWidgetSync(
-    private val appContext: Context,
+    appContext: Context,
     workerParam: WorkerParameters,
     private val appPreferences: AppPreferences,
+    private val stateUpdater: WidgetStateUpdater,
     private val remoteRepository: NoticeRemoteRepository
 ) : CoroutineWorker(appContext, workerParam) {
     private val TAG = "KnuticeWidgetSync"
@@ -63,7 +65,7 @@ class KnuticeWidgetSync(
             }
 
             // Update Widget State (by update cached notices)
-            updateWidgetState(category, widgetNotices)
+            stateUpdater.updateNoticeWidgetState(WidgetState(category, widgetNotices))
             Result.success()
         } catch (e: Exception) {
             Log.d(TAG, "Exception Thrown: ${e.message}")
@@ -89,64 +91,11 @@ class KnuticeWidgetSync(
         }
     }
 
-    // widget state update
-    private suspend fun updateWidgetState(category: String, notices: List<WidgetNoticeVO>) {
-        // Update Widget Status by updating local cache.
-        // All instance of KnuticeWidget would be affected.
-        val widgetManager = GlanceAppWidgetManager(appContext)
-
-        // Retrieve all glance instance of KnuticeWidget.
-        val glanceIds = widgetManager.getGlanceIds(KnuticeWidget::class.java)
-
-        // State Serialization. Serialize it to Json.
-        val currentState = WidgetState(category = category, notices = notices)
-
-        // Flag Variable
-        var isStateChanged = false
-
-        glanceIds.forEach { glanceId ->
-            // Ensure Thread-safe write to Preference (DataStore)
-            updateAppWidgetState(
-                context = appContext,
-                glanceId = glanceId
-            ) { preference ->
-
-                // Retrieve current state saved in DataStore. (Defensive Json Parsing)
-                val previousState = try {
-                    preference[WidgetKey.NOTICE_WIDGET_PREF_STATE_KEY]?.run {
-                        Json.decodeFromString<WidgetState>(this)
-                            .copy(lastUpdated = 0L)
-                    }
-                } catch (e: Exception) {
-                    // Prevent potential exception when deserialize saved Json after the potential
-                    // structural changes of WidgetState
-                    null
-                }
-                // If there's no state change, terminate function and don't update widget.
-                if (previousState == currentState) return@updateAppWidgetState
-
-                val stateJson = Json.encodeToString(
-                    currentState.copy(lastUpdated = System.currentTimeMillis())
-                )
-
-                // Update state to Pref (Local Cache)
-                preference[WidgetKey.NOTICE_WIDGET_PREF_STATE_KEY] = stateJson
-                isStateChanged = true
-            }
-        }
-
-        if (isStateChanged) {
-            // Force Update Glance (Batch Update) (via Inter-Process Communication (IPC) call)
-            KnuticeWidget().updateAll(appContext)
-        } else {
-            Log.d("KnuticeWidgetSync", "No state changes. Update Widget suppressed")
-        }
-    }
-
     // Factory
     class Factory @Inject constructor(
         @ApplicationContext private val context: Context,
         private val appPreferences: AppPreferences,
+        private val stateUpdater: WidgetStateUpdater,
         private val remoteRepository: NoticeRemoteRepository
     ) : IntermediateWorkerFactory {
         override fun create(params: WorkerParameters): ListenableWorker {
@@ -154,6 +103,7 @@ class KnuticeWidgetSync(
                 context,
                 params,
                 appPreferences,
+                stateUpdater,
                 remoteRepository
             )
         }
