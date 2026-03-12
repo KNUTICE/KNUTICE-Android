@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.doyoonkim.common.di.AppInjector
@@ -51,6 +52,8 @@ class MainApplication() : Application(), AppInjectorProvider, WidgetDependencyPr
         super.onCreate()
         // Application-Level injection
         appComponent.inject(this)
+        // Register Observer on ProcessLifecycleOwner
+        ProcessLifecycleOwner.get().lifecycle.addObserver(widgetSyncObserver)
         configureWorkerManager()
 
         // Create channel group

@@ -64,6 +64,8 @@ dependencies {
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.work.runtime.ktx)
 
+    implementation(libs.androidx.lifecycle.process)
+
     // Manual Implementation (Heavy Dependency)
     testImplementation(libs.robolectric)
 }
