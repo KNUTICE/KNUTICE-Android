@@ -61,7 +61,7 @@ class WidgetConfigViewModel @Inject constructor(
             // Update WidgetCategoryPolicy with Current Category Policy selection
             appPreference.updateWidgetCategoryPolicy(uiState.value.selectedCategoryPolicy)
             // Execute worker to update widget.
-            noticeWidgetTaskScheduler()
+            noticeWidgetTaskScheduler.executeImmediateTask()
             mutate(WidgetConfigMutation.Configuration.Processed)
             sendSideEffect(WidgetConfigSideEffect.ShowProcessedSnackBark)
         }

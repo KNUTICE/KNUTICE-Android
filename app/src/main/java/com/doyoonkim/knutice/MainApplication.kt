@@ -12,11 +12,14 @@ import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerAppComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationServiceComponent
+import com.doyoonkim.knutice.di.components.DaggerWidgetComponent
 import com.doyoonkim.knutice.di.util.DaggerWorkerFactory
 import com.doyoonkim.notification.fcm.PushNotificationService
+import com.doyoonkim.widget.di.WidgetDependency
+import com.doyoonkim.widget.di.WidgetDependencyProvider
 import javax.inject.Inject
 
-class MainApplication() : Application(), AppInjectorProvider {
+class MainApplication() : Application(), AppInjectorProvider, WidgetDependencyProvider {
 
     val appComponent: AppComponent by lazy {
         DaggerAppComponent.factory().create(this)
@@ -35,8 +38,14 @@ class MainApplication() : Application(), AppInjectorProvider {
 
     }
 
+
+    override fun provide(): WidgetDependency {
+        return DaggerWidgetComponent.factory().create(appComponent, appComponent)
+    }
+
     @Inject lateinit var notificationManager: NotificationManager
     @Inject lateinit var workerFactory: DaggerWorkerFactory
+    @Inject lateinit var widgetSyncObserver: WidgetSyncObserver
 
     override fun onCreate() {
         super.onCreate()
