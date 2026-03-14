@@ -16,6 +16,7 @@ data class CarrelRoomStatusDTO(
 ) {
     fun toVO() =
         CarrelRoomStatusVO(
+            id = this.id ?: "",
             name = this.name ?: "",
             total = this.total ?: 0,
             occupied = this.occupied ?: 0

@@ -29,13 +29,14 @@ import kotlinx.serialization.json.Json
 fun CarrelStatusScreen(
     modifier: Modifier = Modifier,
     viewModel: CarrelStatusViewModel,
+    roomId: String = "",
     onBackClicked: () -> Unit
 ) {
     val tokenState by viewModel.deviceToken.collectAsStateWithLifecycle()
-    val call = "${BuildConfig.CARREL_BRIDGE}('${tokenState}');"
 
     // Configuration State
     val isKeyProvided = remember { mutableStateOf(false) }
+    val isRoomSelectionProvided = remember { mutableStateOf(false) }
 
     // WebView Message Listener
     val webMessageListener = remember {
@@ -69,11 +70,20 @@ fun CarrelStatusScreen(
             override fun onPageFinished(view: WebView?, url: String?) {
                 // If view is ready, return onPageFinished immediately to avoid multiple JS execution.
                 if (!isKeyProvided.value) {
+                    val call = "${BuildConfig.CARREL_BRIDGE}('${tokenState}');"
                     val script = "javascript:$call;"
                     view?.evaluateJavascript(script, null)
 
                     // Prevent calling onPageFinished multiple times when view is ready.
                     isKeyProvided.value = true
+                }
+
+                if (roomId.isNotBlank() && !isRoomSelectionProvided.value) {
+                    val call = "${BuildConfig.CARREL_ROOM_BRIDGE}('${roomId}');"
+                    val script = "javascript:$call"
+                    view?.evaluateJavascript(script, null)
+
+                    isRoomSelectionProvided.value = true
                 }
                 super.onPageFinished(view, url)
             }

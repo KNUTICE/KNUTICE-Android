@@ -86,7 +86,7 @@ fun CarrelWidgetContainer(
                         .clickable(actionStartActivity(
                             NoticeWidgetUtil.createDeeplinkIntent(
                                 context.packageName,
-                                deeplink = "reading-room",
+                                deeplink = "reading-room?roomId=${vo.id}&seat=0",
                                 type = null
                             )
                         )),
