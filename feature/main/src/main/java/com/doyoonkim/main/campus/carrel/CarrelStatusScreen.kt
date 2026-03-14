@@ -80,7 +80,7 @@ fun CarrelStatusScreen(
 
                 if (roomId.isNotBlank() && !isRoomSelectionProvided.value) {
                     val call = "${BuildConfig.CARREL_ROOM_BRIDGE}('${roomId}');"
-                    val script = "javascript:$call"
+                    val script = "javascript:$call;"
                     view?.evaluateJavascript(script, null)
 
                     isRoomSelectionProvided.value = true

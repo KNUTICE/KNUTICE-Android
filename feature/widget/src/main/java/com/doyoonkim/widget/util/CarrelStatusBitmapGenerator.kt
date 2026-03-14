@@ -23,8 +23,8 @@ enum class CarrelRoomOccupancyState(@ColorInt val color: Int, val label: String)
             return when {
                 // Edge case (potential error under Float math)
                 ratio.isNaN() -> SPACIOUS
-                ratio in 0.0f .. 0.49f -> SPACIOUS
-                ratio in 0.50f..0.79f -> MODERATE
+                ratio < 0.5f -> SPACIOUS
+                ratio < 0.8f -> MODERATE
                 else -> CROWDED
             }
         }
