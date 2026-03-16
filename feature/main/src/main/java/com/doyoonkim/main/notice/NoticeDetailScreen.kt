@@ -112,6 +112,9 @@ fun NoticeDetailScreen(
     val bottomSheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = true
     )
+    val bottomSheetHeight = with(LocalConfiguration.current) {
+        screenHeightDp * 0.6
+    }.dp
 
     // WebViewClient
     val webClient = remember {
@@ -311,9 +314,7 @@ fun NoticeDetailScreen(
                         ) {
                             AiSummaryDialog(
                                 modifier = Modifier.height(
-                                    with(LocalConfiguration.current) {
-                                        screenHeightDp * 0.6
-                                    }.dp
+                                    bottomSheetHeight
                                 ).verticalScroll(rememberScrollState()),
                                 icon = R.drawable.knutice_ai_logo,
                                 header = stringResource(R.string.header_ai_summary),
