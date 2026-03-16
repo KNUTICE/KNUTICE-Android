@@ -274,9 +274,8 @@ fun HomeDashboard(
                                 .padding(horizontal = 7.dp)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(MaterialTheme.colorScheme.secondaryBackground),
-                            imageResources = R.drawable.outline_school_24,
-                            imageColor = MaterialTheme.colorScheme.subTitle,
-                            contentText = stringResource(R.string.title_major_select)
+                            imageResources = R.drawable.graduation_cap,
+                            contentText = stringResource(R.string.info_need_select_major)
                         ) {
                             Button(
                                 onClick = {
