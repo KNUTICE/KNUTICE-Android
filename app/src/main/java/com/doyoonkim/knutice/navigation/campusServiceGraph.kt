@@ -11,7 +11,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerCarrelStatusSceneComponent
 import com.doyoonkim.main.campus.carrel.CarrelStatusScreen
@@ -23,37 +22,7 @@ fun NavGraphBuilder.campusServiceGraph(
     appComponent: AppComponent,
     contentPadding: PaddingValues
 ) {
-
-    composable(
-        route = NavRoutes.CarrelStatus.route,
-        enterTransition = {
-            slideIntoContainer(
-                animationSpec = tween(300, easing = EaseIn),
-                towards = AnimatedContentTransitionScope.SlideDirection.Start
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                animationSpec = tween(300, easing = EaseOut),
-                towards = AnimatedContentTransitionScope.SlideDirection.End
-            )
-        }
-    ) {
-        val sceneComponent = remember(appComponent) {
-            DaggerCarrelStatusSceneComponent.factory().create(
-                appComponent, appComponent, appComponent
-            )
-        }
-
-        CarrelStatusScreen(
-            modifier = Modifier,
-            viewModel = viewModel<CarrelStatusViewModel>(factory = sceneComponent.viewModelFactory())
-        ) {
-            navController.popBackStack()
-        }
-    }
-
-    // Carrel Status by Deeplink
+    
     // reading-room?roomId=ROOM3&seat=531
     composable(
         route = "reading-room?roomId={roomId}&seat={seatNo}",
@@ -88,29 +57,6 @@ fun NavGraphBuilder.campusServiceGraph(
         }
     }
 
-    composable(
-        route = NavRoutes.DiningMenu.route,
-        enterTransition = {
-            slideIntoContainer(
-                animationSpec = tween(300, easing = EaseIn),
-                towards = AnimatedContentTransitionScope.SlideDirection.Start
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                animationSpec = tween(300, easing = EaseOut),
-                towards = AnimatedContentTransitionScope.SlideDirection.End
-            )
-        }
-    ) {
-        DiningMenuScreen(
-            modifier = Modifier
-        ) {
-            navController.popBackStack()
-        }
-    }
-
-    // DiningHall by Deeplink
     // meal?topic=STUDENT_CAFETERIA
     composable(
         route = "meal?topic={mealTopic}",

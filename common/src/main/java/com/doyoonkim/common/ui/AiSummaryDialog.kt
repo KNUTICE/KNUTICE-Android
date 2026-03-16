@@ -3,8 +3,10 @@ package com.doyoonkim.common.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,11 +22,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.doyoonkim.common.R
 
 @Composable
 fun AiSummaryDialog(
@@ -39,12 +43,21 @@ fun AiSummaryDialog(
     isContentAvailable: Boolean,
     content: @Composable () -> Unit
 ) {
-    Column(
-        modifier = modifier
-    ) {
-        if (!isContentAvailable) {
-            Text(text = "Summary Not Available at this moment")
-        } else {
+    if (!isContentAvailable) {
+        Box(
+            modifier = modifier.padding(horizontal = 5.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            PlaceholderScreen(
+                modifier = Modifier.fillMaxSize(),
+                imageResource = R.drawable.question_mark,
+                contentText = stringResource(R.string.info_ai_summary_not_available)
+            )
+        }
+    } else {
+        Column(
+            modifier = modifier
+        ) {
             Row(
                 modifier = Modifier.wrapContentHeight()
                     .fillMaxWidth()

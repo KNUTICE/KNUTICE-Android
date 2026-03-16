@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,6 +53,8 @@ fun PlaceholderScreen(
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.subTitle,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.fillMaxWidth().wrapContentHeight()
         )
     }
@@ -61,7 +64,6 @@ fun PlaceholderScreen(
 fun DashboardPlaceholder(
     modifier: Modifier = Modifier,
     imageResources: Int,
-    imageColor: Color,
     contentText: String,
     optionalElements: @Composable () -> Unit = {  }
 ) {
@@ -80,7 +82,6 @@ fun DashboardPlaceholder(
                 modifier = Modifier.wrapContentHeight()
                     .fillMaxWidth(),
                 imageResource = imageResources,
-                imageColor = imageColor,
                 contentText = contentText
             )
             optionalElements()

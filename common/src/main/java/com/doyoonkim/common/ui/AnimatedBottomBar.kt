@@ -42,9 +42,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
 data class BottomBarButton(
@@ -190,8 +192,11 @@ fun AnimatedBottomNavBarItem(
                 style = TextStyle(
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Center,
-                    color = contentColor
-                )
+                    color = contentColor,
+                    fontSize = 12.sp
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
