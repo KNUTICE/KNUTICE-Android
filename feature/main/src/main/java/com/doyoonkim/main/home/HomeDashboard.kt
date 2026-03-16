@@ -196,7 +196,7 @@ fun HomeDashboard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f),
-                            text = "학식 조회",
+                            text = stringResource(R.string.title_dining_menu),
                             painter = painterResource(R.drawable.icon_dining_menu),
                             containerColor = MaterialTheme.colorScheme.secondaryBackground,
                             textColor = MaterialTheme.colorScheme.title,
@@ -207,7 +207,7 @@ fun HomeDashboard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f),
-                            text = "열람실 현황",
+                            text = stringResource(R.string.knutice_carrel_widget_title),
                             painter = painterResource(R.drawable.icon_study_area),
                             containerColor = MaterialTheme.colorScheme.secondaryBackground,
                             textColor = MaterialTheme.colorScheme.title,
