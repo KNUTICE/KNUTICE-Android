@@ -1,6 +1,5 @@
 package com.doyoonkim.knutice.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -71,9 +70,8 @@ fun NavGraphBuilder.campusServiceGraph(
             )
         }
     ) { backStackEntry ->
-        val room = backStackEntry.arguments?.getString("roomId")
-        val seat = backStackEntry.arguments?.getString("seatNo")
-        Log.d("Navigation", "ROOM:$room SEAT: $seat ")
+        val room = backStackEntry.arguments?.getString("roomId") ?: ""
+        val seat = backStackEntry.arguments?.getString("seatNo") ?: ""
 
         val sceneComponent = remember(appComponent) {
             DaggerCarrelStatusSceneComponent.factory().create(
@@ -83,7 +81,8 @@ fun NavGraphBuilder.campusServiceGraph(
 
         CarrelStatusScreen(
             modifier = Modifier,
-            viewModel = viewModel<CarrelStatusViewModel>(factory = sceneComponent.viewModelFactory())
+            viewModel = viewModel<CarrelStatusViewModel>(factory = sceneComponent.viewModelFactory()),
+            roomId = room
         ) {
             navController.popBackStack()
         }

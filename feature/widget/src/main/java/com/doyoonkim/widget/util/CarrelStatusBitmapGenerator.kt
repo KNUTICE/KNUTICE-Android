@@ -9,23 +9,22 @@ import android.graphics.Typeface
 import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.core.graphics.toColorInt
-import kotlin.math.roundToInt
 import androidx.core.graphics.createBitmap
 
 
 // Color Value enums based on Status
 enum class CarrelRoomOccupancyState(@ColorInt val color: Int, val label: String) {
-    SPACIOUS("#4CAF50".toColorInt(), "여유"),
-    MODERATE("#FFC107".toColorInt(), "보통"),
-    CROWDED("#F44336".toColorInt(), "혼잡");
+    SPACIOUS("#157A43".toColorInt(), "원활"),
+    MODERATE("#F59E0B".toColorInt(), "보통"),
+    CROWDED("#EF4444".toColorInt(), "혼잡");
 
     companion object {
         fun fromOccupancyRatio(ratio: Float): CarrelRoomOccupancyState {
             return when {
                 // Edge case (potential error under Float math)
                 ratio.isNaN() -> SPACIOUS
-                ratio in 0.0f..0.50f -> SPACIOUS
-                ratio in 0.51f..0.85f -> MODERATE
+                ratio < 0.5f -> SPACIOUS
+                ratio < 0.8f -> MODERATE
                 else -> CROWDED
             }
         }

@@ -25,6 +25,7 @@ configure<LibraryExtension>() {
     val origin = properties["knutice_web_app_origin"] ?: ""
     val carrelPath = properties["carrel_path"] ?: ""
     val carrelBridge = properties["carrel_bridge"] ?: ""
+    val carrelRoomBridge = properties["carrel_bridge_room"] ?: ""
 
     val diningPath = properties["dining_path"] ?: ""
     val diningBridge = properties["dining_bridge"] ?: ""
@@ -33,6 +34,7 @@ configure<LibraryExtension>() {
         buildConfigField("String", "KNUTICE_ORIGIN", "\"$origin\"")
         buildConfigField("String", "CARREL_PATH", "\"$carrelPath\"")
         buildConfigField("String", "CARREL_BRIDGE", "\"$carrelBridge\"")
+        buildConfigField("String", "CARREL_ROOM_BRIDGE", "\"$carrelRoomBridge\"")
         buildConfigField("String", "DINING_PATH", "\"$diningPath\"")
         buildConfigField("String", "DINING_BRIDGE", "\"$diningBridge\"")
     }
