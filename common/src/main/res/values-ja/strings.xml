@@ -184,4 +184,7 @@
     <string name="notice_widget_config_header">カテゴーリを選んでください</string>
     <string name="notice_widget_config_title">お知らせウィジェットの設定</string>
     <string name="notice_widget_config_apply_button">カテゴーリ選択</string>
+    <string name="info_ai_summary_not_available">このお知らせはAI要約に対応していません。\n原文をご確認ください。</string>
+    <string name="title_dining_menu">学食メニュー</string>
+    <string name="info_need_select_major">学科の重要なお知らせを見逃さないように、専攻を設定してみましょう！</string>
 </resources>
