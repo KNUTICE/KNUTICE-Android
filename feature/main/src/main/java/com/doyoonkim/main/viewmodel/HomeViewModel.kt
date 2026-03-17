@@ -42,7 +42,9 @@ class HomeViewModel @Inject constructor(
                .distinctUntilChanged()
                .collectLatest { (core, major) ->
                    val coreNoticeReady = with(core) { !isLoading && !isError }
-                   val majorNoticeReady = with(major) { !isLoading && !isError }
+                   val majorNoticeReady = with(major) {
+                       subscribed == MajorCategory.UNSPECIFIED || (!isLoading && !isError)
+                   }
 
                    if (coreNoticeReady && majorNoticeReady)
                        updateNoticeLocalCache(uiState.value)
