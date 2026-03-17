@@ -15,7 +15,7 @@ configure<ApplicationExtension>() {
 
     defaultConfig {
         applicationId = "com.doyoonkim.knutice"
-        versionCode = 36
+        versionCode = 37
         versionName = "@string/version_code"
     }
     buildTypes {
