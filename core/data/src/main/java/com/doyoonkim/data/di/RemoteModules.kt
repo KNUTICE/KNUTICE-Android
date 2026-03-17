@@ -1,7 +1,9 @@
 package com.doyoonkim.data.di
 
+import com.doyoonkim.data.repository.CampusRemoteRepository
 import com.doyoonkim.data.repository.ImageRepositoryImpl
 import com.doyoonkim.data.repository.RemoteRepositoryImpl
+import com.doyoonkim.domain.interfaces.CarrelStatusRemoteRepository
 import com.doyoonkim.domain.interfaces.ImageRemoteRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.domain.interfaces.TipRemoteRepository
@@ -54,4 +56,12 @@ abstract class ImageRemoteModule {
     abstract fun bindsImageRemoteRepo(
         impl: ImageRepositoryImpl
     ) : ImageRemoteRepository
+}
+
+@Module
+abstract class CampusRemoteModule {
+    @Binds
+    abstract fun bindsCarrelRoomRemoteRepo(
+        impl: CampusRemoteRepository
+    ): CarrelStatusRemoteRepository
 }

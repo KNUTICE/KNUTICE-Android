@@ -1,7 +1,6 @@
 package com.doyoonkim.knutice.navigation
 
 import android.net.Uri
-import android.os.Bundle
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
@@ -16,7 +15,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.navDeepLink
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.common.navigation.NavRoutes
@@ -31,8 +29,7 @@ import com.doyoonkim.knutice.di.components.DaggerNoticeInCategorySceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNoticeSearchSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationPreferencesSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerSettingsSceneComponent
-import com.doyoonkim.knutice.di.util.DefaultSystemService
-import com.doyoonkim.main.home.HomeScreen
+import com.doyoonkim.main.home.HomeDashboard
 import com.doyoonkim.main.notice.NoticeByMajorScreen
 import com.doyoonkim.main.notice.NoticeDetailScreen
 import com.doyoonkim.main.notice.NoticeSearchScreen
@@ -51,41 +48,43 @@ import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
 import com.doyoonkim.main.viewmodel.SettingsViewModel
 import com.doyoonkim.model.NoticeCategory
-import com.google.firebase.analytics.FirebaseAnalytics
 
 fun NavGraphBuilder.mainServiceNavGraph(
     navController: NavController,
     appComponent: AppComponent,
-    contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkServiceRequested: (BookmarkInfo) -> Unit,
     onExit: () -> Unit = {  }
 ) {
-    val analytics = appComponent.analytics()
 
     // ViewModels will be injected via ViewModelFactory
     composable(NavRoutes.Home.route) {
         val sceneComponent = remember(appComponent) {
-            DaggerHomeSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerHomeSceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent,
+                localStorageProvider = appComponent,
+                firebaseInfrastructureProvider = appComponent
+            )
         }
 
-        HomeScreen(
+        HomeDashboard(
             modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<HomeViewModel>(factory = sceneComponent.viewModelFactory()),
-            bottomPadding = contentPadding.calculateBottomPadding(),
             onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onGoBackAction = {
                 navController.popBackStack().also { if (!it) onExit() }
             },
             onMoreNoticeRequested = { dest ->
                 navController.run {
-                    when(dest) {
+                    when (dest) {
                         Destination.MORE_GENERAL -> navigate(NavRoutes.GeneralNotices.route)
                         Destination.MORE_ACADEMIC -> navigate(NavRoutes.AcademicNotices.route)
                         Destination.MORE_SCHOLARSHIP -> navigate(NavRoutes.ScholarshipNotices.route)
                         Destination.MORE_EVENT -> navigate(NavRoutes.EventNotices.route)
                         Destination.MORE_EMPLOYMENT -> navigate(NavRoutes.EmploymentNotices.route)
-                        else -> { /* DO NOTHING. */ }
+                        else -> { /* DO NOTHING. */
+                        }
                     }
                 }
             },
@@ -93,13 +92,13 @@ fun NavGraphBuilder.mainServiceNavGraph(
                 onNoticeDetailRequested(NoticeDetail(id, url))
             },
             onTipClicked = { category, url ->
-                analytics.logEvent("BROWSE_TIP", Bundle().apply {
-                    putString(FirebaseAnalytics.Param.ITEM_CATEGORY, category.name)
-                    putString(FirebaseAnalytics.Param.SOURCE, "HomeScreen")
-                    putString(FirebaseAnalytics.Param.DESTINATION, url)
-                })
                 navController.navigate("tipDetail/${category.name}/${Uri.encode(url)}")
-            }
+            },
+            onMoreMajorNoticeRequested = {
+                navController.navigate(NavRoutes.MajorNotices.route)
+            },
+            onCarrelStatusRequested = { navController.navigate(NavRoutes.CarrelStatus.route) },
+            onDiningMenuRequested = { navController.navigate(NavRoutes.DiningMenu.route) }
         )
     }
 
@@ -107,13 +106,15 @@ fun NavGraphBuilder.mainServiceNavGraph(
         route = NavRoutes.MajorNotices.route
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeByMajorSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNoticeByMajorSceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent
+            )
         }
 
         NoticeByMajorScreen(
             modifier = Modifier,
             viewModel = viewModel<NoticeByMajorViewModel>(factory = sceneComponent.getViewModelFactory()),
-            bottomPadding = contentPadding.calculateBottomPadding(),
             onGoBackRequested = { navController.popBackStack() },
             onSettingRequested = { navController.navigate(NavRoutes.Settings.route) },
             onNoticeDetailRequested = { id, url -> onNoticeDetailRequested(NoticeDetail(id, url)) }
@@ -124,13 +125,16 @@ fun NavGraphBuilder.mainServiceNavGraph(
         route = NavRoutes.NoticeSearch.route
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeSearchSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNoticeSearchSceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent,
+                localStorageProvider = appComponent
+            )
         }
 
         NoticeSearchScreen(
             modifier = Modifier,
             viewModel = viewModel<NoticeSearchViewModel>(factory = sceneComponent.viewModelFactory()),
-            bottomPadding = contentPadding.calculateBottomPadding(),
             onBackPressed = { navController.popBackStack() },
             onNoticeSelected = { id, url ->
                 onNoticeDetailRequested(NoticeDetail(id, url))
@@ -163,7 +167,10 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNoticeInCategorySceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent
+            )
         }
 
         NoticesInCategoryScreen(
@@ -193,7 +200,10 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNoticeInCategorySceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent
+            )
         }
 
         NoticesInCategoryScreen(
@@ -223,7 +233,10 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNoticeInCategorySceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent
+            )
         }
 
         NoticesInCategoryScreen(
@@ -253,7 +266,10 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNoticeInCategorySceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent
+            )
         }
 
         NoticesInCategoryScreen(
@@ -283,7 +299,10 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeInCategorySceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNoticeInCategorySceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent
+            )
         }
 
         NoticesInCategoryScreen(
@@ -314,7 +333,11 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerSettingsSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerSettingsSceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent,
+                localStorageProvider = appComponent
+            )
         }
 
         UserPreferenceScreen(
@@ -349,7 +372,10 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNotificationPreferencesSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNotificationPreferencesSceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent
+            )
         }
 
         NotificationPreferencesScreen(
@@ -375,7 +401,10 @@ fun NavGraphBuilder.mainServiceNavGraph(
         }
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerCustomerServiceSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerCustomerServiceSceneComponent.factory().create(
+                systemService = appComponent,
+                networkProvider = appComponent
+            )
         }
 
         CustomerServiceScreen(
@@ -407,13 +436,9 @@ fun NavGraphBuilder.mainServiceNavGraph(
     }
 
     // DeepLinks for NoticeDetailScreen
+    // notice?nttId=1234&contentUrl=https://ut.ac.kr/...&FabVisible=true
     composable(
-        route = "noticeDetail/{nttId}/{contentUrl}/{isFabVisible}",
-        deepLinks = listOf(
-            navDeepLink {
-                uriPattern = "knutice://service/noticeDetail/{nttId}/{contentUrl}/{isFabVisible}"
-            }
-        ),
+        route = "notice?nttId={nttId}&contentUrl={contentUrl}&FabVisible={isFabVisible}",
         enterTransition = {
             slideIntoContainer(
                 animationSpec = tween(300, easing = EaseIn),
@@ -436,7 +461,11 @@ fun NavGraphBuilder.mainServiceNavGraph(
         } ?: Triple(0, "", false)
 
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeDetailSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerNoticeDetailSceneComponent.factory().create(
+                systemServices = appComponent,
+                networkProvider = appComponent,
+                firebaseInfrastructureProvider = appComponent
+            )
         }
 
         NoticeDetailScreen(
@@ -454,11 +483,6 @@ fun NavGraphBuilder.mainServiceNavGraph(
 
     composable(
         route = "tipDetail/{category}/{contentUrl}",
-        deepLinks = listOf(
-            navDeepLink {
-                uriPattern = "knutice://service/tipDetail/{category}/{contentUrl}"
-            }
-        ),
         enterTransition = {
             slideIntoContainer(
                 animationSpec = tween(300, easing = EaseIn),

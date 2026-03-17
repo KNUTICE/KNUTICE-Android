@@ -1,6 +1,7 @@
 package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
+import com.doyoonkim.model.MealCategory
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.TopicType
 import com.doyoonkim.model.di.IoDispatcher
@@ -43,7 +44,12 @@ class FetchTopicSubscriptionStatusImpl @Inject constructor(
                         emit(Result.success(result))
                     }
                     TopicType.MEAL -> {
-                        val result = emptyList<Pair<String, Boolean>>()
+                        val result = mutableListOf<Pair<String, Boolean>>()
+                        MealCategory.entries.forEach { category ->
+                            result.add(
+                                Pair(category.name, it.subscribed.contains(category.name))
+                            )
+                        }
                         emit(Result.success(result))
                     }
                 }

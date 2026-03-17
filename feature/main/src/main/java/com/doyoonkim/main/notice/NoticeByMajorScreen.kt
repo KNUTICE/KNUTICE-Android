@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -60,7 +61,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doyoonkim.common.CollegeResource
@@ -72,6 +72,7 @@ import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
+import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
 import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.main.contract.NoticeByMajorEvent
@@ -87,7 +88,6 @@ import kotlinx.coroutines.launch
 fun NoticeByMajorScreen(
     modifier: Modifier = Modifier,
     viewModel: NoticeByMajorViewModel,
-    bottomPadding: Dp = 0.dp,
     onGoBackRequested: () -> Unit,
     onSettingRequested: () -> Unit,
     onNoticeDetailRequested: (Int, String) -> Unit
@@ -203,18 +203,25 @@ fun NoticeByMajorScreen(
             contentAlignment = Alignment.TopCenter
         ) { 
             if (uiState.targetMajor == MajorCategory.UNSPECIFIED) {
+                // Read HomeScreen content safe bottom padding
+                val bottomPadding = LocalHomeSafeBottomPadding.current
+
                 PlaceholderScreen(
                     modifier = Modifier.fillMaxSize().padding(bottom = bottomPadding),
                     imageResource = R.drawable.plus_clay,
                     contentText = stringResource(R.string.text_major_select)
                 )
             } else {
+                // Read HomeScreen content safe bottom padding
+                val bottomPadding = LocalHomeSafeBottomPadding.current
+
                 if (uiState.notices.isEmpty()) {
                     if (uiState.isLoading) {
                         Surface(
                             modifier = Modifier
                                 .wrapContentSize()
                                 .align(Alignment.Center)
+                                .padding(bottom = bottomPadding)
                                 .clip(RoundedCornerShape(15.dp))
                                 .background(Color.Transparent),
                             color = MaterialTheme.colorScheme.onAnyBackground
@@ -238,7 +245,8 @@ fun NoticeByMajorScreen(
                     modifier = Modifier.fillMaxWidth()
                         .wrapContentHeight()
                         .background(Color.Transparent),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = bottomPadding)
                 ) {
                     items(uiState.notices.size) { index ->
                         val item = uiState.notices[index]
@@ -265,7 +273,15 @@ fun NoticeByMajorScreen(
                             )
                         }
 
-                        if (index == uiState.notices.size - 1 && uiState.isFetchable) {
+                        LaunchedEffect(index) {
+                            if (index == uiState.notices.size - 1 && uiState.isFetchable) {
+                                viewModel.sendUiEvent(NoticeByMajorEvent.RequestNotice)
+                            }
+                        }
+                    }
+
+                    if (uiState.isLoading && !uiState.isRefreshing) {
+                        item {
                             Row(
                                 modifier = Modifier.fillMaxWidth()
                                     .wrapContentHeight(),
@@ -278,11 +294,7 @@ fun NoticeByMajorScreen(
                                     trackColor = MaterialTheme.colorScheme.displayBackground
                                 )
                             }
-                            viewModel.sendUiEvent(NoticeByMajorEvent.RequestNotice)
                         }
-                    }
-                    item {
-                        Spacer(Modifier.height(bottomPadding))
                     }
                 }
             }

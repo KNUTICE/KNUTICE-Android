@@ -1,12 +1,15 @@
 package com.doyoonkim.knutice.di.modules
 
-import androidx.work.ListenableWorker
+import com.doyoonkim.common.di.WorkerKey
 import com.doyoonkim.domain.interfaces.AsyncFtsTaskScheduler
-import com.doyoonkim.knutice.di.util.WorkerKey
 import com.doyoonkim.knutice.task.AsyncFtsTableInsertion
 import com.doyoonkim.knutice.task.AsyncFtsTaskSchedulerImpl
-import com.doyoonkim.notification.di.IntermediateWorkerFactory
+import com.doyoonkim.common.worker.IntermediateWorkerFactory
+import com.doyoonkim.domain.interfaces.AsyncCarrelWidgetTaskScheduler
+import com.doyoonkim.domain.interfaces.AsyncNoticeWidgetTaskScheduler
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
+import com.doyoonkim.widget.worker.AsyncNoticeWidgetTaskSchedulerImpl
+import com.doyoonkim.widget.worker.CarrelWidgetTaskSchedulerImpl
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -33,7 +36,17 @@ abstract class WorkerModule {
 @Module
 abstract class WorkSchedulerModule {
     @Binds
-    abstract fun bindsWorkScheduler(
+    abstract fun bindsFtsWorkScheduler(
         impl: AsyncFtsTaskSchedulerImpl
     ): AsyncFtsTaskScheduler
+
+    @Binds
+    abstract fun bindNoticeWidgetWorkScheduler(
+        impl: AsyncNoticeWidgetTaskSchedulerImpl
+    ): AsyncNoticeWidgetTaskScheduler
+
+    @Binds
+    abstract fun bindCarrelWidgetWorkScheduler(
+        impl: CarrelWidgetTaskSchedulerImpl
+    ): AsyncCarrelWidgetTaskScheduler
 }

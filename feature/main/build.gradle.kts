@@ -1,42 +1,46 @@
-plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    id("kotlin-kapt")
+import com.android.build.api.dsl.LibraryExtension
+import java.io.FileInputStream
+import java.util.Properties
 
-    // Required from Kotlin 2.0.0 (Every module using Compose)
-    alias(libs.plugins.compose.compiler)
+plugins {
+    // Common Android Library
+    id("knutice.android.library")
+    // Common Android Compose
+    id("knutice.android.compose")
+    // Dagger Android
+    id("knutice.android.dagger")
+
+    // Kotlin Serialization
+    alias(libs.plugins.kotlinSerialization)
 }
 
-android {
+configure<LibraryExtension>() {
     namespace = "com.doyoonkim.main"
-    compileSdk = 35
+
+    // BuildConfig
+    val properties = Properties().apply {
+        load(FileInputStream("${rootDir}/local.properties"))
+    }
+
+    val origin = properties["knutice_web_app_origin"] ?: ""
+    val carrelPath = properties["carrel_path"] ?: ""
+    val carrelBridge = properties["carrel_bridge"] ?: ""
+    val carrelRoomBridge = properties["carrel_bridge_room"] ?: ""
+
+    val diningPath = properties["dining_path"] ?: ""
+    val diningBridge = properties["dining_bridge"] ?: ""
 
     defaultConfig {
-        minSdk = 30
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles("consumer-rules.pro")
+        buildConfigField("String", "KNUTICE_ORIGIN", "\"$origin\"")
+        buildConfigField("String", "CARREL_PATH", "\"$carrelPath\"")
+        buildConfigField("String", "CARREL_BRIDGE", "\"$carrelBridge\"")
+        buildConfigField("String", "CARREL_ROOM_BRIDGE", "\"$carrelRoomBridge\"")
+        buildConfigField("String", "DINING_PATH", "\"$diningPath\"")
+        buildConfigField("String", "DINING_BRIDGE", "\"$diningBridge\"")
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-
-        create("ExperimentalServerDebug") {
-            initWith(buildTypes["debug"])
-        }
-    }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-    kotlinOptions {
-        jvmTarget = "11"
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -45,34 +49,12 @@ dependencies {
     implementation(projects.core.domain)
     implementation(projects.common)
 
-    // Universally applied to module uses UI feature
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.material3)
-    implementation(libs.androidx.material)
-
-
-    testImplementation(libs.junit)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-
-    // Dagger
-    implementation(libs.dagger)
-    implementation(libs.dagger.android)
-    implementation(libs.dagger.android.support)
-    kapt(libs.dagger.compiler)
-    kapt(libs.dagger.android.processor)
-
     // Navigation for Compose
     implementation(libs.androidx.navigation.compose)
+
+    // Kotlin Serialization
+    implementation(libs.kotlin.serialization)
+
+    // Androidx WebView library
+    implementation(libs.androidx.webkit)
 }

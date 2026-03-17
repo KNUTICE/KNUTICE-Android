@@ -11,21 +11,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Clear
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -46,7 +41,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
@@ -59,6 +53,7 @@ import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.AnimatedTab
+import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
 import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.main.contract.NoticeSearchEvent
@@ -72,7 +67,6 @@ import java.util.Locale
 fun NoticeSearchScreen(
     modifier: Modifier = Modifier,
     viewModel: NoticeSearchViewModel,
-    bottomPadding: Dp = 0.dp,
     onBackPressed: () -> Unit,
     onNoticeSelected: (Int, String) -> Unit,
     onBookmarkSelected: (Int, String, String) -> Unit
@@ -175,8 +169,13 @@ fun NoticeSearchScreen(
                     }
             ) {
                 if (uiState.searchKeyword.isBlank()) {
+                    // Read HomeScreen content safe bottom padding
+                    val bottomPadding = LocalHomeSafeBottomPadding.current
+
                     PlaceholderScreen(
-                        modifier = Modifier.padding(bottom = bottomPadding),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = bottomPadding),
                         imageResource = R.drawable.magnifying_glasses,
                         contentText = stringResource(R.string.text_search_greeting)
                     )
@@ -205,25 +204,39 @@ fun NoticeSearchScreen(
 
                             // Target to be revised in better way.
                             if (!uiState.isFetching && uiState.isSearchResultEmpty) {
+                                // Read HomeScreen content safe bottom padding
+                                val bottomPadding = LocalHomeSafeBottomPadding.current
+
                                 PlaceholderScreen(
-                                    modifier = Modifier.padding(bottom = bottomPadding),
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(bottom = bottomPadding),
                                     imageResource = R.drawable.question_mark,
                                     contentText = stringResource(R.string.error_no_search_result)
                                 )
                             } else {
+                                // Read HomeScreen content safe bottom padding
+                                val bottomPadding = LocalHomeSafeBottomPadding.current
+
                                 LazyColumn(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .wrapContentHeight(),
-                                    contentPadding = PaddingValues(3.dp)
+                                    contentPadding = PaddingValues(
+                                        top = 3.dp, start = 3.dp, end = 3.dp, bottom = 3.dp + bottomPadding
+                                    )
                                 ) {
                                     when (index) {
                                         0 -> {
                                             itemsIndexed(uiState.fetchResult) { index, notice ->
 
-                                                if (index == uiState.fetchResult.size - 1 && uiState.canRequestMoreNotices) {
-                                                    // List reach ends.
-                                                    viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
+                                                LaunchedEffect(index) {
+                                                    // Safe execution of Fetch More Notice Event
+                                                    if (index == uiState.fetchResult.size - 1
+                                                        && uiState.canRequestMoreNotices) {
+                                                        // List reach ends.
+                                                        viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
+                                                    }
                                                 }
 
                                                 HorizontalDivider(
@@ -256,10 +269,13 @@ fun NoticeSearchScreen(
                                         else -> {
                                             itemsIndexed(uiState.localFetchResult) { index, bookmark ->
 
-                                                if (index == uiState.localFetchResult.size - 1
-                                                    && uiState.canRequestMoreNotices) {
-                                                    // List reach ends.
-                                                    viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
+                                                LaunchedEffect(index) {
+                                                    // Safe execution of Fetch More Notice Event
+                                                    if (index == uiState.localFetchResult.size - 1
+                                                        && uiState.canRequestMoreNotices) {
+                                                        // List reach ends.
+                                                        viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
+                                                    }
                                                 }
 
                                                 HorizontalDivider(
@@ -298,8 +314,6 @@ fun NoticeSearchScreen(
                                             }
                                         }
                                     }
-
-                                    item { Spacer(Modifier.height(bottomPadding)) }
                                 }
                             }
                         }

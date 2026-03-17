@@ -1,14 +1,13 @@
 package com.doyoonkim.common.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -19,14 +18,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
-import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.title
 
@@ -35,11 +30,14 @@ import com.doyoonkim.common.theme.title
  * Created 6/23/25 at 11:38 PM
  */
 
+enum class NavButtonType { BACK, CLOSE }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopAppBarWithBackButton(
+fun TopAppBarWithNavButton(
     modifier: Modifier = Modifier,
     titleText: String,
+    navButtonType: NavButtonType = NavButtonType.BACK,
     onBackPressed: () -> Unit
 ) {
     TopAppBar(
@@ -59,7 +57,10 @@ fun TopAppBarWithBackButton(
                 onClick = { onBackPressed() }
             ) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Default.ArrowBack,
+                    imageVector = when(navButtonType) {
+                      NavButtonType.BACK -> Icons.AutoMirrored.Filled.KeyboardArrowLeft
+                      NavButtonType.CLOSE -> Icons.Filled.Clear
+                    },
                     contentDescription = null
                 )
             }
@@ -104,6 +105,49 @@ fun TopAppBarWithActions(
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.displayBackground,
             titleContentColor = MaterialTheme.colorScheme.title
+        )
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ConfigurableTopAppBar(
+    modifier: Modifier = Modifier,
+    titleText: String,
+    navButtonType: NavButtonType = NavButtonType.BACK,
+    onBackPressed: () -> Unit,
+    actions: @Composable (RowScope.() -> Unit)
+) {
+    TopAppBar(
+        title = {
+            Text(
+                modifier = modifier.fillMaxWidth(),
+                text = titleText,
+                textAlign = TextAlign.Left,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
+        navigationIcon = {
+            IconButton(
+                onClick = { onBackPressed() }
+            ) {
+                Icon(
+                    imageVector = when(navButtonType) {
+                        NavButtonType.BACK -> Icons.AutoMirrored.Filled.KeyboardArrowLeft
+                        NavButtonType.CLOSE -> Icons.Filled.Clear
+                    },
+                    contentDescription = null
+                )
+            }
+        },
+        actions = actions,
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.displayBackground,
+            titleContentColor = MaterialTheme.colorScheme.title,
+            navigationIconContentColor = MaterialTheme.colorScheme.title
         )
     )
 }

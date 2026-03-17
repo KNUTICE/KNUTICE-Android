@@ -4,7 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
-import android.util.Log
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.doyoonkim.common.di.AppInjector
@@ -13,12 +13,14 @@ import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerAppComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationServiceComponent
+import com.doyoonkim.knutice.di.components.DaggerWidgetComponent
 import com.doyoonkim.knutice.di.util.DaggerWorkerFactory
-import com.doyoonkim.knutice.di.util.DefaultSystemService
 import com.doyoonkim.notification.fcm.PushNotificationService
+import com.doyoonkim.widget.di.WidgetDependency
+import com.doyoonkim.widget.di.WidgetDependencyProvider
 import javax.inject.Inject
 
-class MainApplication() : Application(), AppInjectorProvider {
+class MainApplication() : Application(), AppInjectorProvider, WidgetDependencyProvider {
 
     val appComponent: AppComponent by lazy {
         DaggerAppComponent.factory().create(this)
@@ -29,7 +31,7 @@ class MainApplication() : Application(), AppInjectorProvider {
             when(target) {
                 is PushNotificationService -> {
                     DaggerNotificationServiceComponent.factory()
-                        .create(DefaultSystemService(appComponent)).inject(target)
+                        .create(appComponent, appComponent).inject(target)
                 }
                 else -> error("Unsupported Target $target")
             }
@@ -37,13 +39,21 @@ class MainApplication() : Application(), AppInjectorProvider {
 
     }
 
+
+    override fun provide(): WidgetDependency {
+        return DaggerWidgetComponent.factory().create(appComponent, appComponent)
+    }
+
     @Inject lateinit var notificationManager: NotificationManager
     @Inject lateinit var workerFactory: DaggerWorkerFactory
+    @Inject lateinit var widgetSyncObserver: WidgetSyncObserver
 
     override fun onCreate() {
         super.onCreate()
         // Application-Level injection
         appComponent.inject(this)
+        // Register Observer on ProcessLifecycleOwner
+        ProcessLifecycleOwner.get().lifecycle.addObserver(widgetSyncObserver)
         configureWorkerManager()
 
         // Create channel group

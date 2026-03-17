@@ -6,15 +6,18 @@ import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
+import javax.inject.Singleton
 
 @Module
 object DispatcherModule {
 
     @Provides
+    @Singleton
     @IoDispatcher
     fun providesIoDispatchers(): CoroutineDispatcher = Dispatchers.IO
 
     @Provides
+    @Singleton
     @DefaultDispatcher
     fun providesDefaultDispatchers(): CoroutineDispatcher = Dispatchers.Default
 

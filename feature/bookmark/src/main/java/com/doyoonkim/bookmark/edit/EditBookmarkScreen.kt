@@ -75,7 +75,7 @@ import com.doyoonkim.common.ui.RoundedCornerColumnItem
 import com.doyoonkim.common.ui.RoundedCornerColumnTextItemWithExtraOnRight
 import com.doyoonkim.common.ui.TextSize
 import com.doyoonkim.common.ui.TimePickerDialog
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,7 +113,7 @@ fun EditBookmarkScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = stringResource(R.string.title_edit_bookmark),
                 onBackPressed = { viewModel.sendUiEvent(EditBookmarkEvent.GoBack) }
             )
@@ -167,7 +167,7 @@ fun EditBookmarkScreen(
                             checkedTrackColor = MaterialTheme.colorScheme.variantPurple,
                             checkedThumbColor = Color.White
                         ),
-                        onCheckedChange = { viewModel.sendUiEvent(EditBookmarkEvent.UpdateReminderOption) }
+                        onCheckedChange = { viewModel.sendUiEvent(EditBookmarkEvent.UpdateReminderOption(it)) }
                     )
                 }
 

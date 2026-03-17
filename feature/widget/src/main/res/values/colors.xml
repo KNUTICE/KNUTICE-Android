@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="widget_preview_bg">#F3F4F6</color>
+    <color name="widget_preview_text_primary">#000000</color>
+    <color name="widget_preview_text_secondary">#757575</color>
+    <color name="widget_preview_divider">#E0E0E0</color>
+    <color name="widget_variant_purple">#6B79FC</color>
+    <color name="widget_preview_bg_secondary">#FFFFFF</color>
+</resources>

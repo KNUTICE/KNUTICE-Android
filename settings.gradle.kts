@@ -10,6 +10,7 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    includeBuild("build-logic")
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -31,3 +32,5 @@ include(":common")
 include(":core:notification")
 include(":core:domain")
 include(":core:model")
+include(":feature:widget")
+include(":core:infrastructure")

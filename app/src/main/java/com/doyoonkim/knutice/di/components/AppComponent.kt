@@ -1,48 +1,59 @@
 package com.doyoonkim.knutice.di.components
 
-import android.app.AlarmManager
 import android.app.Application
-import android.app.NotificationManager
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.work.ListenableWorker
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.data.di.LocalModule
 import com.doyoonkim.data.di.TokenRemoteModule
 import com.doyoonkim.domain.di.AsyncFtsEntryInsertionModule
 import com.doyoonkim.domain.di.TokenUseCaseModule
 import com.doyoonkim.knutice.MainApplication
-import com.doyoonkim.knutice.analytics.AnalyticsLogger
 import com.doyoonkim.knutice.di.modules.AppModule
 import com.doyoonkim.knutice.di.modules.DispatcherModule
-import com.doyoonkim.knutice.di.modules.FirebaseAnalyticsModule
 import com.doyoonkim.knutice.di.modules.WorkerModule
 import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.FcmTokenModule
-import com.doyoonkim.notification.di.IntermediateWorkerFactory
+import com.doyoonkim.common.worker.IntermediateWorkerFactory
+import com.doyoonkim.data.di.CampusRemoteModule
+import com.doyoonkim.data.di.NoticeRemoteModule
+import com.doyoonkim.data.di.RoomDatabaseModule
+import com.doyoonkim.data.di.SystemCoroutineModule
+import com.doyoonkim.infrastructure.di.FirebaseAnalyticsModule
+import com.doyoonkim.infrastructure.di.FirebaseRemoteConfigModule
+import com.doyoonkim.knutice.di.util.FirebaseInfrastructureProvider
+import com.doyoonkim.knutice.di.util.LocalStorageProvider
+import com.doyoonkim.knutice.di.util.NetworkProvider
+import com.doyoonkim.knutice.di.util.SystemServices
+import com.doyoonkim.widget.di.WidgetModule
 import dagger.BindsInstance
 import dagger.Component
 import dagger.Subcomponent
 import javax.inject.Provider
+import javax.inject.Singleton
 
+@Singleton
 @Component(
     modules = [
         AppModule::class,
-        FirebaseAnalyticsModule::class
+        FirebaseAnalyticsModule::class,
+        FirebaseRemoteConfigModule::class,
+        DispatcherModule::class,
+        SystemCoroutineModule::class,
+        LocalModule::class,
+        RoomDatabaseModule::class,
+        NetworkModule::class
     ]
 )
-interface AppComponent {
-
+interface AppComponent :
+    SystemServices,
+    NetworkProvider,
+    LocalStorageProvider,
+    FirebaseInfrastructureProvider
+{
     fun inject(app: MainApplication)
 
-    // Provision Functions
-    @ApplicationContext fun applicationContext(): Context
-    fun sharedPreference(): SharedPreferences
-    fun alarmManager(): AlarmManager
-    fun notificationManager(): NotificationManager
-
-    // Analytics
-    fun analytics(): AnalyticsLogger
+    // AppPref Instance
+    fun appPreference(): AppPreferences
 
     // Worker Subcomponent
     fun workerComponent(): WorkerSubcomponent.Factory
@@ -60,14 +71,14 @@ interface AppComponent {
 
 @Subcomponent(
     modules = [
-        DispatcherModule::class,
         WorkerModule::class,
+        WidgetModule::class,
         FcmTokenModule::class,
         TokenUseCaseModule::class,
         TokenRemoteModule::class,
         AsyncFtsEntryInsertionModule::class,
-        LocalModule::class,
-        NetworkModule::class
+        NoticeRemoteModule::class,
+        CampusRemoteModule::class
     ]
 )
 interface WorkerSubcomponent {

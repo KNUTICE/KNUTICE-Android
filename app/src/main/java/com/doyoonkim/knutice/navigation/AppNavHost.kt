@@ -40,12 +40,11 @@ fun AppNavHost(
         mainServiceNavGraph(
             navController = navController,
             appComponent = appComponent,
-            contentPadding = contentPadding,
             onNoticeDetailRequested = { target ->
-                navController.navigate("noticeDetail/${target.nttId}/${Uri.encode(target.contentUrl)}/${target.isFabVisible}")
+                navController.navigate("notice?nttId=${target.nttId}&contentUrl=${Uri.encode(target.contentUrl)}&FabVisible=${target.isFabVisible}")
             },
             onBookmarkServiceRequested = {
-                navController.navigate("bookmark/${it.noticeId}/${Uri.encode(it.noticeTitle)}/${Uri.encode(it.noticeInfo)}")
+                navController.navigate("bookmark?id=${it.noticeId}&title=${Uri.encode(it.noticeTitle)}&info=${Uri.encode(it.noticeInfo)}")
             },
             onExit = onExit
         )
@@ -53,14 +52,19 @@ fun AppNavHost(
         bookmarkServiceGraph(
             navController = navController,
             appComponent = appComponent,
-            contentPadding = contentPadding,
             onNoticeDetailRequested = { target ->
-                navController.navigate("noticeDetail/${target.nttId}/${Uri.encode(target.contentUrl)}/${target.isFabVisible}")
+                navController.navigate("notice?nttId=${target.nttId}&contentUrl=${Uri.encode(target.contentUrl)}&FabVisible=${target.isFabVisible}")
             },
             onBookmarkRequested = {
-                navController.navigate("bookmark/${it.noticeId}/${Uri.encode(it.noticeTitle)}/${Uri.encode(it.noticeInfo)}")
+                navController.navigate("bookmark?id=${it.noticeId}&title=${Uri.encode(it.noticeTitle)}&info=${Uri.encode(it.noticeInfo)}")
             },
             onExit = onExit
+        )
+
+        campusServiceGraph(
+            navController = navController,
+            appComponent = appComponent,
+            contentPadding = contentPadding
         )
     }
 }

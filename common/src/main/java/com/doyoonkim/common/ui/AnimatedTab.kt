@@ -37,12 +37,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.title
+import kotlin.math.roundToInt
 
 @Composable
 fun AnimatedTab(
@@ -92,7 +94,7 @@ fun AnimatedTab(
                 ) {
                     Box(
                         modifier = Modifier
-                            .offset(x = with(LocalDensity.current) { animationValue.toDp() })
+                            .offset { IntOffset(x = animationValue.roundToInt(), y = 0) }
                             .size(
                                 width = with(LocalDensity.current) {
                                     (tabSize.width / tabTitles.size).toDp()

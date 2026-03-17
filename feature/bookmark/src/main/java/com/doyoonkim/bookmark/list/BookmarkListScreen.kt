@@ -7,11 +7,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -37,7 +36,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,6 +48,7 @@ import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
+import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TopAppBarDropdownMenu
@@ -62,7 +61,6 @@ import java.util.Locale
 fun BookmarkListScreen(
     modifier: Modifier = Modifier,
     viewModel: BookmarkListViewModel,
-    bottomPadding: Dp = 0.dp,
     onSettingsRequested: () -> Unit,
     onBookmarkSelected: (BookmarkInfo) -> Unit,
     onBackPressed: () -> Unit
@@ -77,6 +75,7 @@ fun BookmarkListScreen(
                 is BookmarkListSideEffect.NavTo -> {
                     onBookmarkSelected(sideEffect.dest)
                 }
+                is BookmarkListSideEffect.Settings -> onSettingsRequested()
             }
         }
     }
@@ -104,7 +103,7 @@ fun BookmarkListScreen(
                     }
                 )
                 IconButton(
-                    onClick = onSettingsRequested
+                    onClick = { viewModel.sendUiEvent(BookmarkListEvent.RequestSettings) }
                 ) {
                     Image(
                         painter = painterResource(R.drawable.baseline_settings_24),
@@ -127,12 +126,16 @@ fun BookmarkListScreen(
         ) {
 
             if (uiState.bookmarks.isEmpty()) {
+                // Read HomeScreen content safe bottom padding
+                val bottomPadding = LocalHomeSafeBottomPadding.current
+
                 Box(
                     modifier = Modifier
                         .wrapContentSize()
+                        .padding(bottom = bottomPadding)
                         .weight(1f)
                 ) {
-                    if (uiState.isRequested) {
+                    if (uiState.isLoading) {
                         Surface(
                             modifier = Modifier
                                 .wrapContentSize()
@@ -175,6 +178,10 @@ fun BookmarkListScreen(
                         )
                     }
                 }
+
+                // Read HomeScreen content safe bottom padding
+                val bottomPadding = LocalHomeSafeBottomPadding.current
+
                 LazyColumn(
                     modifier = modifier
                         .wrapContentHeight()
@@ -183,6 +190,7 @@ fun BookmarkListScreen(
                         .background(Color.Transparent),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(bottom = bottomPadding)
                 ) {
 
                     items(uiState.bookmarks.size) { index ->
@@ -208,7 +216,16 @@ fun BookmarkListScreen(
                             }
                         )
 
-                        if (index == uiState.bookmarks.size - 1 && !uiState.isReachEnd) {
+                        LaunchedEffect(index) {
+                            // Safe-execution of request more bookmark event
+                            if (index == uiState.bookmarks.size - 1 && !uiState.isReachEnd) {
+                                viewModel.sendUiEvent(BookmarkListEvent.RequestMoreBookmark)
+                            }
+                        }
+                    }
+
+                    if (uiState.isLoading && !uiState.isRefreshing) {
+                        item {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -222,17 +239,10 @@ fun BookmarkListScreen(
                                     trackColor = MaterialTheme.colorScheme.displayBackground
                                 )
                             }
-                            viewModel.sendUiEvent(BookmarkListEvent.RequestMoreBookmark)
                         }
-
-                    }
-                    item {
-                        Spacer(Modifier.height(bottomPadding))
                     }
                 }
             }
-
-            Spacer(Modifier.height(bottomPadding))
         }
     }
 }

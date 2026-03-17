@@ -7,6 +7,7 @@ import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.main.contract.NoticeByMajorEvent
+import com.doyoonkim.main.contract.NoticeByMajorMutation
 import com.doyoonkim.main.contract.NoticeByMajorSideEffect
 import com.doyoonkim.main.contract.NoticeByMajorState
 import com.doyoonkim.model.MajorCategory
@@ -21,7 +22,8 @@ class NoticeByMajorViewModel @Inject constructor(
     private val appPreference: AppPreferences,
     private val fetchNoticesPerPage: FetchNoticesPerPage,
     private val submitNotificationPreferences: SubmitNotificationPreferences
-): BaseViewModel<NoticeByMajorState, NoticeByMajorEvent, NoticeByMajorSideEffect>() {
+): BaseViewModel<NoticeByMajorState, NoticeByMajorEvent, NoticeByMajorSideEffect, NoticeByMajorMutation>() {
+    private val TAG = this.javaClass.name
     override fun setInitialState(): NoticeByMajorState = NoticeByMajorState(0)
 
     override fun handleEvent(event: NoticeByMajorEvent) {
@@ -39,10 +41,10 @@ class NoticeByMajorViewModel @Inject constructor(
                 loadNotices()
             }
             is NoticeByMajorEvent.RequestBottomSheetExpand -> {
-                stateUpdate { it.copy(isBottomSheetVisible = true) }
+                mutate(NoticeByMajorMutation.BottomSheetStatus(true))
             }
             is NoticeByMajorEvent.RequestBottomSheetHidden -> {
-                stateUpdate { it.copy(isBottomSheetVisible = false) }
+                mutate(NoticeByMajorMutation.BottomSheetStatus(false))
             }
             is NoticeByMajorEvent.RequestGoBack -> {
                 sendSideEffect(NoticeByMajorSideEffect.GoBack)
@@ -64,29 +66,16 @@ class NoticeByMajorViewModel @Inject constructor(
     private fun initialLoad() {
         val currentSubscription = appPreference.getSubscribedMajor()
         currentSubscription?.let { subscribed ->
-            stateUpdate {
-                it.copy(
-                    targetMajor = MajorCategory.valueOf(subscribed),
-                    isLoading = true
-                )
-            }
+            mutate(NoticeByMajorMutation.Subscribed(MajorCategory.valueOf(subscribed)))
         }
         viewModelScope.launch {
             fetchNotice()
-        }.invokeOnCompletion {
-            stateUpdate {
-                it.copy(
-                    isLoading = false
-                )
-            }
         }
     }
 
     // Need to revised later.
     private fun updateSubscribedMajor(newSubscription: MajorCategory) {
-        stateUpdate {
-            it.copy(isLoading = true)
-        }
+        mutate(NoticeByMajorMutation.Notices.Loading)
 
         val prevSubscription = appPreference.getSubscribedMajor()
         // State Update & Request subscription update on Remote Source.
@@ -113,45 +102,18 @@ class NoticeByMajorViewModel @Inject constructor(
                 if (unsubscribePrevTopic) {
                     // update
                     appPreference.updateSubscribedMajor(newSubscription.name)
-
-                    stateUpdate {
-                        it.copy(
-                            lastNttId = 0,
-                            notices = emptyList(),
-                            targetMajor = newSubscription,
-                            isFetchable = true
-                        )
-                    }
+                    mutate(NoticeByMajorMutation.Subscribed(newSubscription))
                     // Fetch new notices
-                    sendUiEvent(NoticeByMajorEvent.RequestNotice)
+                    loadNotices()
                 }
-            }
-        }.invokeOnCompletion {
-            stateUpdate {
-                it.copy(
-                    isLoading = false
-                )
             }
         }
     }
 
     private fun refreshNotices() {
-        stateUpdate {
-            it.copy(
-                lastNttId = 0,
-                notices = emptyList(),
-                isRefreshing = true,
-                isFetchable = true
-            )
-        }
+        mutate(NoticeByMajorMutation.Notices.Refreshing)
         viewModelScope.launch {
             fetchNotice()
-        }.invokeOnCompletion {
-            stateUpdate {
-                it.copy(
-                    isRefreshing = false
-                )
-            }
         }
     }
 
@@ -162,8 +124,13 @@ class NoticeByMajorViewModel @Inject constructor(
     }
 
     private suspend fun fetchNotice() {
-        Log.d(this.javaClass.name,"Fetching Notices for major ${uiState.value.targetMajor}")
-        if (!uiState.value.isFetchable) return
+        Log.d(TAG,"Fetching Notices for major ${uiState.value.targetMajor}")
+        if (!uiState.value.isFetchable) {
+            mutate(NoticeByMajorMutation.Notices.Failure("Unable to Fetch (Not Fetchable)"))
+            return
+        }
+
+        mutate(NoticeByMajorMutation.Notices.Loading)
         if (uiState.value.targetMajor != MajorCategory.UNSPECIFIED) {
             fetchNoticesPerPage.invoke(
                 category = uiState.value.targetMajor.name, lastNttId = uiState.value.lastNttId
@@ -173,25 +140,67 @@ class NoticeByMajorViewModel @Inject constructor(
                         val updated = uiState.value.notices.toMutableList().apply {
                             addAll(notices)
                         }
-                        stateUpdate {
-                            it.copy(
-                                lastNttId = updated.last().nttId,
-                                notices = updated
-                            )
-                        }
+                        mutate(NoticeByMajorMutation.Notices.Success(updated))
                     },
                     onFailure = {
                         // Do nothing.
-                        Log.d("NoticeByMajorViewModel", "Unable to retrieve notices")
-                        stateUpdate {
-                            it.copy(
-                                isFetchable = false
-                            )
-                        }
+                        mutate(NoticeByMajorMutation.Notices.Failure("Unable to retrieve notices"))
                     }
                 )
             }
         }
     }
+
+    // Main Reducer
+    override fun reduce(
+        currentState: NoticeByMajorState,
+        mutation: NoticeByMajorMutation
+    ): NoticeByMajorState {
+        return when (mutation) {
+            is NoticeByMajorMutation.Notices -> { mutation.reducer(currentState) }
+            is NoticeByMajorMutation.Subscribed -> {
+                currentState.copy(
+                    lastNttId = 0,
+                    notices = emptyList(),
+                    targetMajor = mutation.topic,
+                    isFetchable = true
+                )
+            }
+            is NoticeByMajorMutation.BottomSheetStatus -> {
+                currentState.copy(
+                    isBottomSheetVisible = mutation.expanded
+                )
+            }
+        }
+    }
+
+    // Specialized Reducer
+    private fun NoticeByMajorMutation.Notices.reducer(state: NoticeByMajorState) =
+        when (this) {
+            is NoticeByMajorMutation.Notices.Loading -> { state.copy(isLoading = true) }
+            is NoticeByMajorMutation.Notices.Refreshing -> {
+                state.copy(
+                    isRefreshing = true,
+                    isFetchable = true,
+                    lastNttId = 0,
+                    notices = emptyList()
+                )
+            }
+            is NoticeByMajorMutation.Notices.Success -> {
+                state.copy(
+                    isLoading = false,
+                    isRefreshing = false,
+                    notices = notices,
+                    lastNttId = notices.last().nttId
+                )
+            }
+            is NoticeByMajorMutation.Notices.Failure -> {
+                state.copy(
+                    isLoading = false,
+                    isRefreshing = false,
+                    isFetchable = false
+                ).also { Log.d(TAG, "FAILURE: ${this.reason}") }
+            }
+        }
 
 }

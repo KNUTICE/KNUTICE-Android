@@ -3,6 +3,9 @@ package com.doyoonkim.common.di
 import android.content.SharedPreferences
 import javax.inject.Inject
 import androidx.core.content.edit
+import com.doyoonkim.model.WidgetCategoryPolicy
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class AppPreferences @Inject constructor(
     private val appPref: SharedPreferences
@@ -18,6 +21,15 @@ class AppPreferences @Inject constructor(
 
     // Major Subscription Status
     private val SUBSCRIBED_MAJOR = "SUBSCRIBED_MAJOR"
+
+    // Widget Configuration (Category Selection)
+    private val WIDGET_CATEGORY = "WIDGET_CATEGORY"
+
+    private val json = Json {
+        encodeDefaults = true
+        ignoreUnknownKeys = true
+        classDiscriminator = "type"
+    }
 
     /**
      * updateDeviceToken
@@ -40,6 +52,21 @@ class AppPreferences @Inject constructor(
 
     fun updateSubscribedMajor(newMajor: String) {
         appPref.edit { putString(SUBSCRIBED_MAJOR, newMajor) }
+    }
+
+    /**
+     * Widget Configuration
+     */
+    fun getWidgetCategoryPolicy(): WidgetCategoryPolicy {
+        val cachedPolicy = appPref.getString(WIDGET_CATEGORY, null)
+            ?: return WidgetCategoryPolicy.Unconfigured
+
+        return json.decodeFromString<WidgetCategoryPolicy>(cachedPolicy)
+    }
+
+    fun updateWidgetCategoryPolicy(policy: WidgetCategoryPolicy) {
+        val serializedString = json.encodeToString<WidgetCategoryPolicy>(policy)
+        appPref.edit { putString(WIDGET_CATEGORY, serializedString) }
     }
 
     fun isDatabaseSyncCompleted(): Boolean {

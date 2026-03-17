@@ -169,4 +169,22 @@
     <string name="text_no_major_notice">아직 해당 학과의 공지가 없어요</string>
     <string name="title_major_notification_channel_name">학과 공지</string>
     <string name="description_major_notification_channel">선택한 학과의 소식을 알려드려요</string>
+    <string name="header_ai_summary">AI 핵심 요약</string>
+    <string name="footer_ai_disclaimer">KNUTICE AI는 실수를 할 수 있습니다.</string>
+    <string name="widget_preview_title">최신 공지</string>
+    <string name="widget_preview_description">선택한 카테고리의 최신 공지를 확인하세요</string>
+    <string name="bottom_bar_major_title">학과 공지</string>
+    <string name="title_student_cafeteria">학생 식당</string>
+    <string name="title_staff_cafeteria">교직원 식당</string>
+    <string name="description_student_cafeteria_channel">학생 식당 메뉴를 알려드려요</string>
+    <string name="description_staff_cafeteria_channel">교직원 식당 메뉴를 알려드려요</string>
+    <string name="knutice_carrel_widget_title">열람실 현황</string>
+    <string name="knutice_carrel_widget_description">현재 열람실 현황을 빠르게 확인하세요</string>
+    <string name="notice_widget_set_confirm">카테고리 설정을 완료했어요!</string>
+    <string name="notice_widget_config_header">구독 카테고리를 선택해 주세요.</string>
+    <string name="notice_widget_config_title">공지 위젯 설정</string>
+    <string name="notice_widget_config_apply_button">선택한 카테고리 적용하기</string>
+    <string name="info_ai_summary_not_available">이 공지는 AI 요약이 지원되지 않습니다.\n원문을 확인해 주세요.</string>
+    <string name="title_dining_menu">학식 조회</string>
+    <string name="info_need_select_major">우리 학과의 중요한 소식을 놓치지 않도록\n전공을 설정해 볼까요?</string>
 </resources>

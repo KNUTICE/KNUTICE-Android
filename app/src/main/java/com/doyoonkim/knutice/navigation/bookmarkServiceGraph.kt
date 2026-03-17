@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -14,7 +13,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.navDeepLink
 import com.doyoonkim.bookmark.edit.EditBookmarkScreen
 import com.doyoonkim.bookmark.list.BookmarkListScreen
 import com.doyoonkim.bookmark.viewmodel.BookmarkListViewModel
@@ -25,12 +23,10 @@ import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerBookmarkListSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerEditBookmarkSceneComponent
-import com.doyoonkim.knutice.di.util.DefaultSystemService
 
 fun NavGraphBuilder.bookmarkServiceGraph(
     navController: NavController,
     appComponent: AppComponent,
-    contentPadding: PaddingValues,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkRequested: (BookmarkInfo) -> Unit,
     onExit: () -> Unit = {  }
@@ -38,13 +34,15 @@ fun NavGraphBuilder.bookmarkServiceGraph(
 
     composable(NavRoutes.Bookmark.route) {
         val sceneComponent = remember(appComponent) {
-            DaggerBookmarkListSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerBookmarkListSceneComponent.factory().create(
+                systemServices = appComponent,
+                localStorageProvider = appComponent
+            )
         }
 
         BookmarkListScreen(
             modifier = Modifier.padding(horizontal = 5.dp),
             viewModel = viewModel<BookmarkListViewModel>(factory = sceneComponent.getViewModelFactory()),
-            bottomPadding = contentPadding.calculateBottomPadding(),
             onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
             onBookmarkSelected = {
                 onBookmarkRequested(it)
@@ -56,12 +54,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
     }
 
     composable(
-        route = "bookmark/{id}/{title}/{info}",
-        deepLinks = listOf(
-            navDeepLink {
-                uriPattern = "knutice://service/bookmark/{id}/{title}/{info}"
-            }
-        ),
+        route = "bookmark?id={id}&title={title}&info={info}",
         enterTransition = {
             slideIntoContainer(
                 animationSpec = tween(300, easing = EaseIn),
@@ -84,7 +77,11 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         } ?: BookmarkInfo(0, "", "")
 
         val sceneComponent = remember(appComponent) {
-            DaggerEditBookmarkSceneComponent.factory().create(DefaultSystemService(appComponent))
+            DaggerEditBookmarkSceneComponent.factory().create(
+                systemService = appComponent,
+                networkProvider = appComponent,
+                localStorageProvider = appComponent
+            )
         }
 
         EditBookmarkScreen(

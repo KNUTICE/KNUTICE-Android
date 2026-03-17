@@ -2,11 +2,10 @@ package com.doyoonkim.notification.di
 
 import android.content.Context
 import com.doyoonkim.common.BitmapHandler
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.model.di.IoDispatcher
 import com.doyoonkim.common.di.TokenHandler
 import com.doyoonkim.domain.interfaces.ImageRemoteRepository
-import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.notification.fcm.PushNotificationHandler
 import com.doyoonkim.notification.fcm.TokenHandlerImpl
 import com.doyoonkim.notification.local.AlarmScheduler
@@ -24,14 +23,12 @@ abstract class NotificationModule {
         // Considered to be removed.
         @Provides
         fun providesPushNotificationHandler(
-            remoteRepository: NoticeRemoteRepository,
             imageRepository: ImageRemoteRepository,
             bitmapHandler: BitmapHandler,
             @IoDispatcher dispatcher: CoroutineDispatcher,
             @ApplicationContext context: Context
         ) =
             PushNotificationHandler(
-                remoteRepository,
                 imageRepository,
                 bitmapHandler,
                 dispatcher,

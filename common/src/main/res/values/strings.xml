@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">KNUTICE</string>
+    <string name="app_name_debug" translatable="false">KNUTICE (DEBUG)</string>
     <string name="general_news">General</string>
     <string name="academic_news">Academic</string>
     <string name="scholarship_news">Scholarship</string>
@@ -11,7 +12,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code" translatable="false">1.6.1</string>
+    <string name="version_code" translatable="false">1.7.0</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -181,4 +182,23 @@
     <string name="text_no_major_notice">There are no notices from the selected major</string>
     <string name="title_major_notification_channel_name">Notice by Major</string>
     <string name="description_major_notification_channel">Get notification when new notice from the selected major is being posted.</string>
+    <string name="header_ai_summary">AI Summary</string>
+    <string name="footer_ai_disclaimer">KNUTICE AI can make mistakes.</string>
+    <string name="attribution_knutice_ai" translatable="false">KNUTICE AI powered by Google Gemini</string>
+    <string name="widget_preview_title">Notice Widget</string>
+    <string name="widget_preview_description">Check the most recent notices in chosen category.</string>
+    <string name="bottom_bar_major_title">Dept Notice</string>
+    <string name="title_student_cafeteria">Student Dining Hall</string>
+    <string name="title_staff_cafeteria">Staff Dining Hall</string>
+    <string name="description_student_cafeteria_channel">Get push notificaiton for daily student dining menu</string>
+    <string name="description_staff_cafeteria_channel">Get push notification for daily staff dining menu</string>
+    <string name="knutice_carrel_widget_title">Carrel Roon Status</string>
+    <string name="knutice_carrel_widget_description">Check Carrel Room Occupancy Statue</string>
+    <string name="notice_widget_set_confirm">Category Selected!</string>
+    <string name="notice_widget_config_header">Select Category for Notice Widget</string>
+    <string name="notice_widget_config_title">Notice Widget Settings</string>
+    <string name="notice_widget_config_apply_button">Apply Selected Cateogry</string>
+    <string name="info_ai_summary_not_available">AI summary is unavailable for this notice.\nPlease refer to the original text</string>
+    <string name="title_dining_menu">Dining</string>
+    <string name="info_need_select_major">Set up your major to start receiving your college\'s announcements!</string>
 </resources>

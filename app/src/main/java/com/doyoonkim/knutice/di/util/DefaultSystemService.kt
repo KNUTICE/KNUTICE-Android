@@ -4,27 +4,50 @@ import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
-import com.doyoonkim.common.di.ApplicationContext
-import com.doyoonkim.knutice.di.components.AppComponent
+import androidx.work.WorkManager
+import com.doyoonkim.common.analytics.AnalyticsLogger
+import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
+import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
+import com.doyoonkim.domain.interfaces.NoticeLocalRepository
+import com.doyoonkim.model.di.ApplicationContext
+import com.doyoonkim.domain.interfaces.abtest.FirebaseRemoteConfigRepository
+import com.doyoonkim.model.di.DefaultDispatcher
+import com.doyoonkim.model.di.IoDispatcher
+import com.doyoonkim.network.retrofit.KnuticeService
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
 
 interface SystemServices {
+    // Application Context
     @ApplicationContext fun applicationContext(): Context
+    // SharedPreference (AppPreference)
     fun sharedPreferences(): SharedPreferences
+    // AlarmManager
     fun alarmManager(): AlarmManager
+    // Notification Manager
     fun notificationManager(): NotificationManager
+    // WorkManager
+    fun workManager(): WorkManager
+
+    // Dispatchers
+    @IoDispatcher fun ioDispatcher(): CoroutineDispatcher
+    @DefaultDispatcher fun defaultDispatcher(): CoroutineDispatcher
+
+    // Application Scope Coroutine
+    fun applicationScope(): CoroutineScope
 }
 
-class DefaultSystemService(
-    private val appComponent: AppComponent
-) : SystemServices {
+interface NetworkProvider {
+    fun knuticeService(): KnuticeService
+}
 
-    @ApplicationContext
-    override fun applicationContext(): Context = appComponent.applicationContext()
+interface LocalStorageProvider {
+    fun localNoticeRepository(): NoticeLocalRepository
+    fun localBookmarkRepository(): BookmarkLocalRepository
+    fun localWidgetCacheRepository(): LocalWidgetCacheRepository
+}
 
-    override fun sharedPreferences(): SharedPreferences = appComponent.sharedPreference()
-
-    override fun alarmManager(): AlarmManager = appComponent.alarmManager()
-
-    override fun notificationManager(): NotificationManager = appComponent.notificationManager()
-
+interface FirebaseInfrastructureProvider {
+    fun analyticsLogger(): AnalyticsLogger
+    fun remoteConfigRepository(): FirebaseRemoteConfigRepository
 }

@@ -9,7 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import com.doyoonkim.common.di.ApplicationContext
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.model.BookmarkVO
 import javax.inject.Inject
@@ -37,7 +37,7 @@ class NotificationAlarmScheduler @Inject constructor(
     // Context: ApplicationContext
 
     override fun createPendingIntent(target: BookmarkVO, nav: BookmarkInfo): PendingIntent {
-        val uri = "knutice://service/bookmark/${nav.noticeId}/${Uri.encode(nav.noticeTitle)}/${Uri.encode(nav.noticeInfo)}"
+        val uri = "knutice://bookmark?id=${nav.noticeId}&title=${Uri.encode(nav.noticeTitle)}&info=${Uri.encode(nav.noticeInfo)}"
         val intent = Intent(context, AlarmReceiver::class.java)
             .apply {
                 putExtra("content", target.bookmarkNote)

@@ -1,8 +1,6 @@
 package com.doyoonkim.data.room
 
 import android.content.Context
-import android.os.Parcel
-import android.os.Parcelable
 import android.util.Log
 import androidx.room.AutoMigration
 import androidx.room.Database
@@ -21,8 +19,8 @@ import kotlinx.coroutines.asExecutor
 
 @Database(
     entities = [Bookmark::class, NoticeEntity::class, BookmarkFts::class, PendingBookmarkFtsAsync::class],
-    version = 4,
-    autoMigrations = [ AutoMigration(from = 2, to = 3), AutoMigration(from = 3, to = 4) ]
+    version = 5,
+    autoMigrations = [ AutoMigration(from = 2, to = 3), AutoMigration(from = 3, to = 4), AutoMigration(from = 4, to = 5) ]
 )
 abstract class LocalDatabase : RoomDatabase() {
     abstract fun getDao(): MainDatabaseDao

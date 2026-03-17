@@ -12,7 +12,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,10 +19,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -31,7 +28,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.work.BackoffPolicy
@@ -40,20 +36,15 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Constraints
 import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
 import com.doyoonkim.common.theme.KNUTICETheme
 import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
+import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.common.navigation.DeeplinkHandler
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
-import com.doyoonkim.knutice.di.components.DaggerSplashSceneComponent
-import com.doyoonkim.knutice.di.util.DefaultSystemService
-import com.doyoonkim.main.splash.KnuticeSplashScreen
-import com.doyoonkim.main.viewmodel.SplashViewModel
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
-import com.google.firebase.analytics.FirebaseAnalytics
 import kotlinx.coroutines.delay
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -61,17 +52,20 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
      @Inject lateinit var alarmManager: AlarmManager
+     @Inject lateinit var analytics: AnalyticsLogger
 
     // NavController
     private lateinit var navController: NavHostController
     private val activity = this
     private val receivedIntent = mutableStateOf<Intent?>(null)
 
+    private val isDeeplinkInProcess = mutableStateOf<Boolean>(false)
+    private val lastProcessedIntent = mutableStateOf<Int?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = (application as MainApplication).appComponent
-        DaggerMainActivityComponent.factory().create(DefaultSystemService(appComponent))
+        DaggerMainActivityComponent.factory().create(appComponent, appComponent)
             .inject(this)
-        val analytics = appComponent.analytics()
 
         super.onCreate(savedInstanceState)
 
@@ -91,7 +85,7 @@ class MainActivity : ComponentActivity() {
         ).build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "Token Registration", ExistingPeriodicWorkPolicy.UPDATE, workRequest
+            "Token Registration", ExistingPeriodicWorkPolicy.KEEP, workRequest
         )
 
         receivedIntent.value = intent
@@ -103,120 +97,101 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 navController = rememberNavController()
 
-                var lastProcessedIntent by remember { mutableStateOf<Int?>(null) }
-                var isDeeplinkInProcess by remember { mutableStateOf(false) }
-
-                var isPreProcessCompleted by remember { mutableStateOf(false) }
-                if (!isPreProcessCompleted) {
-                    val sceneComponent = remember(appComponent) {
-                        DaggerSplashSceneComponent.factory().create(DefaultSystemService(appComponent))
+                // Permission Status (Alarm and Reminder)
+                val showPermissionRationale = remember { mutableStateOf(false) }
+                // Permission Launcher
+                val requestPermissionLauncher = rememberLauncherForActivityResult(
+                    ActivityResultContracts.RequestMultiplePermissions()
+                ) { permissions ->
+                    permissions.entries.forEach {
+                        Log.d("MainServiceScreen", "${it.key}, ${it.value}")
+                        if (it.key == Manifest.permission.SCHEDULE_EXACT_ALARM
+                            && !alarmManager.canScheduleExactAlarms()) {
+                            showPermissionRationale.value = true
+                        }
                     }
+                }
 
-                    KnuticeSplashScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        viewModel = viewModel<SplashViewModel>(factory = sceneComponent.viewModelFactory())
-                    ) { result ->
-                        if (!result) this.finish()
-                        isPreProcessCompleted = true
-                    }
-                } else {
+                LaunchedEffect(Unit) {
+                    delay(200L)     // Reduce workload on MainThread on its first initialization.
+                    // Permission check
+                    requestPermissionLauncher.launch(
+                        arrayOf(
+                            Manifest.permission.POST_NOTIFICATIONS,
+                            Manifest.permission.SCHEDULE_EXACT_ALARM
+                        )
+                    )
+                }
 
-                    // Permission Status (Alarm and Reminder)
-                    var showPermissionRationale by remember { mutableStateOf(false) }
-                    // Permission Launcher
-                    val requestPermissionLauncher = rememberLauncherForActivityResult(
-                        ActivityResultContracts.RequestMultiplePermissions()
-                    ) { permissions ->
-                        permissions.entries.forEach {
-                            Log.d("MainServiceScreen", "${it.key}, ${it.value}")
-                            if (it.key == Manifest.permission.SCHEDULE_EXACT_ALARM
-                                && !alarmManager.canScheduleExactAlarms()) {
-                                showPermissionRationale = true
+                MainServiceScreen(
+                    modifier = Modifier,
+                    navController = navController,
+                ) { activity.finish() }
+
+                if (showPermissionRationale.value) {
+                    Dialog(
+                        onDismissRequest = { /* DO NOTHING. PERMISSION IS MANDATORY */ }
+                    ) {
+                        PermissionRationaleComposable(
+                            modifier = Modifier,
+                            permissionName = stringResource(R.string.title_alarm_and_reminder),
+                            rationaleTitle = stringResource(R.string.text_rationale_title),
+                            description = stringResource(R.string.text_rationale_description)
+                        ) {
+                            val settingIntent = Intent(
+                                Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                            ).apply {
+                                this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                this.putExtra(
+                                    "android.provider.extra.APP_PACKAGE",
+                                    context.packageName
+                                )
+                            }
+                            context.startActivity(settingIntent).also {
+                                showPermissionRationale.value = false
                             }
                         }
                     }
+                }
+            }
 
-                    LaunchedEffect(Unit) {
-                        delay(200L)     // Reduce workload on MainThread on its first initialization.
-                        // Permission check
-                        requestPermissionLauncher.launch(
-                            arrayOf(
-                                Manifest.permission.POST_NOTIFICATIONS,
-                                Manifest.permission.SCHEDULE_EXACT_ALARM
-                            )
+            if (isDeeplinkInProcess.value) {
+                Dialog(
+                    onDismissRequest = {  }
+                ) {
+                    Surface(
+                        modifier = Modifier.wrapContentSize()
+                            .background(Color.Transparent),
+                        shape = RoundedCornerShape(15.dp),
+                        color = MaterialTheme.colorScheme.onAnyBackground
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.padding(15.dp),
+                            color = MaterialTheme.colorScheme.variantPurple,
+                            trackColor = MaterialTheme.colorScheme.onAnyBackground
                         )
                     }
-
-                    MainServiceScreen(
-                        modifier = Modifier,
-                        navController = navController,
-                    ) { activity.finish() }
-
-                    if (showPermissionRationale) {
-                        Dialog(
-                            onDismissRequest = { /* DO NOTHING. PERMISSION IS MANDATORY */ }
-                        ) {
-                            PermissionRationaleComposable(
-                                modifier = Modifier,
-                                permissionName = stringResource(R.string.title_alarm_and_reminder),
-                                rationaleTitle = stringResource(R.string.text_rationale_title),
-                                description = stringResource(R.string.text_rationale_description)
-                            ) {
-                                val settingIntent = Intent(
-                                    Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
-                                ).apply {
-                                    this.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                    this.putExtra(
-                                        "android.provider.extra.APP_PACKAGE",
-                                        context.packageName
-                                    )
-                                }
-                                context.startActivity(settingIntent)
-                                showPermissionRationale = false
-                            }
-                        }
-                    }
                 }
+            }
 
-                if (isDeeplinkInProcess) {
-                    Dialog(
-                        onDismissRequest = {  }
-                    ) {
-                        Surface(
-                            modifier = Modifier.wrapContentSize()
-                                .background(Color.Transparent),
-                            shape = RoundedCornerShape(15.dp),
-                            color = MaterialTheme.colorScheme.onAnyBackground
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.padding(15.dp),
-                                color = MaterialTheme.colorScheme.variantPurple,
-                                trackColor = MaterialTheme.colorScheme.onAnyBackground
-                            )
-                        }
-                    }
-                }
-
-                LaunchedEffect(receivedIntent.value, isPreProcessCompleted) {
-                    if (isPreProcessCompleted) {
-                        receivedIntent.value?.let { intent ->
-                            if (intent.hashCode() != lastProcessedIntent) {
-                                isDeeplinkInProcess = true
-                                lastProcessedIntent = intent.hashCode()
-
-                                DeeplinkHandler.processIntent(intent) { service, uri ->
-                                    // Analytics
-                                    analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
-                                        putString(FirebaseAnalytics.Param.CONTENT_TYPE, service)
-                                        putString(FirebaseAnalytics.Param.SOURCE, "PUSH")
-                                        putString(FirebaseAnalytics.Param.DESTINATION, uri)
-                                    })
-
-                                    navController.navigate(uri)
-                                }
-                                isDeeplinkInProcess = false
+            LaunchedEffect(receivedIntent.value) {
+                receivedIntent.value?.let { intent ->
+                    if (intent.hashCode() != lastProcessedIntent.value) {
+                        isDeeplinkInProcess.value = true
+                        lastProcessedIntent.value = intent.hashCode()
+                        DeeplinkHandler.processDeeplink(intent) { host, destination ->
+                            // Analytics
+                            analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
+                                putString("CONTENT_TYPE", host)
+                                putString("SOURCE", "PUSH")
+                                putString("DESTINATION", destination)
+                            })
+                            navController.navigate(destination) {
+                                launchSingleTop = true
                             }
+
                         }
+                        isDeeplinkInProcess.value = false
                     }
                 }
             }
@@ -226,7 +201,6 @@ class MainActivity : ComponentActivity() {
     // Called when intent is being sent while the onCreate() is already called.
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-
         Log.d("MainActivity", "Intent received onNewIntent: ${intent?.data}")
         receivedIntent.value = intent
     }

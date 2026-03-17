@@ -59,9 +59,9 @@ interface MainDatabaseDao {
     fun getPendingBookmarkFtsAsyncBatch(limit: Int): List<PendingBookmarkFtsAsync>
 
     @Query("""
-        DELETE FROM PendingBookmarkFtsAsync WHERE bookmarkId IN (:bookmarkIds)
+        DELETE FROM PendingBookmarkFtsAsync WHERE stagingId IN (:stagingIds)
     """)
-    fun removePendingBookmarkFtsAsync(bookmarkIds: List<Int>)
+    fun removePendingBookmarkFtsAsync(stagingIds: List<Int>)
 
     @Transaction
     fun updateBookmarkFts(

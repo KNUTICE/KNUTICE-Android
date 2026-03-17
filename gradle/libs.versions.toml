@@ -1,17 +1,19 @@
 [versions]
-agp = "8.11.0"
+agp = "9.0.0"
 coilCompose = "2.4.0"
 converterGson = "2.11.0"
-datastorePreferences = "1.1.7"
+datastorePreferences = "1.2.0"
 firebaseMessagingDirectboot = "24.0.2"
+jetpackGlance = "1.1.1"
 javaxInject = "1"
-kotlin = "2.1.20"
+kotlin = "2.2.10"
 coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.1.5"
 espressoCore = "3.5.1"
 kotlinxCoroutinesAndroid = "1.7.3"
 kotlinxCoroutinesTest = "1.7.3"
+lifecycleProcess = "2.10.0"
 lifecycleRuntimeKtx = "2.9.0"
 activityCompose = "1.10.1"
 composeBom = "2025.05.01"
@@ -24,6 +26,7 @@ robolectric = "4.13"
 room = "2.7.1"
 swiperefreshlayout = "1.1.0"
 googleGmsGoogleServices = "4.4.2"
+firebaseBom = "34.9.0"
 firebaseMessaging = "24.0.2"
 kotlinSerialization = "1.6.0"
 junitKtx = "1.2.1"
@@ -36,23 +39,30 @@ uiTooling = "1.8.3"
 mockWebServer = "5.0.0"
 mockk = "1.14.4"
 firebaseAnalytics = "23.0.0"
+webkit = "1.15.0"
 workRuntime = "2.10.3"
 workRuntimeKtx = "2.10.3"
+ksp = "2.3.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "datastorePreferences" }
+androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "jetpackGlance" }
+androidx-glance-appwidget-preview = { module = "androidx.glance:glance-appwidget-preview", version.ref = "jetpackGlance" }
+androidx-glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "jetpackGlance" }
+androidx-glance-preview = { module = "androidx.glance:glance-preview", version.ref = "jetpackGlance" }
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "lifecycleProcess" }
 androidx-material = { module = "androidx.compose.material:material" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-swiperefreshlayout = { module = "androidx.swiperefreshlayout:swiperefreshlayout", version.ref = "swiperefreshlayout" }
+androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "webkit" }
 androidx-work-runtime = { module = "androidx.work:work-runtime", version.ref = "workRuntime" }
 androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workRuntimeKtx" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
-firebase-messaging-directboot = { module = "com.google.firebase:firebase-messaging-directboot", version.ref = "firebaseMessagingDirectboot" }
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javaxInject" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
@@ -60,8 +70,6 @@ androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-co
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activityCompose" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
-androidx-compose-ui-test = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -75,10 +83,13 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 open-korean-text = { module = "org.openkoreantext:open-korean-text", version.ref = "openKoreanText" }
 logging-interceptor = { module = "com.squareup.okhttp3:logging-interceptor", version.ref = "loggingInterceptor" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
-firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-messaging-directboot = { module = "com.google.firebase:firebase-messaging-directboot" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-config = { module = "com.google.firebase:firebase-config" }
 kotlin-serialization = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref="kotlinSerialization" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
-protolite-well-known-types = { group = "com.google.firebase", name = "protolite-well-known-types", version.ref = "protoliteWellKnownTypes" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
@@ -92,8 +103,17 @@ okhttp3-mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 mockk-android = { module = "io.mockk:mockk-android", version.ref = "mockk" }
 mockk-agent = { module = "io.mockk:mockk-agent", version.ref = "mockk" }
-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version.ref = "firebaseAnalytics" }
 
+# Check 'Maven Central Search' to check up-to-date information
+# AGP
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref= "agp" }
+# KGP
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+# Compose Compiler Plugin (Compose Compiler is now being maintained by Jetbrains)
+compose-compiler-plugin = { group = "org.jetbrains.kotlin", name = "compose-compiler-gradle-plugin", version.ref = "kotlin" }
+
+# KSP Gradle Plugin
+ksp-gradlePlugin = { module = "com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -104,3 +124,4 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
+google-devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}

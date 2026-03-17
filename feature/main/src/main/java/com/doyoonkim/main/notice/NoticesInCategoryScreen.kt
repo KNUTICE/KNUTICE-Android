@@ -32,7 +32,7 @@ import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.common.ui.PlaceholderScreen
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.NoticesInCategoryEvent
 import com.doyoonkim.main.contract.NoticesInCategorySideEffect
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
@@ -61,7 +61,7 @@ fun NoticesInCategoryScreen(
 
      // Pull-to-Refresh
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState.isRefreshRequested,
+        refreshing = uiState.isRefreshing,
         onRefresh = {
             viewModel.run {
                 sendUiEvent(NoticesInCategoryEvent.RequestRefresh)
@@ -88,7 +88,7 @@ fun NoticesInCategoryScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = stringResource(scaffoldTitle),
                 onBackPressed = {
                     viewModel.sendUiEvent(NoticesInCategoryEvent.GoBack)
@@ -118,8 +118,12 @@ fun NoticesInCategoryScreen(
                     userScrollEnabled = true
                 ) {
                     items(uiState.notices.size) { index ->
-                        if (index == uiState.notices.size - 1 && !uiState.isError) {
-                            viewModel.sendUiEvent(NoticesInCategoryEvent.RequestNotices(category))
+
+                        LaunchedEffect(index) {
+                            // Safe Execution of request more notice event
+                            if (index == uiState.notices.size - 1 && !uiState.isError) {
+                                viewModel.sendUiEvent(NoticesInCategoryEvent.RequestNotices(category))
+                            }
                         }
 
                         if (index != 0) {
@@ -142,7 +146,7 @@ fun NoticesInCategoryScreen(
                                 }
                         ) {
                             NotificationPreview(
-                                isLoading = uiState.isLoading,
+                                isLoading = notice.title.isBlank(),
                                 notificationTitle = notice.title,
                                 notificationInfo = "[${notice.departName}] ${notice.timestamp}",
                                 isImageContained = notice.imageUrl != null,
@@ -151,7 +155,7 @@ fun NoticesInCategoryScreen(
                         }
                     }
 
-                    if (uiState.isNoticesRequested) {
+                    if (uiState.isLoading && uiState.currentLastNttId != 0) {
                         item {
                             Row(
                                 modifier = Modifier
@@ -173,7 +177,7 @@ fun NoticesInCategoryScreen(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .padding(top = 10.dp),
-                    refreshing = uiState.isRefreshRequested,
+                    refreshing = uiState.isRefreshing,
                     state = pullRefreshState,
                     backgroundColor = MaterialTheme.colorScheme.onAnyBackground,
                     contentColor = MaterialTheme.colorScheme.variantPurple

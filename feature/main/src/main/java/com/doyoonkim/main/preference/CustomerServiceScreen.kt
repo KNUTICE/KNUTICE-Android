@@ -1,9 +1,7 @@
 package com.doyoonkim.main.preference
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,11 +43,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
-import com.doyoonkim.common.ui.TopAppBarWithBackButton
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.CustomerServiceEvent
 import com.doyoonkim.main.contract.CustomerServiceSideEffect
 
@@ -76,7 +76,7 @@ fun CustomerServiceScreen(
 
     Scaffold(
         topBar = {
-            TopAppBarWithBackButton(
+            TopAppBarWithNavButton(
                 titleText = stringResource(R.string.title_customer_service),
                 onBackPressed = {
                     viewModel.sendUiEvent(CustomerServiceEvent.GoBack)
@@ -122,7 +122,7 @@ fun CustomerServiceScreen(
                         modifier = Modifier.fillMaxSize(),
                         value = uiState.userReport,
                         placeholder = { Text(stringResource(R.string.placeholder_customer_report)) },
-                        enabled = !uiState.isSubmissionCompleted,
+                        enabled = !uiState.isSubmissionProcessing,
                         onValueChange = {
                             viewModel.sendUiEvent(CustomerServiceEvent.UpdateUserReport(it))
                         },
@@ -155,7 +155,7 @@ fun CustomerServiceScreen(
                         .wrapContentHeight()
                         .padding(start = 3.dp, end = 3.dp)
                     ,
-                    enabled = !uiState.isSubmissionCompleted && uiState.exceedMinCharacters,
+                    enabled = !uiState.isSubmissionProcessing && uiState.exceedMinCharacters,
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.variantPurple,
@@ -179,28 +179,32 @@ fun CustomerServiceScreen(
                     onDismissRequest = { /* Do nothing on onDismiss */ }
                 ) {
                     Surface(
-                        modifier = Modifier.padding(15.dp)
+                        modifier = Modifier.wrapContentSize()
+                            .padding(15.dp)
                             .clip(RoundedCornerShape(15.dp)),
-                        color = MaterialTheme.colorScheme.surfaceBright
+                        color = MaterialTheme.colorScheme.secondaryBackground
                     ) {
                         Column(
-                            modifier = Modifier.wrapContentHeight()
-                                .padding(30.dp),
+                            modifier = Modifier.fillMaxWidth()
+                                .background(Color.Transparent)
+                                .padding(40.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Text(
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.title,
                                 text = stringResource(
-                                    if (!uiState.isSubmissionFailed) R.string.submission_completed_title
+                                    if (uiState.isSubmissionSuccess) R.string.submission_completed_title
                                     else R.string.error_submission_unavailable
                                 )
                             )
                             Text(
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.title,
                                 text = stringResource(
-                                    if (!uiState.isSubmissionFailed) R.string.submission_completed__subtitle
+                                    if (uiState.isSubmissionSuccess) R.string.submission_completed__subtitle
                                     else R.string.error_submission_unavailable_description
                                 )
                             )
@@ -210,11 +214,18 @@ fun CustomerServiceScreen(
                                         CustomerServiceEvent.ResetSubmissionStatus
                                     )
                                 },
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = ButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.variantPurple,
+                                    contentColor = Color.White,
+                                    disabledContentColor = MaterialTheme.colorScheme.subTitle,
+                                    disabledContainerColor = MaterialTheme.colorScheme.onAnyBackground
+                                )
                             ) {
                                 Text(
                                     fontSize = 14.sp,
                                     fontWeight = FontWeight.Bold,
+                                    color = Color.White,
                                     text = stringResource(R.string.btn_confirm)
                                 )
                             }
