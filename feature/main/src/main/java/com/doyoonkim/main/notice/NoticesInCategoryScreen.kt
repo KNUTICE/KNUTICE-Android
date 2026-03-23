@@ -150,7 +150,8 @@ fun NoticesInCategoryScreen(
                                 notificationTitle = notice.title,
                                 notificationInfo = "[${notice.departName}] ${notice.timestamp}",
                                 isImageContained = notice.imageUrl != null,
-                                imageUrl = notice.imageUrl ?: ""
+                                imageUrl = notice.imageUrl ?: "",
+                                isRecent = notice.isRecent
                             )
                         }
                     }

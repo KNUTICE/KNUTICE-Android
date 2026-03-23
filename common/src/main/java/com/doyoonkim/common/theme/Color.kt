@@ -25,6 +25,11 @@ val SecondaryDark = Color(0xFF1B1C20)
 
 val VariantPurple = Color(0xFF6b79fc)
 
+val VariantPurpleBackground = Color(0xFFF0F2FF)
+val VariantPurpleBackgroundDark = Color(0xFF252740)
+val VariantPurpleStrong = Color(0xFF4755C2)
+val VariantPurpleStrongDark = Color(0xFF8289EF)
+
 val TitleBlack = Color(0xFF000000)
 val TitleWhite = Color(0xFFFFFFFF)
 

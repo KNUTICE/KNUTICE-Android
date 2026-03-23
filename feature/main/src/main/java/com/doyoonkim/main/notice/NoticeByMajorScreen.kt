@@ -261,7 +261,8 @@ fun NoticeByMajorScreen(
                                 isImageContained = item.imageUrl != null,
                                 notificationTitle = item.title,
                                 notificationInfo = "[${item.departName}] ${item.timestamp}",
-                                imageUrl = item.imageUrl ?: ""
+                                imageUrl = item.imageUrl ?: "",
+                                isRecent = item.isRecent
                             )
                         }
 
