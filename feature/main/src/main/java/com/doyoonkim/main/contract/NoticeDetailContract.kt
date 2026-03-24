@@ -32,7 +32,7 @@ sealed interface NoticeDetailEvent: UiEvent {
     data class UpdateLoadingStatus(val status: Int): NoticeDetailEvent
     data object RequestBookmarkCreation: NoticeDetailEvent
     data object RequestNoticeSummary: NoticeDetailEvent
-    data object RequestDownloadAttachment: NoticeDetailEvent
+    data class RequestDownloadAttachment(val status: Boolean): NoticeDetailEvent
     data object DismissBottomSheet: NoticeDetailEvent
     data object GoBack: NoticeDetailEvent
 
@@ -44,6 +44,7 @@ sealed class NoticeDetailSideEffect: UiSideEffect {
     data class NavToEditBookmark(val target: NoticeVO): NoticeDetailSideEffect()
     data object NavToBack: NoticeDetailSideEffect()
     data object ShowDownloadToast: NoticeDetailSideEffect()
+    data object ShowDownloadUnableToast: NoticeDetailSideEffect()
     data object NavToDownload: NoticeDetailSideEffect()
 }
 
