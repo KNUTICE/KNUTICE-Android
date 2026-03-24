@@ -171,9 +171,8 @@ fun NoticeDetailScreen(
                 addRequestHeader("User-Agent", userAgent)
                 setDescription("Downloading File")
                 setTitle(filename)
-                //                                      allowScanningByMediaScanner()     Deprecated.
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "KNUTICE/$filename")
             }
             val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             downloadManager.enqueue(request).also {
