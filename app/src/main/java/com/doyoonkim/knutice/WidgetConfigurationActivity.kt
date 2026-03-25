@@ -40,7 +40,8 @@ class WidgetConfigurationActivity : ComponentActivity() {
                 // Dependency Injection
                 val appComponent = (application as MainApplication).appComponent
                 val sceneComponent = DaggerWidgetConfigSceneComponent.factory().create(
-                    systemService = appComponent
+                    systemService = appComponent,
+                    localCacheProvider = appComponent
                 )
 
                 WidgetPreferencesScreen(

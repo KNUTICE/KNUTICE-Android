@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.work.WorkManager
 import com.doyoonkim.common.analytics.AnalyticsLogger
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
@@ -44,6 +45,10 @@ interface NetworkProvider {
 interface LocalStorageProvider {
     fun localNoticeRepository(): NoticeLocalRepository
     fun localBookmarkRepository(): BookmarkLocalRepository
+}
+
+interface LocalCacheProvider {
+    fun localAppPreferenceRepository(): AppPreferenceRepository
     fun localWidgetCacheRepository(): LocalWidgetCacheRepository
 }
 

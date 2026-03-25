@@ -36,6 +36,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
         val sceneComponent = remember(appComponent) {
             DaggerBookmarkListSceneComponent.factory().create(
                 systemServices = appComponent,
+                localCacheProvider = appComponent,
                 localStorageProvider = appComponent
             )
         }
