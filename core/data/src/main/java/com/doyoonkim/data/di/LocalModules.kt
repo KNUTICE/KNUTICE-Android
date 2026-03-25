@@ -1,10 +1,12 @@
 package com.doyoonkim.data.di
 
 import android.content.Context
+import com.doyoonkim.data.repository.local.AppPreferenceRepositoryImpl
 import com.doyoonkim.model.di.ApplicationContext
-import com.doyoonkim.data.repository.LocalRepositoryImpl
-import com.doyoonkim.data.repository.LocalWidgetCacheRepositoryImpl
+import com.doyoonkim.data.repository.local.LocalRepositoryImpl
+import com.doyoonkim.data.repository.local.LocalWidgetCacheRepositoryImpl
 import com.doyoonkim.data.room.LocalDatabase
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
@@ -46,4 +48,13 @@ object RoomDatabaseModule {
     @Singleton
     fun provideMainDatabaseDao(db: LocalDatabase) = db.getDao()
 
+}
+
+@Module
+abstract class LocalPreferenceModule {
+    @Binds
+    @Singleton
+    abstract fun bindLocalAppPreferenceRepository(
+        impl: AppPreferenceRepositoryImpl
+    ): AppPreferenceRepository
 }
