@@ -1,7 +1,7 @@
-package com.doyoonkim.data.repository
+package com.doyoonkim.data.repository.local
 
 import android.util.Log
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.model.CarrelRoomStatusVO
 import com.doyoonkim.model.NoticeVO
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class LocalWidgetCacheRepositoryImpl @Inject constructor(
-    appPreference: AppPreferences
+    appPreference: AppPreferenceRepository
 ) : LocalWidgetCacheRepository {
 
     companion object {

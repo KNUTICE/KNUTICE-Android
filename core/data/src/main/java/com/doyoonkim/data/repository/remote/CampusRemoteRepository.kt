@@ -1,6 +1,7 @@
-package com.doyoonkim.data.repository
+package com.doyoonkim.data.repository.remote
 
 import android.util.Log
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.CarrelStatusRemoteRepository
 import com.doyoonkim.model.CarrelRoomStatusVO
 import com.doyoonkim.network.KnuticeRemoteSource
@@ -10,14 +11,17 @@ import javax.inject.Inject
 
 
 class CampusRemoteRepository @Inject constructor(
-    private val remoteSource: KnuticeRemoteSource
+    private val remoteSource: KnuticeRemoteSource,
+    private val appPreference: AppPreferenceRepository
 ): CarrelStatusRemoteRepository {
     companion object {
         private val TAG = "CampusRemoteRepository"
     }
 
     override suspend fun getCarrelRoomStatus(): Result<List<CarrelRoomStatusVO>> {
-        remoteSource.getCarrelRoomStatus().fold(
+        remoteSource.getCarrelRoomStatus(
+            appPreference.getCachedToken()
+        ).fold(
             onSuccess = { response ->
                 if (response.result == null)
                     Log.d(TAG, "Unable to receive data").also {

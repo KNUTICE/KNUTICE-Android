@@ -1,4 +1,4 @@
-package com.doyoonkim.data.repository
+package com.doyoonkim.data.repository.remote
 
 import android.util.Log
 import com.doyoonkim.domain.interfaces.ImageRemoteRepository
