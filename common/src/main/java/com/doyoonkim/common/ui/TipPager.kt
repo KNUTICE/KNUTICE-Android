@@ -65,7 +65,9 @@ fun TipPager(
         Surface(
             modifier = modifier
                 .background(Color.Transparent)
-                .clickable {
+                .clickable(
+                    enabled = !isLoading && tips.isNotEmpty()
+                ) {
                     onTipClicked(
                         tips[pagerState.currentPage % tips.size].url
                     )
