@@ -1,14 +1,12 @@
 package com.doyoonkim.common.ui
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -21,19 +19,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
-import com.doyoonkim.common.theme.onAnyBackground
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.model.TipVO
 import kotlinx.coroutines.delay
-import kotlin.math.absoluteValue
 
 @Composable
 fun TipPager(
     modifier: Modifier,
     tips: List<TipVO> = emptyList(),
+    isLoading: Boolean = false,
     onTipClicked: (String) -> Unit
 ) {
     // Pager State
@@ -41,12 +39,15 @@ fun TipPager(
 
     val pageInteractionSource = remember { MutableInteractionSource() }
     val isPagePressed by pageInteractionSource.collectIsPressedAsState()
+    val lifecycle = LocalLifecycleOwner.current
 
     // Auto-Advancing
     val isAutoAdvancing = !isPagePressed && tips.size > 1
     if (isAutoAdvancing) {
-        LaunchedEffect(pagerState, pageInteractionSource) {
-            while (true) {
+        LaunchedEffect(pagerState.settledPage, lifecycle ) {
+            // Prevent potential resource draining under Auto-Advancing implementation
+            // when app is in background.
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 delay(5000L)
                 with(pagerState.currentPage) {
                     if (this < Int.MAX_VALUE) {
@@ -57,49 +58,43 @@ fun TipPager(
         }
     }
 
-    Surface(
-        modifier = Modifier.fillMaxSize()
-            .wrapContentHeight()
-            .background(Color.Transparent)
-            .clickable {
-                onTipClicked(
-                    tips[pagerState.currentPage % tips.size].url
+    // Either loading or tip is not empty, Pager becomes visible.
+    // Loading -> Placeholder (Skeleton Animation)
+    // Tip is not empty -> Show tips.
+    if (isLoading || tips.isNotEmpty()) {
+        Surface(
+            modifier = modifier
+                .background(Color.Transparent)
+                .clickable(
+                    enabled = !isLoading && tips.isNotEmpty()
+                ) {
+                    onTipClicked(
+                        tips[pagerState.currentPage % tips.size].url
+                    )
+                },
+            color = MaterialTheme.colorScheme.secondaryBackground,
+            shape = RoundedCornerShape(15.dp)
+        ) {
+            if (isLoading) {
+                AnimatedGradient(
+                    modifier = Modifier.height(30.dp)
+                        .padding(horizontal = 15.dp, vertical = 8.dp)
                 )
-            },
-        color = MaterialTheme.colorScheme.onAnyBackground,
-        shape = RoundedCornerShape(15.dp)
-    ) {
-        // Vertical Pager
-        VerticalPager(
-            modifier = modifier,
-            pageSize = PageSize.Fixed(50.dp),
-            userScrollEnabled = false,
-            state = pagerState
-        ) { index ->
-            Log.d("TipPager", "Current Page: $index State Status: ${pagerState.currentPage}")
-            Log.d("TipPager", "INDEX?: ${index % pagerState.pageCount}")
-            TipContainer(
-                modifier = Modifier.fillMaxWidth().height(50.dp)
-                    .graphicsLayer {
-                        val pageOffset = (
-                                (pagerState.currentPage - index) + pagerState.currentPageOffsetFraction
-                                ).absoluteValue
-
-                        alpha = lerp(
-                            start = 0.5f,
-                            stop = 1f,
-                            fraction = 1f - pageOffset.coerceIn(0f, 1f)
-                        )
-                    },
-                tipCategory = TipCategory.UPDATES,
-                tipText = tips[index % tips.size].title
-            )
+            } else {
+                // Vertical Pager
+                VerticalPager(
+                    modifier = Modifier.height(50.dp),
+                    pageSize = PageSize.Fill,
+                    userScrollEnabled = false,
+                    state = pagerState
+                ) { index ->
+                    TipContainer(
+                        modifier = Modifier.fillMaxWidth().height(50.dp),
+                        tipCategory = TipCategory.UPDATES,
+                        tipText = tips[index % tips.size].title
+                    )
+                }
+            }
         }
     }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun TipPager_Preview() {
-
 }
