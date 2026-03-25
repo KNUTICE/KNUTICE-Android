@@ -19,7 +19,7 @@ class RemoteTokenRepositoryImpl @Inject constructor(
     private val appPreference: AppPreferenceRepository
 ) : TokenRemoteRepository {
 
-    private val TAG = "RemoteTokenRepository"
+    private val TAG = "RemoteTokenRepositoryImpl"
 
     override suspend fun requestUpdateFcmToken(body: TokenUpdateBody): TokenStatus {
         remoteSource.updateDeviceToken(

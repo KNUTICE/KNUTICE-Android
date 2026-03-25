@@ -19,7 +19,7 @@ class RemotePreferenceRepositoryImpl @Inject constructor(
     private val appPreference: AppPreferenceRepository
 ) : TopicSubscriptionRemoteRepository, UserReportRemoteRepository {
 
-    private val TAG = "RemotePreferenceRepository"
+    private val TAG = "RemotePreferenceRepositoryImpl"
 
     override fun queryTopicSubscriptionStatus(topicType: TopicType) = flow {
         remoteSource.getTopicSubscriptionStatus(

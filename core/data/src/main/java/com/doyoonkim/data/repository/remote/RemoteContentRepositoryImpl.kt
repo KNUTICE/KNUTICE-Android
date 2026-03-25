@@ -15,7 +15,7 @@ class RemoteContentRepositoryImpl @Inject constructor(
 ) : NoticeRemoteRepository,
     TipRemoteRepository
 {
-    private val TAG = "RemoteRepositoryImpl"
+    private val TAG = "RemoteContentRepositoryImpl"
 
     override suspend fun queryTopThreeNotices(category: String): List<NoticeVO>? {
         remoteSource.getNoticesPerPage(category = category, size = 3).fold(
