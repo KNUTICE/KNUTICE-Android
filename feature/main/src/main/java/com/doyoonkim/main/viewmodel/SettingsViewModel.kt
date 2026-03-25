@@ -1,10 +1,8 @@
 package com.doyoonkim.main.viewmodel
 
-import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
 import com.doyoonkim.main.contract.SettingsEvent
 import com.doyoonkim.main.contract.SettingsMutation
@@ -15,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
-    private val appPreferences: AppPreferences,
+    private val appPreferences: AppPreferenceRepository,
     private val syncDataWithUpdateDatabase: SyncDataWithUpdateDatabase
 ) : BaseViewModel<SettingsState, SettingsEvent, SettingsSideEffect, SettingsMutation>() {
     private val TAG = this.javaClass.name

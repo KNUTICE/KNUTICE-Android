@@ -2,31 +2,24 @@ package com.doyoonkim.widget.worker
 
 import android.content.Context
 import android.util.Log
-import androidx.glance.appwidget.GlanceAppWidgetManager
-import androidx.glance.appwidget.state.updateAppWidgetState
-import androidx.glance.appwidget.updateAll
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.WidgetCategoryPolicy
-import com.doyoonkim.widget.model.WidgetKey
 import com.doyoonkim.widget.model.WidgetNoticeVO
 import com.doyoonkim.widget.model.WidgetState
-import com.doyoonkim.widget.notices.KnuticeWidget
 import com.doyoonkim.widget.util.WidgetStateUpdater
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class KnuticeWidgetSync(
     appContext: Context,
     workerParam: WorkerParameters,
-    private val appPreferences: AppPreferences,
+    private val appPreferences: AppPreferenceRepository,
     private val stateUpdater: WidgetStateUpdater,
     private val remoteRepository: NoticeRemoteRepository
 ) : CoroutineWorker(appContext, workerParam) {
@@ -94,7 +87,7 @@ class KnuticeWidgetSync(
     // Factory
     class Factory @Inject constructor(
         @ApplicationContext private val context: Context,
-        private val appPreferences: AppPreferences,
+        private val appPreferences: AppPreferenceRepository,
         private val stateUpdater: WidgetStateUpdater,
         private val remoteRepository: NoticeRemoteRepository
     ) : IntermediateWorkerFactory {

@@ -1,22 +1,20 @@
 package com.doyoonkim.notification.fcm
 
 import android.util.Log
-import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.di.TokenHandler
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.doyoonkim.model.TokenStatus
 import com.doyoonkim.model.requestBody.DeviceTokenBody
 import com.doyoonkim.model.requestBody.TokenUpdateBody
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
 class TokenHandlerImpl @Inject constructor(
     private val validateDeviceToken: ValidateDeviceToken,
-    private val appPreferences: AppPreferences
+    private val appPreferences: AppPreferenceRepository
 ) : TokenHandler {
     private val TAG = this.javaClass.name
 

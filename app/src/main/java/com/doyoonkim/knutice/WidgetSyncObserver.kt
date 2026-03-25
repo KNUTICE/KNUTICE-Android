@@ -3,7 +3,7 @@ package com.doyoonkim.knutice
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.model.WidgetCategoryPolicy
 import com.doyoonkim.widget.model.CarrelWidgetState
@@ -17,7 +17,7 @@ import javax.inject.Inject
 class WidgetSyncObserver @Inject constructor(
     private val localWidgetCacheRepository: LocalWidgetCacheRepository,
     private val widgetStateUpdater: WidgetStateUpdater,
-    private val appPreference: AppPreferences,
+    private val appPreference: AppPreferenceRepository,
     private val applicationScope: CoroutineScope
 ): DefaultLifecycleObserver {
 

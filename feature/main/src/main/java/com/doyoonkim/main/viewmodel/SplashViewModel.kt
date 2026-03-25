@@ -4,9 +4,8 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
-import com.doyoonkim.common.di.ApplicationScope
 import com.doyoonkim.common.di.TokenHandler
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.abtest.FirebaseRemoteConfigRepository
 import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
 import com.doyoonkim.main.contract.SplashEvent
@@ -21,7 +20,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-    private val appPreferences: AppPreferences,
+    private val appPreferences: AppPreferenceRepository,
     private val syncDataWithUpdateDatabase: SyncDataWithUpdateDatabase,
     private val tokenHandler: TokenHandler,
     private val remoteConfigRepository: FirebaseRemoteConfigRepository,
@@ -83,17 +82,12 @@ class SplashViewModel @Inject constructor(
 
     private fun preProcessCompletionCheck() {
         with(uiState.value) {
-            if (
-                syncStatus != SyncStatus.REQUESTED
-            ) {
-                if (
-                    syncStatus == SyncStatus.COMPLETED
-                ) {
-                    sendSideEffect(SplashSideEffect.Dismiss)
-                } else {
-                    sendSideEffect(SplashSideEffect.DismissWithError)
-                }
+            if (syncStatus == SyncStatus.COMPLETED) {
+                sendSideEffect(SplashSideEffect.Dismiss)
+                return
             }
+
+            sendSideEffect(SplashSideEffect.DismissWithError)
         }
     }
 

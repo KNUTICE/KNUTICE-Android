@@ -3,7 +3,7 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.AsyncNoticeWidgetTaskScheduler
 import com.doyoonkim.main.contract.WidgetConfigEvent
 import com.doyoonkim.main.contract.WidgetConfigMutation
@@ -20,7 +20,7 @@ import javax.inject.Inject
  * Created 2/16/26 at 8:38 PM
  */
 class WidgetConfigViewModel @Inject constructor(
-    private val appPreference: AppPreferences,
+    private val appPreference: AppPreferenceRepository,
     private val noticeWidgetTaskScheduler: AsyncNoticeWidgetTaskScheduler,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<WidgetConfigState, WidgetConfigEvent, WidgetConfigSideEffect, WidgetConfigMutation>() {

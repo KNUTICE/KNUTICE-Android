@@ -3,7 +3,7 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.main.contract.NoticeByMajorEvent
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticeByMajorViewModel @Inject constructor(
-    private val appPreference: AppPreferences,
+    private val appPreference: AppPreferenceRepository,
     private val fetchNoticesPerPage: FetchNoticesPerPage,
     private val submitNotificationPreferences: SubmitNotificationPreferences
 ): BaseViewModel<NoticeByMajorState, NoticeByMajorEvent, NoticeByMajorSideEffect, NoticeByMajorMutation>() {

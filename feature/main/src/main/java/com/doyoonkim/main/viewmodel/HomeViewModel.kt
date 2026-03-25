@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.navigation.Destination
+import com.doyoonkim.domain.interfaces.AppPreferenceRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.usecases.FetchTips
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
@@ -30,7 +30,7 @@ class HomeViewModel @Inject constructor(
     private val localWidgetCacheRepository: LocalWidgetCacheRepository,
     private val fetchTopThreeNotices: FetchTopThreeNotices,
     private val fetchTips: FetchTips,
-    private val appPreferences: AppPreferences,
+    private val appPreferences: AppPreferenceRepository,
     private val analytics: AnalyticsLogger
 ) : BaseViewModel<HomeViewState, HomeEvent, HomeSideEffect, HomeMutation>() {
     override fun setInitialState(): HomeViewState = HomeViewState()
