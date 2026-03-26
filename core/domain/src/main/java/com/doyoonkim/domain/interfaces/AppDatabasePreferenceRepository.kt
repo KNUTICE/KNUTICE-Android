@@ -6,19 +6,7 @@ import com.doyoonkim.model.WidgetCategoryPolicy
  * @author kimdoyoon
  * Created 3/25/26 at 1:42 AM
  */
-interface AppPreferenceRepository {
-
-    fun updateDeviceToken(token: String)
-
-    fun getCachedToken(): String?
-
-    fun getSubscribedMajor(): String?
-
-    fun updateSubscribedMajor(newMajor: String)
-
-    fun getWidgetCategoryPolicy(): WidgetCategoryPolicy
-
-    fun updateWidgetCategoryPolicy(policy: WidgetCategoryPolicy)
+interface AppDatabasePreferenceRepository {
 
     fun isDatabaseSyncCompleted(): Boolean
 
