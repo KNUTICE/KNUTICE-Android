@@ -31,7 +31,11 @@ class MainApplication() : Application(), AppInjectorProvider, WidgetDependencyPr
             when(target) {
                 is PushNotificationService -> {
                     DaggerNotificationServiceComponent.factory()
-                        .create(appComponent, appComponent, appComponent).inject(target)
+                        .create(
+                            systemServices = appComponent,
+                            networkProvider = appComponent,
+                            localPreferenceProvider = appComponent
+                        ).inject(target)
                 }
                 else -> error("Unsupported Target $target")
             }
@@ -41,7 +45,10 @@ class MainApplication() : Application(), AppInjectorProvider, WidgetDependencyPr
 
 
     override fun provide(): WidgetDependency {
-        return DaggerWidgetComponent.factory().create(appComponent, appComponent, appComponent)
+        return DaggerWidgetComponent.factory().create(
+            systemServices = appComponent,
+            networkProvider = appComponent,
+            localPreferenceProvider = appComponent)
     }
 
     @Inject lateinit var notificationManager: NotificationManager

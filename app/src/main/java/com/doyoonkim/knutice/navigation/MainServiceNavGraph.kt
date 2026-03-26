@@ -337,8 +337,8 @@ fun NavGraphBuilder.mainServiceNavGraph(
             DaggerSettingsSceneComponent.factory().create(
                 systemServices = appComponent,
                 networkProvider = appComponent,
-                localPreferenceProvider = appComponent,
-                localStorageProvider = appComponent
+                localStorageProvider = appComponent,
+                localPreferenceProvider = appComponent
             )
         }
 
