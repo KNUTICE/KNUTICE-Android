@@ -7,7 +7,8 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
 import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.WidgetCategoryPolicy
@@ -19,7 +20,8 @@ import javax.inject.Inject
 class KnuticeWidgetSync(
     appContext: Context,
     workerParam: WorkerParameters,
-    private val appPreferences: AppPreferenceRepository,
+    private val appWidgetPreference: AppWidgetPreferenceRepository,
+    private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     private val stateUpdater: WidgetStateUpdater,
     private val remoteRepository: NoticeRemoteRepository
 ) : CoroutineWorker(appContext, workerParam) {
@@ -30,7 +32,7 @@ class KnuticeWidgetSync(
         Log.d(TAG, "Worker Start")
          // Overall Logic: Fetch -> Debounce -> Validate -> Update -> Complete
          // Get Current Widget Category Policy
-         val widgetCategoryPolicy = appPreferences.getWidgetCategoryPolicy()
+         val widgetCategoryPolicy = appWidgetPreference.getWidgetCategoryPolicy()
 
         // If widgetCategory == null -> Set Widget State to Onboarding
         if (widgetCategoryPolicy is WidgetCategoryPolicy.Unconfigured)
@@ -76,7 +78,7 @@ class KnuticeWidgetSync(
             }
             is WidgetCategoryPolicy.Major -> {
                 // Get current subscription status.
-                val subscribedMajor = appPreferences.getSubscribedMajor() ?: return null
+                val subscribedMajor = appSubscriptionPreference.getSubscribedMajor() ?: return null
                 category = subscribedMajor
                 return remoteRepository.queryTopThreeNotices(subscribedMajor)
             }
@@ -87,7 +89,8 @@ class KnuticeWidgetSync(
     // Factory
     class Factory @Inject constructor(
         @ApplicationContext private val context: Context,
-        private val appPreferences: AppPreferenceRepository,
+        private val appWidgetPreferences: AppWidgetPreferenceRepository,
+        private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
         private val stateUpdater: WidgetStateUpdater,
         private val remoteRepository: NoticeRemoteRepository
     ) : IntermediateWorkerFactory {
@@ -95,7 +98,8 @@ class KnuticeWidgetSync(
             return KnuticeWidgetSync(
                 context,
                 params,
-                appPreferences,
+                appWidgetPreferences,
+                appSubscriptionPreference,
                 stateUpdater,
                 remoteRepository
             )

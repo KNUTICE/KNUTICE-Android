@@ -9,7 +9,7 @@ import com.doyoonkim.bookmark.contract.BookmarkListSideEffect
 import com.doyoonkim.bookmark.contract.BookmarkListState
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppDatabasePreferenceRepository
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class BookmarkListViewModel @Inject constructor(
-    private val appPreferences: AppPreferenceRepository,
+    private val appDatabasePreference: AppDatabasePreferenceRepository,
     private val fetchAllBookmarks: FetchAllBookmarks
 ) : BaseViewModel<BookmarkListState, BookmarkListEvent, BookmarkListSideEffect, BookmarkListMutation>() {
 
@@ -35,7 +35,7 @@ class BookmarkListViewModel @Inject constructor(
     override fun handleEvent(event: BookmarkListEvent) {
         when (event) {
             is BookmarkListEvent.CheckSyncStatus -> {
-                if (appPreferences.isPartialFailedDuringDatabaseSync()) {
+                if (appDatabasePreference.isPartialFailedDuringDatabaseSync()) {
                     mutate(BookmarkListMutation.SyncNeeded)
                 }
             }

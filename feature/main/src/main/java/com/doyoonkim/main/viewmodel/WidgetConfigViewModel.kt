@@ -3,7 +3,8 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.AsyncNoticeWidgetTaskScheduler
 import com.doyoonkim.main.contract.WidgetConfigEvent
 import com.doyoonkim.main.contract.WidgetConfigMutation
@@ -20,7 +21,8 @@ import javax.inject.Inject
  * Created 2/16/26 at 8:38 PM
  */
 class WidgetConfigViewModel @Inject constructor(
-    private val appPreference: AppPreferenceRepository,
+    private val appWidgetPreference: AppWidgetPreferenceRepository,
+    private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     private val noticeWidgetTaskScheduler: AsyncNoticeWidgetTaskScheduler,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : BaseViewModel<WidgetConfigState, WidgetConfigEvent, WidgetConfigSideEffect, WidgetConfigMutation>() {
@@ -47,10 +49,10 @@ class WidgetConfigViewModel @Inject constructor(
             // Default options (Main Notice Categories)
             val default: List<String> = NoticeCategory.entries.dropLast(1).map { it.name }
             mutate(WidgetConfigMutation.Configuration.Available(
-                default, appPreference.getSubscribedMajor()
+                default, appSubscriptionPreference.getSubscribedMajor()
             ))
             // Check Current Policy Status
-            val currentPolicy = appPreference.getWidgetCategoryPolicy()
+            val currentPolicy = appWidgetPreference.getWidgetCategoryPolicy()
             mutate(WidgetConfigMutation.Configuration.Selected(currentPolicy))
                 .also { Log.d(TAG, "Selected CategoryPolicy Set") }
         }
@@ -59,7 +61,7 @@ class WidgetConfigViewModel @Inject constructor(
         mutate(WidgetConfigMutation.Configuration.Processing)
         viewModelScope.launch {
             // Update WidgetCategoryPolicy with Current Category Policy selection
-            appPreference.updateWidgetCategoryPolicy(uiState.value.selectedCategoryPolicy)
+            appWidgetPreference.updateWidgetCategoryPolicy(uiState.value.selectedCategoryPolicy)
             // Execute worker to update widget.
             noticeWidgetTaskScheduler.executeImmediateTask()
             mutate(WidgetConfigMutation.Configuration.Processed)

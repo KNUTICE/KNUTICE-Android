@@ -2,7 +2,7 @@ package com.doyoonkim.main.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppDatabasePreferenceRepository
 import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
 import com.doyoonkim.main.contract.SettingsEvent
 import com.doyoonkim.main.contract.SettingsMutation
@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SettingsViewModel @Inject constructor(
-    private val appPreferences: AppPreferenceRepository,
+    private val appDatabasePreference: AppDatabasePreferenceRepository,
     private val syncDataWithUpdateDatabase: SyncDataWithUpdateDatabase
 ) : BaseViewModel<SettingsState, SettingsEvent, SettingsSideEffect, SettingsMutation>() {
     private val TAG = this.javaClass.name
@@ -22,7 +22,7 @@ class SettingsViewModel @Inject constructor(
     override fun handleEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.CheckDatabaseSyncStatus -> {
-                if (appPreferences.isPartialFailedDuringDatabaseSync())
+                if (appDatabasePreference.isPartialFailedDuringDatabaseSync())
                     mutate(SettingsMutation.Database.SyncNeeded)
             }
             is SettingsEvent.RequestManualSync -> requestManualDatabaseSync()
@@ -51,7 +51,7 @@ class SettingsViewModel @Inject constructor(
 
         syncDataWithUpdateDatabase.manualSync()
             .collectLatest { syncResult ->
-                appPreferences.setDatabaseSyncPartialFailedStatus(syncResult.withError)
+                appDatabasePreference.setDatabaseSyncPartialFailedStatus(syncResult.withError)
                 mutate(SettingsMutation.Database.Synced(syncResult))
             }
     }

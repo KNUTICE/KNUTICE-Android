@@ -1,11 +1,10 @@
 package com.doyoonkim.main.viewmodel
 
 
-import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.TokenHandler
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppDatabasePreferenceRepository
 import com.doyoonkim.domain.interfaces.abtest.FirebaseRemoteConfigRepository
 import com.doyoonkim.domain.usecases.SyncDataWithUpdateDatabase
 import com.doyoonkim.main.contract.SplashEvent
@@ -20,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class SplashViewModel @Inject constructor(
-    private val appPreferences: AppPreferenceRepository,
+    private val appDatabasePreference: AppDatabasePreferenceRepository,
     private val syncDataWithUpdateDatabase: SyncDataWithUpdateDatabase,
     private val tokenHandler: TokenHandler,
     private val remoteConfigRepository: FirebaseRemoteConfigRepository,
@@ -47,13 +46,12 @@ class SplashViewModel @Inject constructor(
     }
 
     private fun checkDatabaseSyncStatus() {
-        if (appPreferences.isDatabaseSyncCompleted())
+        if (appDatabasePreference.isDatabaseSyncCompleted())
             mutate(SplashMutation.DatabaseSync.Completed)
     }
 
     private fun startPreprocess() = viewModelScope.launch {
         with(uiState.value) {
-            Log.d(TAG, "Current Token: ${appPreferences.getCachedToken()}")
             // Entry Token Validation
             val tokenResult = tokenHandler.validation()
             if (!tokenResult) tokenHandler.invoke()
@@ -72,9 +70,9 @@ class SplashViewModel @Inject constructor(
         syncDataWithUpdateDatabase.entrySync()
             .collectLatest { result ->
                 // result: Pair<Boolean, Boolean> (SyncCompleted, PartialFailed)
-                appPreferences.setSyncStatus_1_2(result.completed)
-                appPreferences.setSyncStatus_2_3(result.completed)
-                appPreferences.setDatabaseSyncPartialFailedStatus(result.withError)
+                appDatabasePreference.setSyncStatus_1_2(result.completed)
+                appDatabasePreference.setSyncStatus_2_3(result.completed)
+                appDatabasePreference.setDatabaseSyncPartialFailedStatus(result.withError)
 
                 if (result.completed) mutate(SplashMutation.DatabaseSync.Completed)
             }

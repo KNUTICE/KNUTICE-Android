@@ -2,7 +2,7 @@ package com.doyoonkim.notification.fcm
 
 import android.util.Log
 import com.doyoonkim.common.di.TokenHandler
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppTokenPreferenceRepository
 import com.doyoonkim.domain.usecases.ValidateDeviceToken
 import com.doyoonkim.model.TokenStatus
 import com.doyoonkim.model.requestBody.DeviceTokenBody
@@ -14,7 +14,7 @@ import javax.inject.Inject
 
 class TokenHandlerImpl @Inject constructor(
     private val validateDeviceToken: ValidateDeviceToken,
-    private val appPreferences: AppPreferenceRepository
+    private val appPreferences: AppTokenPreferenceRepository
 ) : TokenHandler {
     private val TAG = this.javaClass.name
 
@@ -51,6 +51,9 @@ class TokenHandlerImpl @Inject constructor(
     override suspend fun validation(): Boolean {
         val token = Firebase.messaging.token.await()
         val cached = appPreferences.getCachedToken()
+
+        Log.d(TAG, "Received: $token")
+        Log.d(TAG, "Cached: $cached")
 
         return token == cached
     }
