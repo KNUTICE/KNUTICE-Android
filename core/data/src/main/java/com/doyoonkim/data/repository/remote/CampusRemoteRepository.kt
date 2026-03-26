@@ -1,7 +1,7 @@
 package com.doyoonkim.data.repository.remote
 
 import android.util.Log
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppTokenPreferenceRepository
 import com.doyoonkim.domain.interfaces.CarrelStatusRemoteRepository
 import com.doyoonkim.model.CarrelRoomStatusVO
 import com.doyoonkim.network.KnuticeRemoteSource
@@ -12,7 +12,7 @@ import javax.inject.Inject
 
 class CampusRemoteRepository @Inject constructor(
     private val remoteSource: KnuticeRemoteSource,
-    private val appPreference: AppPreferenceRepository
+    private val appPreference: AppTokenPreferenceRepository
 ): CarrelStatusRemoteRepository {
     companion object {
         private val TAG = "CampusRemoteRepository"

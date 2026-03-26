@@ -1,25 +1,22 @@
 package com.doyoonkim.data.repository.remote
 
 import android.util.Log
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppTokenPreferenceRepository
 import com.doyoonkim.domain.interfaces.TopicSubscriptionRemoteRepository
-import com.doyoonkim.domain.interfaces.UserReportRemoteRepository
 import com.doyoonkim.model.TopicType
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
-import com.doyoonkim.model.requestBody.UserReportBody
 import com.doyoonkim.network.KnuticeRemoteSource
-import com.doyoonkim.network.model.ReportSaveRequest
 import com.doyoonkim.network.model.TopicUpdateRequest
 import kotlinx.coroutines.flow.flow
 import model.Metadata
 import javax.inject.Inject
 
-class RemotePreferenceRepositoryImpl @Inject constructor(
+class RemoteSubscriptionRepositoryImpl @Inject constructor(
     private val remoteSource: KnuticeRemoteSource,
-    private val appPreference: AppPreferenceRepository
-) : TopicSubscriptionRemoteRepository, UserReportRemoteRepository {
+    private val appPreference: AppTokenPreferenceRepository
+) : TopicSubscriptionRemoteRepository {
 
-    private val TAG = "RemotePreferenceRepositoryImpl"
+    private val TAG = "RemoteSubscriptionRepositoryImpl"
 
     override fun queryTopicSubscriptionStatus(topicType: TopicType) = flow {
         remoteSource.getTopicSubscriptionStatus(
@@ -54,26 +51,6 @@ class RemotePreferenceRepositoryImpl @Inject constructor(
                 )
             )
         }.fold(
-            onSuccess = {
-                if (it.result?.resultCode == 200) emit(true)
-                else it.result.printLog().also { emit(false) }
-            },
-            onFailure = {
-                it.printLog()
-                emit(false)
-            }
-        )
-    }
-
-    override fun requestUserReportSubmission(body: UserReportBody) = flow {
-        remoteSource.submitUserReport(
-            appPreference.getCachedToken(),
-            ReportSaveRequest(
-                content = body.content,
-                deviceName = body.deviceName,
-                version = body.version
-            )
-        ).fold(
             onSuccess = {
                 if (it.result?.resultCode == 200) emit(true)
                 else it.result.printLog().also { emit(false) }

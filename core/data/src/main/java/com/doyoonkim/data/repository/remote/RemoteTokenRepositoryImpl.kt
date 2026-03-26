@@ -1,7 +1,7 @@
 package com.doyoonkim.data.repository.remote
 
 import android.util.Log
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppTokenPreferenceRepository
 import com.doyoonkim.domain.interfaces.TokenRemoteRepository
 import com.doyoonkim.model.TokenStatus
 import com.doyoonkim.model.requestBody.DeviceTokenBody
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class RemoteTokenRepositoryImpl @Inject constructor(
     private val remoteSource: KnuticeRemoteSource,
-    private val appPreference: AppPreferenceRepository
+    private val appPreference: AppTokenPreferenceRepository
 ) : TokenRemoteRepository {
 
     private val TAG = "RemoteTokenRepositoryImpl"

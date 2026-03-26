@@ -2,9 +2,11 @@ package com.doyoonkim.data.di
 
 import com.doyoonkim.data.repository.remote.CampusRemoteRepository
 import com.doyoonkim.data.repository.remote.ImageRepositoryImpl
-import com.doyoonkim.data.repository.remote.RemoteContentRepositoryImpl
-import com.doyoonkim.data.repository.remote.RemotePreferenceRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteNoticeRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteSubscriptionRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteTipRepositoryImpl
 import com.doyoonkim.data.repository.remote.RemoteTokenRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteUserReportRepositoryImpl
 import com.doyoonkim.domain.interfaces.CarrelStatusRemoteRepository
 import com.doyoonkim.domain.interfaces.ImageRemoteRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
@@ -19,7 +21,7 @@ import dagger.Module
 abstract class NoticeRemoteModule {
     @Binds
     abstract fun bindsNoticeRemoteRepo(
-        impl: RemoteContentRepositoryImpl
+        impl: RemoteNoticeRepositoryImpl
     ) : NoticeRemoteRepository
 }
 
@@ -27,7 +29,7 @@ abstract class NoticeRemoteModule {
 abstract class TipRemoteModule {
     @Binds
     abstract fun bindsTipRemoteRepo(
-        impl: RemoteContentRepositoryImpl
+        impl: RemoteTipRepositoryImpl
     ) : TipRemoteRepository
 }
 
@@ -43,12 +45,12 @@ abstract class TokenRemoteModule {
 abstract class PreferencesRemoteModule {
     @Binds
     abstract fun bindsTopicSubscriptionRemoteRepo(
-        impl: RemotePreferenceRepositoryImpl
+        impl: RemoteSubscriptionRepositoryImpl
     ) : TopicSubscriptionRemoteRepository
 
     @Binds
     abstract fun bindsUserReportRemoteRepo(
-        impl: RemotePreferenceRepositoryImpl
+        impl: RemoteUserReportRepositoryImpl
     ) : UserReportRemoteRepository
 }
 
