@@ -63,6 +63,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
                 systemServices = appComponent,
                 networkProvider = appComponent,
                 localCacheProvider = appComponent,
+                localPreferenceProvider = appComponent,
                 firebaseInfrastructureProvider = appComponent
             )
         }
@@ -108,7 +109,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
             DaggerNoticeByMajorSceneComponent.factory().create(
                 systemServices = appComponent,
                 networkProvider = appComponent,
-                localCacheProvider = appComponent
+                localPreferenceProvider = appComponent
             )
         }
 
@@ -336,7 +337,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
             DaggerSettingsSceneComponent.factory().create(
                 systemServices = appComponent,
                 networkProvider = appComponent,
-                localCacheProvider = appComponent,
+                localPreferenceProvider = appComponent,
                 localStorageProvider = appComponent
             )
         }
@@ -375,7 +376,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         val sceneComponent = remember(appComponent) {
             DaggerNotificationPreferencesSceneComponent.factory().create(
                 systemServices = appComponent,
-                localCacheProvider = appComponent,
+                localPreferenceProvider = appComponent,
                 networkProvider = appComponent
             )
         }
@@ -405,7 +406,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         val sceneComponent = remember(appComponent) {
             DaggerCustomerServiceSceneComponent.factory().create(
                 systemService = appComponent,
-                localCacheProvider = appComponent,
+                localPreferenceProvider = appComponent,
                 networkProvider = appComponent
             )
         }

@@ -1,7 +1,7 @@
 package com.doyoonkim.knutice.di.components
 
 import com.doyoonkim.knutice.di.modules.WorkSchedulerModule
-import com.doyoonkim.knutice.di.util.LocalCacheProvider
+import com.doyoonkim.knutice.di.util.LocalPreferenceProvider
 import com.doyoonkim.knutice.di.util.NetworkProvider
 import com.doyoonkim.knutice.di.util.SystemServices
 import com.doyoonkim.widget.di.WidgetDependency
@@ -10,7 +10,7 @@ import dagger.Component
 @Component(
     dependencies = [
         SystemServices::class,
-        LocalCacheProvider::class,
+        LocalPreferenceProvider::class,
         NetworkProvider::class
     ],
     modules = [
@@ -24,7 +24,7 @@ interface WidgetComponent: WidgetDependency {
         fun create(
             systemServices: SystemServices,
             networkProvider: NetworkProvider,
-            localCacheProvider: LocalCacheProvider
+            localPreferenceProvider: LocalPreferenceProvider
         ): WidgetComponent
     }
 }

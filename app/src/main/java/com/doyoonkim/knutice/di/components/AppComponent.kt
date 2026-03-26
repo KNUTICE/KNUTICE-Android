@@ -22,6 +22,7 @@ import com.doyoonkim.infrastructure.di.FirebaseAnalyticsModule
 import com.doyoonkim.infrastructure.di.FirebaseRemoteConfigModule
 import com.doyoonkim.knutice.di.util.FirebaseInfrastructureProvider
 import com.doyoonkim.knutice.di.util.LocalCacheProvider
+import com.doyoonkim.knutice.di.util.LocalPreferenceProvider
 import com.doyoonkim.knutice.di.util.LocalStorageProvider
 import com.doyoonkim.knutice.di.util.NetworkProvider
 import com.doyoonkim.knutice.di.util.SystemServices
@@ -51,6 +52,7 @@ interface AppComponent :
     NetworkProvider,
     LocalStorageProvider,
     LocalCacheProvider,
+    LocalPreferenceProvider,
     FirebaseInfrastructureProvider
 {
     fun inject(app: MainApplication)

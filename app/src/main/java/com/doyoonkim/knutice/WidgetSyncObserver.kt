@@ -3,7 +3,8 @@ package com.doyoonkim.knutice
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.model.WidgetCategoryPolicy
 import com.doyoonkim.widget.model.CarrelWidgetState
@@ -17,7 +18,8 @@ import javax.inject.Inject
 class WidgetSyncObserver @Inject constructor(
     private val localWidgetCacheRepository: LocalWidgetCacheRepository,
     private val widgetStateUpdater: WidgetStateUpdater,
-    private val appPreference: AppPreferenceRepository,
+    private val appWidgetPreference: AppWidgetPreferenceRepository,
+    private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     private val applicationScope: CoroutineScope
 ): DefaultLifecycleObserver {
 
@@ -42,7 +44,7 @@ class WidgetSyncObserver @Inject constructor(
                 contentUrl = vo.url
             )
         }
-        val categoryPolicy = appPreference.getWidgetCategoryPolicy()
+        val categoryPolicy = appWidgetPreference.getWidgetCategoryPolicy()
         // Category Mismatch: Recent Category Changed via WidgetConfiguration. Widget is already updated.
         if (categoryPolicy != localWidgetCacheRepository.widgetCategoryCacheState.value) return
 
@@ -56,7 +58,7 @@ class WidgetSyncObserver @Inject constructor(
                             )
                         }
                         is WidgetCategoryPolicy.Major -> {
-                            val majorCategory = appPreference.getSubscribedMajor()
+                            val majorCategory = appSubscriptionPreference.getSubscribedMajor()
                             majorCategory?.let {
                                 updateNoticeWidgetState(
                                     WidgetState(it, noticeCache)

@@ -44,7 +44,7 @@ fun NavGraphBuilder.campusServiceGraph(
 
         val sceneComponent = remember(appComponent) {
             DaggerCarrelStatusSceneComponent.factory().create(
-                appComponent, appComponent, appComponent
+                appComponent, appComponent, appComponent, appComponent
             )
         }
 

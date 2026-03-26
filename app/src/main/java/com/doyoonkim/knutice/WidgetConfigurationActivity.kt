@@ -41,7 +41,7 @@ class WidgetConfigurationActivity : ComponentActivity() {
                 val appComponent = (application as MainApplication).appComponent
                 val sceneComponent = DaggerWidgetConfigSceneComponent.factory().create(
                     systemService = appComponent,
-                    localCacheProvider = appComponent
+                    localPreferenceProvider = appComponent
                 )
 
                 WidgetPreferencesScreen(

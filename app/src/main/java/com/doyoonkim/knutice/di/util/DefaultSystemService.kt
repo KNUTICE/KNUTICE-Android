@@ -6,7 +6,10 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.work.WorkManager
 import com.doyoonkim.common.analytics.AnalyticsLogger
-import com.doyoonkim.domain.interfaces.AppPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppDatabasePreferenceRepository
+import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppTokenPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
@@ -48,8 +51,14 @@ interface LocalStorageProvider {
 }
 
 interface LocalCacheProvider {
-    fun localAppPreferenceRepository(): AppPreferenceRepository
     fun localWidgetCacheRepository(): LocalWidgetCacheRepository
+}
+
+interface LocalPreferenceProvider {
+    fun localAppDatabasePreferenceRepository(): AppDatabasePreferenceRepository
+    fun localAppSubscriptionPreferenceRepository(): AppSubscriptionPreferenceRepository
+    fun localAppTokenPreferenceRepository(): AppTokenPreferenceRepository
+    fun localAppWidgetPreferenceRepository(): AppWidgetPreferenceRepository
 }
 
 interface FirebaseInfrastructureProvider {
