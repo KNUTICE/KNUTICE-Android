@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
 import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.remember
@@ -63,7 +62,8 @@ fun NavGraphBuilder.mainServiceNavGraph(
             DaggerHomeSceneComponent.factory().create(
                 systemServices = appComponent,
                 networkProvider = appComponent,
-                localStorageProvider = appComponent,
+                localCacheProvider = appComponent,
+                localPreferenceProvider = appComponent,
                 firebaseInfrastructureProvider = appComponent
             )
         }
@@ -108,7 +108,8 @@ fun NavGraphBuilder.mainServiceNavGraph(
         val sceneComponent = remember(appComponent) {
             DaggerNoticeByMajorSceneComponent.factory().create(
                 systemServices = appComponent,
-                networkProvider = appComponent
+                networkProvider = appComponent,
+                localPreferenceProvider = appComponent
             )
         }
 
@@ -336,7 +337,8 @@ fun NavGraphBuilder.mainServiceNavGraph(
             DaggerSettingsSceneComponent.factory().create(
                 systemServices = appComponent,
                 networkProvider = appComponent,
-                localStorageProvider = appComponent
+                localStorageProvider = appComponent,
+                localPreferenceProvider = appComponent
             )
         }
 
@@ -374,6 +376,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         val sceneComponent = remember(appComponent) {
             DaggerNotificationPreferencesSceneComponent.factory().create(
                 systemServices = appComponent,
+                localPreferenceProvider = appComponent,
                 networkProvider = appComponent
             )
         }
@@ -403,6 +406,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
         val sceneComponent = remember(appComponent) {
             DaggerCustomerServiceSceneComponent.factory().create(
                 systemService = appComponent,
+                localPreferenceProvider = appComponent,
                 networkProvider = appComponent
             )
         }

@@ -1,6 +1,7 @@
 package com.doyoonkim.knutice.di.components
 
 import com.doyoonkim.knutice.di.modules.WorkSchedulerModule
+import com.doyoonkim.knutice.di.util.LocalPreferenceProvider
 import com.doyoonkim.knutice.di.util.NetworkProvider
 import com.doyoonkim.knutice.di.util.SystemServices
 import com.doyoonkim.widget.di.WidgetDependency
@@ -9,6 +10,7 @@ import dagger.Component
 @Component(
     dependencies = [
         SystemServices::class,
+        LocalPreferenceProvider::class,
         NetworkProvider::class
     ],
     modules = [
@@ -21,7 +23,8 @@ interface WidgetComponent: WidgetDependency {
     interface Factory {
         fun create(
             systemServices: SystemServices,
-            networkProvider: NetworkProvider
+            networkProvider: NetworkProvider,
+            localPreferenceProvider: LocalPreferenceProvider
         ): WidgetComponent
     }
 }

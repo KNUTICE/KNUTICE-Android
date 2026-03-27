@@ -3,7 +3,6 @@ package com.doyoonkim.main.viewmodel
 import android.os.Build
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.domain.usecases.SubmitUserReport
 import com.doyoonkim.main.contract.CustomerServiceEvent
 import com.doyoonkim.main.contract.CustomerServiceMutation
@@ -16,7 +15,6 @@ import javax.inject.Inject
 
 class CustomerServiceViewModel @Inject constructor(
     private val submitUserReport: SubmitUserReport,
-    private val appPreferences: AppPreferences
 ) : BaseViewModel<CustomerServiceStatus, CustomerServiceEvent, CustomerServiceSideEffect, CustomerServiceMutation>() {
     override fun setInitialState(): CustomerServiceStatus = CustomerServiceStatus()
 

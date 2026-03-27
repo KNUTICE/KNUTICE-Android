@@ -49,6 +49,7 @@ class SplashActivity : ComponentActivity() {
                     systemServices = appComponent,
                     networkProvider = appComponent,
                     localStorageProvider = appComponent,
+                    localPreferenceProvider = appComponent,
                     firebaseInfrastructureProvider = appComponent
                 )
 

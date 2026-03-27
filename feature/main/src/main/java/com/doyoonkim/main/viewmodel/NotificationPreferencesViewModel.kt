@@ -6,10 +6,9 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.util.Log
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
 import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.domain.usecases.FetchTopicSubscriptionStatus
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
@@ -29,7 +28,7 @@ class NotificationPreferencesViewModel @Inject constructor(
     private val submitNotificationPreferences: SubmitNotificationPreferences,
     private val fetchTopicSubscriptionStatus: FetchTopicSubscriptionStatus,
     private val notificationManager: NotificationManager,
-    private val appPreferences: AppPreferences,
+    private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     @ApplicationContext private val context: Context
 ) : BaseViewModel<NotificationPrefStatus, NotificationPrefEvent, NotificationPrefSideEffect, NotificationPrefMutation>() {
     private val TAG = this.javaClass.name
@@ -104,7 +103,7 @@ class NotificationPreferencesViewModel @Inject constructor(
     }
 
     private fun updateMajorSubscriptionStatus(state: Boolean) {
-        val subscribedMajor = appPreferences.getSubscribedMajor() ?: return
+        val subscribedMajor = appSubscriptionPreference.getSubscribedMajor() ?: return
         mutate(NotificationPrefMutation.Syncing)
 
         viewModelScope.launch {
@@ -167,12 +166,12 @@ class NotificationPreferencesViewModel @Inject constructor(
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = { status ->
-                            val cachedMajorSelection = appPreferences.getSubscribedMajor()
+                            val cachedMajorSelection = appSubscriptionPreference.getSubscribedMajor()
                             if (cachedMajorSelection != null) {
                                 var majorStatus = false
                                 if (status.isNotEmpty()) {
                                     if (cachedMajorSelection != status.first().first) {
-                                        appPreferences.updateSubscribedMajor(status.first().first)
+                                        appSubscriptionPreference.updateSubscribedMajor(status.first().first)
                                     }
                                     majorStatus = status.first().second
                                 }

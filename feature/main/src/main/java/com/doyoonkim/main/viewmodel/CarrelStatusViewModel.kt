@@ -3,7 +3,7 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppTokenPreferenceRepository
 import com.doyoonkim.domain.interfaces.CarrelStatusRemoteRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 class CarrelStatusViewModel @Inject constructor(
     private val localWidgetCacheRepository: LocalWidgetCacheRepository,
     private val carrelStatusRepository: CarrelStatusRemoteRepository,
-    private val appPreference: AppPreferences
+    private val appTokenPreference: AppTokenPreferenceRepository
 ) : ViewModel() {
 
     // States
@@ -26,7 +26,7 @@ class CarrelStatusViewModel @Inject constructor(
         // Hydrate Device Token
         viewModelScope.launch {
             _deviceToken.update {
-                appPreference.getCachedToken() ?: ""
+                appTokenPreference.getCachedToken() ?: ""
             }
         }
         fetchCarrelRoomStateAndUpdateCache()

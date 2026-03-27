@@ -5,8 +5,9 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.common.navigation.Destination
+import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
+import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.usecases.FetchTips
 import com.doyoonkim.domain.usecases.FetchTopThreeNotices
@@ -30,7 +31,8 @@ class HomeViewModel @Inject constructor(
     private val localWidgetCacheRepository: LocalWidgetCacheRepository,
     private val fetchTopThreeNotices: FetchTopThreeNotices,
     private val fetchTips: FetchTips,
-    private val appPreferences: AppPreferences,
+    private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
+    private val appWidgetPreference: AppWidgetPreferenceRepository,
     private val analytics: AnalyticsLogger
 ) : BaseViewModel<HomeViewState, HomeEvent, HomeSideEffect, HomeMutation>() {
     override fun setInitialState(): HomeViewState = HomeViewState()
@@ -150,7 +152,7 @@ class HomeViewModel @Inject constructor(
 
     // Side Effect (Access SharedPreference)
     private fun getMajorSubscriptionStatus() = viewModelScope.launch {
-        val subscribed = appPreferences.getSubscribedMajor()?.let {
+        val subscribed = appSubscriptionPreference.getSubscribedMajor()?.let {
             MajorCategory.valueOf(it)
         }
         Log.d(this.javaClass.name, "Subscription: $subscribed")
@@ -172,7 +174,7 @@ class HomeViewModel @Inject constructor(
 
     private fun updateNoticeLocalCache(snapshot: HomeViewState) =
         viewModelScope.launch {
-            when (val noticePolicy = appPreferences.getWidgetCategoryPolicy()) {
+            when (val noticePolicy = appWidgetPreference.getWidgetCategoryPolicy()) {
                 is WidgetCategoryPolicy.Main -> {
                     localWidgetCacheRepository.updateNoticeCache(
                         snapshot.mainContentState.get(noticePolicy.categoryKey)
