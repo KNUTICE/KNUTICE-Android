@@ -13,7 +13,9 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navigation
+import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NavRoutes
+import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.knutice.MainApplication
 
 // Nested NavGraph
@@ -58,7 +60,7 @@ fun AppNavHost(
                 navController = navController,
                 appComponent = appComponent,
                 onNoticeDetailRequested = { target ->
-                    navController.navigate("notice?nttId=${target.nttId}&contentUrl=${Uri.encode(target.contentUrl)}&FabVisible=${target.isFabVisible}")
+                    navController.navigate(target.toNavRoute())
                 },
                 onTabSwitches = onHomeTabSwitched,
                 onPopBottomNavHistory = onPopBottomNavHistory
@@ -73,10 +75,10 @@ fun AppNavHost(
                 navController = navController,
                 appComponent = appComponent,
                 onNoticeDetailRequested = { target ->
-                    navController.navigate("notice?nttId=${target.nttId}&contentUrl=${Uri.encode(target.contentUrl)}&FabVisible=${target.isFabVisible}")
+                    navController.navigate(target.toNavRoute())
                 },
-                onBookmarkServiceRequested = {
-                    navController.navigate("bookmark?id=${it.noticeId}&title=${Uri.encode(it.noticeTitle)}&info=${Uri.encode(it.noticeInfo)}")
+                onBookmarkServiceRequested = { target ->
+                    navController.navigate(target.toNavRoute())
                 },
                 onPopBottomNavHistory = onPopBottomNavHistory
             )
@@ -90,10 +92,10 @@ fun AppNavHost(
                 navController = navController,
                 appComponent = appComponent,
                 onNoticeDetailRequested = { target ->
-                    navController.navigate("notice?nttId=${target.nttId}&contentUrl=${Uri.encode(target.contentUrl)}&FabVisible=${target.isFabVisible}")
+                    navController.navigate(target.toNavRoute())
                 },
-                onBookmarkRequested = {
-                    navController.navigate("bookmark?id=${it.noticeId}&title=${Uri.encode(it.noticeTitle)}&info=${Uri.encode(it.noticeInfo)}")
+                onBookmarkRequested = { target ->
+                    navController.navigate(target.toNavRoute())
                 },
                 onPopBottomNavHistory = onPopBottomNavHistory
             )
@@ -106,10 +108,10 @@ fun AppNavHost(
             searchServiceGraph(
                 appComponent = appComponent,
                 onNoticeDetailRequested = { target ->
-                    navController.navigate("notice?nttId=${target.nttId}&contentUrl=${Uri.encode(target.contentUrl)}&FabVisible=${target.isFabVisible}")
+                    navController.navigate(target.toNavRoute())
                 },
-                onBookmarkServiceRequested = {
-                    navController.navigate("bookmark?id=${it.noticeId}&title=${Uri.encode(it.noticeTitle)}&info=${Uri.encode(it.noticeInfo)}")
+                onBookmarkServiceRequested = { target ->
+                    navController.navigate(target.toNavRoute())
                 },
                 onPopBottomNavHistory = onPopBottomNavHistory
             )
@@ -121,8 +123,17 @@ fun AppNavHost(
         ) {
             preferenceServiceGraph(
                 navController = navController,
-                appComponent = appComponent
+                appComponent = appComponent,
+                navToBottomDest = onHomeTabSwitched
             )
         }
     }
 }
+
+// Notice Detail Destination Resolver
+private fun NoticeDetail.toNavRoute() =
+    "notice?nttId=${this.nttId}&contentUrl=${Uri.encode(this.contentUrl)}&FabVisible=${this.isFabVisible}"
+
+// Bookmark Detail Destination Resolver
+private fun BookmarkInfo.toNavRoute() =
+    "bookmark?id=${this.noticeId}&title=${Uri.encode(this.noticeTitle)}&info=${Uri.encode(this.noticeInfo)}"

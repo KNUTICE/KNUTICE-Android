@@ -27,7 +27,8 @@ import com.doyoonkim.main.viewmodel.SettingsViewModel
 
 fun NavGraphBuilder.preferenceServiceGraph(
     navController: NavController,
-    appComponent: AppComponent
+    appComponent: AppComponent,
+    navToBottomDest: (String) -> Unit
 ) {
     composable(
         route = NavRoutes.Settings.route,
@@ -61,8 +62,7 @@ fun NavGraphBuilder.preferenceServiceGraph(
             onOssClicked = { navController.navigate(NavRoutes.OpenSource.route) },
             onBackPressed = { syncPerformed ->
                 if (syncPerformed) {
-                    navController.popBackStack(NavRoutes.Home.route, inclusive = true)
-                    navController.navigate(NavRoutes.Bookmark.route)
+                    navToBottomDest(GraphRoute.BOOKMARK)
                 }
                 else navController.popBackStack()
             }
