@@ -12,9 +12,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NavRoutes
-import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerCustomerServiceSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationPreferencesSceneComponent
