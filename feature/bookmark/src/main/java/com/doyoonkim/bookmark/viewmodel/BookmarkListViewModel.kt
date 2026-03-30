@@ -21,12 +21,6 @@ class BookmarkListViewModel @Inject constructor(
     private val fetchAllBookmarks: FetchAllBookmarks
 ) : BaseViewModel<BookmarkListState, BookmarkListEvent, BookmarkListSideEffect, BookmarkListMutation>() {
 
-    init {
-        // Preprocessing
-        sendUiEvent(BookmarkListEvent.CheckSyncStatus)
-        sendUiEvent(BookmarkListEvent.RequestBookmark)
-    }
-
     private val TAG = this.javaClass.name
     override fun setInitialState(): BookmarkListState {
         return BookmarkListState()
@@ -39,7 +33,10 @@ class BookmarkListViewModel @Inject constructor(
                     mutate(BookmarkListMutation.SyncNeeded)
                 }
             }
-            is BookmarkListEvent.RequestBookmark -> requestBookmarks()
+            is BookmarkListEvent.RequestBookmark -> {
+                mutate(BookmarkListMutation.Refreshing)
+                requestBookmarks()
+            }
             is BookmarkListEvent.RequestMoreBookmark -> requestBookmarks()
             is BookmarkListEvent.RequestBookmarkDetail -> {
                 val dest = uiState.value.bookmarks[event.index].run {
@@ -99,7 +96,13 @@ class BookmarkListViewModel @Inject constructor(
         return when (mutation) {
             is BookmarkListMutation.SyncNeeded -> { currentState.copy(isSyncRequired = true) }
             is BookmarkListMutation.Loading -> { currentState.copy(isLoading = true) }
-            is BookmarkListMutation.Refreshing -> { currentState.copy(isRefreshing = true) }
+            is BookmarkListMutation.Refreshing -> {
+                currentState.copy(
+                    isRefreshing = true,
+                    bookmarks = emptyList(),
+                    pageNumber = 0
+                )
+            }
             is BookmarkListMutation.Sort -> {
                 currentState.copy(
                     sortOption = mutation.option,
