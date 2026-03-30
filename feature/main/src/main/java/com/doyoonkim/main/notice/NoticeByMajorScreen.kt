@@ -74,6 +74,7 @@ import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
 import com.doyoonkim.common.ui.NotificationPreview
+import com.doyoonkim.common.ui.OnForegroundFocusEffect
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.main.contract.NoticeByMajorEvent
 import com.doyoonkim.main.contract.NoticeByMajorSideEffect
@@ -109,8 +110,15 @@ fun NoticeByMajorScreen(
         }
     )
 
+    OnForegroundFocusEffect {
+        if (uiState.targetMajor == MajorCategory.UNSPECIFIED && uiState.notices.isEmpty()) {
+            viewModel.sendUiEvent(NoticeByMajorEvent.CheckSubscribedMajor)
+        } else {
+            viewModel.sendUiEvent(NoticeByMajorEvent.RequestNotice)
+        }
+    }
+
     LaunchedEffect(Unit) {
-        viewModel.sendUiEvent(NoticeByMajorEvent.CheckSubscribedMajor)
         viewModel.uiSideEffect.collectLatest { sideEffect ->
             when (sideEffect) {
                 is NoticeByMajorSideEffect.GoBack -> {

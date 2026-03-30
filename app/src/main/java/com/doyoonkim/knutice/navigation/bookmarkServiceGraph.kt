@@ -29,7 +29,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
     appComponent: AppComponent,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkRequested: (BookmarkInfo) -> Unit,
-    onExit: () -> Unit = {  }
+    onPopBottomNavHistory: () -> Unit = {  }
 ) {
 
     composable(NavRoutes.Bookmark.route) {
@@ -49,7 +49,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
                 onBookmarkRequested(it)
             },
             onBackPressed = {
-                navController.popBackStack().also { if (!it) onExit() }
+                onPopBottomNavHistory()
             }
         )
     }
@@ -91,11 +91,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
             bookmarkInfo = bookmarkInfo,
             onNoticeSelected = { onNoticeDetailRequested(it) },
             onCompleted = {
-                navController.navigate(NavRoutes.Bookmark.route) {
-                    popUpTo(navController.graph.startDestinationId) {
-                        inclusive = true
-                    }
-                }
+                navController.popBackStack()
             },
             onBackPressed = {
                 navController.popBackStack().also {

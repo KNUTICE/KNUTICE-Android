@@ -35,6 +35,8 @@ import com.doyoonkim.common.ui.AnimatedBottomBar
 import com.doyoonkim.common.ui.BottomBarButton
 import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
 import com.doyoonkim.knutice.navigation.AppNavHost
+import com.doyoonkim.knutice.navigation.GraphRoute
+import com.doyoonkim.knutice.navigation.rememberBottomNavigationState
 
 @Composable
 fun MainServiceScreen(
@@ -53,6 +55,11 @@ fun MainServiceScreen(
         }
     }
 
+    // Navigation via BottomNavBar handling
+    val bottomNavigationState = rememberBottomNavigationState(
+        navController, GraphRoute.MAIN, onExit
+    )
+
     val isDarkTheme = isSystemInDarkTheme()
     val scrimColor = if (isDarkTheme) Color.Black else Color.White
 
@@ -61,22 +68,22 @@ fun MainServiceScreen(
             BottomBarButton(
                 R.string.bottom_bar_home,
                 R.drawable.baseline_home_24,
-                NavRoutes.Home.route
+                GraphRoute.MAIN
             ),
             BottomBarButton(
                 R.string.bottom_bar_major_title,
                 R.drawable.outline_school_24,
-                NavRoutes.MajorNotices.route
+                GraphRoute.NOTICE
             ),
             BottomBarButton(
                 R.string.bottom_bar_bookmark,
                 R.drawable.baseline_bookmarks_24,
-                NavRoutes.Bookmark.route
+                GraphRoute.BOOKMARK
             ),
             BottomBarButton(
                 R.string.title_search,
                 R.drawable.baseline_search_24,
-                NavRoutes.NoticeSearch.route
+                GraphRoute.SEARCH
             )
         )
     }
@@ -108,7 +115,8 @@ fun MainServiceScreen(
                         bottom = contentPadding.calculateBottomPadding() + 100.dp
                     ),
                     navController = navController,
-                    onExit = onExit
+                    onHomeTabSwitched = bottomNavigationState.navigateToBottomNavDestination,
+                    onPopBottomNavHistory = bottomNavigationState.popHistory
                 )
 
                 if (bottomBarSelectionState >= 0) {
@@ -143,7 +151,7 @@ fun MainServiceScreen(
                         contentColor = MaterialTheme.colorScheme.title,
                         colorOnSelect = MaterialTheme.colorScheme.onAnyBackground,
                         onItemClicked = { _, dest ->
-                            navController.navigate(dest)
+                            bottomNavigationState.switchTab(dest)
                         }
                     )
                 }

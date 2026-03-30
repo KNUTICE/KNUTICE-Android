@@ -48,6 +48,7 @@ import com.doyoonkim.common.ui.DashboardPlaceholder
 import com.doyoonkim.common.ui.EntryPointButton
 import com.doyoonkim.common.ui.HorizontalContentPager
 import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
+import com.doyoonkim.common.ui.OnForegroundFocusEffect
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.common.ui.TipPager
@@ -79,10 +80,12 @@ fun HomeDashboard(
         viewModel.sendUiEvent(HomeEvent.GoBack)
     }
 
+    OnForegroundFocusEffect {
+        viewModel.sendUiEvent(HomeEvent.RequestMainContents)
+    }
+
     // SideEffect Handling
     LaunchedEffect(Unit) {
-        viewModel.sendUiEvent(HomeEvent.RequestMainContents)
-
         // SideEffect Channel Subscription
         viewModel.uiSideEffect.collect { effect ->
             when (effect) {
