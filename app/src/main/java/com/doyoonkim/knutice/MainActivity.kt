@@ -45,7 +45,9 @@ import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.receiveAsFlow
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
@@ -57,10 +59,10 @@ class MainActivity : ComponentActivity() {
     // NavController
     private lateinit var navController: NavHostController
     private val activity = this
-    private val receivedIntent = mutableStateOf<Intent?>(null)
 
-    private val isDeeplinkInProcess = mutableStateOf<Boolean>(false)
-    private val lastProcessedIntent = mutableStateOf<Int?>(null)
+    // Flow Pipeline to process incoming Intent.
+    // Channel for HotStream, process one-time side-effect (e.g. Navigation)
+    private val intentChannel = Channel<Intent>(Channel.CONFLATED)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val appComponent = (application as MainApplication).appComponent
@@ -88,7 +90,8 @@ class MainActivity : ComponentActivity() {
             "Token Registration", ExistingPeriodicWorkPolicy.KEEP, workRequest
         )
 
-        receivedIntent.value = intent
+        // New Flow based testing
+        intentChannel.trySend(intent)
 
         WindowCompat.setDecorFitsSystemWindows(window, false)
         enableEdgeToEdge()
@@ -123,6 +126,21 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
+                val isDeeplinkProcessing = remember { mutableStateOf(false) }
+                LaunchedEffect(Unit) {
+                    // Collect intentFlow
+                    intentChannel.receiveAsFlow().collect { intent ->
+                        isDeeplinkProcessing.value = true
+                        DeeplinkHandler.processDeeplink(intent) { host, destination ->
+                            // TODO: Revert Analytics Logging later.
+                            navController.navigate(destination) {
+                                launchSingleTop = true
+                            }
+                        }
+                        isDeeplinkProcessing.value = false
+                    }
+                }
+
                 MainServiceScreen(
                     modifier = Modifier,
                     navController = navController,
@@ -153,45 +171,24 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 }
-            }
 
-            if (isDeeplinkInProcess.value) {
-                Dialog(
-                    onDismissRequest = {  }
-                ) {
-                    Surface(
-                        modifier = Modifier.wrapContentSize()
-                            .background(Color.Transparent),
-                        shape = RoundedCornerShape(15.dp),
-                        color = MaterialTheme.colorScheme.onAnyBackground
+                if (isDeeplinkProcessing.value) {
+                    Dialog(
+                        onDismissRequest = {  }
                     ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.padding(15.dp),
-                            color = MaterialTheme.colorScheme.variantPurple,
-                            trackColor = MaterialTheme.colorScheme.onAnyBackground
-                        )
-                    }
-                }
-            }
-
-            LaunchedEffect(receivedIntent.value) {
-                receivedIntent.value?.let { intent ->
-                    if (intent.hashCode() != lastProcessedIntent.value) {
-                        isDeeplinkInProcess.value = true
-                        lastProcessedIntent.value = intent.hashCode()
-                        DeeplinkHandler.processDeeplink(intent) { host, destination ->
-                            // Analytics
-                            analytics.logEvent("CLICK_NOTIFICATION", Bundle().apply {
-                                putString("CONTENT_TYPE", host)
-                                putString("SOURCE", "PUSH")
-                                putString("DESTINATION", destination)
-                            })
-                            navController.navigate(destination) {
-                                launchSingleTop = true
-                            }
-
+                        Surface(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .background(Color.Transparent),
+                            shape = RoundedCornerShape(15.dp),
+                            color = MaterialTheme.colorScheme.onAnyBackground
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.padding(15.dp),
+                                color = MaterialTheme.colorScheme.variantPurple,
+                                trackColor = MaterialTheme.colorScheme.onAnyBackground
+                            )
                         }
-                        isDeeplinkInProcess.value = false
                     }
                 }
             }
@@ -201,8 +198,7 @@ class MainActivity : ComponentActivity() {
     // Called when intent is being sent while the onCreate() is already called.
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        Log.d("MainActivity", "Intent received onNewIntent: ${intent?.data}")
-        receivedIntent.value = intent
+        intentChannel.trySend(intent)
     }
 
     override fun onDestroy() {
