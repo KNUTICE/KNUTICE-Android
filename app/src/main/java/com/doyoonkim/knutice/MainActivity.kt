@@ -11,21 +11,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
@@ -41,8 +32,6 @@ import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
 import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.common.navigation.DeeplinkHandler
-import com.doyoonkim.common.theme.onAnyBackground
-import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
 import kotlinx.coroutines.channels.Channel
@@ -126,18 +115,19 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-                val isDeeplinkProcessing = remember { mutableStateOf(false) }
                 LaunchedEffect(Unit) {
                     // Collect intentFlow
                     intentChannel.receiveAsFlow().collect { intent ->
-                        isDeeplinkProcessing.value = true
                         DeeplinkHandler.processDeeplink(intent) { host, destination ->
                             // TODO: Revert Analytics Logging later.
                             navController.navigate(destination) {
                                 launchSingleTop = true
                             }
                         }
-                        isDeeplinkProcessing.value = false
+                        // Clean-up Intent to prevent duplicated Intent processing caused by
+                        // Activity Re-creation (Screen rotation, Split Screen, etc.)
+                        intent.data = null
+                        intent.removeExtra("deeplink")
                     }
                 }
 
@@ -168,26 +158,6 @@ class MainActivity : ComponentActivity() {
                             context.startActivity(settingIntent).also {
                                 showPermissionRationale.value = false
                             }
-                        }
-                    }
-                }
-
-                if (isDeeplinkProcessing.value) {
-                    Dialog(
-                        onDismissRequest = {  }
-                    ) {
-                        Surface(
-                            modifier = Modifier
-                                .wrapContentSize()
-                                .background(Color.Transparent),
-                            shape = RoundedCornerShape(15.dp),
-                            color = MaterialTheme.colorScheme.onAnyBackground
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.padding(15.dp),
-                                color = MaterialTheme.colorScheme.variantPurple,
-                                trackColor = MaterialTheme.colorScheme.onAnyBackground
-                            )
                         }
                     }
                 }
