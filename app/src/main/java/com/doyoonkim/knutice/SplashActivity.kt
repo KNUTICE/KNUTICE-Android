@@ -74,20 +74,25 @@ class SplashActivity : ComponentActivity() {
 
     // Receive Intent and forward it to MainActivity (Trampoline Activity Behavior)
     private fun delegateUser() {
+        // Check System Task Manager restore previous Intent.
+        val isFromHistory = (intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0
+
         val delegateIntent = Intent(this, MainActivity::class.java).apply {
-            // Forward Deeplink information
-            data = intent.data
-            action = intent.action
+            if (!isFromHistory) {
+                // Forward Deeplink information
+                data = intent.data
+                action = intent.action
 
-            // Forward Intent Extras
-            intent.extras?.let {
-                this.putExtras(it)
+                // Forward Intent Extras
+                intent.extras?.let {
+                    this.putExtras(it)
+                }
             }
-
             // Flag Settings
             // Put MainActivity on Stack (singleTask) if there's no existing one. If there's existing instance, reuse it.
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
+
         // Dismiss Animated Activity Transition
         val transitionOption = ActivityOptions.makeCustomAnimation(this, 0, 0)
 
