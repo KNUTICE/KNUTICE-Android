@@ -1,8 +1,12 @@
 package com.doyoonkim.data.di
 
-import com.doyoonkim.data.repository.CampusRemoteRepository
-import com.doyoonkim.data.repository.ImageRepositoryImpl
-import com.doyoonkim.data.repository.RemoteRepositoryImpl
+import com.doyoonkim.data.repository.remote.CampusRemoteRepository
+import com.doyoonkim.data.repository.remote.ImageRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteNoticeRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteSubscriptionRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteTipRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteTokenRepositoryImpl
+import com.doyoonkim.data.repository.remote.RemoteUserReportRepositoryImpl
 import com.doyoonkim.domain.interfaces.CarrelStatusRemoteRepository
 import com.doyoonkim.domain.interfaces.ImageRemoteRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
@@ -17,7 +21,7 @@ import dagger.Module
 abstract class NoticeRemoteModule {
     @Binds
     abstract fun bindsNoticeRemoteRepo(
-        impl: RemoteRepositoryImpl
+        impl: RemoteNoticeRepositoryImpl
     ) : NoticeRemoteRepository
 }
 
@@ -25,7 +29,7 @@ abstract class NoticeRemoteModule {
 abstract class TipRemoteModule {
     @Binds
     abstract fun bindsTipRemoteRepo(
-        impl: RemoteRepositoryImpl
+        impl: RemoteTipRepositoryImpl
     ) : TipRemoteRepository
 }
 
@@ -33,7 +37,7 @@ abstract class TipRemoteModule {
 abstract class TokenRemoteModule {
     @Binds
     abstract fun bindsTokenRemoteRepo(
-        impl: RemoteRepositoryImpl
+        impl: RemoteTokenRepositoryImpl
     ) : TokenRemoteRepository
 }
 
@@ -41,12 +45,12 @@ abstract class TokenRemoteModule {
 abstract class PreferencesRemoteModule {
     @Binds
     abstract fun bindsTopicSubscriptionRemoteRepo(
-        impl: RemoteRepositoryImpl
+        impl: RemoteSubscriptionRepositoryImpl
     ) : TopicSubscriptionRemoteRepository
 
     @Binds
     abstract fun bindsUserReportRemoteRepo(
-        impl: RemoteRepositoryImpl
+        impl: RemoteUserReportRepositoryImpl
     ) : UserReportRemoteRepository
 }
 

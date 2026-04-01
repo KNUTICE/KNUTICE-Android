@@ -2,7 +2,6 @@ package com.doyoonkim.knutice.di.components
 
 import android.app.Application
 import androidx.work.ListenableWorker
-import com.doyoonkim.common.di.AppPreferences
 import com.doyoonkim.data.di.LocalModule
 import com.doyoonkim.data.di.TokenRemoteModule
 import com.doyoonkim.domain.di.AsyncFtsEntryInsertionModule
@@ -15,12 +14,15 @@ import com.doyoonkim.network.di.NetworkModule
 import com.doyoonkim.notification.di.FcmTokenModule
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import com.doyoonkim.data.di.CampusRemoteModule
+import com.doyoonkim.data.di.LocalPreferenceModule
 import com.doyoonkim.data.di.NoticeRemoteModule
 import com.doyoonkim.data.di.RoomDatabaseModule
 import com.doyoonkim.data.di.SystemCoroutineModule
 import com.doyoonkim.infrastructure.di.FirebaseAnalyticsModule
 import com.doyoonkim.infrastructure.di.FirebaseRemoteConfigModule
 import com.doyoonkim.knutice.di.util.FirebaseInfrastructureProvider
+import com.doyoonkim.knutice.di.util.LocalCacheProvider
+import com.doyoonkim.knutice.di.util.LocalPreferenceProvider
 import com.doyoonkim.knutice.di.util.LocalStorageProvider
 import com.doyoonkim.knutice.di.util.NetworkProvider
 import com.doyoonkim.knutice.di.util.SystemServices
@@ -41,6 +43,7 @@ import javax.inject.Singleton
         SystemCoroutineModule::class,
         LocalModule::class,
         RoomDatabaseModule::class,
+        LocalPreferenceModule::class,
         NetworkModule::class
     ]
 )
@@ -48,12 +51,11 @@ interface AppComponent :
     SystemServices,
     NetworkProvider,
     LocalStorageProvider,
+    LocalCacheProvider,
+    LocalPreferenceProvider,
     FirebaseInfrastructureProvider
 {
     fun inject(app: MainApplication)
-
-    // AppPref Instance
-    fun appPreference(): AppPreferences
 
     // Worker Subcomponent
     fun workerComponent(): WorkerSubcomponent.Factory

@@ -36,34 +36,10 @@ fun TipContainer(
     }
 
     Row(
-        modifier = modifier.wrapContentHeight()
-            .padding(
-                horizontal = 10.dp,
-                vertical = 7.dp
-            ),
+        modifier = modifier.padding(horizontal = 10.dp, vertical = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-/*
-        Surface(
-            modifier = Modifier.wrapContentSize()
-                .background(Color.Transparent),
-            color = MaterialTheme.colorScheme.containerGray,
-            shape = RoundedCornerShape(15.dp)
-        ) {
-            Text(
-                modifier = Modifier.wrapContentSize().padding(
-                    vertical = 5.dp,
-                    horizontal = 10.dp
-                ),
-                text = tagTitle,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.title
-            )
-        }
- */
         Text(
             modifier = Modifier.wrapContentSize(),
             text = tipText,

@@ -86,6 +86,13 @@ class NoticeDetailViewModel @Inject constructor(
                 mutate(NoticeDetailMutation.Summary.Dismiss)
             }
             is NoticeDetailEvent.RequestDownloadAttachment -> {
+                if (!event.status) {
+                    // Exception Occurred.
+                    sendSideEffect(NoticeDetailSideEffect.ShowDownloadUnableToast)
+                    return
+                }
+
+                // Download Successfully enqueued
                 sendSideEffect(NoticeDetailSideEffect.ShowDownloadToast)
                 sendSideEffect(NoticeDetailSideEffect.NavToDownload)
             }

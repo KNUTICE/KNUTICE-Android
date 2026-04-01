@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.webkit.CookieManager
 import android.webkit.DownloadListener
+import android.webkit.MimeTypeMap
 import android.webkit.URLUtil
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
@@ -71,6 +72,9 @@ import com.doyoonkim.common.ui.markdown.MarkdownView
 import com.doyoonkim.main.campus.components.LifecycleAwareWebView
 import com.doyoonkim.main.contract.NoticeDetailEvent
 import com.doyoonkim.main.contract.NoticeDetailSideEffect
+import java.io.File
+import java.net.URLDecoder
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,6 +103,9 @@ fun NoticeDetailScreen(
                 is NoticeDetailSideEffect.NavToEditBookmark -> onBookmarkCreate(effect.target)
                 is NoticeDetailSideEffect.ShowDownloadToast -> {
                     Toast.makeText(context, R.string.text_download, Toast.LENGTH_LONG).show()
+                }
+                is NoticeDetailSideEffect.ShowDownloadUnableToast -> {
+                    Toast.makeText(context, R.string.text_download_not_available, Toast.LENGTH_LONG).show()
                 }
                 is NoticeDetailSideEffect.NavToDownload -> {
                     // Guide user to the File application
@@ -160,25 +167,59 @@ fun NoticeDetailScreen(
     val downloadListener = remember {
         DownloadListener { url, userAgent, contentDisposition, mimetype, contentLength ->
             val request = DownloadManager.Request(url.toUri())
-            val filename = URLUtil.guessFileName(url, contentDisposition, mimetype)
-                .also { Log.d("DownloadManager", "Filename: $it") }
+
+            // URL (UTF-8) Encoded Raw Filename
+            val rawFilename = URLUtil.guessFileName(url, contentDisposition, mimetype)
+            val decodedFilename = try {
+                URLDecoder.decode(rawFilename, "UTF-8")
+            } catch (e: Exception) {
+                Log.d("DownloadListener", "Unable to decode the raw filename")
+                rawFilename
+            }.run {
+                // Clean filename
+                File(this).name
+            }
+
+            // Explicitly provide mimetype to process implicit intent via Notification correctly.
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(url)
+                ?: decodedFilename.substringAfterLast(".", "")
+            var resolvedMimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                fileExtension.lowercase(Locale.ROOT)
+            ) ?: mimetype
+
+            // Process specific file extension (HWP)
+            if (decodedFilename.endsWith(".hwp", ignoreCase = true)) {
+                // override resolve Mime Type via MimeTypeMap.
+                resolvedMimeType = "application/x-hwp"
+            }
+
             // save session data before downloading the target file.
             val cookies = CookieManager.getInstance().getCookie(url)
 
+            Log.d("NoticeDetailScreen", "Processed Filename: $decodedFilename")
             request.apply {
-                setMimeType(mimetype)
+                setMimeType(resolvedMimeType)
                 addRequestHeader("cookie", cookies)
                 addRequestHeader("User-Agent", userAgent)
                 setDescription("Downloading File")
-                setTitle(filename)
-                //                                      allowScanningByMediaScanner()     Deprecated.
+                setTitle(decodedFilename)
                 setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
+                setDestinationInExternalPublicDir(
+                    Environment.DIRECTORY_DOWNLOADS,
+                    decodedFilename
+                )
             }
-            val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
-            downloadManager.enqueue(request).also {
-                // Guide user to the File application
-                viewModel.sendUiEvent(NoticeDetailEvent.RequestDownloadAttachment)
+
+            // Potential Error Handling
+            try {
+                val downloadManager = context.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
+                downloadManager.enqueue(request).also {
+                    // Guide user to the File application
+                    viewModel.sendUiEvent(NoticeDetailEvent.RequestDownloadAttachment(true))
+                }
+            } catch (e: Exception) {
+                // Potential Error: Download Manager is disabled
+                viewModel.sendUiEvent(NoticeDetailEvent.RequestDownloadAttachment(false))
             }
         }
     }
