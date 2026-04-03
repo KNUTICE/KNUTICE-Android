@@ -177,7 +177,7 @@ If the app remains unused for extended periods or the device enters Doze mode, F
 ### 5. Memory Leak Prevention & Navigation Optimization
 Unrestricted bottom-navigation switching in Compose can lead to duplicate ViewModel instantiations and excessive memory bloat in the JVM.
 
-- **Single-Top Routing & State Restoration**: Restructured the Navigation for Compose implementation to use nested navigation graphs. By enforcing strict Single-Top routing (launchSingleTop = true) alongside UI state restoration (restoreState = true), I capped ViewModel instances to exactly 1 per tab.
+- **Single-Top Routing & State Restoration**: Restructured the Navigation for Compose implementation to use nested navigation graphs. By enforcing strict Single-Top routing (`launchSingleTop = true`) alongside UI state restoration (`restoreState = true`), I capped ViewModel instances to exactly 1 per tab.
 
 - **State Delegation & Custom Back-Stack**: Completely decoupled the UI layer from navigation actions by creating a MainServiceState holder. By managing a custom tabHistory queue inside this state holder, I ensured precise, chronological back-navigation behavior while keeping the AnimatedBottomBar component entirely stateless and focused strictly on rendering.
 
@@ -189,13 +189,15 @@ To provide quick access to Study Room statuses, I implemented Home Screen widget
 
 - **Background Bitmap Rendering**: Bypassed this OS limitation by constructing an off-main-thread pipeline that programmatically generates the Ring Graph as a static Bitmap, which is then passed to the Glance widget.
 
-- **Lifecycle-Aware Synchronization**: Engineered a dual-layer refresh policy to guarantee data consistency between the main application and the widget. While a Dagger-injected WidgetSyncWorker handles periodic background updates, I integrated ProcessLifecycle observation to trigger immediate, local cache-based widget refreshes the moment the application enters the foreground or background, ensuring users always see the most up-to-date state.
+- **Lifecycle-Aware Synchronization**: Engineered a dual-layer refresh policy to guarantee data consistency between the main application and the widget. While a Dagger-injected `WidgetSyncWorker` handles periodic background updates, I integrated ProcessLifecycle observation to trigger immediate, local cache-based widget refreshes the moment the application enters the foreground or background, ensuring users always see the most up-to-date state.
 
 
-### 7. Scoped Storage & File I/O Stability
-In version 1.7.0, downloading specific file types (like .hwp) resulted in corrupted filenames or files failing to appear in the device's native Downloads app due to improper directory targeting.
+### 7. File I/O Stability & MIME-Type Handling
+Before version 1.7.0, downloading specific file types (like .hwp) resulted in corrupted filenames or files failing to download entirely. The root cause was an over-reliance on server-side MIME-type declarations and the mishandling of UTF-8 encoded filenames within the data stream.
 
-- **Dedicated File Routing**: Rewrote the file download logic to explicitly target a dedicated 'KNUTICE' directory using Android's DownloadManager and updated Scoped Storage APIs.
+Client-Side Resolution & Decoding: Restructured the download logic to independently determine accurate MIME types on the client side and strictly decode UTF-8 filenames before passing the data to Android's DownloadManager.
+
+Standardized Storage UX: Rather than creating an isolated, app-specific folder (a common file-system anti-pattern), I explicitly routed all attachments to the native public Downloads directory. This preserved a seamless, expected user experience.
 
 
 ### 8. Scalable Build Environment with Convention Plugins
