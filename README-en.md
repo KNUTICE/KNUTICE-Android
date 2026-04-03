@@ -15,7 +15,7 @@
 > 
 > **Status:** Live in Production (Google Play Store)
 > 
-> **Users:** 250+ Total Users / 130+ MAU
+> **Users:** 300+ Total Users / 190+ MAU
 
 # 💁 Service Introduction
 
@@ -31,7 +31,7 @@ Built with a focus on stability, scalability, and modern Android development sta
 
 - **Language:** `Kotlin`
     
-- **UI:** `Jetpack Compose` (Material3), `Navigation for Compose`
+- **UI:** `Jetpack Compose` (Material3), `Jetpack Glance` (Widget),  `Navigation for Compose`
     
 - **Architecture:** `Multi-Module Clean Architecture`, `MVI (Unidirectional Data Flow)`
     
@@ -39,7 +39,7 @@ Built with a focus on stability, scalability, and modern Android development sta
     
 - **DI:** `Dagger 2`
     
-- **Local DB:** `Room` (FTS4, Custom Tokenizer applied), `DataStore`
+- **Local DB:** `Room` (FTS4, Custom Tokenizer applied), `DataStore`, `SharedPreference`
     
 - **Background Task:** `WorkManager` (PeriodicWork, Chained Task)
     
@@ -77,6 +77,7 @@ graph TD
     subgraph Presentation ["Presentation Layer"]
         FeatMain(":feature:main"):::feature
         FeatBookmark(":feature:bookmark"):::feature
+        FeatWidget(":feature:widget"):::feature
     end
 
     subgraph Business ["Domain Layer"]
@@ -88,6 +89,7 @@ graph TD
         Data(":core:data"):::data
         Network(":core:network"):::data
         Notif(":core:notification"):::data
+        Infra(":core:infrastructure"):::data
     end
 
     subgraph SharedKernel ["Shared Modules (Ubiquitous)"]
@@ -97,17 +99,22 @@ graph TD
     end
 
     %% --- Critical Architecture Flows (Thick Lines) ---
-    %% These show the logic flow
+    %% These show the primary business logic and Dependency Inversion
     FeatMain ==> Domain
     FeatBookmark ==> Domain
+    FeatWidget ==> Domain
     Data ==> Domain
+    Notif ==> Domain
+    Infra ==> Domain
     
     %% --- Structural Wiring (Standard Lines) ---
     App --> FeatMain
     App --> FeatBookmark
+    App --> FeatWidget
     App --> Data
     App --> Network
     App --> Notif
+    App --> Infra
     
     %% Data internal wiring
     Data --> Network
@@ -116,10 +123,13 @@ graph TD
     %% Using dotted lines prevents the 'Messy Web' effect
     FeatMain -.-> Common & Model
     FeatBookmark -.-> Common & Model
+    FeatWidget -.-> Common & Model
     Domain -.-> Model
     Data -.-> Common & Model
     Network -.-> Common & Model
     Notif -.-> Common & Model
+    Infra -.-> Common & Model
+    Common -.-> Model
     
     %% Specific Cross-Module Dependencies
     FeatBookmark -.-> Notif
@@ -155,14 +165,45 @@ Writing to an FTS-enabled table is slower than standard tables due to the indexi
 - **Staging Table Strategy:** Implemented a lightweight "Staging Table" for immediate writes. When a user bookmarks an item, it is instantly saved here, allowing the UI to return to a success state immediately without blocking.
     
 - **Deferred Indexing:** Configured a chained **WorkManager** pipeline to migrate data from the Staging Table to the FTS Table in the background. This approach secured both high performance and a seamless user experience.
-    
 
+    
 ### 4. Reliable Push Notification Management (PeriodicWork)
 
 If the app remains unused for extended periods or the device enters Doze mode, FCM tokens can become stale or unsynchronized, leading to missed notifications.
 
 - **PeriodicWork:** Deployed **WorkManager** to periodically synchronize the FCM token with the server and validate its status. This ensures that users reliably receive critical announcements even if they do not open the app frequently.
-    
+
+
+### 5. Memory Leak Prevention & Navigation Optimization
+Unrestricted bottom-navigation switching in Compose can lead to duplicate ViewModel instantiations and excessive memory bloat in the JVM.
+
+- **Single-Top Routing & State Restoration**: Restructured the Navigation for Compose implementation to use nested navigation graphs. By enforcing strict Single-Top routing (launchSingleTop = true) alongside UI state restoration (restoreState = true), I capped ViewModel instances to exactly 1 per tab.
+
+- **State Delegation & Custom Back-Stack**: Completely decoupled the UI layer from navigation actions by creating a MainServiceState holder. By managing a custom tabHistory queue inside this state holder, I ensured precise, chronological back-navigation behavior while keeping the AnimatedBottomBar component entirely stateless and focused strictly on rendering.
+
+- **Profiling Impact**: Conducted rigorous Android Studio memory profiling, demonstrating a 70% decrease in retained ViewModel memory and a 23.6% reduction (252,650 objects) in total JVM object allocations during standard user traversal.
+
+
+### 6. Overcoming Jetpack Glance Constraints & Lifecycle Synchronization
+To provide quick access to Study Room statuses, I implemented Home Screen widgets using Jetpack Glance. However, Glance translates Composables into OS-level RemoteViews, which entirely lack support for custom Canvas drawing—meaning my Ring Graph UI couldn't be rendered natively.
+
+- **Background Bitmap Rendering**: Bypassed this OS limitation by constructing an off-main-thread pipeline that programmatically generates the Ring Graph as a static Bitmap, which is then passed to the Glance widget.
+
+- **Lifecycle-Aware Synchronization**: Engineered a dual-layer refresh policy to guarantee data consistency between the main application and the widget. While a Dagger-injected WidgetSyncWorker handles periodic background updates, I integrated ProcessLifecycle observation to trigger immediate, local cache-based widget refreshes the moment the application enters the foreground or background, ensuring users always see the most up-to-date state.
+
+
+### 7. Scoped Storage & File I/O Stability
+In version 1.7.0, downloading specific file types (like .hwp) resulted in corrupted filenames or files failing to appear in the device's native Downloads app due to improper directory targeting.
+
+- **Dedicated File Routing**: Rewrote the file download logic to explicitly target a dedicated 'KNUTICE' directory using Android's DownloadManager and updated Scoped Storage APIs.
+
+
+### 8. Scalable Build Environment with Convention Plugins
+As the project transitioned to a Multi-Module architecture, managing Gradle dependencies and compiler configurations across numerous modules led to significant boilerplate and potential version inconsistencies.
+
+- **Centralized Build Logic**: Implemented Gradle Convention Plugins (build-logic) using Kotlin DSL to centralize dependency management, SDK versions, and Compose compiler settings.
+
+- **Maintainability Impact**: This infrastructure update eliminated redundant build.gradle scripts across the codebase, ensuring strict version synchronization and drastically reducing the setup time required when generating new feature modules.
 
 # 🧐 What I Learned
 
