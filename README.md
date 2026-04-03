@@ -15,7 +15,7 @@
 > 
 > **Status:** 운영 중 (Play Store 배포)
 > 
-> **Users:** 총 사용자 250명+ / 월간 활성 사용자(MAU) 130명+
+> **Users:** 총 사용자 300명+ / 월간 활성 사용자(MAU) 190명+
 
 # 💁 Service Introduction
 
@@ -31,7 +31,7 @@ KNUTICE는 학교 홈페이지에 새 공지사항이 올라오면, 푸시 알�
 
 - **Language:** `Kotlin`
     
-- **UI:** `Jetpack Compose` (Material3), `Navigation for Compose`
+- **UI:** `Jetpack Compose` (Material3), `Jetpack Glance` (Widget), `Navigation for Compose`
     
 - **Architecture:** `Multi-Module Clean Architecture`, `MVI (Unidirectional Data Flow)`
     
@@ -77,6 +77,7 @@ graph TD
     subgraph Presentation ["Presentation Layer"]
         FeatMain(":feature:main"):::feature
         FeatBookmark(":feature:bookmark"):::feature
+        FeatWidget(":feature:widget"):::feature
     end
 
     subgraph Business ["Domain Layer"]
@@ -88,6 +89,7 @@ graph TD
         Data(":core:data"):::data
         Network(":core:network"):::data
         Notif(":core:notification"):::data
+        Infra(":core:infrastructure"):::data
     end
 
     subgraph SharedKernel ["Shared Modules (Ubiquitous)"]
@@ -97,17 +99,22 @@ graph TD
     end
 
     %% --- Critical Architecture Flows (Thick Lines) ---
-    %% These show the logic flow
+    %% These show the primary business logic and Dependency Inversion
     FeatMain ==> Domain
     FeatBookmark ==> Domain
+    FeatWidget ==> Domain
     Data ==> Domain
+    Notif ==> Domain
+    Infra ==> Domain
     
     %% --- Structural Wiring (Standard Lines) ---
     App --> FeatMain
     App --> FeatBookmark
+    App --> FeatWidget
     App --> Data
     App --> Network
     App --> Notif
+    App --> Infra
     
     %% Data internal wiring
     Data --> Network
@@ -116,10 +123,13 @@ graph TD
     %% Using dotted lines prevents the 'Messy Web' effect
     FeatMain -.-> Common & Model
     FeatBookmark -.-> Common & Model
+    FeatWidget -.-> Common & Model
     Domain -.-> Model
     Data -.-> Common & Model
     Network -.-> Common & Model
     Notif -.-> Common & Model
+    Infra -.-> Common & Model
+    Common -.-> Model
     
     %% Specific Cross-Module Dependencies
     FeatBookmark -.-> Notif
@@ -161,6 +171,35 @@ FTS 테이블은 인덱싱 과정 때문에 쓰기(Insert) 속도가 느린 편�
 앱이 오랫동안 실행되지 않거나 기기가 절전 모드에 들어가면 FCM 토큰이 만료되거나 동기화되지 않아 알림을 놓칠 위험이 있었어요.
 
 - **WorkManager의 PeriodicWork**를 사용하여 주기적으로 FCM 토큰을 서버와 동기화하고 유효성을 검증하는 로직을 구현했어요. 이를 통해 사용자가 앱을 자주 켜지 않아도 중요한 공지 알림을 안정적으로 받을 수 있도록 했어요.
+
+### 5. 메모리 누수 방지 및 네비게이션 최적화
+Compose에서 바텀 네비게이션 탭을 자유롭게 이동하다 보면 ViewModel이 중복 생성되어 메모리를 불필요하게 많이 차지하는 문제가 있었어요.
+
+- **Single-Top 라우팅 및 상태 복원**: Navigation for Compose를 중첩된 네비게이션 그래프(Nested Graph) 구조로 개편했어요. launchSingleTop = true와 restoreState = true를 적용해 ViewModel 인스턴스가 각 탭당 정확히 1개씩만 유지되도록 만들었어요.
+
+- **상태 위임과 커스텀 백스택**: UI 레이어에서 라우팅 로직을 완전히 덜어내고, MainServiceState라는 전용 상태 홀더를 만들었어요. 내부적으로 커스텀 tabHistory 큐를 관리해서 UI 컴포넌트는 가볍게 유지하면서도 시간순으로 정확하게 뒤로 가기가 작동하도록 구현했어요.
+
+- **프로파일링 성과**: Android Studio로 메모리를 꼼꼼히 프로파일링한 결과, 보존되는 ViewModel 메모리를 70% 줄이고 앱을 탐색할 때 발생하는 불필요한 JVM 객체 할당량을 23.6%(약 25만 개)나 줄일 수 있었어요.
+
+### 6. Jetpack Glance RemoteViews 한계 극복 및 생명주기 동기화
+열람실 좌석 현황을 더 빠르게 확인할 수 있도록 Jetpack Glance로 홈 화면 위젯을 만들었어요. 하지만 Glance는 OS 수준의 RemoteViews를 사용하기 때문에 커스텀 Canvas를 지원하지 않아, 동그란 링 형태의 그래프(Ring Graph)를 직접 그릴 수 없는 제약이 있었어요.
+
+- **백그라운드 Bitmap 렌더링**: 이 한계를 넘기 위해 메인 스레드 밖에서 링 그래프를 정적인 이미지(Bitmap)로 먼저 그려낸 다음 위젯에 전달하는 방식을 선택했어요.
+
+- **앱 생명주기 기반의 촘촘한 동기화**: 앱을 켰을 때와 위젯을 볼 때 데이터가 서로 달라지는 일이 없도록 새로고침 정책을 아주 세밀하게 설계했어요. 평소에는 Dagger 2로 주입한 WidgetSyncWorker가 백그라운드 업데이트를 담당하지만, 사용자가 앱을 켜거나 끌 때(ProcessLifecycle) 이를 감지해 로컬 캐시에 저장된 최신 데이터로 위젯을 즉시 업데이트하도록 만들어 완벽한 데이터 일관성을 유지했어요.
+
+### 7. Scoped Storage 및 파일 I/O 안정성 확보
+1.7.0 버전에서는 .hwp 같은 특정 첨부파일을 다운로드할 때 파일명이 깨지거나, 기기의 '다운로드' 폴더에서 파일이 바로 보이지 않는 문제가 있었어요.
+
+- **전용 파일 라우팅**: Android의 DownloadManager와 최신 Scoped Storage API를 사용해서 'KNUTICE' 전용 폴더에 파일이 안전하게 저장되도록 다운로드 로직을 완전히 새로 작성했어요.
+
+
+### 8. Convention Plugin을 활용한 빌드 환경 최적화
+멀티 모듈 구조로 프로젝트가 커지면서, 각 모듈마다 비슷한 빌드 설정과 라이브러리 버전 코드가 반복되는 문제가 있었어요.
+
+- **빌드 로직 중앙화**: Kotlin DSL과 Gradle Convention Plugin(build-logic)을 도입해 파편화된 빌드 설정(SDK 버전, Compose 컴파일러 등)을 한 곳으로 모았어요.
+
+- **유지보수성 향상**: 덕분에 불필요한 중복 코드를 없애고 전체 프로젝트의 버전을 완벽하게 동기화할 수 있었어요. 앞으로 새로운 모듈을 추가할 때도 훨씬 빠르고 안정적으로 확장할 수 있는 단단한 기반을 마련했어요.
     
 
 # 🧐 What I Learned
