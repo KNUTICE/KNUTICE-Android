@@ -195,9 +195,9 @@ To provide quick access to Study Room statuses, I implemented Home Screen widget
 ### 7. File I/O Stability & MIME-Type Handling
 Before version 1.7.0, downloading specific file types (like .hwp) resulted in corrupted filenames or files failing to download entirely. The root cause was an over-reliance on server-side MIME-type declarations and the mishandling of UTF-8 encoded filenames within the data stream.
 
-Client-Side Resolution & Decoding: Restructured the download logic to independently determine accurate MIME types on the client side and strictly decode UTF-8 filenames before passing the data to Android's DownloadManager.
+- **Client-Side Resolution & Decoding**: Restructured the download logic to independently determine accurate MIME types on the client side and strictly decode UTF-8 filenames before passing the data to Android's DownloadManager.
 
-Standardized Storage UX: Rather than creating an isolated, app-specific folder (a common file-system anti-pattern), I explicitly routed all attachments to the native public Downloads directory. This preserved a seamless, expected user experience.
+- **Standardized Storage UX**: Rather than creating an isolated, app-specific folder (a common file-system anti-pattern), I explicitly routed all attachments to the native public Downloads directory. This preserved a seamless, expected user experience.
 
 
 ### 8. Scalable Build Environment with Convention Plugins
