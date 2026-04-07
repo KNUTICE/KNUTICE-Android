@@ -188,5 +188,5 @@
     <string name="title_dining_menu">学食メニュー</string>
     <string name="info_need_select_major">学科の重要なお知らせを見逃さないように、専攻を設定してみましょう！</string>
     <string name="text_download_not_available">ファイルをダウンロード 出来ません</string>
-    <string name="text_carrel_widget_seat_unit">席</string>
+    <string name="text_carrel_widget_remaining_seat">%1$d席</string>
 </resources>

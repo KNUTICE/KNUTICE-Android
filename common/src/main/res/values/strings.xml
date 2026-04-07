@@ -202,5 +202,5 @@
     <string name="title_dining_menu">Dining</string>
     <string name="info_need_select_major">Set up your major to start receiving your college\'s announcements!</string>
     <string name="text_download_not_available">Cannot download attachment.</string>
-    <string name="text_carrel_widget_seat_unit">seats</string>
+    <string name="text_carrel_widget_remaining_seat">%1$d seats</string>
 </resources>

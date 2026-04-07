@@ -54,7 +54,6 @@ fun CarrelWidgetContainer(
     Log.d("Widget", "IsLoading: $isLoading")
 
     val titleString = context.getString(R.string.knutice_carrel_widget_title)
-    val seatUnitString = context.getString(R.string.text_carrel_widget_seat_unit)
 
     Column(
         modifier = GlanceModifier
@@ -133,7 +132,9 @@ fun CarrelWidgetContainer(
                         )
 
                         Text(
-                            text = "$currentRemainingSeats$seatUnitString",
+                            text = context.getString(
+                                R.string.text_carrel_widget_remaining_seat, currentRemainingSeats
+                            ),
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,
