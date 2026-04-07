@@ -1,6 +1,7 @@
 package com.doyoonkim.widget.util
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -61,10 +62,17 @@ object CarrelStatusBitmapGenerator {
         val canvas = Canvas(resultBitmap)
 
         // Paint Configuration
+        // Check current device theme & set Track color based on the device theme
+        val deviceTheme = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val trackColor = when(deviceTheme) {
+            Configuration.UI_MODE_NIGHT_YES -> "#2C2C2E"
+            else -> "#E0E0E0"
+        }.toColorInt()
+
         val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
             strokeWidth = chartStrokeWidthInPx
-            color = "#E0E0E0".toColorInt()
+            color = trackColor
             strokeCap = Paint.Cap.ROUND
         }
 
