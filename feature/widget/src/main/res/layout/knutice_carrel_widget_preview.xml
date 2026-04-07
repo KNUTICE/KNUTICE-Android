@@ -47,7 +47,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="제1집중"
-                android:textColor="#333333"
+                android:textColor="@color/widget_preview_text_primary"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
@@ -63,8 +63,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="여유"
-                    android:textColor="#66BB6A"
+                    android:text="원활"
+                    android:textColor="#157A43"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </FrameLayout>
@@ -72,8 +72,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10 / 300"
-                android:textColor="#000000"
+                android:text="290석"
+                android:textColor="@color/widget_preview_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -92,7 +92,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="제2집중"
-                android:textColor="#333333"
+                android:textColor="@color/widget_preview_text_primary"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
@@ -109,7 +109,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="보통"
-                    android:textColor="#FFB300"
+                    android:textColor="#F59E0B"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </FrameLayout>
@@ -117,8 +117,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="160 / 300"
-                android:textColor="#000000"
+                android:text="140석"
+                android:textColor="@color/widget_preview_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -137,7 +137,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="제3집중"
-                android:textColor="#333333"
+                android:textColor="@color/widget_preview_text_primary"
                 android:textSize="17sp"
                 android:textStyle="bold" />
 
@@ -154,7 +154,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text="혼잡"
-                    android:textColor="#E53935"
+                    android:textColor="#EF4444"
                     android:textSize="20sp"
                     android:textStyle="bold" />
             </FrameLayout>
@@ -162,8 +162,8 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="10 / 300"
-                android:textColor="#000000"
+                android:text="10석"
+                android:textColor="@color/widget_preview_text_primary"
                 android:textSize="16sp"
                 android:textStyle="bold" />
         </LinearLayout>

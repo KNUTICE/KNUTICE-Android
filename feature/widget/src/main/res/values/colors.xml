@@ -6,4 +6,5 @@
     <color name="widget_preview_divider">#E0E0E0</color>
     <color name="widget_variant_purple">#6B79FC</color>
     <color name="widget_preview_bg_secondary">#FFFFFF</color>
+    <color name="widget_preview_bg_graph_track">#E0E0E0</color>
 </resources>

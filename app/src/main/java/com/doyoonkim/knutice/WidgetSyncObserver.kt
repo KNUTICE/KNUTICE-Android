@@ -30,7 +30,7 @@ class WidgetSyncObserver @Inject constructor(
     override fun onStop(owner: LifecycleOwner) {
         // Update Widget on App enters its onStop Status.
         updateNoticeWidgetLocalCache()
-//        updateCarrelWidgetLocalCache()        // Temporarily Disable in 1.7.0 Release
+        updateCarrelWidgetLocalCache()
     }
 
     private fun updateNoticeWidgetLocalCache() {

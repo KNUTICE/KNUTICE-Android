@@ -5,12 +5,12 @@
     android:viewportHeight="100">
     <path
         android:pathData="M 30,84.6 A 40,40 0 1 1 70,84.6"
-        android:strokeColor="#EAEAEA"
+        android:strokeColor="@color/widget_preview_bg_graph_track"
         android:strokeWidth="10"
         android:strokeLineCap="round" />
     <path
         android:pathData="M 30,84.6 A 40,40 0 1 1 76.5, 80"
-        android:strokeColor="#E75A46"
+        android:strokeColor="#EF4444"
         android:strokeWidth="10"
         android:strokeLineCap="round" />
 </vector>

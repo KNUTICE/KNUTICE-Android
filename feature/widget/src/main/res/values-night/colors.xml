@@ -5,4 +5,5 @@
     <color name="widget_preview_text_secondary">#B0B0B0</color>
     <color name="widget_preview_divider">#424242</color>
     <color name="widget_preview_bg_secondary">#1B1C20</color>
+    <color name="widget_preview_bg_graph_track">#2C2C2E</color>
 </resources>
