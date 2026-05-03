@@ -19,8 +19,13 @@ class TokenHandlerImpl @Inject constructor(
     private val TAG = this.javaClass.name
 
     override suspend fun invoke(t: String?): TokenStatus {
-        val token = t ?: Firebase.messaging.token.await()
+        val token = t ?: getToken()
         val cached = appPreferences.getCachedToken()
+
+        if (token == null)  {
+            // Firebase Service Unavailable
+            return TokenStatus.RETRY
+        }
 
         if (token != cached) appPreferences.updateDeviceToken(token)
 
@@ -49,12 +54,25 @@ class TokenHandlerImpl @Inject constructor(
         )
 
     override suspend fun validation(): Boolean {
-        val token = Firebase.messaging.token.await()
+        val token = getToken()
         val cached = appPreferences.getCachedToken()
 
         Log.d(TAG, "Received: $token")
         Log.d(TAG, "Cached: $cached")
 
+        if (token == null) return false
+
         return token == cached
+    }
+
+    // Access Token with Exception Handling
+    private suspend fun getToken(): String? {
+        return try {
+            Firebase.messaging.token.await()
+        } catch (e: Exception) {
+            // Unable to access to Token (IPC Failure; Firebase Service Not Available.)
+            Log.e("TokenHandler", "Unable to access Token ${e.localizedMessage}")
+            null
+        }
     }
 }
