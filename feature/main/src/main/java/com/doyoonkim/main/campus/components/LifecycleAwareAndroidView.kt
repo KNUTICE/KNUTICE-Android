@@ -52,7 +52,7 @@ fun LifecycleAwareWebView(
 
     // Access Context via CompositionLocal
     val context = LocalContext.current
-    val activityContext = context.findActivity()
+    val activityContext = remember(context) { context.findActivity() }
 
     // WebView BackHandler
     BackHandler {
@@ -159,7 +159,7 @@ fun LifecycleAwareWebView(
                     // Potential Exception Thrown: AndroidRuntimeException, ResourceNotFoundException
                     isWebViewEngineUnavailable = true
 
-                    Log.e("LifecycleAwareWebView", "Exception: ${e.localizedMessage}")
+                    Log.e("LifecycleAwareWebView", "WebView Unavailable ${e.localizedMessage}")
                     // Return fallback dummy screen
                     View(activityContext)
                 }

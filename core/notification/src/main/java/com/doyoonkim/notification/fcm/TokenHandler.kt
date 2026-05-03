@@ -9,6 +9,7 @@ import com.doyoonkim.model.requestBody.DeviceTokenBody
 import com.doyoonkim.model.requestBody.TokenUpdateBody
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -70,8 +71,11 @@ class TokenHandlerImpl @Inject constructor(
         return try {
             Firebase.messaging.token.await()
         } catch (e: Exception) {
+            // Throw Cancellation Exception to ensure structured concurrency.
+            if (e is CancellationException) throw e
+
             // Unable to access to Token (IPC Failure; Firebase Service Not Available.)
-            Log.e("TokenHandler", "Unable to access Token ${e.localizedMessage}")
+            Log.e(TAG, "Unable to access Token")
             null
         }
     }
