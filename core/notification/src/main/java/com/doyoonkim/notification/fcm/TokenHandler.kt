@@ -9,6 +9,7 @@ import com.doyoonkim.model.requestBody.DeviceTokenBody
 import com.doyoonkim.model.requestBody.TokenUpdateBody
 import com.google.firebase.Firebase
 import com.google.firebase.messaging.messaging
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -19,8 +20,13 @@ class TokenHandlerImpl @Inject constructor(
     private val TAG = this.javaClass.name
 
     override suspend fun invoke(t: String?): TokenStatus {
-        val token = t ?: Firebase.messaging.token.await()
+        val token = t ?: getToken()
         val cached = appPreferences.getCachedToken()
+
+        if (token == null)  {
+            // Firebase Service Unavailable
+            return TokenStatus.RETRY
+        }
 
         if (token != cached) appPreferences.updateDeviceToken(token)
 
@@ -49,12 +55,28 @@ class TokenHandlerImpl @Inject constructor(
         )
 
     override suspend fun validation(): Boolean {
-        val token = Firebase.messaging.token.await()
+        val token = getToken()
         val cached = appPreferences.getCachedToken()
 
         Log.d(TAG, "Received: $token")
         Log.d(TAG, "Cached: $cached")
 
+        if (token == null) return false
+
         return token == cached
+    }
+
+    // Access Token with Exception Handling
+    private suspend fun getToken(): String? {
+        return try {
+            Firebase.messaging.token.await()
+        } catch (e: Exception) {
+            // Throw Cancellation Exception to ensure structured concurrency.
+            if (e is CancellationException) throw e
+
+            // Unable to access to Token (IPC Failure; Firebase Service Not Available.)
+            Log.e(TAG, "Unable to access Token")
+            null
+        }
     }
 }
