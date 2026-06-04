@@ -1,7 +1,7 @@
-package com.doyoonkim.data.repository
+package com.doyoonkim.data.repository.local
 
 import android.util.Log
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.model.CarrelRoomStatusVO
 import com.doyoonkim.model.NoticeVO
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class LocalWidgetCacheRepositoryImpl @Inject constructor(
-    appPreference: AppPreferences
+    appWidgetPreference: AppWidgetPreferenceRepository
 ) : LocalWidgetCacheRepository {
 
     companion object {
@@ -22,7 +22,7 @@ class LocalWidgetCacheRepositoryImpl @Inject constructor(
     private val _noticeCacheState = MutableStateFlow<List<NoticeVO>>(emptyList())
     override val noticeCacheState = _noticeCacheState.asStateFlow()
 
-    private val _widgetCategoryCacheState = MutableStateFlow(appPreference.getWidgetCategoryPolicy())
+    private val _widgetCategoryCacheState = MutableStateFlow(appWidgetPreference.getWidgetCategoryPolicy())
     override val widgetCategoryCacheState = _widgetCategoryCacheState.asStateFlow()
 
     private val _carrelCacheState = MutableStateFlow<List<CarrelRoomStatusVO>>(emptyList())

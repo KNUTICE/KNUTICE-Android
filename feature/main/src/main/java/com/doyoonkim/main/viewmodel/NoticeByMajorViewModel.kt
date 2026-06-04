@@ -3,7 +3,7 @@ package com.doyoonkim.main.viewmodel
 import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
-import com.doyoonkim.common.di.AppPreferences
+import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
 import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.main.contract.NoticeByMajorEvent
@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class NoticeByMajorViewModel @Inject constructor(
-    private val appPreference: AppPreferences,
+    private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     private val fetchNoticesPerPage: FetchNoticesPerPage,
     private val submitNotificationPreferences: SubmitNotificationPreferences
 ): BaseViewModel<NoticeByMajorState, NoticeByMajorEvent, NoticeByMajorSideEffect, NoticeByMajorMutation>() {
@@ -64,7 +64,7 @@ class NoticeByMajorViewModel @Inject constructor(
     }
 
     private fun initialLoad() {
-        val currentSubscription = appPreference.getSubscribedMajor()
+        val currentSubscription = appSubscriptionPreference.getSubscribedMajor()
         currentSubscription?.let { subscribed ->
             mutate(NoticeByMajorMutation.Subscribed(MajorCategory.valueOf(subscribed)))
         }
@@ -77,7 +77,7 @@ class NoticeByMajorViewModel @Inject constructor(
     private fun updateSubscribedMajor(newSubscription: MajorCategory) {
         mutate(NoticeByMajorMutation.Notices.Loading)
 
-        val prevSubscription = appPreference.getSubscribedMajor()
+        val prevSubscription = appSubscriptionPreference.getSubscribedMajor()
         // State Update & Request subscription update on Remote Source.
         viewModelScope.launch {
             val subscribeNewTopic = submitNotificationPreferences.invoke(
@@ -101,7 +101,7 @@ class NoticeByMajorViewModel @Inject constructor(
 
                 if (unsubscribePrevTopic) {
                     // update
-                    appPreference.updateSubscribedMajor(newSubscription.name)
+                    appSubscriptionPreference.updateSubscribedMajor(newSubscription.name)
                     mutate(NoticeByMajorMutation.Subscribed(newSubscription))
                     // Fetch new notices
                     loadNotices()

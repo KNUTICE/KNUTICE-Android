@@ -16,6 +16,8 @@ import com.doyoonkim.domain.di.TipUseCaseModule
 import com.doyoonkim.knutice.di.modules.ViewModelFactoryModule
 import com.doyoonkim.knutice.di.modules.WorkSchedulerModule
 import com.doyoonkim.knutice.di.util.FirebaseInfrastructureProvider
+import com.doyoonkim.knutice.di.util.LocalCacheProvider
+import com.doyoonkim.knutice.di.util.LocalPreferenceProvider
 import com.doyoonkim.knutice.di.util.LocalStorageProvider
 import com.doyoonkim.knutice.di.util.NetworkProvider
 import com.doyoonkim.knutice.di.util.SystemServices
@@ -37,7 +39,8 @@ import javax.inject.Singleton
 @Component(
     dependencies = [
         SystemServices::class,
-        LocalStorageProvider::class,
+        LocalCacheProvider::class,
+        LocalPreferenceProvider::class,
         NetworkProvider::class,
         FirebaseInfrastructureProvider::class
     ],
@@ -58,14 +61,19 @@ interface HomeSceneComponent {
         fun create(
             systemServices: SystemServices,
             networkProvider: NetworkProvider,
-            localStorageProvider: LocalStorageProvider,
+            localCacheProvider: LocalCacheProvider,
+            localPreferenceProvider: LocalPreferenceProvider,
             firebaseInfrastructureProvider: FirebaseInfrastructureProvider
         ): HomeSceneComponent
     }
 }
 
 @Component(
-    dependencies = [SystemServices::class, NetworkProvider::class],
+    dependencies = [
+        SystemServices::class,
+        NetworkProvider::class,
+        LocalPreferenceProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
         NoticeByMajorSceneModule::class,
@@ -82,14 +90,19 @@ interface NoticeByMajorSceneComponent {
     interface Factory {
         fun create(
             systemServices: SystemServices,
-            networkProvider: NetworkProvider
+            networkProvider: NetworkProvider,
+            localPreferenceProvider: LocalPreferenceProvider
         ): NoticeByMajorSceneComponent
     }
 }
 
 
 @Component(
-    dependencies = [SystemServices::class, LocalStorageProvider::class],
+    dependencies = [
+        SystemServices::class,
+        LocalStorageProvider::class,
+        LocalPreferenceProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
         BookmarkListSceneModule::class,
@@ -103,6 +116,7 @@ interface BookmarkListSceneComponent {
     interface Factory {
         fun create(
             systemServices: SystemServices,
+            localPreferenceProvider: LocalPreferenceProvider,
             localStorageProvider: LocalStorageProvider
         ): BookmarkListSceneComponent
     }
@@ -212,7 +226,11 @@ interface NoticeInCategorySceneComponent {
 
 
 @Component(
-    dependencies = [SystemServices::class, NetworkProvider::class],
+    dependencies = [
+        SystemServices::class,
+        LocalPreferenceProvider::class,
+        NetworkProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
         CustomerServiceSceneModule::class,
@@ -227,6 +245,7 @@ interface CustomerServiceSceneComponent {
     interface Factory {
         fun create(
             systemService: SystemServices,
+            localPreferenceProvider: LocalPreferenceProvider,
             networkProvider: NetworkProvider
         ): CustomerServiceSceneComponent
     }
@@ -234,7 +253,11 @@ interface CustomerServiceSceneComponent {
 
 
 @Component(
-    dependencies = [SystemServices::class, NetworkProvider::class],
+    dependencies = [
+        SystemServices::class,
+        LocalPreferenceProvider::class,
+        NetworkProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
         NotificationPreferencesSceneModule::class,
@@ -249,6 +272,7 @@ interface NotificationPreferencesSceneComponent {
     interface Factory {
         fun create(
             systemServices: SystemServices,
+            localPreferenceProvider: LocalPreferenceProvider,
             networkProvider: NetworkProvider
         ): NotificationPreferencesSceneComponent
     }
@@ -256,7 +280,12 @@ interface NotificationPreferencesSceneComponent {
 
 
 @Component(
-    dependencies = [SystemServices::class, NetworkProvider::class, LocalStorageProvider::class ],
+    dependencies = [
+        SystemServices::class,
+        NetworkProvider::class,
+        LocalStorageProvider::class,
+        LocalPreferenceProvider::class
+    ],
     modules = [
         ViewModelFactoryModule::class,
         SettingsSceneModule::class,
@@ -272,7 +301,8 @@ interface SettingsSceneComponent {
         fun create(
             systemServices: SystemServices,
             networkProvider: NetworkProvider,
-            localStorageProvider: LocalStorageProvider
+            localStorageProvider: LocalStorageProvider,
+            localPreferenceProvider: LocalPreferenceProvider
         ): SettingsSceneComponent
     }
 }
@@ -283,6 +313,7 @@ interface SettingsSceneComponent {
         SystemServices::class,
         NetworkProvider::class,
         LocalStorageProvider::class,
+        LocalPreferenceProvider::class,
         FirebaseInfrastructureProvider::class
     ],
     modules = [
@@ -303,13 +334,14 @@ interface SplashSceneComponent {
             systemServices: SystemServices,
             networkProvider: NetworkProvider,
             localStorageProvider: LocalStorageProvider,
+            localPreferenceProvider: LocalPreferenceProvider,
             firebaseInfrastructureProvider: FirebaseInfrastructureProvider
         ): SplashSceneComponent
     }
 }
 
 @Component(
-    dependencies = [SystemServices::class],
+    dependencies = [SystemServices::class, LocalPreferenceProvider::class],
     modules = [
         ViewModelFactoryModule::class,
         WidgetConfigSceneModule::class,
@@ -322,7 +354,10 @@ interface WidgetConfigSceneComponent {
 
     @Component.Factory
     interface Factory {
-        fun create(systemService: SystemServices): WidgetConfigSceneComponent
+        fun create(
+            systemService: SystemServices,
+            localPreferenceProvider: LocalPreferenceProvider
+        ): WidgetConfigSceneComponent
     }
 }
 
@@ -330,7 +365,8 @@ interface WidgetConfigSceneComponent {
     dependencies = [
         SystemServices::class,
         NetworkProvider::class,
-        LocalStorageProvider::class
+        LocalCacheProvider::class,
+        LocalPreferenceProvider::class
     ],
     modules = [
         ViewModelFactoryModule::class,
@@ -346,7 +382,8 @@ interface CarrelStatusSceneComponent {
         fun create(
             systemServices: SystemServices,
             networkProvider: NetworkProvider,
-            localStorageProvider: LocalStorageProvider
+            localCacheProvider: LocalCacheProvider,
+            localPreferenceProvider: LocalPreferenceProvider
         ): CarrelStatusSceneComponent
     }
 }

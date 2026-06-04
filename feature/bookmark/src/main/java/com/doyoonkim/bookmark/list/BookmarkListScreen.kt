@@ -50,6 +50,7 @@ import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
 import com.doyoonkim.common.ui.NotificationPreviewCardMarked
+import com.doyoonkim.common.ui.OnForegroundFocusEffect
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TopAppBarDropdownMenu
 import com.doyoonkim.common.ui.TopAppBarWithActions
@@ -68,6 +69,11 @@ fun BookmarkListScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     BackHandler { onBackPressed() }
+
+    OnForegroundFocusEffect {
+        viewModel.sendUiEvent(BookmarkListEvent.CheckSyncStatus)
+        viewModel.sendUiEvent(BookmarkListEvent.RequestBookmark)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiSideEffect.collect { sideEffect ->

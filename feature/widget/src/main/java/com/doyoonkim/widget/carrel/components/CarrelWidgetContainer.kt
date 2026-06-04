@@ -53,6 +53,8 @@ fun CarrelWidgetContainer(
     val context = LocalContext.current
     Log.d("Widget", "IsLoading: $isLoading")
 
+    val titleString = context.getString(R.string.knutice_carrel_widget_title)
+
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
@@ -62,7 +64,7 @@ fun CarrelWidgetContainer(
     ) {
         WidgetHeader(
             modifier = GlanceModifier.defaultWeight(),
-            title = "열람실 현황",
+            title = titleString,
             lastUpdated = lastSync,
             iconResId = R.drawable.outline_sync_24,
             onRefreshClick = actionRunCallback<CarrelStatusRefreshAction>()
@@ -99,6 +101,8 @@ fun CarrelWidgetContainer(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         val carrelName = vo.name.split(" ").firstOrNull() ?: vo.name
+                        val currentRemainingSeats = vo.total - vo.occupied
+
                         Text(
                             text = carrelName,
                             style = TextStyle(
@@ -128,7 +132,9 @@ fun CarrelWidgetContainer(
                         )
 
                         Text(
-                            text = "${vo.occupied} / ${vo.total}",
+                            text = context.getString(
+                                R.string.text_carrel_widget_remaining_seat, currentRemainingSeats
+                            ),
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,

@@ -1,13 +1,11 @@
 package com.doyoonkim.main.home
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -44,12 +43,12 @@ import com.doyoonkim.common.navigation.Destination
 import com.doyoonkim.common.theme.buttonOnBackground
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.secondaryBackground
-import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.DashboardPlaceholder
 import com.doyoonkim.common.ui.EntryPointButton
 import com.doyoonkim.common.ui.HorizontalContentPager
 import com.doyoonkim.common.ui.LocalHomeSafeBottomPadding
+import com.doyoonkim.common.ui.OnForegroundFocusEffect
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.ui.TipCategory
 import com.doyoonkim.common.ui.TipPager
@@ -81,10 +80,12 @@ fun HomeDashboard(
         viewModel.sendUiEvent(HomeEvent.GoBack)
     }
 
+    OnForegroundFocusEffect {
+        viewModel.sendUiEvent(HomeEvent.RequestMainContents)
+    }
+
     // SideEffect Handling
     LaunchedEffect(Unit) {
-        viewModel.sendUiEvent(HomeEvent.RequestMainContents)
-
         // SideEffect Channel Subscription
         viewModel.uiSideEffect.collect { effect ->
             when (effect) {
@@ -158,27 +159,31 @@ fun HomeDashboard(
         } else {
             // Read HomeScreen content safe bottom padding
             val bottomPadding = LocalHomeSafeBottomPadding.current
-            Log.d("HomeScreen", "Safe Padding: $bottomPadding")
+            
+            // LazyColumnState
+            val lazyColumnState = rememberLazyListState()
+
             LazyColumn(
                 modifier = modifier
                     .padding(innerPadding)
                     .background(MaterialTheme.colorScheme.displayBackground),
+                state = lazyColumnState,
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(20.dp),
                 contentPadding = PaddingValues(bottom = bottomPadding)
             ) {
-                if (!uiState.tipState.isError && uiState.tipState.tips.isNotEmpty()) {
+                if (!uiState.tipState.isError) {
                     item("tip") {
                         TipPager(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .height(50.dp)
-                                .padding(5.dp),
-                            tips = uiState.tipState.tips
+                                .padding(horizontal = 7.dp),
+                            tips = uiState.tipState.tips,
+                            isLoading = uiState.tipState.isLoading
                         ) {
                             viewModel.sendUiEvent(HomeEvent.RequestTipDetail(TipCategory.UPDATES, it))
                         }
-                        Spacer(Modifier.height(15.dp))
                     }
                 }
 
