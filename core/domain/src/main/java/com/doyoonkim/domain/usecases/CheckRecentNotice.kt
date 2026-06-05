@@ -13,22 +13,23 @@ import javax.inject.Inject
  */
 class CheckRecentNotice @Inject constructor() {
 
-    operator fun invoke(notices: List<NoticeVO>): List<NoticeVO> {
-        // Retrieve Current Time
-        val current = System.currentTimeMillis()
+    companion object {
         // DateTimeFormatter
-        val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        // 48-hours in Millis
-        val twoDaysMillis = 86_400_000L * 2
+        private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        // Target Zone ID (Asia/Seoul)
+        private val zoneId = ZoneId.of("Asia/Seoul")
+    }
+
+    operator fun invoke(notices: List<NoticeVO>): List<NoticeVO> {
+        //Retrieve current date.
+        val current = LocalDate.now(zoneId)
         return notices.map {
             try {
-                val timeInMillis = LocalDate.parse(it.timestamp, format)
-                    .atStartOfDay(ZoneId.of("Asia/Seoul"))
-                    .toInstant()
-                    .toEpochMilli()
-
+                // Utilize direct LocalDate comparison for Recent validation.
+                val posted = LocalDate.parse(it.timestamp, format)
                 it.copy(
-                    isRecent = current - timeInMillis <= twoDaysMillis
+                    // Recent Notice Validation based on 48 hours window.
+                    isRecent = !posted.isBefore(current.minusDays(2))
                 )
             } catch (e: DateTimeParseException) {
                 // Unable to parse Date information.
