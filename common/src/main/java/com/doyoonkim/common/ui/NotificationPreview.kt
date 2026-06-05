@@ -106,7 +106,7 @@ fun NotificationPreview(
                 }
 
                 Text(
-                    modifier = Modifier.fillMaxWidth().weight(9f),
+                    modifier = Modifier.weight(1f),
                     text = notificationTitle,
                     textAlign = TextAlign.Start,
                     fontSize = 14.sp,
