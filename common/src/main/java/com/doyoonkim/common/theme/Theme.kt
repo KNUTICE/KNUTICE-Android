@@ -97,6 +97,14 @@ val ColorScheme.variantPurple: Color
     @Composable
     get() = VariantPurple
 
+val ColorScheme.variantPurpleStrong: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) VariantPurpleStrongDark else VariantPurpleStrong
+
+val ColorScheme.variantPurpleLight: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) VariantPurpleBackgroundDark else VariantPurpleBackground
+
 val ColorScheme.buttonOnBackground: Color
     @Composable
     get() = if(isSystemInDarkTheme()) ButtonDark else ButtonLight

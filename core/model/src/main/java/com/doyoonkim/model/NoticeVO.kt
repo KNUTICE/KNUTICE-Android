@@ -9,5 +9,6 @@ data class NoticeVO(
     val departName: String = "",
     val timestamp: String = "",
     val noticeName: String = "",
-    val isSummaryAvailable: Boolean = false
+    val isSummaryAvailable: Boolean = false,
+    val isRecent: Boolean = false
 )
