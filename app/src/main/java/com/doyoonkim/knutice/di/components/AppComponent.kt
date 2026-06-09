@@ -16,8 +16,10 @@ import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import com.doyoonkim.data.di.CampusRemoteModule
 import com.doyoonkim.data.di.LocalPreferenceModule
 import com.doyoonkim.data.di.NoticeRemoteModule
+import com.doyoonkim.data.di.PreferencesRemoteModule
 import com.doyoonkim.data.di.RoomDatabaseModule
 import com.doyoonkim.data.di.SystemCoroutineModule
+import com.doyoonkim.domain.di.PreferencesUseCaseModule
 import com.doyoonkim.infrastructure.di.FirebaseAnalyticsModule
 import com.doyoonkim.infrastructure.di.FirebaseRemoteConfigModule
 import com.doyoonkim.knutice.di.util.FirebaseInfrastructureProvider
@@ -75,10 +77,12 @@ interface AppComponent :
     modules = [
         WorkerModule::class,
         WidgetModule::class,
+        PreferencesUseCaseModule::class,
         FcmTokenModule::class,
         TokenUseCaseModule::class,
         TokenRemoteModule::class,
         AsyncFtsEntryInsertionModule::class,
+        PreferencesRemoteModule::class,
         NoticeRemoteModule::class,
         CampusRemoteModule::class
     ]

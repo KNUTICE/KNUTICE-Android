@@ -4,6 +4,8 @@ import android.app.AlarmManager
 import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.work.WorkManager
 import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.domain.interfaces.AppDatabasePreferenceRepository
@@ -32,6 +34,8 @@ interface SystemServices {
     fun notificationManager(): NotificationManager
     // WorkManager
     fun workManager(): WorkManager
+    // PreferencesDataStore
+    fun preferenceDataStore(): DataStore<Preferences>
 
     // Dispatchers
     @IoDispatcher fun ioDispatcher(): CoroutineDispatcher
