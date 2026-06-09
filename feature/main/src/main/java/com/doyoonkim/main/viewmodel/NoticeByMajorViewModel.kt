@@ -4,15 +4,13 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
+import com.doyoonkim.domain.interfaces.MajorSubscriptionUpdateTaskScheduler
 import com.doyoonkim.domain.usecases.FetchNoticesPerPage
-import com.doyoonkim.domain.usecases.SubmitNotificationPreferences
 import com.doyoonkim.main.contract.NoticeByMajorEvent
 import com.doyoonkim.main.contract.NoticeByMajorMutation
 import com.doyoonkim.main.contract.NoticeByMajorSideEffect
 import com.doyoonkim.main.contract.NoticeByMajorState
 import com.doyoonkim.model.MajorCategory
-import com.doyoonkim.model.TopicType
-import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -21,7 +19,7 @@ import javax.inject.Inject
 class NoticeByMajorViewModel @Inject constructor(
     private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     private val fetchNoticesPerPage: FetchNoticesPerPage,
-    private val submitNotificationPreferences: SubmitNotificationPreferences
+    private val jobScheduler: MajorSubscriptionUpdateTaskScheduler
 ): BaseViewModel<NoticeByMajorState, NoticeByMajorEvent, NoticeByMajorSideEffect, NoticeByMajorMutation>() {
     private val TAG = this.javaClass.name
     override fun setInitialState(): NoticeByMajorState = NoticeByMajorState(0)
@@ -64,49 +62,33 @@ class NoticeByMajorViewModel @Inject constructor(
     }
 
     private fun initialLoad() {
-        val currentSubscription = appSubscriptionPreference.getSubscribedMajor()
-        currentSubscription?.let { subscribed ->
-            mutate(NoticeByMajorMutation.Subscribed(MajorCategory.valueOf(subscribed)))
-        }
         viewModelScope.launch {
+            val currentSubscription = appSubscriptionPreference.getSubscribedMajor().first()
+            // Temporary
+            if (currentSubscription.isNotEmpty()) {
+                mutate(NoticeByMajorMutation.Subscribed(MajorCategory.valueOf(currentSubscription.first())))
+            }
             fetchNotice()
         }
     }
 
     // Need to revised later.
     private fun updateSubscribedMajor(newSubscription: MajorCategory) {
-        mutate(NoticeByMajorMutation.Notices.Loading)
-
-        val prevSubscription = appSubscriptionPreference.getSubscribedMajor()
-        // State Update & Request subscription update on Remote Source.
         viewModelScope.launch {
-            val subscribeNewTopic = submitNotificationPreferences.invoke(
-                TopicSubscriptionPreferencesBody(
-                    topicType = TopicType.MAJOR,
-                    noticeName = newSubscription.name,
-                    isSubscribed = true
-                )
-            ).first()
+            // Temporary Overall processing
+            val prevSubscription = appSubscriptionPreference.getSubscribedMajor().first()
+            // Add prevSubscription Major to unsubscribe targets
+            if (prevSubscription.isNotEmpty()) appSubscriptionPreference.updateUnsubscribeTarget(prevSubscription.first())
+            // Register new topic
+            appSubscriptionPreference.updateSubscribedMajor(newSubscription.name)
+            // Add new topic to Subscription Pending
+            appSubscriptionPreference.addPendingTarget(newSubscription.name)
+            // Trigger background work for server-side synchronization
+            jobScheduler.execute()
 
-            if (subscribeNewTopic) {
-                val unsubscribePrevTopic = prevSubscription?.let { prev ->
-                    submitNotificationPreferences.invoke(
-                        TopicSubscriptionPreferencesBody(
-                            topicType = TopicType.MAJOR,
-                            noticeName = prev,
-                            isSubscribed = false
-                        )
-                    ).first()
-                } ?: true
-
-                if (unsubscribePrevTopic) {
-                    // update
-                    appSubscriptionPreference.updateSubscribedMajor(newSubscription.name)
-                    mutate(NoticeByMajorMutation.Subscribed(newSubscription))
-                    // Fetch new notices
-                    loadNotices()
-                }
-            }
+            // Trigger New Notices fetch
+            mutate(NoticeByMajorMutation.Subscribed(newSubscription))
+            loadNotices()
         }
     }
 

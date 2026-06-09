@@ -13,6 +13,7 @@ import com.doyoonkim.main.contract.WidgetConfigState
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,8 +49,13 @@ class WidgetConfigViewModel @Inject constructor(
         viewModelScope.launch(ioDispatcher) {
             // Default options (Main Notice Categories)
             val default: List<String> = NoticeCategory.entries.dropLast(1).map { it.name }
+            val majorSelection = appSubscriptionPreference.getSubscribedMajor().first().run {
+                if (isEmpty()) null
+                else first()
+            }
+
             mutate(WidgetConfigMutation.Configuration.Available(
-                default, appSubscriptionPreference.getSubscribedMajor()
+                default, majorSelection
             ))
             // Check Current Policy Status
             val currentPolicy = appWidgetPreference.getWidgetCategoryPolicy()
