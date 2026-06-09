@@ -21,94 +21,67 @@ class MajorSubscriptionUpdate(
     private val appSubscriptionPreferenceRepository: AppSubscriptionPreferenceRepository
 ): CoroutineWorker(appContext, workerParam) {
     override suspend fun doWork(): Result {
-        // Perform Major Topic Subscription Update work.
-        // 1. Update necessary value.
-        // 2. Check prev registered topic.
-        // 3. Necessary deletion work.
-        val updateTarget = appSubscriptionPreferenceRepository.getSubscriptionPending().first()
-        val unsubscribeTargets = appSubscriptionPreferenceRepository.getUnsubscribePending().first()
-
-        /* TEMPORARY LOG FOR DEBUG */
-        Log.d("MajorSubscriptionUpdate", "SUBSCRIPTION PENDING: ${updateTarget.toList()}")
-        Log.d("MajorSubscriptionUpdate", "UNSUBSCRIPTION PENDING: ${unsubscribeTargets.toList()}")
-
-        if (updateTarget.isEmpty()) return Result.failure()
-
-        // New Major to subscribe
-        updateTarget.forEach { target ->
-            val result = submitNotificationPreferences.invoke(
-                TopicSubscriptionPreferencesBody(
-                    topicType = TopicType.MAJOR,
-                    noticeName = target,
-                    isSubscribed = true
-                )
-            ).first()
+        try {
+            // Perform Major Topic Subscription Update work.
+            // 1. Update necessary value.
+            // 2. Check prev registered topic.
+            // 3. Necessary deletion work.
+            val updateTarget = appSubscriptionPreferenceRepository.getSubscriptionPending().first()
+            val unsubscribeTargets = appSubscriptionPreferenceRepository.getUnsubscribePending().first()
 
             /* TEMPORARY LOG FOR DEBUG */
-            Log.d("MajorSubscriptionUpdate", "Subscribing target $target processed with result $result")
+            Log.d("MajorSubscriptionUpdate", "SUBSCRIPTION PENDING: ${updateTarget.toList()}")
+            Log.d("MajorSubscriptionUpdate", "UNSUBSCRIPTION PENDING: ${unsubscribeTargets.toList()}")
 
-            // Regardless of retryCount, registration must be completed, in order to
-            // promise PUSH notification on this topic.
-            if (!result) return Result.retry()
-        }
-        // Clear out pending list.
-        // Clear pending list early. In case, retry occurred in unsubscribed logic, above process will be safely ignored because
-        // updateTarget would be empty.
-        appSubscriptionPreferenceRepository.removePendingTarget(updateTarget)
+            // In case both pending lists are empty, early exit the work with Success result.
+            if (updateTarget.isEmpty() && unsubscribeTargets.isEmpty()) return Result.success()
 
-        unsubscribeTargets.forEach {
-            val unsubscribePrevTopic = submitNotificationPreferences.invoke(
-                TopicSubscriptionPreferencesBody(
-                    topicType = TopicType.MAJOR,
-                    noticeName = it,
-                    isSubscribed = false
-                )
-            ).first()
+            // New Major to subscribe
+            updateTarget.forEach { target ->
+                val result = submitNotificationPreferences.invoke(
+                    TopicSubscriptionPreferencesBody(
+                        topicType = TopicType.MAJOR,
+                        noticeName = target,
+                        isSubscribed = true
+                    )
+                ).first()
 
-            /* TEMPORARY LOG FOR DEBUG */
-            Log.d("MajorSubscriptionUpdate", "Subscribing target $it processed with result $unsubscribePrevTopic")
+                /* TEMPORARY LOG FOR DEBUG */
+                Log.d("MajorSubscriptionUpdate", "Subscribing target $target processed with result $result")
 
-            // Regardless of retryCount, unsubscription must be completed, in order to avoid
-            // PUSH notification on this topic.
-            if (!unsubscribePrevTopic) return Result.retry()
-        }
-
-        // All unsubscription is completed.
-        appSubscriptionPreferenceRepository.removeUnsubscribedTarget(unsubscribeTargets)
-        return Result.success()
-
-        /*    Old Logics.
-        // State Update & Request subscription update on Remote Source.
-        viewModelScope.launch {
-            val subscribeNewTopic = submitNotificationPreferences.invoke(
-                TopicSubscriptionPreferencesBody(
-                    topicType = TopicType.MAJOR,
-                    noticeName = newSubscription.name,
-                    isSubscribed = true
-                )
-            ).first()
-
-            if (subscribeNewTopic) {
-                val unsubscribePrevTopic = prevSubscription?.let { prev ->
-                    submitNotificationPreferences.invoke(
-                        TopicSubscriptionPreferencesBody(
-                            topicType = TopicType.MAJOR,
-                            noticeName = prev,
-                            isSubscribed = false
-                        )
-                    ).first()
-                } ?: true
-
-                if (unsubscribePrevTopic) {
-                    // update
-                    appSubscriptionPreference.updateSubscribedMajor(newSubscription.name)
-                    mutate(NoticeByMajorMutation.Subscribed(newSubscription))
-                    // Fetch new notices
-                    loadNotices()
-                }
+                // Regardless of retryCount, registration must be completed, in order to
+                // promise PUSH notification on this topic.
+                if (!result) return Result.retry()
             }
+            // Clear out pending list.
+            // Clear pending list early. In case, retry occurred in unsubscribed logic, above process will be safely ignored because
+            // updateTarget would be empty.
+            appSubscriptionPreferenceRepository.removePendingTarget(updateTarget)
+
+            unsubscribeTargets.forEach {
+                val unsubscribePrevTopic = submitNotificationPreferences.invoke(
+                    TopicSubscriptionPreferencesBody(
+                        topicType = TopicType.MAJOR,
+                        noticeName = it,
+                        isSubscribed = false
+                    )
+                ).first()
+
+                /* TEMPORARY LOG FOR DEBUG */
+                Log.d("MajorSubscriptionUpdate", "Subscribing target $it processed with result $unsubscribePrevTopic")
+
+                // Regardless of retryCount, unsubscription must be completed, in order to avoid
+                // PUSH notification on this topic.
+                if (!unsubscribePrevTopic) return Result.retry()
+            }
+
+            // All unsubscription is completed.
+            appSubscriptionPreferenceRepository.removeUnsubscribedTarget(unsubscribeTargets)
+            return Result.success()
+        } catch (e: Exception) {
+            Log.d("MajorSubscriptionUpdate", "Unable to process Server-side Synchronization\nReason:${e.stackTraceToString()}")
+            return Result.retry()
         }
-         */
     }
 
     class Factory @Inject constructor(

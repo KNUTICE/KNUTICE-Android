@@ -3,6 +3,7 @@ package com.doyoonkim.data.repository.local
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
 import kotlinx.coroutines.flow.Flow
@@ -32,8 +33,11 @@ class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
      * Major Subscription Status
      */
     override fun getSubscribedMajor(): Flow<Set<String>> =
-        preferenceDataStore.data.map {
-            it[MAJORS_SUBSCRIBED] ?: emptySet()
+        preferenceDataStore.data.map {preference ->
+            preference[MAJORS_SUBSCRIBED]
+                // Check if pre-existing subscription value in SharedPreference, apply it to updated subscription value.
+                ?: preference[stringPreferencesKey(SUBSCRIBED_MAJOR)]?.let { setOf(it) }
+                ?: emptySet()
         }
 
     override suspend fun updateSubscribedMajor(newMajor: String) {
