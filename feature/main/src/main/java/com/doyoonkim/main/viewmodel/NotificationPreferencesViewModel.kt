@@ -21,6 +21,7 @@ import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.TopicType
 import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -103,21 +104,23 @@ class NotificationPreferencesViewModel @Inject constructor(
     }
 
     private fun updateMajorSubscriptionStatus(state: Boolean) {
-        val subscribedMajor = appSubscriptionPreference.getSubscribedMajor() ?: return
         mutate(NotificationPrefMutation.Syncing)
-
+        // Temporary
         viewModelScope.launch {
-            submitNotificationPreferences.invoke(
-                TopicSubscriptionPreferencesBody(
-                    topicType = TopicType.MAJOR,
-                    noticeName = subscribedMajor,
-                    isSubscribed = state
-                )
-            ).collectLatest { result ->
-                if (result) {
-                    mutate(NotificationPrefMutation.Major.UpdateSuccess(state))
-                } else {
-                    mutate(NotificationPrefMutation.Major.Failure("Submit Failed"))
+            val subscribedMajor = appSubscriptionPreference.getSubscribedMajor().first()
+            if (subscribedMajor.isNotEmpty()) {
+                submitNotificationPreferences.invoke(
+                    TopicSubscriptionPreferencesBody(
+                        topicType = TopicType.MAJOR,
+                        noticeName = subscribedMajor.first(),
+                        isSubscribed = state
+                    )
+                ).collectLatest { result ->
+                    if (result) {
+                        mutate(NotificationPrefMutation.Major.UpdateSuccess(state))
+                    } else {
+                        mutate(NotificationPrefMutation.Major.Failure("Submit Failed"))
+                    }
                 }
             }
         }.invokeOnCompletion { mutate(NotificationPrefMutation.Synced) }
@@ -166,11 +169,11 @@ class NotificationPreferencesViewModel @Inject constructor(
                 .collectLatest { result ->
                     result.fold(
                         onSuccess = { status ->
-                            val cachedMajorSelection = appSubscriptionPreference.getSubscribedMajor()
-                            if (cachedMajorSelection != null) {
+                            val cachedMajorSelection = appSubscriptionPreference.getSubscribedMajor().first()
+                            if (cachedMajorSelection.isNotEmpty()) {
                                 var majorStatus = false
                                 if (status.isNotEmpty()) {
-                                    if (cachedMajorSelection != status.first().first) {
+                                    if (cachedMajorSelection.first() != status.first().first) {
                                         appSubscriptionPreference.updateSubscribedMajor(status.first().first)
                                     }
                                     majorStatus = status.first().second

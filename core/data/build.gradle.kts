@@ -25,4 +25,7 @@ dependencies {
 
     // Kotlin Serialization
     implementation(libs.kotlin.serialization)
+
+    // PreferenceDataStore
+    implementation (libs.androidx.datastore.preferences)
 }

@@ -76,9 +76,9 @@ interface HomeSceneComponent {
     ],
     modules = [
         ViewModelFactoryModule::class,
+        WorkSchedulerModule::class,
         NoticeByMajorSceneModule::class,
         NoticeUseCaseModule::class,
-        PreferencesUseCaseModule::class,
         NoticeRemoteModule::class,
         PreferencesRemoteModule::class
     ]

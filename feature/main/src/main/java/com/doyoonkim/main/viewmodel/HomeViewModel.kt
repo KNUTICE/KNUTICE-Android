@@ -23,6 +23,7 @@ import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.WidgetCategoryPolicy
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -152,24 +153,24 @@ class HomeViewModel @Inject constructor(
 
     // Side Effect (Access SharedPreference)
     private fun getMajorSubscriptionStatus() = viewModelScope.launch {
-        val subscribed = appSubscriptionPreference.getSubscribedMajor()?.let {
-            MajorCategory.valueOf(it)
-        }
-        Log.d(this.javaClass.name, "Subscription: $subscribed")
-
-        subscribed?.let {
-            fetchTopThreeNotices.getMajorNotices(subscribed)
+        val subscribed = appSubscriptionPreference.getSubscribedMajor().first()
+        if (subscribed.isEmpty()) {
+            mutate(HomeMutation.MajorNotices.Failure("Unable to find subscribed major"))
+        } else {
+            Log.d(this.javaClass.name, "Subscription: $subscribed")
+            val selected = MajorCategory.valueOf(subscribed.first())
+            fetchTopThreeNotices.getMajorNotices(selected)
                 .fold(
-                    onSuccess = { result ->
-                        Log.d(this.javaClass.name, "Result: ${result.toString()}")
-                        mutate(HomeMutation.MajorNotices.Success(subscribed, result))
+                    onSuccess = {result ->
+                        Log.d(this.javaClass.name, "Result: $result")
+                        mutate(HomeMutation.MajorNotices.Success(selected, result))
                     },
-                    onFailure = { error ->
+                    onFailure = {error ->
                         Log.d(this.javaClass.name, "Result: ${error.stackTraceToString()}")
                         mutate(HomeMutation.MajorNotices.Failure(error.stackTraceToString()))
                     }
                 )
-        } ?: mutate(HomeMutation.MajorNotices.Failure("Unable to find subscribed major"))
+        }
     }
 
     private fun updateNoticeLocalCache(snapshot: HomeViewState) =

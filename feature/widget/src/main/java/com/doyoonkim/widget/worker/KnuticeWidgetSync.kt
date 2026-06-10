@@ -15,6 +15,7 @@ import com.doyoonkim.model.WidgetCategoryPolicy
 import com.doyoonkim.widget.model.WidgetNoticeVO
 import com.doyoonkim.widget.model.WidgetState
 import com.doyoonkim.widget.util.WidgetStateUpdater
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class KnuticeWidgetSync(
@@ -78,9 +79,14 @@ class KnuticeWidgetSync(
             }
             is WidgetCategoryPolicy.Major -> {
                 // Get current subscription status.
-                val subscribedMajor = appSubscriptionPreference.getSubscribedMajor() ?: return null
-                category = subscribedMajor
-                return remoteRepository.queryTopThreeNotices(subscribedMajor)
+                val subscribedMajor = appSubscriptionPreference.getSubscribedMajor().first()
+
+                return if (subscribedMajor.isNotEmpty()) {
+                    category = subscribedMajor.first()
+                    remoteRepository.queryTopThreeNotices(category)
+                } else {
+                    null
+                }
             }
             else -> { return null }
         }
