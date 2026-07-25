@@ -17,7 +17,7 @@ import dagger.Component
         WorkSchedulerModule::class
     ]
 )
-interface WidgetComponent: WidgetDependency {
+interface WidgetComponent : WidgetDependency {
 
     @Component.Factory
     interface Factory {

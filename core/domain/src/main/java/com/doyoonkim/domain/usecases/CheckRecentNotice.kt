@@ -16,12 +16,13 @@ class CheckRecentNotice @Inject constructor() {
     companion object {
         // DateTimeFormatter
         private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
         // Target Zone ID (Asia/Seoul)
         private val zoneId = ZoneId.of("Asia/Seoul")
     }
 
     operator fun invoke(notices: List<NoticeVO>): List<NoticeVO> {
-        //Retrieve current date.
+        // Retrieve current date.
         val current = LocalDate.now(zoneId)
         return notices.map {
             try {
@@ -38,5 +39,4 @@ class CheckRecentNotice @Inject constructor() {
             }
         }
     }
-
 }

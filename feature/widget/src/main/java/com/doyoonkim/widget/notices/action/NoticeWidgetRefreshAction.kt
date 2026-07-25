@@ -11,7 +11,7 @@ import com.doyoonkim.widget.di.WidgetDependencyProvider
  * @author kimdoyoon
  * Created 3/11/26 at 1:39 AM
  */
-class NoticeWidgetRefreshAction: ActionCallback {
+class NoticeWidgetRefreshAction : ActionCallback {
     override suspend fun onAction(
         context: Context,
         glanceId: GlanceId,
@@ -21,5 +21,4 @@ class NoticeWidgetRefreshAction: ActionCallback {
         val provider = (context.applicationContext as WidgetDependencyProvider).provide()
         provider.noticeWidgetTaskScheduler().executeImmediateTask()
     }
-
 }

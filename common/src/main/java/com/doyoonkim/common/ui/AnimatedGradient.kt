@@ -65,7 +65,7 @@ fun Modifier.skeletonEffect(
     this.then(
         // Defer Phase -> Let animation runs on Draw Phase (after the completion of Composition and Layout Phases)
         Modifier.drawBehind {
-            val xOffset = skeletonAnimation * size.width / 1000f        // get 0.0 to 1.0 range float value for offset calcuation
+            val xOffset = skeletonAnimation * size.width / 1000f // get 0.0 to 1.0 range float value for offset calcuation
 
             drawRect(
                 brush = Brush.linearGradient(

@@ -36,7 +36,6 @@ interface SyncDataWithUpdateDatabase {
     fun manualSync(): Flow<DatabaseSyncResult>
 
     fun entrySync(): Flow<DatabaseSyncResult>
-
 }
 
 class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
@@ -71,18 +70,20 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
             .firstOrNull()
 
         if (bookmarks.isNullOrEmpty()) {
-            emit(DatabaseSyncResult(
-                completed = true,
-                withError = false,
-                targetCounts = 0,
-                failureCounts = 0
-            ))
+            emit(
+                DatabaseSyncResult(
+                    completed = true,
+                    withError = false,
+                    targetCounts = 0,
+                    failureCounts = 0
+                )
+            )
             return@flow
         }
 
         var failureCounts = 0
         for (bookmark in bookmarks) {
-            println("BookmarkVO: ${bookmark.toString()}")
+            println("BookmarkVO: $bookmark")
             try {
                 val noticeLocal = noticeLocalRepository.queryNoticeById(bookmark.targetNoticeNttId)
                     .firstOrNull()
@@ -91,16 +92,19 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                     continue
                 }
 
-                println("NoticeLocalVO: ${noticeLocal.toString()}")
+                println("NoticeLocalVO: $noticeLocal")
 
                 // Check whether the values are already synced or not.
                 if (!bookmark.isSynced()) {
                     val syncedBookmark = bookmark.copy(
                         createdAt = noticeLocal.timestamp.toLong(),
                         updatedAt =
-                            if (bookmark.updatedAt > 0) bookmark.updatedAt
-                            else noticeLocal.timestamp.toLong()
-                    ).also { println("Synced Bookmark: ${it.toString()}") }
+                        if (bookmark.updatedAt > 0) {
+                            bookmark.updatedAt
+                        } else {
+                            noticeLocal.timestamp.toLong()
+                        }
+                    ).also { println("Synced Bookmark: $it") }
                     if (!bookmarkLocalRepository.updateBookmark(syncedBookmark)) {
                         failureCounts++
                         continue
@@ -120,7 +124,7 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
 
                     val syncedNotice = noticeLocal.copy(
                         noticeName = noticeRemote.noticeName
-                    ).also { println("Synced Notice: ${it.toString()}") }
+                    ).also { println("Synced Notice: $it") }
                     if (!noticeLocalRepository.updateNoticeEntity(syncedNotice).first()) {
                         failureCounts++
                         continue
@@ -141,7 +145,6 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                 failureCounts = failureCounts
             )
         )
-
     }.catch { /* OVERALL ERROR */ }.flowOn(ioDispatcher)
 
     // Consider change this function to suspend function.
@@ -209,7 +212,6 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
                 failureCounts = failureCounts
             )
         )
-
     }.catch { /* OVERALL ERROR */ }.flowOn(ioDispatcher)
 
     private fun BookmarkVO.isSynced(): Boolean {
@@ -224,5 +226,4 @@ class SyncDataWithUpdatedDatabaseImpl @Inject constructor(
         val timestamps = this.split(" ")
         return SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).parse(timestamps[0]).time
     }
-
 }

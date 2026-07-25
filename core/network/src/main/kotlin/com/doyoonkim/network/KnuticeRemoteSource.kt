@@ -41,7 +41,6 @@ class KnuticeRemoteSource @Inject constructor(
             }
         }
 
-
     suspend fun getNoticesByKeyword(keyword: String, nttId: Int?) =
         withContext(ioDispatcher) {
             runCatching {
@@ -56,14 +55,14 @@ class KnuticeRemoteSource @Inject constructor(
                 Log.d(TAG, "Summary Request for Notice $nttId")
                 knuticeApi.getNoticeSummary(nttId.toString())
             }
-
         }
 
     suspend fun getTopicSubscriptionStatus(token: String?, topicType: String) =
         withContext(ioDispatcher) {
             runCatching {
-                if (token.isNullOrBlank()) throw Exception("No validated token found")
-                else {
+                if (token.isNullOrBlank()) {
+                    throw Exception("No validated token found")
+                } else {
                     knuticeApi.getTopicSubscriptionStatus(
                         token,
                         topicType
@@ -82,8 +81,9 @@ class KnuticeRemoteSource @Inject constructor(
     suspend fun getCarrelRoomStatus(token: String?) =
         withContext(ioDispatcher) {
             runCatching {
-                if (token.isNullOrBlank()) throw Exception("No validated token found")
-                else {
+                if (token.isNullOrBlank()) {
+                    throw Exception("No validated token found")
+                } else {
                     knuticeApi.getReadingRoomStatus(
                         token
                     )
@@ -104,10 +104,12 @@ class KnuticeRemoteSource @Inject constructor(
     suspend fun submitUserReport(token: String?, request: ReportSaveRequest) =
         withContext(ioDispatcher) {
             runCatching {
-                if (token.isNullOrBlank()) throw Exception("No validated token found")
-                else {
+                if (token.isNullOrBlank()) {
+                    throw Exception("No validated token found")
+                } else {
                     knuticeApi.submitUserReport(
-                        token, request
+                        token,
+                        request
                     )
                 }
             }

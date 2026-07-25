@@ -13,28 +13,28 @@ data class SettingsState(
     val databaseSyncResult: DatabaseSyncResult = DatabaseSyncResult()
 ) : UiState
 
-sealed interface SettingsEvent: UiEvent {
-    data object CheckDatabaseSyncStatus: SettingsEvent
-    data object RequestManualSync: SettingsEvent
-    data object DismissSyncDialog: SettingsEvent
-    data object RequestNotificationSettings: SettingsEvent
-    data object RequestCustomerService: SettingsEvent
-    data object RequestOssNotice: SettingsEvent
-    data object GoBack: SettingsEvent
+sealed interface SettingsEvent : UiEvent {
+    data object CheckDatabaseSyncStatus : SettingsEvent
+    data object RequestManualSync : SettingsEvent
+    data object DismissSyncDialog : SettingsEvent
+    data object RequestNotificationSettings : SettingsEvent
+    data object RequestCustomerService : SettingsEvent
+    data object RequestOssNotice : SettingsEvent
+    data object GoBack : SettingsEvent
 }
 
-sealed class SettingsSideEffect: UiSideEffect {
-    data object NavToNotificationSettings: SettingsSideEffect()
-    data object NavToCustomerService: SettingsSideEffect()
-    data object NavToRequestOssNotice: SettingsSideEffect()
-    data class NavToBack(val status: Boolean): SettingsSideEffect()
+sealed class SettingsSideEffect : UiSideEffect {
+    data object NavToNotificationSettings : SettingsSideEffect()
+    data object NavToCustomerService : SettingsSideEffect()
+    data object NavToRequestOssNotice : SettingsSideEffect()
+    data class NavToBack(val status: Boolean) : SettingsSideEffect()
 }
 
-sealed interface SettingsMutation: UiMutation {
-    sealed interface Database: SettingsMutation {
-        data object SyncNeeded: Database
-        data object Syncing: Database
-        data object Dismiss: Database
-        data class Synced(val result: DatabaseSyncResult): Database
+sealed interface SettingsMutation : UiMutation {
+    sealed interface Database : SettingsMutation {
+        data object SyncNeeded : Database
+        data object Syncing : Database
+        data object Dismiss : Database
+        data class Synced(val result: DatabaseSyncResult) : Database
     }
 }

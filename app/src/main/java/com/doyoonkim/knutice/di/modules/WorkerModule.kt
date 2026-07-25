@@ -1,13 +1,13 @@
 package com.doyoonkim.knutice.di.modules
 
 import com.doyoonkim.common.di.WorkerKey
-import com.doyoonkim.domain.interfaces.AsyncFtsTaskScheduler
-import com.doyoonkim.knutice.task.AsyncFtsTableInsertion
-import com.doyoonkim.knutice.task.AsyncFtsTaskSchedulerImpl
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import com.doyoonkim.domain.interfaces.AsyncCarrelWidgetTaskScheduler
+import com.doyoonkim.domain.interfaces.AsyncFtsTaskScheduler
 import com.doyoonkim.domain.interfaces.AsyncNoticeWidgetTaskScheduler
 import com.doyoonkim.domain.interfaces.MajorSubscriptionUpdateTaskScheduler
+import com.doyoonkim.knutice.task.AsyncFtsTableInsertion
+import com.doyoonkim.knutice.task.AsyncFtsTaskSchedulerImpl
 import com.doyoonkim.knutice.task.MajorSubscriptionUpdate
 import com.doyoonkim.knutice.task.MajorSubscriptionUpdateSchedulerImpl
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
@@ -40,7 +40,6 @@ abstract class WorkerModule {
     abstract fun bindsMajorSubscriptionUpdateWorker(
         factory: MajorSubscriptionUpdate.Factory
     ): IntermediateWorkerFactory
-
 }
 
 @Module

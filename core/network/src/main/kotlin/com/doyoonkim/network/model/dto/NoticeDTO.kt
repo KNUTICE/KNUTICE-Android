@@ -33,12 +33,11 @@ data class NoticeDTO(
         )
 }
 
-//@Keep
-//data class Topic(
+// @Keep
+// data class Topic(
 //    @SerializedName("bbsPath") var bbsPath: String? = null,
 //    @SerializedName("category") var category: String? = null,
 //    @SerializedName("noticeUrl") var noticeUrl: String? = null,
 //    @SerializedName("rootDomain") var rootDomain: String? = null,
 //    @SerializedName("topicName") var topicName: String? = null
-//)
-
+// )

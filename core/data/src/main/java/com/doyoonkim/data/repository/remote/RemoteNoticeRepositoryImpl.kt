@@ -16,8 +16,11 @@ class RemoteNoticeRepositoryImpl @Inject constructor(
     override suspend fun queryTopThreeNotices(category: String): List<NoticeVO>? {
         remoteSource.getNoticesPerPage(category = category, size = 3).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) return it.body?.map { it.toVO() }
-                else it.result?.printLog().also { return emptyList<NoticeVO>() }
+                if (it.result?.resultCode == 200) {
+                    return it.body?.map { it.toVO() }
+                } else {
+                    it.result?.printLog().also { return emptyList<NoticeVO>() }
+                }
             },
             onFailure = {
                 it.printLog()
@@ -27,13 +30,14 @@ class RemoteNoticeRepositoryImpl @Inject constructor(
         return null
     }
 
-
-
     override fun queryNoticesPerPage(category: String, lastNttId: Int?) = flow {
         remoteSource.getNoticesPerPage(category = category, lastNttId = lastNttId).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
-                else it.result.printLog().also { emit(emptyList<NoticeVO>()) }
+                if (it.result?.resultCode == 200) {
+                    emit(it.body?.map { it.toVO() })
+                } else {
+                    it.result.printLog().also { emit(emptyList<NoticeVO>()) }
+                }
             },
             onFailure = {
                 it.printLog()
@@ -45,9 +49,12 @@ class RemoteNoticeRepositoryImpl @Inject constructor(
     override fun queryNoticeById(nttId: Int) = flow {
         remoteSource.getNoticeById(nttId).fold(
             onSuccess = {
-                Log.d(TAG, "Received Result: ${it.toString()}")
-                if (it.result?.resultCode == 200) emit(it.body?.toVO())
-                else it.result.printLog().also { emit(null) }
+                Log.d(TAG, "Received Result: $it")
+                if (it.result?.resultCode == 200) {
+                    emit(it.body?.toVO())
+                } else {
+                    it.result.printLog().also { emit(null) }
+                }
             },
             onFailure = {
                 it.printLog()
@@ -59,8 +66,11 @@ class RemoteNoticeRepositoryImpl @Inject constructor(
     override fun queryNoticesByKeyword(keyword: String, lastNttId: Int?) = flow {
         remoteSource.getNoticesByKeyword(keyword, lastNttId).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(it.body?.map { it.toVO() })
-                else it.result.printLog().also { emit(emptyList<NoticeVO>()) }
+                if (it.result?.resultCode == 200) {
+                    emit(it.body?.map { it.toVO() })
+                } else {
+                    it.result.printLog().also { emit(emptyList<NoticeVO>()) }
+                }
             },
             onFailure = {
                 it.printLog()
@@ -72,8 +82,11 @@ class RemoteNoticeRepositoryImpl @Inject constructor(
     override suspend fun getNoticeSummary(nttId: Int): String? {
         remoteSource.getNoticeSummary(nttId).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) return it.body?.rawSummary
-                else it.result.printLog().also { return null }
+                if (it.result?.resultCode == 200) {
+                    return it.body?.rawSummary
+                } else {
+                    it.result.printLog().also { return null }
+                }
             },
             onFailure = {
                 it.printLog()
@@ -87,6 +100,9 @@ class RemoteNoticeRepositoryImpl @Inject constructor(
         Log.d(TAG, "Failed to receive data\nREASON: ${this.stackTraceToString()}")
 
     private fun Metadata?.printLog() =
-        Log.d(TAG, "Failed to receive data (${this?.resultCode})" +
-                "\nREASON:${this?.resultMessage}")
+        Log.d(
+            TAG,
+            "Failed to receive data (${this?.resultCode})" +
+                "\nREASON:${this?.resultMessage}"
+        )
 }

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
 
 interface FetchNoticesByKeyword {
-    operator fun invoke (keyword: String, lastNttId: Int?): Flow<Result<List<NoticeVO>>>
+    operator fun invoke(keyword: String, lastNttId: Int?): Flow<Result<List<NoticeVO>>>
 }
 
 class FetchNoticesByKeywordImpl @Inject constructor(

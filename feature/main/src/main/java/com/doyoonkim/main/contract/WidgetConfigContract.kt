@@ -15,21 +15,21 @@ data class WidgetConfigState(
 
 sealed interface WidgetConfigEvent : UiEvent {
     data object FetchStatus : WidgetConfigEvent
-    data class SelectPolicy(val policy: WidgetCategoryPolicy): WidgetConfigEvent
+    data class SelectPolicy(val policy: WidgetCategoryPolicy) : WidgetConfigEvent
     data object SaveSelection : WidgetConfigEvent
     data object Exit : WidgetConfigEvent
 }
 
 sealed interface WidgetConfigSideEffect : UiSideEffect {
-    data object ShowProcessedSnackBark: WidgetConfigSideEffect
+    data object ShowProcessedSnackBark : WidgetConfigSideEffect
     data object CloseSettings : WidgetConfigSideEffect
 }
 
 sealed interface WidgetConfigMutation : UiMutation {
-    sealed interface Configuration: WidgetConfigMutation {
+    sealed interface Configuration : WidgetConfigMutation {
         data object Processing : Configuration
         data object Processed : Configuration
-        data class Selected(val policy: WidgetCategoryPolicy): Configuration
-        data class Available(val categories: List<String>, val majorSubscribed: String?): Configuration
+        data class Selected(val policy: WidgetCategoryPolicy) : Configuration
+        data class Available(val categories: List<String>, val majorSubscribed: String?) : Configuration
     }
 }

@@ -42,59 +42,58 @@ abstract class DomainModule {
         impl: FetchNoticeByIdImpl
     ): FetchNoticeById
 
-   @Binds
-   abstract fun bindsFetchNoticeByIdFromLocal(
-       impl: FetchNoticeByIdFromLocalImpl
-   ): FetchNoticeByIdFromLocal
+    @Binds
+    abstract fun bindsFetchNoticeByIdFromLocal(
+        impl: FetchNoticeByIdFromLocalImpl
+    ): FetchNoticeByIdFromLocal
 
-   @Binds
-   abstract fun bindsFetchNoticesByKeyword(
-       impl: FetchNoticesByKeywordImpl
-   ): FetchNoticesByKeyword
+    @Binds
+    abstract fun bindsFetchNoticesByKeyword(
+        impl: FetchNoticesByKeywordImpl
+    ): FetchNoticesByKeyword
 
-   @Binds
-   abstract fun bindsFetchNoticesPerPage(
-       impl: FetchNoticesPerPageImpl
-   ): FetchNoticesPerPage
+    @Binds
+    abstract fun bindsFetchNoticesPerPage(
+        impl: FetchNoticesPerPageImpl
+    ): FetchNoticesPerPage
 
-   @Binds
-   abstract fun bindsFetchTopicSubscriptionStatus(
-       impl: FetchTopicSubscriptionStatusImpl
-   ): FetchTopicSubscriptionStatus
+    @Binds
+    abstract fun bindsFetchTopicSubscriptionStatus(
+        impl: FetchTopicSubscriptionStatusImpl
+    ): FetchTopicSubscriptionStatus
 
-   @Binds
-   abstract fun bindsFetchTopThreeNotices(
-       impl: FetchTopThreeNoticesImpl
-   ): FetchTopThreeNotices
+    @Binds
+    abstract fun bindsFetchTopThreeNotices(
+        impl: FetchTopThreeNoticesImpl
+    ): FetchTopThreeNotices
 
-   @Binds
-   abstract fun bindsModifyBookmark(
-       impl: ModifyBookmarkImpl
-   ): ModifyBookmark
+    @Binds
+    abstract fun bindsModifyBookmark(
+        impl: ModifyBookmarkImpl
+    ): ModifyBookmark
 
-   @Binds
-   abstract fun bindsSubmitNotificationPreferences(
-       impl: SubmitNotificationPreferencesImpl
-   ): SubmitNotificationPreferences
+    @Binds
+    abstract fun bindsSubmitNotificationPreferences(
+        impl: SubmitNotificationPreferencesImpl
+    ): SubmitNotificationPreferences
 
-   @Binds
-   abstract fun bindsSubmitUserReport(
-       impl: SubmitUserReportImpl
-   ): SubmitUserReport
+    @Binds
+    abstract fun bindsSubmitUserReport(
+        impl: SubmitUserReportImpl
+    ): SubmitUserReport
 
-   @Binds
-   abstract fun bindsValidateDeviceToken(
-       impl: ValidateDeviceTokenImpl
-   ): ValidateDeviceToken
+    @Binds
+    abstract fun bindsValidateDeviceToken(
+        impl: ValidateDeviceTokenImpl
+    ): ValidateDeviceToken
 
-   @Binds
-   abstract fun bindsSyncDataWithUpdatedDatabase(
-       impl: SyncDataWithUpdatedDatabaseImpl
-   ): SyncDataWithUpdateDatabase
+    @Binds
+    abstract fun bindsSyncDataWithUpdatedDatabase(
+        impl: SyncDataWithUpdatedDatabaseImpl
+    ): SyncDataWithUpdateDatabase
 
-   @Binds
-   abstract fun bindsFetchTips(
-       impl: FetchTipsImpl
-   ): FetchTips
-
+    @Binds
+    abstract fun bindsFetchTips(
+        impl: FetchTipsImpl
+    ): FetchTips
 }

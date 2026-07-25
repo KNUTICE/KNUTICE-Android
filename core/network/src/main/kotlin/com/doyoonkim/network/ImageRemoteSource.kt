@@ -13,5 +13,4 @@ class ImageRemoteSource @Inject constructor() {
             URL(url).readBytes()
         }.onFailure { throw it }
     }
-
 }

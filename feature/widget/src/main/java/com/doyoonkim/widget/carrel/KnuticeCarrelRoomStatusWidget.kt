@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
-import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -16,11 +15,7 @@ import androidx.glance.currentState
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.fillMaxSize
-import androidx.glance.layout.fillMaxWidth
-import androidx.glance.layout.wrapContentSize
-import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.state.PreferencesGlanceStateDefinition
-import androidx.glance.text.Text
 import com.doyoonkim.widget.carrel.components.CarrelWidgetContainer
 import com.doyoonkim.widget.model.CarrelWidgetState
 import com.doyoonkim.widget.model.WidgetKey
@@ -57,7 +52,7 @@ class KnuticeCarrelRoomStatusWidget : GlanceAppWidget() {
             val isLoading = preferences[WidgetKey.CARREL_WIDGET_PREF_LOADING_STATE_KEY] ?: false
             val lastSync = preferences[WidgetKey.CARREL_WIDGET_PREF_LAST_SYNC_KEY] ?: System.currentTimeMillis()
 
-            Log.d(TAG, "state: ${carrelWidgetState.toString()}, loading?: $isLoading, LastSync: $lastSync")
+            Log.d(TAG, "state: $carrelWidgetState, loading?: $isLoading, LastSync: $lastSync")
 
             GlanceTheme(colors = KnuticeWidgetTheme.colors) {
                 Box(
@@ -85,6 +80,4 @@ class KnuticeCarrelRoomStatusWidget : GlanceAppWidget() {
             }
         }
     }
-
 }
-

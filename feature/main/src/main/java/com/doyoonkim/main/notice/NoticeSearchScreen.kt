@@ -43,12 +43,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.containerGray
-import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
+import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
@@ -58,10 +57,10 @@ import com.doyoonkim.common.ui.NotificationPreview
 import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.main.contract.NoticeSearchEvent
 import com.doyoonkim.main.contract.NoticeSearchSideEffect
+import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
-
 
 @Composable
 fun NoticeSearchScreen(
@@ -80,7 +79,7 @@ fun NoticeSearchScreen(
         viewModel.uiSideEffect.collect { effect ->
             when (effect) {
                 is NoticeSearchSideEffect.NavToNoticeDetail -> {
-                    with (effect) {
+                    with(effect) {
                         onNoticeSelected(id, url)
                     }
                 }
@@ -223,7 +222,10 @@ fun NoticeSearchScreen(
                                         .fillMaxWidth()
                                         .wrapContentHeight(),
                                     contentPadding = PaddingValues(
-                                        top = 3.dp, start = 3.dp, end = 3.dp, bottom = 3.dp + bottomPadding
+                                        top = 3.dp,
+                                        start = 3.dp,
+                                        end = 3.dp,
+                                        bottom = 3.dp + bottomPadding
                                     )
                                 ) {
                                     when (index) {
@@ -232,8 +234,9 @@ fun NoticeSearchScreen(
 
                                                 LaunchedEffect(index) {
                                                     // Safe execution of Fetch More Notice Event
-                                                    if (index == uiState.fetchResult.size - 1
-                                                        && uiState.canRequestMoreNotices) {
+                                                    if (index == uiState.fetchResult.size - 1 &&
+                                                        uiState.canRequestMoreNotices
+                                                    ) {
                                                         // List reach ends.
                                                         viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
                                                     }
@@ -250,7 +253,8 @@ fun NoticeSearchScreen(
                                                         .clickable {
                                                             viewModel.sendUiEvent(
                                                                 NoticeSearchEvent.RequestNoticeDetail(
-                                                                    notice.nttId, notice.url
+                                                                    notice.nttId,
+                                                                    notice.url
                                                                 )
                                                             )
                                                         }
@@ -271,8 +275,9 @@ fun NoticeSearchScreen(
 
                                                 LaunchedEffect(index) {
                                                     // Safe execution of Fetch More Notice Event
-                                                    if (index == uiState.localFetchResult.size - 1
-                                                        && uiState.canRequestMoreNotices) {
+                                                    if (index == uiState.localFetchResult.size - 1 &&
+                                                        uiState.canRequestMoreNotices
+                                                    ) {
                                                         // List reach ends.
                                                         viewModel.sendUiEvent(NoticeSearchEvent.RequestMoreNotices)
                                                     }
@@ -302,10 +307,10 @@ fun NoticeSearchScreen(
                                                         notificationInfo = with(bookmark) {
                                                             if (updatedAt > createdAt) {
                                                                 stringResource(R.string.text_updated_at) +
-                                                                        " ${updatedAt.toFormattedDate()}"
+                                                                    " ${updatedAt.toFormattedDate()}"
                                                             } else {
                                                                 stringResource(R.string.text_created_at) +
-                                                                        " ${createdAt.toFormattedDate()}"
+                                                                    " ${createdAt.toFormattedDate()}"
                                                             }
                                                         },
                                                         imageUrl = ""

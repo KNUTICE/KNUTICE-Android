@@ -83,7 +83,7 @@ fun NotificationPreview(
                 horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
                 // Badge
-                if (isRecent){
+                if (isRecent) {
                     Surface(
                         modifier = Modifier.wrapContentSize()
                             .background(Color.Transparent),
@@ -129,7 +129,8 @@ fun NotificationPreview(
     }
 }
 
-@Preview(showBackground = true,
+@Preview(
+    showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_DESK,
     backgroundColor = 0xFF000000
 )

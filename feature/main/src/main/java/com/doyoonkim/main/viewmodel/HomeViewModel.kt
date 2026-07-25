@@ -41,17 +41,18 @@ class HomeViewModel @Inject constructor(
     // Local Cache Management
     init {
         viewModelScope.launch {
-           uiState.map { it.mainContentState to it.majorNoticesState }
-               .distinctUntilChanged()
-               .collectLatest { (core, major) ->
-                   val coreNoticeReady = with(core) { !isLoading && !isError }
-                   val majorNoticeReady = with(major) {
-                       subscribed == MajorCategory.UNSPECIFIED || (!isLoading && !isError)
-                   }
+            uiState.map { it.mainContentState to it.majorNoticesState }
+                .distinctUntilChanged()
+                .collectLatest { (core, major) ->
+                    val coreNoticeReady = with(core) { !isLoading && !isError }
+                    val majorNoticeReady = with(major) {
+                        subscribed == MajorCategory.UNSPECIFIED || (!isLoading && !isError)
+                    }
 
-                   if (coreNoticeReady && majorNoticeReady)
-                       updateNoticeLocalCache(uiState.value)
-               }
+                    if (coreNoticeReady && majorNoticeReady) {
+                        updateNoticeLocalCache(uiState.value)
+                    }
+                }
         }
     }
 
@@ -64,14 +65,14 @@ class HomeViewModel @Inject constructor(
                 getTips()
             }
             is HomeEvent.RequestNoticeDetail -> {
-                with (event) {
+                with(event) {
                     sendSideEffect(
                         HomeSideEffect.NavToNoticeDetail(id, url)
                     )
                 }
             }
             is HomeEvent.RequestMore -> {
-                with (event.category) {
+                with(event.category) {
                     sendSideEffect(
                         HomeSideEffect.NavToMoreNoticeInCategory(
                             when (this) {
@@ -103,12 +104,15 @@ class HomeViewModel @Inject constructor(
                 sendSideEffect(HomeSideEffect.NavToDiningMenu)
             }
             is HomeEvent.RequestTipDetail -> {
-                with (event) {
-                    analytics.logEvent("BROWSE_TIP", Bundle().apply {
-                        putString("ITEM_CATEGORY", category.name)
-                        putString("SOURCE", "HomeScreen")
-                        putString("DESTINATION", url)
-                    })
+                with(event) {
+                    analytics.logEvent(
+                        "BROWSE_TIP",
+                        Bundle().apply {
+                            putString("ITEM_CATEGORY", category.name)
+                            putString("SOURCE", "HomeScreen")
+                            putString("DESTINATION", url)
+                        }
+                    )
 
                     sendSideEffect(HomeSideEffect.NavToTipDetail(category, url))
                 }
@@ -161,11 +165,11 @@ class HomeViewModel @Inject constructor(
             val selected = MajorCategory.valueOf(subscribed.first())
             fetchTopThreeNotices.getMajorNotices(selected)
                 .fold(
-                    onSuccess = {result ->
+                    onSuccess = { result ->
                         Log.d(this.javaClass.name, "Result: $result")
                         mutate(HomeMutation.MajorNotices.Success(selected, result))
                     },
-                    onFailure = {error ->
+                    onFailure = { error ->
                         Log.d(this.javaClass.name, "Result: ${error.stackTraceToString()}")
                         mutate(HomeMutation.MajorNotices.Failure(error.stackTraceToString()))
                     }
@@ -235,7 +239,7 @@ class HomeViewModel @Inject constructor(
                     isLoading = false,
                     isError = true
                 ).also {
-                    Log.d(this.javaClass.name, "Fetching Main Content Failed: ${reason}")
+                    Log.d(this.javaClass.name, "Fetching Main Content Failed: $reason")
                 }
             }
         }

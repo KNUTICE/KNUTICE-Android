@@ -12,18 +12,18 @@ data class SplashState(
 ) : UiState
 
 sealed interface SplashEvent : UiEvent {
-    data object InitiatePreprocess: SplashEvent
+    data object InitiatePreprocess : SplashEvent
 }
 
 sealed class SplashSideEffect : UiSideEffect {
-    data object Dismiss: SplashSideEffect()
-    data object DismissWithError: SplashSideEffect()
+    data object Dismiss : SplashSideEffect()
+    data object DismissWithError : SplashSideEffect()
 }
 
-sealed interface SplashMutation: UiMutation {
-    sealed interface DatabaseSync: SplashMutation {
-        data object Request: DatabaseSync
-        data object Processing: DatabaseSync
-        data object Completed: DatabaseSync
+sealed interface SplashMutation : UiMutation {
+    sealed interface DatabaseSync : SplashMutation {
+        data object Request : DatabaseSync
+        data object Processing : DatabaseSync
+        data object Completed : DatabaseSync
     }
 }

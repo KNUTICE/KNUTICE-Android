@@ -6,7 +6,7 @@ plugins {
     id("knutice.android.dagger")
 }
 
-configure<LibraryExtension>() {
+configure<LibraryExtension> {
     namespace = "com.doyoonkim.infrastructure"
 
     buildFeatures {

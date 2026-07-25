@@ -21,23 +21,25 @@ import com.doyoonkim.main.campus.components.LifecycleAwareWebView
 fun DiningMenuScreen(
     modifier: Modifier = Modifier,
     hallSelection: String = "",
-    onBackClicked: () -> Unit = {  }
+    onBackClicked: () -> Unit = { }
 ) {
-
     var isHallSelectionProvided by remember { mutableStateOf(false) }
 
     // WebViewClient
     val diningWebViewClient = remember {
-        object: WebViewClient() {
+        object : WebViewClient() {
             override fun onPageFinished(view: WebView?, url: String?) {
                 // Check hallSelection is provided.
                 if (hallSelection.isNotBlank() && !isHallSelectionProvided) {
                     val call = BuildConfig.DINING_BRIDGE + "('$hallSelection');"
 
                     // JS Injection
-                    view?.evaluateJavascript("""
+                    view?.evaluateJavascript(
+                        """
                         $call
-                    """.trimIndent(), null)
+                        """.trimIndent(),
+                        null
+                    )
                     isHallSelectionProvided = true
                 }
                 super.onPageFinished(view, url)
@@ -56,7 +58,7 @@ fun DiningMenuScreen(
             }
         },
         containerColor = MaterialTheme.colorScheme.displayBackground
-    ) {contentPadding ->
+    ) { contentPadding ->
         LifecycleAwareWebView(
             modifier = Modifier
                 .fillMaxSize()

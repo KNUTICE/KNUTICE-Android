@@ -1,6 +1,5 @@
 package com.doyoonkim.main.splash
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,8 +32,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.R
+import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
@@ -144,5 +143,4 @@ fun KnuticeSplashScreen(
 @Preview(showBackground = true)
 @Composable
 fun KnuticeSplashScreen_Preview() {
-
 }

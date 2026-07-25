@@ -11,7 +11,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-configure<LibraryExtension>() {
+configure<LibraryExtension> {
     namespace = "com.doyoonkim.widget"
 
     buildFeatures {
@@ -41,5 +41,4 @@ dependencies {
 
     // WorkManager
     implementation(libs.androidx.work.runtime.ktx)
-
 }

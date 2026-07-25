@@ -1,6 +1,5 @@
 package com.doyoonkim.network
 
-
 object DeviceToken {
     private var validatedToken = ""
 

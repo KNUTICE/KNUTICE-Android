@@ -13,7 +13,6 @@ import org.gradle.kotlin.dsl.getByType
  * Created 2/10/26 at 2:37 AM
  */
 
-
 class AndroidLibraryConventionPlugin : Plugin<Project> {
     private val TAG = "plugins.AndroidLibraryConventionPlugin"
 

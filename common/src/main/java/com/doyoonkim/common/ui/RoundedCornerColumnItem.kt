@@ -109,7 +109,6 @@ fun RoundedCornerColumnItem(
     dividerColor: Color = Color.Gray,
     content: @Composable (ColumnScope.() -> Unit)
 ) {
-
     val columnPadding = if (hasBottomDivider) {
         PaddingValues(top = verticalPadding + extra)
     } else {
@@ -122,7 +121,6 @@ fun RoundedCornerColumnItem(
         verticalArrangement = Arrangement.SpaceEvenly,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         content()
 
         if (hasBottomDivider) {

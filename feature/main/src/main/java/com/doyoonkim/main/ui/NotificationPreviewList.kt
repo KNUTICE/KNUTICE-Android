@@ -35,7 +35,7 @@ fun NotificationPreviewList(
     titleColor: Color = Color.Unspecified,
     isContentLoading: Boolean = false,
     contents: List<NoticeVO> = listOf(),
-    onMoreClicked: () -> Unit = {  },
+    onMoreClicked: () -> Unit = { },
     onNoticeClicked: (NoticeVO) -> Unit
 ) {
     Box(
@@ -89,18 +89,19 @@ fun NotificationPreviewList(
                         interactionSource = null,
                         indication = null,
                         enabled = true,
-                        onClick = { onNoticeClicked(content) },
+                        onClick = { onNoticeClicked(content) }
                     ),
                     isLoading = isContentLoading,
                     notificationTitle = content.title,
                     notificationInfo = "[${content.departName}] ${content.timestamp}",
                     isRecent = content.isRecent
                 )
-                if (index != contents.lastIndex)
+                if (index != contents.lastIndex) {
                     HorizontalDivider(
                         thickness = 1.2.dp,
                         color = MaterialTheme.colorScheme.onAnyBackground
                     )
+                }
             }
         }
     }

@@ -1,14 +1,11 @@
 package com.doyoonkim.network.model
 
 import androidx.annotation.Keep
-import com.doyoonkim.model.requestBody.TopicSubscriptionPreferencesBody
-import model.Metadata
 
 /**
  * @author kimdoyoon
  * Created 6/3/25 at 12:10 AM
  */
-
 
 @Keep
 data class FcmTokenSaveRequest(

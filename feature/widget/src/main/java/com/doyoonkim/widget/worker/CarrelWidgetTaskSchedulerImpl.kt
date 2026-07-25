@@ -23,7 +23,8 @@ class CarrelWidgetTaskSchedulerImpl @Inject constructor(
 
     override fun schedulePeriodicTask() {
         val periodicTask = PeriodicWorkRequestBuilder<KnuticeCarrelWidgetSync>(
-            30, TimeUnit.MINUTES
+            30,
+            TimeUnit.MINUTES
         ).setBackoffCriteria(
             backoffPolicy = BackoffPolicy.EXPONENTIAL,
             backoffDelay = 5,
@@ -62,7 +63,7 @@ class CarrelWidgetTaskSchedulerImpl @Inject constructor(
 
         workManager.enqueueUniqueWork(
             uniqueWorkName = ONETIME_WORK_KEY,
-            existingWorkPolicy = ExistingWorkPolicy.REPLACE,        // Enable debounce.
+            existingWorkPolicy = ExistingWorkPolicy.REPLACE, // Enable debounce.
             request = carrelStatusTask
         )
     }

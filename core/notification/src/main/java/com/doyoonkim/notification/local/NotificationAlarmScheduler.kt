@@ -9,9 +9,9 @@ import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresPermission
-import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.model.BookmarkVO
+import com.doyoonkim.model.di.ApplicationContext
 import javax.inject.Inject
 
 /**
@@ -80,5 +80,4 @@ class NotificationAlarmScheduler @Inject constructor(
     override fun canScheduleExactAlarms(): Boolean {
         return alarmManager.canScheduleExactAlarms()
     }
-
 }

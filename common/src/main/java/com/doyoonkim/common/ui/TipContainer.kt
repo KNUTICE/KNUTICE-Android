@@ -29,7 +29,7 @@ fun TipContainer(
     tipCategory: TipCategory = TipCategory.UPDATES,
     tipText: String = ""
 ) {
-    val tagTitle = when(tipCategory) {
+    val tagTitle = when (tipCategory) {
         TipCategory.GENERAL_TIP -> stringResource(R.string.text_tip_general)
         TipCategory.UPDATES -> stringResource(R.string.text_tip_updates)
         TipCategory.SYS_NOTICE -> stringResource(R.string.text_tip_sys_notice)

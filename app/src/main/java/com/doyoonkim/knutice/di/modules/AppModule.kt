@@ -33,7 +33,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesAlarmManager(@ApplicationContext context: Context) : AlarmManager =
+    fun providesAlarmManager(@ApplicationContext context: Context): AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     @Provides
@@ -65,5 +65,4 @@ object AppModule {
                 context.preferencesDataStoreFile(name = "user_preferences")
             }
         )
-
 }

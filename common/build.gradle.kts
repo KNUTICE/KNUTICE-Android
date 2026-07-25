@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-configure<LibraryExtension>() {
+configure<LibraryExtension> {
     namespace = "com.doyoonkim.common"
 }
 

@@ -19,7 +19,7 @@ interface InsertPendingFtsEntries {
 class InsertPendingFtsEntriesImpl @Inject constructor(
     private val localRepository: BookmarkLocalRepository,
     @DefaultDispatcher private val defaultDispatcher: CoroutineDispatcher
-): InsertPendingFtsEntries {
+) : InsertPendingFtsEntries {
     override suspend fun execute(target: PendingBookmarkFtsVO): Boolean {
         // Policy Based Execution
         return when (target.policy) {

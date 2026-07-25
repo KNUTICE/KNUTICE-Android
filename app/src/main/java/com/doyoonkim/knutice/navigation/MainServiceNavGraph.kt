@@ -34,9 +34,8 @@ fun NavGraphBuilder.mainServiceNavGraph(
     appComponent: AppComponent,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onTabSwitches: (String) -> Unit,
-    onPopBottomNavHistory: () -> Unit = {  }
+    onPopBottomNavHistory: () -> Unit = { }
 ) {
-
     // ViewModels will be injected via ViewModelFactory
     composable(NavRoutes.Home.route) {
         val sceneComponent = remember(appComponent) {
@@ -66,7 +65,8 @@ fun NavGraphBuilder.mainServiceNavGraph(
                             Destination.MORE_SCHOLARSHIP -> navigate(createRoute(NoticeCategory.SCHOLARSHIP_NEWS.name))
                             Destination.MORE_EVENT -> navigate(createRoute(NoticeCategory.EVENT_NEWS.name))
                             Destination.MORE_EMPLOYMENT -> navigate(createRoute(NoticeCategory.EMPLOYMENT_NEWS.name))
-                            else -> { /* DO NOTHING. */
+                            else -> {
+                                /* DO NOTHING. */
                             }
                         }
                     }

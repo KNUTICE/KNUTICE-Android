@@ -21,7 +21,7 @@ class FetchTopThreeNoticesImpl @Inject constructor(
 ) : FetchTopThreeNotices {
 
     override suspend operator fun invoke(): Result<TopThreeNoticeVO> {
-       return runCatching {
+        return runCatching {
             remoteRepository.run {
                 coroutineScope {
                     val general = async {
@@ -57,5 +57,4 @@ class FetchTopThreeNoticesImpl @Inject constructor(
             Result.success(it)
         } ?: Result.failure(NoSuchElementException("Unable to fetch the notices"))
     }
-
 }

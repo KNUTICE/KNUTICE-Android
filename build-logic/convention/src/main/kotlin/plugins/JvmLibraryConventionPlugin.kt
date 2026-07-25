@@ -1,6 +1,5 @@
 package plugins
 
-import extensions.configureDaggerCommon
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -10,9 +9,7 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
-import org.jetbrains.kotlin.gradle.plugin.KaptExtension
 
 class JvmLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) =
@@ -47,5 +44,4 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
                 add("testImplementation", libs.findLibrary("kotlinx-coroutines-test").get())
             }
         }
-
 }

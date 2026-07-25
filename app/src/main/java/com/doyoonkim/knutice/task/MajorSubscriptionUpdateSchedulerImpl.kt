@@ -15,7 +15,7 @@ import javax.inject.Inject
 class MajorSubscriptionUpdateSchedulerImpl @Inject constructor(
     @ApplicationContext private val context: Context,
     private val workManager: WorkManager
-): MajorSubscriptionUpdateTaskScheduler {
+) : MajorSubscriptionUpdateTaskScheduler {
     override fun execute() {
         val onetimeWorkRequest = OneTimeWorkRequestBuilder<MajorSubscriptionUpdate>()
             // let OS handles debounce.
@@ -33,5 +33,4 @@ class MajorSubscriptionUpdateSchedulerImpl @Inject constructor(
             onetimeWorkRequest
         )
     }
-
 }

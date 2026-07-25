@@ -23,7 +23,6 @@ class AppWidgetPreferenceRepositoryImpl @Inject constructor(
             ignoreUnknownKeys = true
             classDiscriminator = "type"
         }
-
     }
 
     /**
@@ -40,5 +39,4 @@ class AppWidgetPreferenceRepositoryImpl @Inject constructor(
         val serializedString = json.encodeToString<WidgetCategoryPolicy>(policy)
         appPref.edit { putString(WIDGET_CATEGORY, serializedString) }
     }
-
 }

@@ -1,7 +1,6 @@
 package com.doyoonkim.bookmark.viewmodel
 
 import android.annotation.SuppressLint
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.bookmark.contract.EditBookmarkEvent
 import com.doyoonkim.bookmark.contract.EditBookmarkMutation
@@ -91,8 +90,11 @@ class EditBookmarkViewModel @Inject constructor(
                 removeBookmark()
             }
             is EditBookmarkEvent.ValidateProcessResult -> {
-                if (uiState.value.isSuccessful) sendSideEffect(EditBookmarkSideEffect.ExitOnCompletion)
-                else mutate(EditBookmarkMutation.Edit.Ready) // Set false for completion status for marking a new transaction is ready to start.
+                if (uiState.value.isSuccessful) {
+                    sendSideEffect(EditBookmarkSideEffect.ExitOnCompletion)
+                } else {
+                    mutate(EditBookmarkMutation.Edit.Ready) // Set false for completion status for marking a new transaction is ready to start.
+                }
             }
             is EditBookmarkEvent.GoBack -> sendSideEffect(EditBookmarkSideEffect.NavToBack)
         }
@@ -159,8 +161,6 @@ class EditBookmarkViewModel @Inject constructor(
         calendar.set(Calendar.SECOND, 0)
     }
 
-
-
     @SuppressLint("android.permission.SCHEDULE_EXACT_ALARM")
     private fun submitBookmark() =
         viewModelScope.launch {
@@ -197,8 +197,11 @@ class EditBookmarkViewModel @Inject constructor(
                     if (result) {
                         // Access AlarmScheduler to set local alarm
                         bookmarkNav?.let {
-                            if (bookmark.isScheduled) alarmScheduler.schedule(bookmark, it)
-                            else alarmScheduler.cancel(bookmark, it)
+                            if (bookmark.isScheduled) {
+                                alarmScheduler.schedule(bookmark, it)
+                            } else {
+                                alarmScheduler.cancel(bookmark, it)
+                            }
                         }
                         mutate(EditBookmarkMutation.Edit.Success)
                     } else {
@@ -253,9 +256,11 @@ class EditBookmarkViewModel @Inject constructor(
             is EditBookmarkMutation.AlarmPermissionDenied -> {
                 currentState.copy(alarmPermissionStatus = false)
             }
-            is EditBookmarkMutation.CreationNeeded -> { currentState.copy(requireCreation = true) }
+            is EditBookmarkMutation.CreationNeeded -> {
+                currentState.copy(requireCreation = true)
+            }
             is EditBookmarkMutation.BookmarkFetched -> {
-                with (mutation) {
+                with(mutation) {
                     currentState.copy(
                         bookmarkId = bookmark.bookmarkId,
                         isReminderRequested = bookmark.isScheduled,
@@ -280,11 +285,21 @@ class EditBookmarkViewModel @Inject constructor(
     // Specialized Reducer
     private fun EditBookmarkMutation.Edit.reducer(state: EditBookmarkState) =
         when (this) {
-            is EditBookmarkMutation.Edit.NoticeId -> { state.copy(targetNoticeId = nttId) }
-            is EditBookmarkMutation.Edit.Notes -> { state.copy(bookmarkNote = notes) }
-            is EditBookmarkMutation.Edit.Reminder -> { state.copy(isReminderRequested = requested) }
-            is EditBookmarkMutation.Edit.Ready -> { state.copy(isCompleted = false) }
-            is EditBookmarkMutation.Edit.Processing -> { state.copy(isProcessing = true) }
+            is EditBookmarkMutation.Edit.NoticeId -> {
+                state.copy(targetNoticeId = nttId)
+            }
+            is EditBookmarkMutation.Edit.Notes -> {
+                state.copy(bookmarkNote = notes)
+            }
+            is EditBookmarkMutation.Edit.Reminder -> {
+                state.copy(isReminderRequested = requested)
+            }
+            is EditBookmarkMutation.Edit.Ready -> {
+                state.copy(isCompleted = false)
+            }
+            is EditBookmarkMutation.Edit.Processing -> {
+                state.copy(isProcessing = true)
+            }
             is EditBookmarkMutation.Edit.Success -> {
                 state.copy(
                     isProcessing = false,

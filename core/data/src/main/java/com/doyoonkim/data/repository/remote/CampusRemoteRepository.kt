@@ -9,11 +9,10 @@ import com.doyoonkim.network.util.NetworkResultUtil
 import model.Metadata
 import javax.inject.Inject
 
-
 class CampusRemoteRepository @Inject constructor(
     private val remoteSource: KnuticeRemoteSource,
     private val appPreference: AppTokenPreferenceRepository
-): CarrelStatusRemoteRepository {
+) : CarrelStatusRemoteRepository {
     companion object {
         private val TAG = "CampusRemoteRepository"
     }
@@ -23,16 +22,17 @@ class CampusRemoteRepository @Inject constructor(
             appPreference.getCachedToken()
         ).fold(
             onSuccess = { response ->
-                if (response.result == null)
+                if (response.result == null) {
                     Log.d(TAG, "Unable to receive data").also {
                         return Result.failure(Exception("Unable to receive data"))
                     }
+                }
 
                 if (response.result?.resultCode == 200) {
                     return Result.success(response.body?.map { dto -> dto.toVO() } ?: emptyList())
                 } else {
                     response.result?.printLog()
-                    return Result.failure( NetworkResultUtil.resultCodeValidator(response.result))
+                    return Result.failure(NetworkResultUtil.resultCodeValidator(response.result))
                 }
             },
             onFailure = {
@@ -46,8 +46,9 @@ class CampusRemoteRepository @Inject constructor(
         Log.d(TAG, "Failed to receive data\nREASON: ${this.stackTraceToString()}")
 
     private fun Metadata?.printLog() =
-        Log.d(TAG, "Failed to receive data (${this?.resultCode})" +
-                "\nREASON:${this?.resultMessage}")
-
-
+        Log.d(
+            TAG,
+            "Failed to receive data (${this?.resultCode})" +
+                "\nREASON:${this?.resultMessage}"
+        )
 }

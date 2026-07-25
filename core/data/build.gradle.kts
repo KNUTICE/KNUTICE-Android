@@ -9,7 +9,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-configure<LibraryExtension>() {
+configure<LibraryExtension> {
     namespace = "com.doyoonkim.data"
 
     buildFeatures {
@@ -20,12 +20,12 @@ configure<LibraryExtension>() {
 dependencies {
     implementation(projects.core.model)
     implementation(projects.core.network)
-    implementation(projects.core.domain)            // Dependency Inversion
+    implementation(projects.core.domain) // Dependency Inversion
     implementation(projects.common)
 
     // Kotlin Serialization
     implementation(libs.kotlin.serialization)
 
     // PreferenceDataStore
-    implementation (libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.preferences)
 }

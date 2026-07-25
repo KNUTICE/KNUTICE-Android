@@ -29,9 +29,8 @@ fun NavGraphBuilder.bookmarkServiceGraph(
     appComponent: AppComponent,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkRequested: (BookmarkInfo) -> Unit,
-    onPopBottomNavHistory: () -> Unit = {  }
+    onPopBottomNavHistory: () -> Unit = { }
 ) {
-
     composable(NavRoutes.Bookmark.route) {
         val sceneComponent = remember(appComponent) {
             DaggerBookmarkListSceneComponent.factory().create(
@@ -67,7 +66,7 @@ fun NavGraphBuilder.bookmarkServiceGraph(
                 animationSpec = tween(300, easing = EaseOut),
                 towards = AnimatedContentTransitionScope.SlideDirection.Down
             )
-        },
+        }
     ) { backStackEntry ->
         val bookmarkInfo = backStackEntry.arguments?.let {
             BookmarkInfo(
@@ -100,5 +99,4 @@ fun NavGraphBuilder.bookmarkServiceGraph(
             }
         )
     }
-
 }

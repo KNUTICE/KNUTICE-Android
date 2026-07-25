@@ -22,6 +22,4 @@ interface AppSubscriptionPreferenceRepository {
     suspend fun removeUnsubscribedTarget(completed: Set<String>)
 
     suspend fun updateUnsubscribeTarget(target: String)
-
-
 }

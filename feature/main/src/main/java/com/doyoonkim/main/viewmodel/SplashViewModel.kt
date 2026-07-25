@@ -1,6 +1,5 @@
 package com.doyoonkim.main.viewmodel
 
-
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.di.TokenHandler
@@ -46,8 +45,9 @@ class SplashViewModel @Inject constructor(
     }
 
     private fun checkDatabaseSyncStatus() {
-        if (appDatabasePreference.isDatabaseSyncCompleted())
+        if (appDatabasePreference.isDatabaseSyncCompleted()) {
             mutate(SplashMutation.DatabaseSync.Completed)
+        }
     }
 
     private fun startPreprocess() = viewModelScope.launch {
@@ -55,10 +55,11 @@ class SplashViewModel @Inject constructor(
             // Entry Token Validation
             val tokenResult = tokenHandler.validation()
             if (!tokenResult) tokenHandler.invoke()
-            delay(600L)         // Give slight delay to reduce thread workload.
+            delay(600L) // Give slight delay to reduce thread workload.
 
-            if (syncStatus == SyncStatus.REQUESTED)
+            if (syncStatus == SyncStatus.REQUESTED) {
                 syncDatabase()
+            }
         }
     }.invokeOnCompletion {
         preProcessCompletionCheck()

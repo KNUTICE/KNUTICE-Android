@@ -22,8 +22,11 @@ class FetchNoticesPerPageImpl @Inject constructor(
 
     override operator fun invoke(category: String, lastNttId: Int) =
         remoteRepository.run {
-            if (lastNttId == 0) queryNoticesPerPage(category, null)
-            else queryNoticesPerPage(category, lastNttId)
+            if (lastNttId == 0) {
+                queryNoticesPerPage(category, null)
+            } else {
+                queryNoticesPerPage(category, lastNttId)
+            }
         }.transform { result ->
             result?.let {
                 if (lastNttId == 0) {

@@ -45,5 +45,4 @@ class CarrelStatusViewModel @Inject constructor(
                     }
                 )
         }
-
 }

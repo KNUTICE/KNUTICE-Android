@@ -17,5 +17,4 @@ class CarrelStatusRefreshAction : ActionCallback {
         val provider = (context.applicationContext as WidgetDependencyProvider).provide()
         provider.carrelWidgetTaskScheduler().executeImmediateTask()
     }
-
 }

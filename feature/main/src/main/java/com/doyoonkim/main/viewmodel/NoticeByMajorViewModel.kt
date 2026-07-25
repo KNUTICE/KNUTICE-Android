@@ -20,7 +20,7 @@ class NoticeByMajorViewModel @Inject constructor(
     private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     private val fetchNoticesPerPage: FetchNoticesPerPage,
     private val jobScheduler: MajorSubscriptionUpdateTaskScheduler
-): BaseViewModel<NoticeByMajorState, NoticeByMajorEvent, NoticeByMajorSideEffect, NoticeByMajorMutation>() {
+) : BaseViewModel<NoticeByMajorState, NoticeByMajorEvent, NoticeByMajorSideEffect, NoticeByMajorMutation>() {
     private val TAG = this.javaClass.name
     override fun setInitialState(): NoticeByMajorState = NoticeByMajorState(0)
 
@@ -106,7 +106,7 @@ class NoticeByMajorViewModel @Inject constructor(
     }
 
     private suspend fun fetchNotice() {
-        Log.d(TAG,"Fetching Notices for major ${uiState.value.targetMajor}")
+        Log.d(TAG, "Fetching Notices for major ${uiState.value.targetMajor}")
         if (!uiState.value.isFetchable) {
             mutate(NoticeByMajorMutation.Notices.Failure("Unable to Fetch (Not Fetchable)"))
             return
@@ -115,7 +115,8 @@ class NoticeByMajorViewModel @Inject constructor(
         mutate(NoticeByMajorMutation.Notices.Loading)
         if (uiState.value.targetMajor != MajorCategory.UNSPECIFIED) {
             fetchNoticesPerPage.invoke(
-                category = uiState.value.targetMajor.name, lastNttId = uiState.value.lastNttId
+                category = uiState.value.targetMajor.name,
+                lastNttId = uiState.value.lastNttId
             ).collectLatest { result ->
                 result.fold(
                     onSuccess = { notices ->
@@ -139,7 +140,9 @@ class NoticeByMajorViewModel @Inject constructor(
         mutation: NoticeByMajorMutation
     ): NoticeByMajorState {
         return when (mutation) {
-            is NoticeByMajorMutation.Notices -> { mutation.reducer(currentState) }
+            is NoticeByMajorMutation.Notices -> {
+                mutation.reducer(currentState)
+            }
             is NoticeByMajorMutation.Subscribed -> {
                 currentState.copy(
                     lastNttId = 0,
@@ -159,7 +162,9 @@ class NoticeByMajorViewModel @Inject constructor(
     // Specialized Reducer
     private fun NoticeByMajorMutation.Notices.reducer(state: NoticeByMajorState) =
         when (this) {
-            is NoticeByMajorMutation.Notices.Loading -> { state.copy(isLoading = true) }
+            is NoticeByMajorMutation.Notices.Loading -> {
+                state.copy(isLoading = true)
+            }
             is NoticeByMajorMutation.Notices.Refreshing -> {
                 state.copy(
                     isRefreshing = true,
@@ -184,5 +189,4 @@ class NoticeByMajorViewModel @Inject constructor(
                 ).also { Log.d(TAG, "FAILURE: ${this.reason}") }
             }
         }
-
 }

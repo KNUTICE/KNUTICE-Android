@@ -2,9 +2,7 @@ package com.doyoonkim.widget.notices.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.glance.GlanceModifier
-import androidx.glance.GlanceTheme
 import androidx.glance.background
 import androidx.glance.layout.Box
 import androidx.glance.layout.fillMaxWidth
