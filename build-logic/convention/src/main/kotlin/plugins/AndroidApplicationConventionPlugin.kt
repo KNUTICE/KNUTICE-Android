@@ -27,7 +27,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
         // Application Specific Configuration
         extensions.configure<ApplicationExtension> {
             defaultConfig {
-                targetSdk = 35
+                targetSdk = 36
                 vectorDrawables { useSupportLibrary = true }
             }
         }
