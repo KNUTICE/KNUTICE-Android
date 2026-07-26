@@ -43,9 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.doyoonkim.common.R
-import com.doyoonkim.common.theme.secondaryBackground
-import com.doyoonkim.common.theme.containerGray
 import com.doyoonkim.common.theme.onAnyBackground
+import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
@@ -67,7 +66,7 @@ fun TimePickerDialog(
         .apply { initialTime?.let { timeInMillis = it } }
 
     val hours = (0..23).map { if (it < 10) "0$it" else it.toString() }.toList()
-    val minutes = (0..59).map { if (it< 10) "0$it" else it.toString() }.toList()
+    val minutes = (0..59).map { if (it < 10) "0$it" else it.toString() }.toList()
     var hourSelected by remember {
         mutableIntStateOf(calendar[Calendar.HOUR_OF_DAY])
     }
@@ -93,10 +92,12 @@ fun TimePickerDialog(
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal,
                 color = MaterialTheme.colorScheme.title,
-                modifier = Modifier.padding(PaddingValues(
-                    horizontal = 20.dp,
-                    vertical = 10.dp
-                ))
+                modifier = Modifier.padding(
+                    PaddingValues(
+                        horizontal = 20.dp,
+                        vertical = 10.dp
+                    )
+                )
             )
         }
 
@@ -134,7 +135,7 @@ fun TimePickerDialog(
                                 modifier = Modifier.background(Color.Transparent)
                                     .padding(start = 35.dp, end = 35.dp),
                                 elements = hours,
-                                initialItemIndex = hourSelected,
+                                initialItemIndex = hourSelected
                             ) {
                                 hourSelected = it
                             }
@@ -161,7 +162,6 @@ fun TimePickerDialog(
                     }
                 }
             }
-
         }
     }
 }
@@ -259,11 +259,10 @@ internal fun WheelPickerItem(
     )
 }
 
-
-@Preview(showBackground = true,
+@Preview(
+    showBackground = true,
     uiMode = Configuration.UI_MODE_NIGHT_YES or Configuration.UI_MODE_TYPE_NORMAL
 )
 @Composable
 fun TimePickerWheel_Preview() {
-
 }

@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class CustomerServiceViewModel @Inject constructor(
-    private val submitUserReport: SubmitUserReport,
+    private val submitUserReport: SubmitUserReport
 ) : BaseViewModel<CustomerServiceStatus, CustomerServiceEvent, CustomerServiceSideEffect, CustomerServiceMutation>() {
     override fun setInitialState(): CustomerServiceStatus = CustomerServiceStatus()
 

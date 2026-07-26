@@ -23,7 +23,7 @@ class TokenHandlerImpl @Inject constructor(
         val token = t ?: getToken()
         val cached = appPreferences.getCachedToken()
 
-        if (token == null)  {
+        if (token == null) {
             // Firebase Service Unavailable
             return TokenStatus.RETRY
         }
@@ -32,10 +32,10 @@ class TokenHandlerImpl @Inject constructor(
 
         if (cached.isNullOrBlank()) {
             Log.d("TokenHandler", "Token $token would be registered")
-                return registerNewToken(token)
+            return registerNewToken(token)
         } else {
             Log.d("TokenHandler", "Token $cached would be replaced with $token")
-                return updateRegisteredToken(cached, token)
+            return updateRegisteredToken(cached, token)
         }
     }
 

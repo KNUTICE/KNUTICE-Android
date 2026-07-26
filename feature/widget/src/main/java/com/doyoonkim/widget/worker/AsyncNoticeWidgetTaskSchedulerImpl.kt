@@ -23,7 +23,8 @@ class AsyncNoticeWidgetTaskSchedulerImpl @Inject constructor(
 
     override fun schedulePeriodicTask() {
         val periodicTask = PeriodicWorkRequestBuilder<KnuticeWidgetSync>(
-            6, TimeUnit.HOURS
+            6,
+            TimeUnit.HOURS
         ).setBackoffCriteria(
             backoffPolicy = BackoffPolicy.EXPONENTIAL,
             backoffDelay = 30,

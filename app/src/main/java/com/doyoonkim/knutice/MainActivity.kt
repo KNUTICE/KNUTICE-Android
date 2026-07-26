@@ -22,16 +22,16 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import androidx.work.BackoffPolicy
+import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import com.doyoonkim.common.theme.KNUTICETheme
-import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.common.R
 import com.doyoonkim.common.analytics.AnalyticsLogger
 import com.doyoonkim.common.navigation.DeeplinkHandler
+import com.doyoonkim.common.theme.KNUTICETheme
+import com.doyoonkim.common.ui.PermissionRationaleComposable
 import com.doyoonkim.knutice.di.components.DaggerMainActivityComponent
 import com.doyoonkim.notification.task.PeriodicTokenRegistration
 import kotlinx.coroutines.channels.Channel
@@ -42,8 +42,9 @@ import javax.inject.Inject
 
 class MainActivity : ComponentActivity() {
 
-     @Inject lateinit var alarmManager: AlarmManager
-     @Inject lateinit var analytics: AnalyticsLogger
+    @Inject lateinit var alarmManager: AlarmManager
+
+    @Inject lateinit var analytics: AnalyticsLogger
 
     // NavController
     private lateinit var navController: NavHostController
@@ -63,7 +64,8 @@ class MainActivity : ComponentActivity() {
         // Periodic Token Registration Event
         // Interval: 30-ish days, Backoff: 12 hours Linear
         val workRequest = PeriodicWorkRequestBuilder<PeriodicTokenRegistration>(
-            730, TimeUnit.HOURS
+            730,
+            TimeUnit.HOURS
         ).setConstraints(
             Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
@@ -76,7 +78,9 @@ class MainActivity : ComponentActivity() {
         ).build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-            "Token Registration", ExistingPeriodicWorkPolicy.KEEP, workRequest
+            "Token Registration",
+            ExistingPeriodicWorkPolicy.KEEP,
+            workRequest
         )
 
         // New Flow based testing
@@ -97,15 +101,16 @@ class MainActivity : ComponentActivity() {
                 ) { permissions ->
                     permissions.entries.forEach {
                         Log.d("MainServiceScreen", "${it.key}, ${it.value}")
-                        if (it.key == Manifest.permission.SCHEDULE_EXACT_ALARM
-                            && !alarmManager.canScheduleExactAlarms()) {
+                        if (it.key == Manifest.permission.SCHEDULE_EXACT_ALARM &&
+                            !alarmManager.canScheduleExactAlarms()
+                        ) {
                             showPermissionRationale.value = true
                         }
                     }
                 }
 
                 LaunchedEffect(Unit) {
-                    delay(200L)     // Reduce workload on MainThread on its first initialization.
+                    delay(200L) // Reduce workload on MainThread on its first initialization.
                     // Permission check
                     requestPermissionLauncher.launch(
                         arrayOf(
@@ -133,7 +138,7 @@ class MainActivity : ComponentActivity() {
 
                 MainServiceScreen(
                     modifier = Modifier,
-                    navController = navController,
+                    navController = navController
                 ) { activity.finish() }
 
                 if (showPermissionRationale.value) {

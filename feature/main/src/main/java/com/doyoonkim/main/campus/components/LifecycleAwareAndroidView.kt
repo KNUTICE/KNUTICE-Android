@@ -24,12 +24,12 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.doyoonkim.common.ui.PlaceholderScreen
 import com.doyoonkim.common.R
+import com.doyoonkim.common.ui.PlaceholderScreen
 
 // App-Level Issue
 // Context Helper. Mitigate potential issue caused by Injected Context via Dagger.
-private fun Context.findActivity(): Activity? = when(this) {
+private fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()
     else -> null
@@ -40,8 +40,8 @@ fun LifecycleAwareWebView(
     modifier: Modifier = Modifier,
     dynamicThemeEnabled: Boolean = true,
     url: String,
-    onWebViewCreate: (WebView) -> Unit = {  },
-    onWebViewDestroy: (WebView) -> Unit = {  },
+    onWebViewCreate: (WebView) -> Unit = { },
+    onWebViewDestroy: (WebView) -> Unit = { },
     onLeaveWebView: () -> Unit
 ) {
     var webViewInstance by remember { mutableStateOf<WebView?>(null) }
@@ -70,8 +70,12 @@ fun LifecycleAwareWebView(
         // Lifecycle Observer
         val lifecycleObserver = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> { webViewInstance?.onResume() }
-                Lifecycle.Event.ON_PAUSE -> { webViewInstance?.onPause() }
+                Lifecycle.Event.ON_RESUME -> {
+                    webViewInstance?.onResume()
+                }
+                Lifecycle.Event.ON_PAUSE -> {
+                    webViewInstance?.onPause()
+                }
                 else -> Unit
             }
         }
@@ -94,7 +98,7 @@ fun LifecycleAwareWebView(
                 target.stopLoading()
                 target.clearHistory()
                 target.removeAllViews()
-                target.loadUrl("about:blank")       // Clear Rendering Process.
+                target.loadUrl("about:blank") // Clear Rendering Process.
                 // Remove Taget WebView from its ViewTree. (Allow GC collects it)
                 (target.parent as? ViewGroup)?.removeView(target)
                 target.destroy()
@@ -142,8 +146,8 @@ fun LifecycleAwareWebView(
                             cacheMode = WebSettings.LOAD_DEFAULT
 
                             // Ensure responsiveness
-                            useWideViewPort = true          // support HTML viewport tag.
-                            loadWithOverviewMode = true     // Zoom out to fit entire content initially.
+                            useWideViewPort = true // support HTML viewport tag.
+                            loadWithOverviewMode = true // Zoom out to fit entire content initially.
                         }
 
                         // Prevent user long-click on WebView Content (by consuming it.)

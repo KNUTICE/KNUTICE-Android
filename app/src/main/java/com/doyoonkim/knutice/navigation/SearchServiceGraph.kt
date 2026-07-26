@@ -17,7 +17,7 @@ fun NavGraphBuilder.searchServiceGraph(
     appComponent: AppComponent,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkServiceRequested: (BookmarkInfo) -> Unit,
-    onPopBottomNavHistory: () -> Unit = {  }
+    onPopBottomNavHistory: () -> Unit = { }
 ) {
     composable(
         route = NavRoutes.NoticeSearch.route

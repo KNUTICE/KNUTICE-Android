@@ -10,7 +10,7 @@ import com.doyoonkim.widget.di.WidgetDependencyProvider
  * @author kimdoyoon
  * Created 3/2/26 at 1:02 AM
  */
-class KnuticeCarrelWidgetReceiver: GlanceAppWidgetReceiver() {
+class KnuticeCarrelWidgetReceiver : GlanceAppWidgetReceiver() {
 
     override val glanceAppWidget: GlanceAppWidget = KnuticeCarrelRoomStatusWidget()
 
@@ -27,5 +27,4 @@ class KnuticeCarrelWidgetReceiver: GlanceAppWidgetReceiver() {
         val provider = (context.applicationContext as WidgetDependencyProvider).provide()
         provider.carrelWidgetTaskScheduler().unschedulePeriodicTask()
     }
-
 }

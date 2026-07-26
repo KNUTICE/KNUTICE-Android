@@ -14,7 +14,6 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextAlign
 import androidx.glance.text.TextStyle
-import com.doyoonkim.widget.components.WidgetHeader
 import com.doyoonkim.widget.model.WidgetState
 import com.doyoonkim.widget.notices.components.NoticeWidgetContainer
 import com.doyoonkim.widget.notices.components.WidgetHorizontalDivider

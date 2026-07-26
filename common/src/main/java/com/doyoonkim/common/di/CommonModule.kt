@@ -2,8 +2,8 @@ package com.doyoonkim.common.di
 
 import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.BitmapHandlerImpl
-import dagger.Module
 import dagger.Binds
+import dagger.Module
 
 /**
  * @author kimdoyoon
@@ -16,5 +16,4 @@ abstract class CommonModule {
     abstract fun bindsBitmapHandler(
         impl: BitmapHandlerImpl
     ): BitmapHandler
-
 }

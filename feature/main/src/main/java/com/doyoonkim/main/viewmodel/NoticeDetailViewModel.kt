@@ -53,32 +53,41 @@ class NoticeDetailViewModel @Inject constructor(
             }
             is NoticeDetailEvent.RequestBookmarkCreation -> {
                 // AB Test related Logging
-                analytics.logEvent("bookmark_button_action_clicked", Bundle().apply {
-                    putString("exp_variant", uiState.value.abTestLayoutState.layoutType )
-                })
-                with (uiState.value) {
-                    if (isReceived) receivedNotice?.let {
-                        sendSideEffect(
-                            NoticeDetailSideEffect.NavToEditBookmark(it)
-                        )
+                analytics.logEvent(
+                    "bookmark_button_action_clicked",
+                    Bundle().apply {
+                        putString("exp_variant", uiState.value.abTestLayoutState.layoutType)
+                    }
+                )
+                with(uiState.value) {
+                    if (isReceived) {
+                        receivedNotice?.let {
+                            sendSideEffect(
+                                NoticeDetailSideEffect.NavToEditBookmark(it)
+                            )
+                        }
                     }
                 }
             }
             is NoticeDetailEvent.RequestNoticeSummary -> {
                 // AB Test related Logging
-                analytics.logEvent("ai_button_action_clicked", Bundle().apply {
-                    putString("exp_variant", uiState.value.abTestLayoutState.layoutType)
-                })
+                analytics.logEvent(
+                    "ai_button_action_clicked",
+                    Bundle().apply {
+                        putString("exp_variant", uiState.value.abTestLayoutState.layoutType)
+                    }
+                )
 
-                with (uiState.value) {
+                with(uiState.value) {
                     if (!summarizedContent.isNullOrEmpty()) {
                         // TODO: Need to be revised.
                         mutate(NoticeDetailMutation.Summary.Success(summarizedContent))
                     } else {
-                        if (isReceived)
+                        if (isReceived) {
                             receivedNotice?.let {
                                 getNoticeSummary(receivedNotice.nttId)
                             }
+                        }
                     }
                 }
             }
@@ -103,9 +112,12 @@ class NoticeDetailViewModel @Inject constructor(
             is NoticeDetailEvent.ActivateAbTest -> {
                 if (!isTestActivated && !uiState.value.abTestLayoutState.layoutType.isBlank()) {
                     // Activate Test via Logger
-                    analytics.logEvent("ai_feature_visible", Bundle().apply {
-                        putString("exp_variant", uiState.value.abTestLayoutState.layoutType)
-                    })
+                    analytics.logEvent(
+                        "ai_feature_visible",
+                        Bundle().apply {
+                            putString("exp_variant", uiState.value.abTestLayoutState.layoutType)
+                        }
+                    )
                     isTestActivated = true
                 }
             }
@@ -117,7 +129,7 @@ class NoticeDetailViewModel @Inject constructor(
             fetchNoticeById(nttId)
                 .collectLatest { result ->
                     result.fold(
-                        onSuccess =  { vo ->
+                        onSuccess = { vo ->
                             mutate(NoticeDetailMutation.Notice.Success(vo, canBookmark))
                         },
                         onFailure = { reason ->
@@ -161,9 +173,15 @@ class NoticeDetailViewModel @Inject constructor(
         mutation: NoticeDetailMutation
     ): NoticeDetailState {
         return when (mutation) {
-            is NoticeDetailMutation.Notice -> { mutation.reducer(currentState) }
-            is NoticeDetailMutation.Content -> { mutation.reducer(currentState) }
-            is NoticeDetailMutation.Summary -> { mutation.reducer(currentState) }
+            is NoticeDetailMutation.Notice -> {
+                mutation.reducer(currentState)
+            }
+            is NoticeDetailMutation.Content -> {
+                mutation.reducer(currentState)
+            }
+            is NoticeDetailMutation.Summary -> {
+                mutation.reducer(currentState)
+            }
             // AB Test related State modification. TO BE REMOVED once test is completed.
             is NoticeDetailMutation.TestLayoutVariantA -> {
                 currentState.copy(

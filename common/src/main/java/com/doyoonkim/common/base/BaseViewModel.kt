@@ -18,7 +18,7 @@ interface UiEvent
 interface UiSideEffect
 interface UiMutation
 
-abstract class BaseViewModel<S: UiState, E: UiEvent, SE: UiSideEffect, M: UiMutation>: ViewModel() {
+abstract class BaseViewModel<S : UiState, E : UiEvent, SE : UiSideEffect, M : UiMutation> : ViewModel() {
     // Function for initial state set.
     private val initialState by lazy { setInitialState() }
     abstract fun setInitialState(): S

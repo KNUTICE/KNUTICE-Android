@@ -8,7 +8,6 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-
 import javax.inject.Inject
 
 class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
@@ -28,12 +27,11 @@ class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
         private val MAJORS_TO_BE_UNSUBSCRIBED = stringSetPreferencesKey("MAJORS_UNSUBSCRIPTION_PENDING")
     }
 
-
     /**
      * Major Subscription Status
      */
     override fun getSubscribedMajor(): Flow<Set<String>> =
-        preferenceDataStore.data.map {preference ->
+        preferenceDataStore.data.map { preference ->
             preference[MAJORS_SUBSCRIBED]
                 // Check if pre-existing subscription value in SharedPreference, apply it to updated subscription value.
                 ?: preference[stringPreferencesKey(SUBSCRIBED_MAJOR)]?.let { setOf(it) }
@@ -77,7 +75,6 @@ class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
         }
     }
 
-
     // Temporarily store majors to be unsubscribed.
     override fun getUnsubscribePending(): Flow<Set<String>> =
         preferenceDataStore.data.map {
@@ -101,5 +98,4 @@ class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
             preferences[MAJORS_TO_BE_UNSUBSCRIBED] = updatedTargets
         }
     }
-
 }

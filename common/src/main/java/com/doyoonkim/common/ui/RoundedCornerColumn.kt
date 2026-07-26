@@ -91,7 +91,6 @@ fun RoundedCornerColumn(
     backgroundColor: Color,
     content: @Composable (ColumnScope.() -> Unit)
 ) {
-
     Surface(
         modifier = modifier
             .wrapContentSize()
@@ -108,7 +107,6 @@ fun RoundedCornerColumn(
             content = content
         )
     }
-
 }
 
 @Preview(showBackground = true)

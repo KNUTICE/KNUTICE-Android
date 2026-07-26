@@ -50,7 +50,7 @@ import javax.inject.Singleton
         NoticeUseCaseModule::class,
         TipUseCaseModule::class,
         NoticeRemoteModule::class,
-        TipRemoteModule::class,
+        TipRemoteModule::class
     ]
 )
 interface HomeSceneComponent {
@@ -96,7 +96,6 @@ interface NoticeByMajorSceneComponent {
     }
 }
 
-
 @Component(
     dependencies = [
         SystemServices::class,
@@ -106,7 +105,7 @@ interface NoticeByMajorSceneComponent {
     modules = [
         ViewModelFactoryModule::class,
         BookmarkListSceneModule::class,
-        BookmarkUseCaseModule::class,
+        BookmarkUseCaseModule::class
     ]
 )
 interface BookmarkListSceneComponent {
@@ -136,7 +135,7 @@ interface BookmarkListSceneComponent {
         BookmarkUseCaseModule::class,
         NoticeUseCaseModule::class,
         NotificationModule::class,
-        NoticeRemoteModule::class,
+        NoticeRemoteModule::class
     ]
 )
 interface EditBookmarkSceneComponent {
@@ -162,7 +161,7 @@ interface EditBookmarkSceneComponent {
         ViewModelFactoryModule::class,
         NoticeDetailSceneModule::class,
         NoticeUseCaseModule::class,
-        NoticeRemoteModule::class,
+        NoticeRemoteModule::class
     ]
 )
 interface NoticeDetailSceneComponent {
@@ -177,7 +176,6 @@ interface NoticeDetailSceneComponent {
         ): NoticeDetailSceneComponent
     }
 }
-
 
 @Component(
     dependencies = [SystemServices::class, NetworkProvider::class, LocalStorageProvider::class],
@@ -202,7 +200,6 @@ interface NoticeSearchSceneComponent {
     }
 }
 
-
 @Component(
     dependencies = [SystemServices::class, NetworkProvider::class],
     modules = [
@@ -223,7 +220,6 @@ interface NoticeInCategorySceneComponent {
         ): NoticeInCategorySceneComponent
     }
 }
-
 
 @Component(
     dependencies = [
@@ -251,7 +247,6 @@ interface CustomerServiceSceneComponent {
     }
 }
 
-
 @Component(
     dependencies = [
         SystemServices::class,
@@ -277,7 +272,6 @@ interface NotificationPreferencesSceneComponent {
         ): NotificationPreferencesSceneComponent
     }
 }
-
 
 @Component(
     dependencies = [
@@ -307,7 +301,6 @@ interface SettingsSceneComponent {
     }
 }
 
-
 @Component(
     dependencies = [
         SystemServices::class,
@@ -322,7 +315,7 @@ interface SettingsSceneComponent {
         NotificationModule::class,
         PreProcessingUseCaseModule::class,
         NoticeRemoteModule::class,
-        TokenRemoteModule::class,
+        TokenRemoteModule::class
     ]
 )
 interface SplashSceneComponent {
@@ -345,7 +338,7 @@ interface SplashSceneComponent {
     modules = [
         ViewModelFactoryModule::class,
         WidgetConfigSceneModule::class,
-        WorkSchedulerModule::class,
+        WorkSchedulerModule::class
     ]
 )
 interface WidgetConfigSceneComponent {

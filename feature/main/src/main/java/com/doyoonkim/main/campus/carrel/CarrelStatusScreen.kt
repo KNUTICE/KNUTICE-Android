@@ -55,8 +55,10 @@ fun CarrelStatusScreen(
             try {
                 val bridgeEnvelop = Json.decodeFromString<WebBridgeEnvelop>(rawMessage)
                 when (bridgeEnvelop.type) {
-                    WebAppAction.CLOSE_WEBVIEW.name -> { onBackClicked() }
-                    else ->  Unit
+                    WebAppAction.CLOSE_WEBVIEW.name -> {
+                        onBackClicked()
+                    }
+                    else -> Unit
                 }
             } catch (e: Exception) {
                 Log.d("WebMessageListener", "Invalid Envelope ${e.stackTraceToString()}")
@@ -70,7 +72,7 @@ fun CarrelStatusScreen(
             override fun onPageFinished(view: WebView?, url: String?) {
                 // If view is ready, return onPageFinished immediately to avoid multiple JS execution.
                 if (!isKeyProvided.value) {
-                    val call = "${BuildConfig.CARREL_BRIDGE}('${tokenState}');"
+                    val call = "${BuildConfig.CARREL_BRIDGE}('$tokenState');"
                     val script = "javascript:$call;"
                     view?.evaluateJavascript(script, null)
 
@@ -79,7 +81,7 @@ fun CarrelStatusScreen(
                 }
 
                 if (roomId.isNotBlank() && !isRoomSelectionProvided.value) {
-                    val call = "${BuildConfig.CARREL_ROOM_BRIDGE}('${roomId}');"
+                    val call = "${BuildConfig.CARREL_ROOM_BRIDGE}('$roomId');"
                     val script = "javascript:$call;"
                     view?.evaluateJavascript(script, null)
 

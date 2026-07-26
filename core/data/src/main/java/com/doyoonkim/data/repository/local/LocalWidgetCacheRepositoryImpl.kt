@@ -37,5 +37,4 @@ class LocalWidgetCacheRepositoryImpl @Inject constructor(
         Log.d(TAG, "Carrel Cache Updated")
         _carrelCacheState.update { status }
     }
-
 }

@@ -110,7 +110,6 @@ fun MarkdownView_Preview() {
         MarkdownString.Body(text = "Some Random String\nSome **Random** String\n**_[naver](https://www.naver.com)_** and ")
     )
 
-
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.CenterStart
@@ -121,7 +120,7 @@ fun MarkdownView_Preview() {
             containerColor = MaterialTheme.colorScheme.secondaryBackground,
             primaryTextColor = MaterialTheme.colorScheme.title,
             secondaryTextColor = MaterialTheme.colorScheme.subTitle,
-            highlightColor = MaterialTheme.colorScheme.variantPurple,
+            highlightColor = MaterialTheme.colorScheme.variantPurple
         )
     }
 }

@@ -85,13 +85,15 @@ fun CarrelWidgetContainer(
                         .defaultWeight()
                         .cornerRadius(15.dp)
                         .background(GlanceTheme.colors.secondaryContainer)
-                        .clickable(actionStartActivity(
-                            NoticeWidgetUtil.createDeeplinkIntent(
-                                context.packageName,
-                                deeplink = "reading-room?roomId=${vo.id}&seat=0",
-                                type = null
+                        .clickable(
+                            actionStartActivity(
+                                NoticeWidgetUtil.createDeeplinkIntent(
+                                    context.packageName,
+                                    deeplink = "reading-room?roomId=${vo.id}&seat=0",
+                                    type = null
+                                )
                             )
-                        )),
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
@@ -133,7 +135,8 @@ fun CarrelWidgetContainer(
 
                         Text(
                             text = context.getString(
-                                R.string.text_carrel_widget_remaining_seat, currentRemainingSeats
+                                R.string.text_carrel_widget_remaining_seat,
+                                currentRemainingSeats
                             ),
                             style = TextStyle(
                                 fontSize = 16.sp,
@@ -187,7 +190,7 @@ fun CarrelWidget_Preview() {
                 name = "제3협업 학습 ZONE (콘센트)",
                 total = 300,
                 occupied = 280
-            ),
+            )
         )
     )
 

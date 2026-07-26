@@ -1,6 +1,5 @@
 package com.doyoonkim.data.di
 
-import com.doyoonkim.common.di.ApplicationScope
 import dagger.Module
 import dagger.Provides
 import kotlinx.coroutines.CoroutineScope
@@ -17,5 +16,4 @@ object SystemCoroutineModule {
     @Provides
     @Singleton
     fun provideApplicationScope(): CoroutineScope = applicationScopeCoroutine
-
 }

@@ -44,23 +44,29 @@ interface MainDatabaseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun createBookmarkFts(entry: BookmarkFts)
 
-    @Query("""
+    @Query(
+        """
         DELETE FROM BookmarkFts WHERE rowid = :ftsId
-    """)
+    """
+    )
     fun deleteBookmarkFts(ftsId: Int)
 
     // Temp Table for Asynchronous FTS table insertion
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun createAsyncFtsEntity(entity: PendingBookmarkFtsAsync)
 
-    @Query("""
+    @Query(
+        """
         SELECT * FROM PendingBookmarkFtsAsync ORDER BY createdAt ASC LIMIT :limit
-    """)
+    """
+    )
     fun getPendingBookmarkFtsAsyncBatch(limit: Int): List<PendingBookmarkFtsAsync>
 
-    @Query("""
+    @Query(
+        """
         DELETE FROM PendingBookmarkFtsAsync WHERE stagingId IN (:stagingIds)
-    """)
+    """
+    )
     fun removePendingBookmarkFtsAsync(stagingIds: List<Int>)
 
     @Transaction
@@ -79,8 +85,6 @@ interface MainDatabaseDao {
         )
     }
 
-
-
     @Query("SELECT * FROM NoticeEntity WHERE ntt_id=:nttId")
     fun getNoticeByNttId(nttId: Int): NoticeEntity?
 
@@ -93,7 +97,8 @@ interface MainDatabaseDao {
     @Query("SELECT * FROM Bookmark ORDER BY bookmarkId ASC LIMIT :size OFFSET :pageNumber * :size")
     fun getBookmarkSortedOldest(size: Int, pageNumber: Int): List<Bookmark>
 
-    @Query("""
+    @Query(
+        """
         SELECT
             b.bookmarkId AS bookmarkId,
             n.ntt_id AS noticeId,
@@ -105,10 +110,12 @@ interface MainDatabaseDao {
         FROM Bookmark b
         INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
         ORDER BY b.bookmarkId ASC LIMIT :size OFFSET :pageNumber * :size
-    """)
+    """
+    )
     fun getBookmarkListSortedNewest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
 
-    @Query("""
+    @Query(
+        """
         SELECT
             b.bookmarkId AS bookmarkId,
             n.ntt_id AS noticeId,
@@ -120,10 +127,12 @@ interface MainDatabaseDao {
         FROM Bookmark b
         INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
         ORDER BY b.bookmarkId DESC LIMIT :size OFFSET :pageNumber * :size
-    """)
+    """
+    )
     fun getBookmarkListSortedOldest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
 
-    @Query("""
+    @Query(
+        """
         SELECT
             b.bookmarkId AS bookmarkId,
             n.ntt_id AS noticeId,
@@ -135,10 +144,12 @@ interface MainDatabaseDao {
         FROM Bookmark b
         INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
         ORDER BY b.updated_at ASC LIMIT :size OFFSET :pageNumber * :size
-    """)
+    """
+    )
     fun getBookmarkListSortedUpdatedNewest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
 
-    @Query("""
+    @Query(
+        """
         SELECT
             b.bookmarkId AS bookmarkId,
             n.ntt_id AS noticeId,
@@ -150,22 +161,24 @@ interface MainDatabaseDao {
         FROM Bookmark b
         INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
         ORDER BY b.updated_at DESC LIMIT :size OFFSET :pageNumber * :size
-    """)
+    """
+    )
     fun getBookmarkListSortedUpdatedOldest(size: Int, pageNumber: Int): List<BookmarkAsListElement>
 
-
-    @Query("""
+    @Query(
+        """
         SELECT
             b.bookmarkId AS bookmarkId,
             b.bookmark_note AS bookmarkNotes,
             n.notice_title AS noticeTitle
         FROM Bookmark b
         INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
-    """)
+    """
+    )
     fun getFtsEntriesFromExistingTables(): List<BookmarkFtsTarget>
 
-
-    @Query("""
+    @Query(
+        """
         SELECT
             b.bookmarkId AS bookmarkId,
             n.ntt_id AS noticeId,
@@ -179,10 +192,12 @@ interface MainDatabaseDao {
         INNER JOIN NoticeEntity n ON n.ntt_id = b.target_ntt_id
         WHERE BookmarkFts MATCH :keyword
         LIMIT :size OFFSET :pageNumber * :size
-    """)
+    """
+    )
     fun getBookmarkListByKeywordFts(keyword: String, size: Int, pageNumber: Int): List<BookmarkAsListElement>
 
-    @Query("""
+    @Query(
+        """
         SELECT
             b.bookmarkId AS bookmarkId,
             n.ntt_id AS noticeId,
@@ -195,6 +210,7 @@ interface MainDatabaseDao {
         INNER JOIN NoticeEntity n ON b.target_ntt_id = n.ntt_id
         WHERE b.bookmark_note LIKE '%' || :keyword || '%'
         LIMIT :size OFFSET :pageNumber * :size
-    """)
+    """
+    )
     fun getBookmarkListByKeyword(keyword: String, size: Int, pageNumber: Int): List<BookmarkAsListElement>
 }

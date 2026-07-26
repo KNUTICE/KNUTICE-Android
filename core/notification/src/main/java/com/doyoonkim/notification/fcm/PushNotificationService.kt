@@ -12,6 +12,7 @@ import javax.inject.Inject
 
 class PushNotificationService : FirebaseMessagingService() {
     @Inject lateinit var handlerProvider: Lazy<PushNotificationHandler>
+
     @Inject lateinit var tokenHandler: Lazy<TokenHandler>
 
     private val TAG = "PushNotificationHandler"
@@ -26,7 +27,7 @@ class PushNotificationService : FirebaseMessagingService() {
         super.onNewToken(token)
         (applicationContext as AppInjectorProvider).appInjector.inject(this)
         // POST request to send FCM Token to the Server.
-        Log.d(TAG, "onNewToken() call: Received Token: ${token.toString()}")
+        Log.d(TAG, "onNewToken() call: Received Token: $token")
     }
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)

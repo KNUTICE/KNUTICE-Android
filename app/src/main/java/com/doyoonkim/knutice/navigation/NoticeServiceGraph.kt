@@ -32,7 +32,7 @@ fun NavGraphBuilder.noticeServiceGraph(
     appComponent: AppComponent,
     onNoticeDetailRequested: (NoticeDetail) -> Unit,
     onBookmarkServiceRequested: (BookmarkInfo) -> Unit,
-    onPopBottomNavHistory: () -> Unit = {  }
+    onPopBottomNavHistory: () -> Unit = { }
 ) {
     composable(
         route = NavRoutes.MajorNotices.route
@@ -97,7 +97,6 @@ fun NavGraphBuilder.noticeServiceGraph(
                 onNoticeDetailRequested(NoticeDetail(id, url))
             }
         )
-
     }
 
     // DeepLinks for NoticeDetailScreen
@@ -137,11 +136,15 @@ fun NavGraphBuilder.noticeServiceGraph(
             modifier = Modifier.fillMaxSize(),
             viewModel = viewModel<NoticeDetailViewModel>(factory = sceneComponent.viewModelFactory()),
             noticeInfo = noticeInfo,
-            onBookmarkCreate = { onBookmarkServiceRequested(BookmarkInfo(
-                noticeId = it.nttId,
-                noticeTitle = it.title,
-                noticeInfo = it.noticeName.ifBlank { it.departName }
-            )) },
+            onBookmarkCreate = {
+                onBookmarkServiceRequested(
+                    BookmarkInfo(
+                        noticeId = it.nttId,
+                        noticeTitle = it.title,
+                        noticeInfo = it.noticeName.ifBlank { it.departName }
+                    )
+                )
+            },
             onBackPressed = { navController.popBackStack() }
         )
     }

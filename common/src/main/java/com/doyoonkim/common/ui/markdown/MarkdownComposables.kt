@@ -82,7 +82,7 @@ fun MarkdownBulletPoint(
     textColor: Color
 ) {
     // Run syntax process under Dispatchers.Default
-    val processedContent : AnnotatedString by produceState(
+    val processedContent: AnnotatedString by produceState(
         initialValue = AnnotatedString(text),
         key1 = text
     ) {
@@ -117,7 +117,7 @@ fun MarkdownTable(
     modifier: Modifier = Modifier,
     tableHeader: List<String>,
     tableRows: List<List<String>>,
-    color: MarkdownTableColor,
+    color: MarkdownTableColor
 ) {
     // Why?
     Column(
@@ -130,7 +130,7 @@ fun MarkdownTable(
         ) {
             tableHeader.forEach { h ->
                 // Run syntax process under Dispatchers.Default
-                val processedContent : AnnotatedString by produceState(
+                val processedContent: AnnotatedString by produceState(
                     initialValue = AnnotatedString(h),
                     key1 = h
                 ) {
@@ -164,7 +164,7 @@ fun MarkdownTable(
             ) {
                 row.forEach { c ->
                     // Run syntax process under Dispatchers.Default
-                    val processedContent : AnnotatedString by produceState(
+                    val processedContent: AnnotatedString by produceState(
                         initialValue = AnnotatedString(c),
                         key1 = c
                     ) {
@@ -187,7 +187,6 @@ fun MarkdownTable(
                         ),
                         modifier = Modifier.weight(1f)
                     )
-
                 }
             }
         }
@@ -201,7 +200,7 @@ fun MarkdownBody(
     color: Color
 ) {
     // Run syntax process under Dispatchers.Default
-    val processedContent : AnnotatedString by produceState(
+    val processedContent: AnnotatedString by produceState(
         initialValue = AnnotatedString(text),
         key1 = text
     ) {
@@ -252,7 +251,7 @@ private fun syntaxProcess(text: String, builder: AnnotatedString.Builder) {
         builder.append(text.substring(0, result.range.first))
 
         // Process Matches. Invoke recursive call to process compound syntax.
-        when(result) {
+        when (result) {
             boldResult -> {
                 val content = result.groupValues[1]
                 builder.withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
@@ -293,7 +292,6 @@ private fun syntaxProcess(text: String, builder: AnnotatedString.Builder) {
             // Recursive call to check matches in the remaining text.
             syntaxProcess(text.substring(result.range.last + 1), builder)
         }
-
     } else {
         // No matches found. Process Plain Text (Leaf Node)
         builder.append(text)

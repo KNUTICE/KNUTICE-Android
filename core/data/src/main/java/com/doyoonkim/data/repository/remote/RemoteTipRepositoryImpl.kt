@@ -19,7 +19,9 @@ class RemoteTipRepositoryImpl @Inject constructor(
             onSuccess = {
                 if (it.result?.resultCode == 200) {
                     emit(it.body?.map { dto -> dto.toVO() })
-                } else it.result.printLog().also { emit(emptyList<TipVO>()) }
+                } else {
+                    it.result.printLog().also { emit(emptyList<TipVO>()) }
+                }
             },
             onFailure = {
                 it.printLog()
@@ -32,6 +34,9 @@ class RemoteTipRepositoryImpl @Inject constructor(
         Log.d(TAG, "Failed to receive data\nREASON: ${this.stackTraceToString()}")
 
     private fun Metadata?.printLog() =
-        Log.d(TAG, "Failed to receive data (${this?.resultCode})" +
-                "\nREASON:${this?.resultMessage}")
+        Log.d(
+            TAG,
+            "Failed to receive data (${this?.resultCode})" +
+                "\nREASON:${this?.resultMessage}"
+        )
 }

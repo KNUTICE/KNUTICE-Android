@@ -3,7 +3,6 @@ package com.doyoonkim.widget.notices.components
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceModifier
 import androidx.glance.LocalContext
 import androidx.glance.appwidget.action.actionRunCallback
@@ -16,13 +15,7 @@ import androidx.glance.layout.ColumnScope
 import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.padding
-import androidx.glance.layout.wrapContentHeight
-import androidx.glance.text.FontWeight
-import androidx.glance.text.Text
-import androidx.glance.text.TextAlign
-import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.doyoonkim.common.CollegeResource
 import com.doyoonkim.common.MajorResources
 import com.doyoonkim.common.NoticeResources
 import com.doyoonkim.common.R
@@ -42,9 +35,11 @@ fun NoticeWidgetContainer(
     val context = LocalContext.current
 
     val categoryTextRes = NoticeResources.getStringResourcesByCategory(title).let {
-        if (it == R.string.text_category_not_found)
+        if (it == R.string.text_category_not_found) {
             MajorResources.getLocalizedString(title)
-        else it
+        } else {
+            it
+        }
     }
     val categoryText = context.getString(categoryTextRes)
 

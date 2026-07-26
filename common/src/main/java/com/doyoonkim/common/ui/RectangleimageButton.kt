@@ -57,9 +57,10 @@ fun RectangleImageButton(
             modifier = modifier
                 .background(containerColor)
                 .border(
-                    width =3.dp,
+                    width = 3.dp,
                     color = if (isSelected) borderHighlighted else border,
-                    shape = RoundedCornerShape(15.dp))
+                    shape = RoundedCornerShape(15.dp)
+                )
                 .padding(25.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -75,7 +76,7 @@ fun RectangleImageButton(
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     textAlign = TextAlign.Start,
-                    color = textColor,
+                    color = textColor
                 ),
                 maxLines = 2,
                 modifier = Modifier.wrapContentSize()

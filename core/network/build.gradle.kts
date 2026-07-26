@@ -7,13 +7,14 @@ plugins {
     id("knutice.android.dagger")
 }
 
-configure<LibraryExtension>() {
+configure<LibraryExtension> {
     namespace = "com.doyoonkim.network"
 
     // BuildConfig
-    val properties = Properties().apply {
-        load(FileInputStream("${rootDir}/local.properties"))
-    }
+    val properties =
+        Properties().apply {
+            load(FileInputStream("$rootDir/local.properties"))
+        }
     val apiBaseLive = properties["api_migrated"] ?: ""
 
     defaultConfig {

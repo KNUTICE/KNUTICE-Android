@@ -15,8 +15,8 @@ import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
-import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.domain.interfaces.abtest.FirebaseRemoteConfigRepository
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.model.di.IoDispatcher
 import com.doyoonkim.network.retrofit.KnuticeService
@@ -26,19 +26,25 @@ import kotlinx.coroutines.CoroutineScope
 interface SystemServices {
     // Application Context
     @ApplicationContext fun applicationContext(): Context
+
     // SharedPreference (AppPreference)
     fun sharedPreferences(): SharedPreferences
+
     // AlarmManager
     fun alarmManager(): AlarmManager
+
     // Notification Manager
     fun notificationManager(): NotificationManager
+
     // WorkManager
     fun workManager(): WorkManager
+
     // PreferencesDataStore
     fun preferenceDataStore(): DataStore<Preferences>
 
     // Dispatchers
     @IoDispatcher fun ioDispatcher(): CoroutineDispatcher
+
     @DefaultDispatcher fun defaultDispatcher(): CoroutineDispatcher
 
     // Application Scope Coroutine

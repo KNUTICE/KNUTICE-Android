@@ -12,27 +12,26 @@ data class CustomerServiceStatus(
     val isSubmissionProcessing: Boolean = false,
     val isSubmissionCompleted: Boolean = false,
     val isSubmissionSuccess: Boolean = false
-): UiState
+) : UiState
 
 sealed interface CustomerServiceEvent : UiEvent {
-    data class UpdateUserReport(val value: String): CustomerServiceEvent
-    data class SubmitUserReport(val version: String): CustomerServiceEvent
-    data object ResetSubmissionStatus: CustomerServiceEvent
-    data object GoBack: CustomerServiceEvent
+    data class UpdateUserReport(val value: String) : CustomerServiceEvent
+    data class SubmitUserReport(val version: String) : CustomerServiceEvent
+    data object ResetSubmissionStatus : CustomerServiceEvent
+    data object GoBack : CustomerServiceEvent
 }
 
-sealed class CustomerServiceSideEffect: UiSideEffect {
-    data object NavToBack: CustomerServiceSideEffect()
+sealed class CustomerServiceSideEffect : UiSideEffect {
+    data object NavToBack : CustomerServiceSideEffect()
 }
 
-sealed interface CustomerServiceMutation: UiMutation {
-    data class UpdateReportContent(val content: String): CustomerServiceMutation
+sealed interface CustomerServiceMutation : UiMutation {
+    data class UpdateReportContent(val content: String) : CustomerServiceMutation
 
-    sealed interface Submit: CustomerServiceMutation {
-        data object Processing: Submit
-        data object Success: Submit
-        data object Failure: Submit
-        data object SubmissionStatusReset: Submit
+    sealed interface Submit : CustomerServiceMutation {
+        data object Processing : Submit
+        data object Success : Submit
+        data object Failure : Submit
+        data object SubmissionStatusReset : Submit
     }
-
 }

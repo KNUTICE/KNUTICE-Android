@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.doyoonkim.common.theme.onAnyBackground
-import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.title
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -81,14 +80,14 @@ fun DatePickerDialog(
 
         if (pickerVisible) {
             DatePickerDialog(
-                onDismissRequest =  {
-                     datePickerState.selectedDateMillis?.let {
-                         with(getInfo(it.toFormattedString())) {
-                             onDismissed(this[0], this[1], this[2])
-                         }
-                     }.also { pickerVisible = !pickerVisible }
+                onDismissRequest = {
+                    datePickerState.selectedDateMillis?.let {
+                        with(getInfo(it.toFormattedString())) {
+                            onDismissed(this[0], this[1], this[2])
+                        }
+                    }.also { pickerVisible = !pickerVisible }
                 },
-                confirmButton = {  }
+                confirmButton = { }
             ) {
                 DatePicker(
                     state = datePickerState,
@@ -97,7 +96,6 @@ fun DatePickerDialog(
             }
         }
     }
-
 }
 
 private fun Long.toFormattedString() =

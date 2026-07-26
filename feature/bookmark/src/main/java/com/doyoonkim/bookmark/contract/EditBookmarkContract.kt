@@ -29,39 +29,39 @@ data class EditBookmarkState(
 ) : UiState
 
 sealed class EditBookmarkEvent : UiEvent {
-    data object CheckAlarmPermissionState: EditBookmarkEvent()
-    data class GetBookmarkInformation(val info: BookmarkInfo): EditBookmarkEvent()
-    data class UpdateReminderOption(val status: Boolean): EditBookmarkEvent()
-    data class UpdateReminderDate(val year: Int, val month: Int, val day: Int): EditBookmarkEvent()
-    data class UpdateReminderTime(val hour: Int, val min: Int): EditBookmarkEvent()
-    data class UpdateBookmarkNotes(val notes: String): EditBookmarkEvent()
-    data object RequestNoticeDetail: EditBookmarkEvent()
-    data object SaveBookmark: EditBookmarkEvent()
-    data object RemoveBookmark: EditBookmarkEvent()
-    data object ValidateProcessResult: EditBookmarkEvent()
-    data object GoBack: EditBookmarkEvent()
+    data object CheckAlarmPermissionState : EditBookmarkEvent()
+    data class GetBookmarkInformation(val info: BookmarkInfo) : EditBookmarkEvent()
+    data class UpdateReminderOption(val status: Boolean) : EditBookmarkEvent()
+    data class UpdateReminderDate(val year: Int, val month: Int, val day: Int) : EditBookmarkEvent()
+    data class UpdateReminderTime(val hour: Int, val min: Int) : EditBookmarkEvent()
+    data class UpdateBookmarkNotes(val notes: String) : EditBookmarkEvent()
+    data object RequestNoticeDetail : EditBookmarkEvent()
+    data object SaveBookmark : EditBookmarkEvent()
+    data object RemoveBookmark : EditBookmarkEvent()
+    data object ValidateProcessResult : EditBookmarkEvent()
+    data object GoBack : EditBookmarkEvent()
 }
 
 sealed class EditBookmarkSideEffect : UiSideEffect {
-    data class NavToSelectedNotice(val dest: NoticeDetail): EditBookmarkSideEffect()
-    data object NavToBack: EditBookmarkSideEffect()
-    data object ExitOnCompletion: EditBookmarkSideEffect()
+    data class NavToSelectedNotice(val dest: NoticeDetail) : EditBookmarkSideEffect()
+    data object NavToBack : EditBookmarkSideEffect()
+    data object ExitOnCompletion : EditBookmarkSideEffect()
 }
 
 sealed interface EditBookmarkMutation : UiMutation {
-    data object AlarmPermissionDenied: EditBookmarkMutation
-    data object CreationNeeded: EditBookmarkMutation
-    data class BookmarkFetched(val bookmark: BookmarkVO): EditBookmarkMutation
-    data class NoticeFetched(val notice: NoticeVO): EditBookmarkMutation
+    data object AlarmPermissionDenied : EditBookmarkMutation
+    data object CreationNeeded : EditBookmarkMutation
+    data class BookmarkFetched(val bookmark: BookmarkVO) : EditBookmarkMutation
+    data class NoticeFetched(val notice: NoticeVO) : EditBookmarkMutation
 
     sealed interface Edit : EditBookmarkMutation {
-        data class NoticeId(val nttId: Int): Edit
-        data class Notes(val notes: String): Edit
-        data class Reminder(val requested: Boolean): Edit
+        data class NoticeId(val nttId: Int) : Edit
+        data class Notes(val notes: String) : Edit
+        data class Reminder(val requested: Boolean) : Edit
 
-        data object Ready: Edit
-        data object Processing: Edit
-        data object Success: Edit
-        data class Failure(val reason: String): Edit
+        data object Ready : Edit
+        data object Processing : Edit
+        data object Success : Edit
+        data class Failure(val reason: String) : Edit
     }
 }

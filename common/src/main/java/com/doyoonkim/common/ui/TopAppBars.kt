@@ -57,9 +57,9 @@ fun TopAppBarWithNavButton(
                 onClick = { onBackPressed() }
             ) {
                 Icon(
-                    imageVector = when(navButtonType) {
-                      NavButtonType.BACK -> Icons.AutoMirrored.Filled.KeyboardArrowLeft
-                      NavButtonType.CLOSE -> Icons.Filled.Clear
+                    imageVector = when (navButtonType) {
+                        NavButtonType.BACK -> Icons.AutoMirrored.Filled.KeyboardArrowLeft
+                        NavButtonType.CLOSE -> Icons.Filled.Clear
                     },
                     contentDescription = null
                 )
@@ -135,7 +135,7 @@ fun ConfigurableTopAppBar(
                 onClick = { onBackPressed() }
             ) {
                 Icon(
-                    imageVector = when(navButtonType) {
+                    imageVector = when (navButtonType) {
                         NavButtonType.BACK -> Icons.AutoMirrored.Filled.KeyboardArrowLeft
                         NavButtonType.CLOSE -> Icons.Filled.Clear
                     },

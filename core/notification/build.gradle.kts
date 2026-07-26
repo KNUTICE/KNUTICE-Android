@@ -6,7 +6,7 @@ plugins {
     id("knutice.android.firebase")
 }
 
-configure<LibraryExtension>() {
+configure<LibraryExtension> {
     namespace = "com.doyoonkim.notification"
 }
 

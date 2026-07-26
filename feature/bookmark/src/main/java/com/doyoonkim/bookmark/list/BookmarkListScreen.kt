@@ -42,8 +42,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.bookmark.contract.BookmarkListEvent
 import com.doyoonkim.bookmark.contract.BookmarkListSideEffect
 import com.doyoonkim.bookmark.viewmodel.BookmarkListViewModel
-import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.R
+import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.title
@@ -130,7 +130,6 @@ fun BookmarkListScreen(
             verticalArrangement = Arrangement.spacedBy(3.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             if (uiState.bookmarks.isEmpty()) {
                 // Read HomeScreen content safe bottom padding
                 val bottomPadding = LocalHomeSafeBottomPadding.current
@@ -198,7 +197,6 @@ fun BookmarkListScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     contentPadding = PaddingValues(bottom = bottomPadding)
                 ) {
-
                     items(uiState.bookmarks.size) { index ->
                         val item = uiState.bookmarks[index]
                         Log.d("BookmarkComposable", "Index: $index Element: $item")
@@ -208,10 +206,10 @@ fun BookmarkListScreen(
                             noticeSubtitle = with(item) {
                                 if (updatedAt > createdAt) {
                                     stringResource(R.string.text_updated_at) +
-                                            " ${updatedAt.toFormattedDate()}"
+                                        " ${updatedAt.toFormattedDate()}"
                                 } else {
                                     stringResource(R.string.text_created_at) +
-                                            " ${createdAt.toFormattedDate()}"
+                                        " ${createdAt.toFormattedDate()}"
                                 }
                             },
                             noticeCategory = item.noticeCategory,

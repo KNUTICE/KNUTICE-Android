@@ -22,7 +22,7 @@ class WidgetSyncObserver @Inject constructor(
     private val appWidgetPreference: AppWidgetPreferenceRepository,
     private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     private val applicationScope: CoroutineScope
-): DefaultLifecycleObserver {
+) : DefaultLifecycleObserver {
 
     companion object {
         private const val TAG = "WidgetSyncObserver"
@@ -82,5 +82,4 @@ class WidgetSyncObserver @Inject constructor(
             }
         }
     }
-
 }

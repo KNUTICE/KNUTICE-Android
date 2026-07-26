@@ -33,8 +33,10 @@ class WidgetConfigViewModel @Inject constructor(
     override fun setInitialState(): WidgetConfigState = WidgetConfigState()
 
     override fun handleEvent(event: WidgetConfigEvent) {
-        when(event) {
-            is WidgetConfigEvent.FetchStatus -> { fetchWidgetCategoryStatus() }
+        when (event) {
+            is WidgetConfigEvent.FetchStatus -> {
+                fetchWidgetCategoryStatus()
+            }
             is WidgetConfigEvent.SelectPolicy -> {
                 mutate(WidgetConfigMutation.Configuration.Selected(event.policy))
             }
@@ -50,13 +52,19 @@ class WidgetConfigViewModel @Inject constructor(
             // Default options (Main Notice Categories)
             val default: List<String> = NoticeCategory.entries.dropLast(1).map { it.name }
             val majorSelection = appSubscriptionPreference.getSubscribedMajor().first().run {
-                if (isEmpty()) null
-                else first()
+                if (isEmpty()) {
+                    null
+                } else {
+                    first()
+                }
             }
 
-            mutate(WidgetConfigMutation.Configuration.Available(
-                default, majorSelection
-            ))
+            mutate(
+                WidgetConfigMutation.Configuration.Available(
+                    default,
+                    majorSelection
+                )
+            )
             // Check Current Policy Status
             val currentPolicy = appWidgetPreference.getWidgetCategoryPolicy()
             mutate(WidgetConfigMutation.Configuration.Selected(currentPolicy))
@@ -87,7 +95,7 @@ class WidgetConfigViewModel @Inject constructor(
     private fun WidgetConfigMutation.Configuration.reducer(
         currentState: WidgetConfigState
     ): WidgetConfigState {
-        return when(this) {
+        return when (this) {
             is WidgetConfigMutation.Configuration.Available -> {
                 currentState.copy(
                     defaultCategories = categories,

@@ -19,7 +19,7 @@ class MajorSubscriptionUpdate(
     workerParam: WorkerParameters,
     private val submitNotificationPreferences: SubmitNotificationPreferences,
     private val appSubscriptionPreferenceRepository: AppSubscriptionPreferenceRepository
-): CoroutineWorker(appContext, workerParam) {
+) : CoroutineWorker(appContext, workerParam) {
     override suspend fun doWork(): Result {
         try {
             // Perform Major Topic Subscription Update work.
@@ -88,7 +88,7 @@ class MajorSubscriptionUpdate(
         @ApplicationContext private val appContext: Context,
         private val submitNotificationPreferences: SubmitNotificationPreferences,
         private val appSubscriptionPreferenceRepository: AppSubscriptionPreferenceRepository
-    ): IntermediateWorkerFactory {
+    ) : IntermediateWorkerFactory {
         override fun create(params: WorkerParameters): ListenableWorker {
             return MajorSubscriptionUpdate(
                 appContext,
@@ -97,6 +97,5 @@ class MajorSubscriptionUpdate(
                 appSubscriptionPreferenceRepository
             )
         }
-
     }
 }

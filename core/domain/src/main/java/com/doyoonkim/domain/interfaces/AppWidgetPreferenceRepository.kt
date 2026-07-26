@@ -11,5 +11,4 @@ interface AppWidgetPreferenceRepository {
     fun getWidgetCategoryPolicy(): WidgetCategoryPolicy
 
     fun updateWidgetCategoryPolicy(policy: WidgetCategoryPolicy)
-
 }

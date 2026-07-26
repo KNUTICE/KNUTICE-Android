@@ -24,5 +24,4 @@ abstract class WidgetModule {
     abstract fun bindsKnuticeCarrelWidgetSyncWorker(
         factory: KnuticeCarrelWidgetSync.Factory
     ): IntermediateWorkerFactory
-
 }

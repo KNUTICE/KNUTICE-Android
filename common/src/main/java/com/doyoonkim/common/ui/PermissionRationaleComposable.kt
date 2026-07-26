@@ -56,14 +56,14 @@ fun PermissionRationaleComposable(
             )
 
             Text(
-                //modifier = Modifier.weight(1f),
+                // modifier = Modifier.weight(1f),
                 text = permissionName,
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                //modifier = Modifier.weight(1f),
+                // modifier = Modifier.weight(1f),
                 text = description,
                 fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
@@ -74,7 +74,7 @@ fun PermissionRationaleComposable(
                 modifier = Modifier.fillMaxWidth(),
                 colors = ButtonDefaults.buttonColors().copy(
                     containerColor = MaterialTheme.colorScheme.variantPurple,
-                    contentColor = Color.White,
+                    contentColor = Color.White
                 ),
                 onClick = onPermissionDecided
             ) {
@@ -96,7 +96,7 @@ fun PermissionRationaleComposable_Preview() {
             modifier = Modifier.align(Alignment.Center),
             permissionName = "Alarm and Reminder",
             rationaleTitle = "Please allow following permission",
-            description = "Alarm and Reminder permission is required to send you a reminder regards bookmark you saved.",
+            description = "Alarm and Reminder permission is required to send you a reminder regards bookmark you saved."
         ) { }
     }
 }

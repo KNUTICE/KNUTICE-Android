@@ -17,14 +17,13 @@ class AppDatabasePreferenceRepositoryImpl @Inject constructor(
         private const val DB_SYNC_2_3_STATUS = "DB_SYNC_2_3_STATUS"
     }
 
-
     override fun isDatabaseSyncCompleted(): Boolean {
         // If sync 2_3 is required, return
         // appPref.getBoolean(DB_SYNC_1_2_STATUS, false) && appPref.getBoolean(DB_SYNC_2_3_STATUS, false)
 
         return with(appPref) {
-            getBoolean(DB_SYNC_1_2_STATUS, false)
-                    && getBoolean(DB_SYNC_2_3_STATUS, false)
+            getBoolean(DB_SYNC_1_2_STATUS, false) &&
+                getBoolean(DB_SYNC_2_3_STATUS, false)
         }
     }
 
@@ -38,5 +37,4 @@ class AppDatabasePreferenceRepositoryImpl @Inject constructor(
 
     override fun setDatabaseSyncPartialFailedStatus(status: Boolean) =
         appPref.edit { putBoolean(DB_SYNC_PARTIAL_FAIL, status) }
-
 }

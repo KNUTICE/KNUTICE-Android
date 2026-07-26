@@ -102,7 +102,7 @@ class WidgetStateUpdater @Inject constructor(
                 async(Dispatchers.IO) {
                     updateAppWidgetState(
                         context = context,
-                        glanceId = glanceId,
+                        glanceId = glanceId
                     ) { preferences ->
                         // Set Loading State and Last Updated Mark
                         val syncTimeStamp = System.currentTimeMillis()

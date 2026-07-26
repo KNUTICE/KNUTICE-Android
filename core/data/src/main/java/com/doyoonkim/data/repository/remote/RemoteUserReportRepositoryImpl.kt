@@ -27,8 +27,11 @@ class RemoteUserReportRepositoryImpl @Inject constructor(
             )
         ).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) emit(true)
-                else it.result.printLog().also { emit(false) }
+                if (it.result?.resultCode == 200) {
+                    emit(true)
+                } else {
+                    it.result.printLog().also { emit(false) }
+                }
             },
             onFailure = {
                 it.printLog()
@@ -41,7 +44,9 @@ class RemoteUserReportRepositoryImpl @Inject constructor(
         Log.d(TAG, "Failed to receive data\nREASON: ${this.stackTraceToString()}")
 
     private fun Metadata?.printLog() =
-        Log.d(TAG, "Failed to receive data (${this?.resultCode})" +
-                "\nREASON:${this?.resultMessage}")
-
+        Log.d(
+            TAG,
+            "Failed to receive data (${this?.resultCode})" +
+                "\nREASON:${this?.resultMessage}"
+        )
 }

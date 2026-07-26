@@ -33,8 +33,8 @@ import com.doyoonkim.common.R
 fun PopUpDialog(
     modifier: Modifier = Modifier,
     isVisible: Boolean = false,
-    onCloseForDayClicked: () -> Unit = {  },
-    onCloseClicked: () -> Unit = {  },
+    onCloseForDayClicked: () -> Unit = { },
+    onCloseClicked: () -> Unit = { },
     dialogContent: @Composable () -> Unit
 ) {
     AnimatedVisibility(
@@ -99,7 +99,7 @@ fun PopUpDialog_Preview() {
             )
             Button(
                 modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter),
-                onClick = {  }
+                onClick = { }
             ) {
                 Text("Button")
             }

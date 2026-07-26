@@ -22,7 +22,7 @@ abstract class NoticeRemoteModule {
     @Binds
     abstract fun bindsNoticeRemoteRepo(
         impl: RemoteNoticeRepositoryImpl
-    ) : NoticeRemoteRepository
+    ): NoticeRemoteRepository
 }
 
 @Module
@@ -30,7 +30,7 @@ abstract class TipRemoteModule {
     @Binds
     abstract fun bindsTipRemoteRepo(
         impl: RemoteTipRepositoryImpl
-    ) : TipRemoteRepository
+    ): TipRemoteRepository
 }
 
 @Module
@@ -38,7 +38,7 @@ abstract class TokenRemoteModule {
     @Binds
     abstract fun bindsTokenRemoteRepo(
         impl: RemoteTokenRepositoryImpl
-    ) : TokenRemoteRepository
+    ): TokenRemoteRepository
 }
 
 @Module
@@ -46,12 +46,12 @@ abstract class PreferencesRemoteModule {
     @Binds
     abstract fun bindsTopicSubscriptionRemoteRepo(
         impl: RemoteSubscriptionRepositoryImpl
-    ) : TopicSubscriptionRemoteRepository
+    ): TopicSubscriptionRemoteRepository
 
     @Binds
     abstract fun bindsUserReportRemoteRepo(
         impl: RemoteUserReportRepositoryImpl
-    ) : UserReportRemoteRepository
+    ): UserReportRemoteRepository
 }
 
 @Module
@@ -59,7 +59,7 @@ abstract class ImageRemoteModule {
     @Binds
     abstract fun bindsImageRemoteRepo(
         impl: ImageRepositoryImpl
-    ) : ImageRemoteRepository
+    ): ImageRemoteRepository
 }
 
 @Module

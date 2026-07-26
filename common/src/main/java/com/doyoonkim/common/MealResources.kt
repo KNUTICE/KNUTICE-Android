@@ -20,6 +20,5 @@ class MealResources {
                 MealCategory.STUDENT_CAFETERIA -> stringResource(R.string.description_student_cafeteria_channel)
                 MealCategory.STAFF_CAFETERIA -> stringResource(R.string.description_staff_cafeteria_channel)
             }
-
     }
 }

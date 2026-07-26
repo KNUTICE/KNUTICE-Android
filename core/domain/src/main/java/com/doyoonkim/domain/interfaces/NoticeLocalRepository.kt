@@ -8,5 +8,4 @@ interface NoticeLocalRepository {
     fun queryNoticeById(nttId: Int): Flow<NoticeVO?>
 
     fun updateNoticeEntity(notice: NoticeVO): Flow<Boolean>
-
 }

@@ -63,8 +63,9 @@ fun NavGraphBuilder.preferenceServiceGraph(
             onBackPressed = { syncPerformed ->
                 if (syncPerformed) {
                     navToBottomDest(GraphRoute.BOOKMARK)
+                } else {
+                    navController.popBackStack()
                 }
-                else navController.popBackStack()
             }
         )
     }

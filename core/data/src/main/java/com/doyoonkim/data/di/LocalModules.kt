@@ -5,7 +5,6 @@ import com.doyoonkim.data.repository.local.AppDatabasePreferenceRepositoryImpl
 import com.doyoonkim.data.repository.local.AppSubscriptionPreferenceRepositoryImpl
 import com.doyoonkim.data.repository.local.AppTokenPreferenceRepositoryImpl
 import com.doyoonkim.data.repository.local.AppWidgetPreferenceRepositoryImpl
-import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.data.repository.local.LocalRepositoryImpl
 import com.doyoonkim.data.repository.local.LocalWidgetCacheRepositoryImpl
 import com.doyoonkim.data.room.LocalDatabase
@@ -16,6 +15,7 @@ import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.BookmarkLocalRepository
 import com.doyoonkim.domain.interfaces.LocalWidgetCacheRepository
 import com.doyoonkim.domain.interfaces.NoticeLocalRepository
+import com.doyoonkim.model.di.ApplicationContext
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -26,12 +26,12 @@ abstract class LocalModule {
     @Binds
     abstract fun bindsBookmarkLocalRepository(
         impl: LocalRepositoryImpl
-    ) : BookmarkLocalRepository
+    ): BookmarkLocalRepository
 
     @Binds
     abstract fun bindsNoticeLocalRepository(
         impl: LocalRepositoryImpl
-    ) : NoticeLocalRepository
+    ): NoticeLocalRepository
 
     @Binds
     @Singleton
@@ -53,7 +53,6 @@ object RoomDatabaseModule {
     @Provides
     @Singleton
     fun provideMainDatabaseDao(db: LocalDatabase) = db.getDao()
-
 }
 
 @Module

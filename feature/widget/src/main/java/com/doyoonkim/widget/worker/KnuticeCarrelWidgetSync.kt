@@ -22,7 +22,7 @@ class KnuticeCarrelWidgetSync(
     workerParam: WorkerParameters,
     private val stateUpdater: WidgetStateUpdater,
     private val repository: CarrelStatusRemoteRepository
-): CoroutineWorker(appContext, workerParam) {
+) : CoroutineWorker(appContext, workerParam) {
     companion object {
         private const val TAG = "KnuticeCarrelWidgetSync"
     }
@@ -30,18 +30,21 @@ class KnuticeCarrelWidgetSync(
     override suspend fun doWork(): Result {
         // Fetch Current status
         Log.d(TAG, "Carrel Widget Worker Start")
-        setWidgetLoading()      // Set Widget in Loading State.
+        setWidgetLoading() // Set Widget in Loading State.
 
         return repository.getCarrelRoomStatus()
             .fold(
                 onSuccess = { status ->
-                    Log.d(TAG, "${status.toString()}")
+                    Log.d(TAG, "$status")
                     stateUpdater.updateCarrelWidgetState(CarrelWidgetState(status))
                     Result.success()
                 },
-                onFailure = {reason ->
-                    if (runAttemptCount < 3) Result.retry()
-                    else Result.failure().also { Log.d(TAG, "Error: ${reason.stackTraceToString()}") }
+                onFailure = { reason ->
+                    if (runAttemptCount < 3) {
+                        Result.retry()
+                    } else {
+                        Result.failure().also { Log.d(TAG, "Error: ${reason.stackTraceToString()}") }
+                    }
                 }
             )
     }
@@ -67,12 +70,14 @@ class KnuticeCarrelWidgetSync(
         @ApplicationContext private val context: Context,
         private val stateUpdater: WidgetStateUpdater,
         private val repository: CarrelStatusRemoteRepository
-    ): IntermediateWorkerFactory {
+    ) : IntermediateWorkerFactory {
         override fun create(params: WorkerParameters): ListenableWorker {
             return KnuticeCarrelWidgetSync(
-                context, params, stateUpdater, repository
+                context,
+                params,
+                stateUpdater,
+                repository
             )
         }
     }
-
 }

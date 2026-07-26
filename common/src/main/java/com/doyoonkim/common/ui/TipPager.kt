@@ -44,7 +44,7 @@ fun TipPager(
     // Auto-Advancing
     val isAutoAdvancing = !isPagePressed && tips.size > 1
     if (isAutoAdvancing) {
-        LaunchedEffect(pagerState.settledPage, lifecycle ) {
+        LaunchedEffect(pagerState.settledPage, lifecycle) {
             // Prevent potential resource draining under Auto-Advancing implementation
             // when app is in background.
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {

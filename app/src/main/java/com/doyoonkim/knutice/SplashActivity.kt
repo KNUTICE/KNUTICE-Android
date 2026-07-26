@@ -25,7 +25,7 @@ class SplashActivity : ComponentActivity() {
 
         // Check whether SplashActivity is a base of the Task Stack. If not, skip SplashActivity
         with(intent) {
-            Log.d(TAG, "Current State: isTaskRoot: ${isTaskRoot}")
+            Log.d(TAG, "Current State: isTaskRoot: $isTaskRoot")
             Log.d(TAG, "Current State: has category: ${hasCategory(Intent.CATEGORY_LAUNCHER)}")
             Log.d(TAG, "Current State: action?: ${action?.equals(Intent.ACTION_VIEW)}")
 
@@ -40,7 +40,6 @@ class SplashActivity : ComponentActivity() {
                 return
             }
         }
-
 
         setContent {
             KNUTICETheme {
@@ -66,7 +65,6 @@ class SplashActivity : ComponentActivity() {
                         // Initial Setup failed. Close application.
                         this.finish()
                     }
-
                 }
             }
         }
@@ -101,5 +99,4 @@ class SplashActivity : ComponentActivity() {
         // Close SplashActivity for unexpected visit via Back-button action.
         this.finish()
     }
-
 }

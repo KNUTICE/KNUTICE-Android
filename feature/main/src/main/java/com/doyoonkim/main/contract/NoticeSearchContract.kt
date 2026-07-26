@@ -21,30 +21,30 @@ data class NoticeSearchState(
 enum class FetchingSource { REMOTE, LOCAL }
 
 sealed interface NoticeSearchEvent : UiEvent {
-    data class InitiateSearch(val keyword: String): NoticeSearchEvent
-    data class UpdateSearchKeyword(val value: String): NoticeSearchEvent
-    data object RequestMoreNotices: NoticeSearchEvent
-    data class RequestNoticeDetail(val id: Int, val url: String): NoticeSearchEvent
-    data object GoBack: NoticeSearchEvent
+    data class InitiateSearch(val keyword: String) : NoticeSearchEvent
+    data class UpdateSearchKeyword(val value: String) : NoticeSearchEvent
+    data object RequestMoreNotices : NoticeSearchEvent
+    data class RequestNoticeDetail(val id: Int, val url: String) : NoticeSearchEvent
+    data object GoBack : NoticeSearchEvent
 }
 
-sealed class NoticeSearchSideEffect: UiSideEffect {
-    data class NavToNoticeDetail(val id: Int, val url: String): NoticeSearchSideEffect()
-    data object NavToBack: NoticeSearchSideEffect()
+sealed class NoticeSearchSideEffect : UiSideEffect {
+    data class NavToNoticeDetail(val id: Int, val url: String) : NoticeSearchSideEffect()
+    data object NavToBack : NoticeSearchSideEffect()
 }
 
-sealed interface NoticeSearchMutation: UiMutation {
-    data class Keyword(val keyword: String): NoticeSearchMutation
-    data class Source(val source: FetchingSource): NoticeSearchMutation
-    data class Emptiness(val status: Boolean): NoticeSearchMutation
-    data object Initialize: NoticeSearchMutation
-    data object Loading: NoticeSearchMutation
-    sealed interface Remote: NoticeSearchMutation {
-        data class Success(val result: List<NoticeVO>): Remote
-        data class Failure(val reason: String): Remote
+sealed interface NoticeSearchMutation : UiMutation {
+    data class Keyword(val keyword: String) : NoticeSearchMutation
+    data class Source(val source: FetchingSource) : NoticeSearchMutation
+    data class Emptiness(val status: Boolean) : NoticeSearchMutation
+    data object Initialize : NoticeSearchMutation
+    data object Loading : NoticeSearchMutation
+    sealed interface Remote : NoticeSearchMutation {
+        data class Success(val result: List<NoticeVO>) : Remote
+        data class Failure(val reason: String) : Remote
     }
-    sealed interface Local: NoticeSearchMutation {
-        data class Success(val result: List<BookmarkAsListElementVO>): Local
-        data class Failure(val reason: String): Local
+    sealed interface Local : NoticeSearchMutation {
+        data class Success(val result: List<BookmarkAsListElementVO>) : Local
+        data class Failure(val reason: String) : Local
     }
 }

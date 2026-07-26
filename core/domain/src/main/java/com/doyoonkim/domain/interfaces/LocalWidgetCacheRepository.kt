@@ -5,7 +5,6 @@ import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.WidgetCategoryPolicy
 import kotlinx.coroutines.flow.StateFlow
 
-
 interface LocalWidgetCacheRepository {
 
     val noticeCacheState: StateFlow<List<NoticeVO>>
