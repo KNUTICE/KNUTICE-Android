@@ -11,6 +11,11 @@ import android.view.ViewGroup
 import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -20,12 +25,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.doyoonkim.common.R
+import com.doyoonkim.common.ui.NavButtonType
 import com.doyoonkim.common.ui.PlaceholderScreen
+import com.doyoonkim.common.ui.TopAppBarWithNavButton
 
 // App-Level Issue
 // Context Helper. Mitigate potential issue caused by Injected Context via Dagger.
@@ -35,11 +43,17 @@ private fun Context.findActivity(): Activity? = when (this) {
     else -> null
 }
 
+sealed interface LifecycleAwareWebViewFallbackType {
+    data object Simple : LifecycleAwareWebViewFallbackType
+    data class Scaffold(val title: String, val navButtonType: NavButtonType) : LifecycleAwareWebViewFallbackType
+}
+
 @Composable
 fun LifecycleAwareWebView(
     modifier: Modifier = Modifier,
     dynamicThemeEnabled: Boolean = true,
     url: String,
+    fallbackType: LifecycleAwareWebViewFallbackType = LifecycleAwareWebViewFallbackType.Simple,
     onWebViewCreate: (WebView) -> Unit = { },
     onWebViewDestroy: (WebView) -> Unit = { },
     onLeaveWebView: () -> Unit
@@ -109,11 +123,37 @@ fun LifecycleAwareWebView(
 
     // If WebViewEngine is not available
     if (isWebViewEngineUnavailable || activityContext == null) {
-        PlaceholderScreen(
-            modifier = modifier,
-            imageResource = R.drawable.question_mark,
-            contentText = stringResource(R.string.text_content_unavailable)
-        )
+        // KAN-131 Add TopNavBar to Fallback Placeholder screen on LifecycleAwareWebView.
+        when (fallbackType) {
+            is LifecycleAwareWebViewFallbackType.Scaffold -> {
+                Scaffold(
+                    topBar = {
+                        TopAppBarWithNavButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            titleText = fallbackType.title,
+                            navButtonType = fallbackType.navButtonType,
+                            onBackPressed = onLeaveWebView
+                        )
+                    }
+                ) { contentPadding ->
+                    PlaceholderScreen(
+                        modifier = modifier.padding(
+                            start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
+                            end = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
+                        ),
+                        imageResource = R.drawable.question_mark,
+                        contentText = stringResource(R.string.text_content_unavailable)
+                    )
+                }
+            }
+            is LifecycleAwareWebViewFallbackType.Simple -> {
+                PlaceholderScreen(
+                    modifier = modifier,
+                    imageResource = R.drawable.question_mark,
+                    contentText = stringResource(R.string.text_content_unavailable)
+                )
+            }
+        }
     } else {
         AndroidView(
             modifier = modifier,
