@@ -1,7 +1,6 @@
 package com.doyoonkim.bookmark.viewmodel
 
 import android.util.Log
-import com.doyoonkim.domain.SortOption
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.bookmark.contract.BookmarkListEvent
 import com.doyoonkim.bookmark.contract.BookmarkListMutation
@@ -9,6 +8,7 @@ import com.doyoonkim.bookmark.contract.BookmarkListSideEffect
 import com.doyoonkim.bookmark.contract.BookmarkListState
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.common.navigation.BookmarkInfo
+import com.doyoonkim.domain.SortOption
 import com.doyoonkim.domain.interfaces.AppDatabasePreferenceRepository
 import com.doyoonkim.domain.usecases.FetchAllBookmarks
 import kotlinx.coroutines.delay
@@ -58,7 +58,6 @@ class BookmarkListViewModel @Inject constructor(
         }
     }
 
-
     private fun requestBookmarks(
         size: Int = 20,
         pageNumber: Int = 0
@@ -71,15 +70,15 @@ class BookmarkListViewModel @Inject constructor(
                 pageNumber = uiState.value.pageNumber,
                 option = uiState.value.sortOption
             ).collectLatest { result ->
-                    result.fold(
-                        onSuccess = { vo ->
-                            mutate(BookmarkListMutation.Success(vo))
-                        },
-                        onFailure = { reason ->
-                            mutate(BookmarkListMutation.Failure(reason.stackTraceToString()))
-                        }
-                    )
-                }
+                result.fold(
+                    onSuccess = { vo ->
+                        mutate(BookmarkListMutation.Success(vo))
+                    },
+                    onFailure = { reason ->
+                        mutate(BookmarkListMutation.Failure(reason.stackTraceToString()))
+                    }
+                )
+            }
         }
     }
 
@@ -94,8 +93,12 @@ class BookmarkListViewModel @Inject constructor(
         mutation: BookmarkListMutation
     ): BookmarkListState {
         return when (mutation) {
-            is BookmarkListMutation.SyncNeeded -> { currentState.copy(isSyncRequired = true) }
-            is BookmarkListMutation.Loading -> { currentState.copy(isLoading = true) }
+            is BookmarkListMutation.SyncNeeded -> {
+                currentState.copy(isSyncRequired = true)
+            }
+            is BookmarkListMutation.Loading -> {
+                currentState.copy(isLoading = true)
+            }
             is BookmarkListMutation.Refreshing -> {
                 currentState.copy(
                     isRefreshing = true,

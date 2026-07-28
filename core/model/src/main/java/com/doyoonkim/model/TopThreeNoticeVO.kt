@@ -8,10 +8,10 @@ data class TopThreeNoticeVO(
     val employment: List<NoticeVO> = listOf()
 ) {
     fun isEmpty(): Boolean {
-        return general.isEmpty()
-                && scholarship.isEmpty()
-                && event.isEmpty()
-                && academic.isEmpty()
-                && employment.isEmpty()
+        return general.isEmpty() &&
+            scholarship.isEmpty() &&
+            event.isEmpty() &&
+            academic.isEmpty() &&
+            employment.isEmpty()
     }
 }

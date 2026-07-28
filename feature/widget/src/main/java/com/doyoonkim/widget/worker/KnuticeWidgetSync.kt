@@ -5,16 +5,17 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.ListenableWorker
 import androidx.work.WorkerParameters
-import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.common.worker.IntermediateWorkerFactory
 import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
 import com.doyoonkim.domain.interfaces.AppWidgetPreferenceRepository
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.WidgetCategoryPolicy
+import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.widget.model.WidgetNoticeVO
 import com.doyoonkim.widget.model.WidgetState
 import com.doyoonkim.widget.util.WidgetStateUpdater
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class KnuticeWidgetSync(
@@ -30,19 +31,20 @@ class KnuticeWidgetSync(
 
     override suspend fun doWork(): Result {
         Log.d(TAG, "Worker Start")
-         // Overall Logic: Fetch -> Debounce -> Validate -> Update -> Complete
-         // Get Current Widget Category Policy
-         val widgetCategoryPolicy = appWidgetPreference.getWidgetCategoryPolicy()
+        // Overall Logic: Fetch -> Debounce -> Validate -> Update -> Complete
+        // Get Current Widget Category Policy
+        val widgetCategoryPolicy = appWidgetPreference.getWidgetCategoryPolicy()
 
         // If widgetCategory == null -> Set Widget State to Onboarding
-        if (widgetCategoryPolicy is WidgetCategoryPolicy.Unconfigured)
+        if (widgetCategoryPolicy is WidgetCategoryPolicy.Unconfigured) {
             return Result.failure().also { Log.d(TAG, "No selected widget category found.") }
+        }
 
         return try {
             // Get Top Three Notices, based on the given policy
             val notices = fetchTopThreeNotice(widgetCategoryPolicy)
 
-            Log.d(TAG, "Received: ${notices.toString()}")
+            Log.d(TAG, "Received: $notices")
             // Unable to fetch notices (receive null or empty)
             if (notices.isNullOrEmpty()) {
                 // Do not perform update/Sync --> Retry with Backoff policy
@@ -78,11 +80,18 @@ class KnuticeWidgetSync(
             }
             is WidgetCategoryPolicy.Major -> {
                 // Get current subscription status.
-                val subscribedMajor = appSubscriptionPreference.getSubscribedMajor() ?: return null
-                category = subscribedMajor
-                return remoteRepository.queryTopThreeNotices(subscribedMajor)
+                val subscribedMajor = appSubscriptionPreference.getSubscribedMajor().first()
+
+                return if (subscribedMajor.isNotEmpty()) {
+                    category = subscribedMajor.first()
+                    remoteRepository.queryTopThreeNotices(category)
+                } else {
+                    null
+                }
             }
-            else -> { return null }
+            else -> {
+                return null
+            }
         }
     }
 

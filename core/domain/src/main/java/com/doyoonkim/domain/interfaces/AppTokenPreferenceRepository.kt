@@ -9,5 +9,4 @@ interface AppTokenPreferenceRepository {
     fun updateDeviceToken(token: String)
 
     fun getCachedToken(): String?
-
 }

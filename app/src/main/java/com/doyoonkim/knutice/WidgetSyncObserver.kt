@@ -12,6 +12,7 @@ import com.doyoonkim.widget.model.WidgetNoticeVO
 import com.doyoonkim.widget.model.WidgetState
 import com.doyoonkim.widget.util.WidgetStateUpdater
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,7 +22,7 @@ class WidgetSyncObserver @Inject constructor(
     private val appWidgetPreference: AppWidgetPreferenceRepository,
     private val appSubscriptionPreference: AppSubscriptionPreferenceRepository,
     private val applicationScope: CoroutineScope
-): DefaultLifecycleObserver {
+) : DefaultLifecycleObserver {
 
     companion object {
         private const val TAG = "WidgetSyncObserver"
@@ -30,7 +31,7 @@ class WidgetSyncObserver @Inject constructor(
     override fun onStop(owner: LifecycleOwner) {
         // Update Widget on App enters its onStop Status.
         updateNoticeWidgetLocalCache()
-//        updateCarrelWidgetLocalCache()        // Temporarily Disable in 1.7.0 Release
+        updateCarrelWidgetLocalCache()
     }
 
     private fun updateNoticeWidgetLocalCache() {
@@ -58,10 +59,10 @@ class WidgetSyncObserver @Inject constructor(
                             )
                         }
                         is WidgetCategoryPolicy.Major -> {
-                            val majorCategory = appSubscriptionPreference.getSubscribedMajor()
-                            majorCategory?.let {
+                            val majorCategory = appSubscriptionPreference.getSubscribedMajor().first()
+                            if (majorCategory.isNotEmpty()) {
                                 updateNoticeWidgetState(
-                                    WidgetState(it, noticeCache)
+                                    WidgetState(majorCategory.first(), noticeCache)
                                 )
                             }
                         }
@@ -81,5 +82,4 @@ class WidgetSyncObserver @Inject constructor(
             }
         }
     }
-
 }

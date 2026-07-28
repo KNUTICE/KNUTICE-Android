@@ -140,7 +140,7 @@ private fun HorizontalPagerIndicator(
         val colorDefault = MaterialTheme.colorScheme.containerGray
 
         // Circle Based Indicator
-        repeat(total) {idx ->
+        repeat(total) { idx ->
             Box(
                 modifier = Modifier.size(indicatorSize)
                     .clickable {

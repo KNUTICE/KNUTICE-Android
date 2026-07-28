@@ -25,5 +25,4 @@ class FetchNoticeByIdFromLocalImpl @Inject constructor(
         }.catch {
             /* Internal Error. Consume values, and never emit values. */
         }.flowOn(ioDispatcher)
-
 }

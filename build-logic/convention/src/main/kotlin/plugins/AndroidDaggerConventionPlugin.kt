@@ -41,5 +41,4 @@ class AndroidDaggerConventionPlugin : Plugin<Project> {
             }
         }
     }
-
 }

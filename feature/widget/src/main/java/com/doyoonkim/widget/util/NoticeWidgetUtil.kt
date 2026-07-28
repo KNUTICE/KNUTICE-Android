@@ -6,9 +6,9 @@ import com.doyoonkim.widget.model.WidgetState
 
 // Notice Widget Phase based on Status
 sealed interface NoticeWidgetPhase {
-    data object NotConfigured: NoticeWidgetPhase
-    data object FetchFailure: NoticeWidgetPhase
-    data object FetchCompleted: NoticeWidgetPhase
+    data object NotConfigured : NoticeWidgetPhase
+    data object FetchFailure : NoticeWidgetPhase
+    data object FetchCompleted : NoticeWidgetPhase
 }
 
 // NoticeWidgetUtil

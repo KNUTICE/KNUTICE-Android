@@ -1,7 +1,7 @@
 package com.doyoonkim.model
 
 data class NoticeVO(
-    val entityId: Int? = null,      // Later migrated and removed.
+    val entityId: Int? = null, // Later migrated and removed.
     val nttId: Int = -1,
     val title: String = "",
     val url: String = "",
@@ -9,5 +9,6 @@ data class NoticeVO(
     val departName: String = "",
     val timestamp: String = "",
     val noticeName: String = "",
-    val isSummaryAvailable: Boolean = false
+    val isSummaryAvailable: Boolean = false,
+    val isRecent: Boolean = false
 )

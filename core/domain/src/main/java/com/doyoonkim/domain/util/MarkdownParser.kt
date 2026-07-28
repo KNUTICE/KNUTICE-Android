@@ -29,8 +29,11 @@ class MarkdownParser {
                     trimed.startsWith("*  ") -> {
                         trimed.split("\n").forEach { string ->
                             val level = string.takeWhile { it == ' ' }.length / 4
-                            elements.add(MarkdownString.BulletPoint(
-                                text = string.trimStart().removePrefix("*").trimStart(), level = level)
+                            elements.add(
+                                MarkdownString.BulletPoint(
+                                    text = string.trimStart().removePrefix("*").trimStart(),
+                                    level = level
+                                )
                             )
                         }
                     }

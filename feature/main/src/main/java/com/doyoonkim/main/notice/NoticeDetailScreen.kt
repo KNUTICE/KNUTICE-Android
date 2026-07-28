@@ -29,11 +29,11 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -58,8 +58,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
-import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.secondaryBackground
@@ -72,6 +70,8 @@ import com.doyoonkim.common.ui.markdown.MarkdownView
 import com.doyoonkim.main.campus.components.LifecycleAwareWebView
 import com.doyoonkim.main.contract.NoticeDetailEvent
 import com.doyoonkim.main.contract.NoticeDetailSideEffect
+import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
+import com.doyoonkim.model.NoticeVO
 import java.io.File
 import java.net.URLDecoder
 import java.util.Locale
@@ -142,7 +142,7 @@ fun NoticeDetailScreen(
                                                 
                               aside_remote.remove();
                               p_board_butt[0].remove();
-                            """.trimIndent(),
+                    """.trimIndent()
                 ) { result ->
                     Log.d("Android Web View Client", "RESULT: $result")
                     view.visibility = View.VISIBLE
@@ -153,7 +153,7 @@ fun NoticeDetailScreen(
     }
 
     val chromeClient = remember {
-        object: WebChromeClient() {
+        object : WebChromeClient() {
             override fun onProgressChanged(view: WebView?, newProgress: Int) {
                 // Update progress status
                 viewModel.sendUiEvent(
@@ -282,7 +282,7 @@ fun NoticeDetailScreen(
                                 // Enabled due to WebPage configuration on KNUT side.
                                 settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                             }
-                        },
+                        }
                     ) { viewModel.sendUiEvent(NoticeDetailEvent.GoBack) }
 
                     Box(
@@ -378,7 +378,6 @@ fun NoticeDetailScreen(
                             }
                         }
                     }
-
                 }
             }
         }
@@ -388,5 +387,4 @@ fun NoticeDetailScreen(
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun NoticeDetailScreen_Preview() {
-
 }

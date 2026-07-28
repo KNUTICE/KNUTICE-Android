@@ -11,7 +11,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 class BottomNavigationState(
     val navController: NavController,
     initialDestination: String,
-    onExit: () -> Unit = {  }
+    onExit: () -> Unit = { }
 ) {
 
     // Navigation via BottomNabBar Handling
@@ -68,7 +68,6 @@ class BottomNavigationState(
             restoreState = true
         }
     }
-
 }
 
 @Composable

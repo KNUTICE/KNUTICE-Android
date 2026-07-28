@@ -24,5 +24,4 @@ class KnuticeWidgetReceiver : GlanceAppWidgetReceiver() {
         val provider = (context.applicationContext as WidgetDependencyProvider).provide()
         provider.noticeWidgetTaskScheduler().unschedulePeriodicTask()
     }
-
 }

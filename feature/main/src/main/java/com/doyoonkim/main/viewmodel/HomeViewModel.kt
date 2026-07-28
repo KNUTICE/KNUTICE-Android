@@ -23,6 +23,7 @@ import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.WidgetCategoryPolicy
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,17 +41,18 @@ class HomeViewModel @Inject constructor(
     // Local Cache Management
     init {
         viewModelScope.launch {
-           uiState.map { it.mainContentState to it.majorNoticesState }
-               .distinctUntilChanged()
-               .collectLatest { (core, major) ->
-                   val coreNoticeReady = with(core) { !isLoading && !isError }
-                   val majorNoticeReady = with(major) {
-                       subscribed == MajorCategory.UNSPECIFIED || (!isLoading && !isError)
-                   }
+            uiState.map { it.mainContentState to it.majorNoticesState }
+                .distinctUntilChanged()
+                .collectLatest { (core, major) ->
+                    val coreNoticeReady = with(core) { !isLoading && !isError }
+                    val majorNoticeReady = with(major) {
+                        subscribed == MajorCategory.UNSPECIFIED || (!isLoading && !isError)
+                    }
 
-                   if (coreNoticeReady && majorNoticeReady)
-                       updateNoticeLocalCache(uiState.value)
-               }
+                    if (coreNoticeReady && majorNoticeReady) {
+                        updateNoticeLocalCache(uiState.value)
+                    }
+                }
         }
     }
 
@@ -63,14 +65,14 @@ class HomeViewModel @Inject constructor(
                 getTips()
             }
             is HomeEvent.RequestNoticeDetail -> {
-                with (event) {
+                with(event) {
                     sendSideEffect(
                         HomeSideEffect.NavToNoticeDetail(id, url)
                     )
                 }
             }
             is HomeEvent.RequestMore -> {
-                with (event.category) {
+                with(event.category) {
                     sendSideEffect(
                         HomeSideEffect.NavToMoreNoticeInCategory(
                             when (this) {
@@ -102,12 +104,15 @@ class HomeViewModel @Inject constructor(
                 sendSideEffect(HomeSideEffect.NavToDiningMenu)
             }
             is HomeEvent.RequestTipDetail -> {
-                with (event) {
-                    analytics.logEvent("BROWSE_TIP", Bundle().apply {
-                        putString("ITEM_CATEGORY", category.name)
-                        putString("SOURCE", "HomeScreen")
-                        putString("DESTINATION", url)
-                    })
+                with(event) {
+                    analytics.logEvent(
+                        "BROWSE_TIP",
+                        Bundle().apply {
+                            putString("ITEM_CATEGORY", category.name)
+                            putString("SOURCE", "HomeScreen")
+                            putString("DESTINATION", url)
+                        }
+                    )
 
                     sendSideEffect(HomeSideEffect.NavToTipDetail(category, url))
                 }
@@ -152,24 +157,24 @@ class HomeViewModel @Inject constructor(
 
     // Side Effect (Access SharedPreference)
     private fun getMajorSubscriptionStatus() = viewModelScope.launch {
-        val subscribed = appSubscriptionPreference.getSubscribedMajor()?.let {
-            MajorCategory.valueOf(it)
-        }
-        Log.d(this.javaClass.name, "Subscription: $subscribed")
-
-        subscribed?.let {
-            fetchTopThreeNotices.getMajorNotices(subscribed)
+        val subscribed = appSubscriptionPreference.getSubscribedMajor().first()
+        if (subscribed.isEmpty()) {
+            mutate(HomeMutation.MajorNotices.Failure("Unable to find subscribed major"))
+        } else {
+            Log.d(this.javaClass.name, "Subscription: $subscribed")
+            val selected = MajorCategory.valueOf(subscribed.first())
+            fetchTopThreeNotices.getMajorNotices(selected)
                 .fold(
                     onSuccess = { result ->
-                        Log.d(this.javaClass.name, "Result: ${result.toString()}")
-                        mutate(HomeMutation.MajorNotices.Success(subscribed, result))
+                        Log.d(this.javaClass.name, "Result: $result")
+                        mutate(HomeMutation.MajorNotices.Success(selected, result))
                     },
                     onFailure = { error ->
                         Log.d(this.javaClass.name, "Result: ${error.stackTraceToString()}")
                         mutate(HomeMutation.MajorNotices.Failure(error.stackTraceToString()))
                     }
                 )
-        } ?: mutate(HomeMutation.MajorNotices.Failure("Unable to find subscribed major"))
+        }
     }
 
     private fun updateNoticeLocalCache(snapshot: HomeViewState) =
@@ -234,7 +239,7 @@ class HomeViewModel @Inject constructor(
                     isLoading = false,
                     isError = true
                 ).also {
-                    Log.d(this.javaClass.name, "Fetching Main Content Failed: ${reason}")
+                    Log.d(this.javaClass.name, "Fetching Main Content Failed: $reason")
                 }
             }
         }

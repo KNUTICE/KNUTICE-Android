@@ -1,6 +1,7 @@
 package com.doyoonkim.widget.util
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -8,9 +9,8 @@ import android.graphics.RectF
 import android.graphics.Typeface
 import android.util.TypedValue
 import androidx.annotation.ColorInt
-import androidx.core.graphics.toColorInt
 import androidx.core.graphics.createBitmap
-
+import androidx.core.graphics.toColorInt
 
 // Color Value enums based on Status
 enum class CarrelRoomOccupancyState(@ColorInt val color: Int, val label: String) {
@@ -43,7 +43,6 @@ object CarrelStatusBitmapGenerator {
         totalSeat: Int,
         widgetSizeDp: Float = 100f
     ): Bitmap {
-
         // Carrel Room Status Calculation
         val divisor = if (totalSeat <= 0) 1 else totalSeat
         val ratio = (occupiedSeat.toFloat() / divisor.toFloat()).coerceIn(0.0f, 1.0f)
@@ -52,19 +51,28 @@ object CarrelStatusBitmapGenerator {
         // Density Conversion (dp to px)
         val metrics = context.resources.displayMetrics
         val sizeInPx = TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, widgetSizeDp, metrics
+            TypedValue.COMPLEX_UNIT_DIP,
+            widgetSizeDp,
+            metrics
         ).toInt()
-        val chartStrokeWidthInPx = sizeInPx * 0.12f     // Set Stroke Width to 12% of total size.
+        val chartStrokeWidthInPx = sizeInPx * 0.12f // Set Stroke Width to 12% of total size.
 
         // Memory Allocation
         val resultBitmap = createBitmap(sizeInPx, sizeInPx)
         val canvas = Canvas(resultBitmap)
 
         // Paint Configuration
+        // Check current device theme & set Track color based on the device theme
+        val deviceTheme = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        val trackColor = when (deviceTheme) {
+            Configuration.UI_MODE_NIGHT_YES -> "#2C2C2E"
+            else -> "#E0E0E0"
+        }.toColorInt()
+
         val trackPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
             strokeWidth = chartStrokeWidthInPx
-            color = "#E0E0E0".toColorInt()
+            color = trackColor
             strokeCap = Paint.Cap.ROUND
         }
 
@@ -77,7 +85,7 @@ object CarrelStatusBitmapGenerator {
 
         val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = status.color
-            textSize = sizeInPx * 0.28f     // Set Text size to 28% of widget size.
+            textSize = sizeInPx * 0.28f // Set Text size to 28% of widget size.
             textAlign = Paint.Align.CENTER
             typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
         }
@@ -100,7 +108,6 @@ object CarrelStatusBitmapGenerator {
 
         return resultBitmap
     }
-
 }
 
 // Preview

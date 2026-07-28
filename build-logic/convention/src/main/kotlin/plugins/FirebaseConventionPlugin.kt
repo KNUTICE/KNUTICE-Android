@@ -7,7 +7,7 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.getByType
 
-class FirebaseConventionPlugin : Plugin<Project>{
+class FirebaseConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) =
         with(target) {
             // Version Catalog Access Helper

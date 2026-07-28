@@ -1,0 +1,13 @@
+root = true
+
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4
+
+# Disable line length enforcement to prevent manual wrapping errors
+max_line_length = off
+ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
+
+# Jetpack Compose Specific Overrides
+ij_kotlin_allow_trailing_comma = false
+ij_kotlin_allow_trailing_comma_on_call_site = false

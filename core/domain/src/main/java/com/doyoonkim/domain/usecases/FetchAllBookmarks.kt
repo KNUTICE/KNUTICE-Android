@@ -22,7 +22,9 @@ class FetchAllBookmarksImpl @Inject constructor(
 
     override operator fun invoke(size: Int, pageNumber: Int, option: SortOption) =
         localRepository.queryBookmarkSorted(
-            size, pageNumber, option
+            size,
+            pageNumber,
+            option
         ).transform { element ->
             element?.let {
                 emit(Result.success(it))
@@ -31,5 +33,4 @@ class FetchAllBookmarksImpl @Inject constructor(
             /* Internal Error */
             emit(Result.failure(e))
         }.flowOn(ioDispatcher)
-
 }

@@ -12,16 +12,16 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,9 +42,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.buttonOnBackground
 import com.doyoonkim.common.theme.containerGray
-import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
+import com.doyoonkim.common.theme.secondaryBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.theme.variantPurple
@@ -64,7 +64,7 @@ fun UserPreferenceScreen(
     onNotificationPreferenceClicked: () -> Unit,
     onCustomerServiceClicked: () -> Unit,
     onOssClicked: () -> Unit,
-    onBackPressed: (Boolean) -> Unit,
+    onBackPressed: (Boolean) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -212,9 +212,10 @@ fun UserPreferenceScreen(
 
             if (uiState.isSyncDialogVisible) {
                 Dialog(
-                    onDismissRequest = {  },
+                    onDismissRequest = { },
                     properties = DialogProperties(
-                        dismissOnBackPress = false, dismissOnClickOutside = false
+                        dismissOnBackPress = false,
+                        dismissOnClickOutside = false
                     )
                 ) {
                     Surface(
@@ -241,10 +242,12 @@ fun UserPreferenceScreen(
                             )
 
                             Text(
-                                text = if(uiState.databaseSyncResult.completed) {
+                                text = if (uiState.databaseSyncResult.completed) {
                                     stringResource(R.string.text_sync_result) +
-                                            " ${uiState.databaseSyncResult.targetCounts} / ${uiState.databaseSyncResult.failureCounts}"
-                                } else { stringResource(R.string.text_sync_in_progress) },
+                                        " ${uiState.databaseSyncResult.targetCounts} / ${uiState.databaseSyncResult.failureCounts}"
+                                } else {
+                                    stringResource(R.string.text_sync_in_progress)
+                                },
                                 textAlign = TextAlign.Center,
                                 fontWeight = FontWeight.Normal,
                                 fontSize = 12.sp,

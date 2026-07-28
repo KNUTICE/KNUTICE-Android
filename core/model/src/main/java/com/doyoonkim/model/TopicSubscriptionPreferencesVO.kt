@@ -1,6 +1,5 @@
 package com.doyoonkim.model
 
-
 data class TopicSubscriptionStatusVO(
     val type: TopicType = TopicType.NOTICE,
     val subscribed: ArrayList<String> = ArrayList<String>()

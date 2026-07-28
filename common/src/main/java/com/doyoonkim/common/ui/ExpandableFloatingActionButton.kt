@@ -63,13 +63,13 @@ fun ExpandableFloatingActionButton(
 ) {
     var isExpanded by remember { mutableStateOf(false) }
     val interactionSource = remember { MutableInteractionSource() }
-    
+
     Surface(
         modifier = modifier
             .background(Color.Transparent),
         shape = RoundedCornerShape(16.dp),
         shadowElevation = 3.dp,
-        color = secondaryContainerColor,
+        color = secondaryContainerColor
     ) {
         Column(
             // Force parent column to calculate its width based on its widest child BEFORE drawing.
@@ -87,7 +87,7 @@ fun ExpandableFloatingActionButton(
                     items.forEachIndexed { index, item ->
                         Row(
                             modifier = Modifier.padding(vertical = 15.dp)
-                                .fillMaxWidth()     // Take maximum width under the parent column
+                                .fillMaxWidth() // Take maximum width under the parent column
                                 .clip(RoundedCornerShape(15.dp))
                                 .clickable(
                                     interactionSource = interactionSource,
@@ -120,12 +120,13 @@ fun ExpandableFloatingActionButton(
                             )
                         }
 
-                        if (index < items.size - 1)
+                        if (index < items.size - 1) {
                             HorizontalDivider(
                                 Modifier.padding(horizontal = 1.dp),
                                 thickness = 1.dp,
                                 color = MaterialTheme.colorScheme.subTitle
                             )
+                        }
                     }
                 }
             }

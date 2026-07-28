@@ -33,7 +33,6 @@ import com.doyoonkim.domain.usecases.ValidateDeviceTokenImpl
 import dagger.Binds
 import dagger.Module
 
-
 @Module
 abstract class NoticeUseCaseModule {
     @Binds

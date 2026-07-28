@@ -7,7 +7,7 @@ import kotlinx.coroutines.tasks.await
 
 class FirebaseRemoteConfigRepositoryImpl(
     private val remoteConfig: FirebaseRemoteConfig
-): FirebaseRemoteConfigRepository {
+) : FirebaseRemoteConfigRepository {
     private val TAG = "FirebaseRemoteConfigRepositoryImpl"
 
     // Reading value from Heap Memory
@@ -29,5 +29,4 @@ class FirebaseRemoteConfigRepositoryImpl(
             false
         }
     }
-
 }

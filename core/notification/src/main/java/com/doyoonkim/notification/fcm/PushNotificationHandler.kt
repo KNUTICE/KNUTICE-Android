@@ -15,8 +15,6 @@ import androidx.core.net.toUri
 import com.doyoonkim.common.BitmapHandler
 import com.doyoonkim.common.R
 import com.doyoonkim.domain.interfaces.ImageRemoteRepository
-import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
-import com.doyoonkim.model.NoticeCategory
 import com.google.firebase.messaging.RemoteMessage
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -37,7 +35,7 @@ class PushNotificationHandler @Inject constructor(
     private val TAG = "PushNotificationHandler"
 
     // HardCoded CoroutineScope for Testing
-    private val job = SupervisorJob()     // Variable for manual Cancellation
+    private val job = SupervisorJob() // Variable for manual Cancellation
     private val coroutineScope = CoroutineScope(ioDispatcher + job)
 
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
@@ -63,7 +61,8 @@ class PushNotificationHandler @Inject constructor(
         val notificationId = Random(System.currentTimeMillis().toInt()).nextInt()
         // Utilize channel already created by FCM as default
         val notificationBuilder = NotificationCompat.Builder(
-            context, context.getString(R.string.inapp_notification_channel_id)
+            context,
+            context.getString(R.string.inapp_notification_channel_id)
         ).apply {
             setSmallIcon(R.mipmap.ic_launcher)
             setContentTitle(notification?.title ?: context.getString(R.string.new_notice))
@@ -148,13 +147,15 @@ class PushNotificationHandler @Inject constructor(
                             }
                         },
                         onFailure = {
-                            Log.d(TAG, "Unable to receive image.\n" +
-                                    "REASON: ${it.stackTrace}")
+                            Log.d(
+                                TAG,
+                                "Unable to receive image.\n" +
+                                    "REASON: ${it.stackTrace}"
+                            )
                         }
                     )
                 }
             }.invokeOnCompletion { notify(notificationId, notificationBuilder.build()) }
-
         }
     }
 }

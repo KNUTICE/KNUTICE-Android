@@ -8,15 +8,14 @@ sealed interface AiFeatureAbTestLayoutPolicy {
     val variantName: String
 
     // Variant A (Control)
-    data class VariantA(override val variantName: String = "layout_a"): AiFeatureAbTestLayoutPolicy
+    data class VariantA(override val variantName: String = "layout_a") : AiFeatureAbTestLayoutPolicy
 
     // Variant B (Retention)
-    data class VariantB(override val variantName: String = "layout_b"): AiFeatureAbTestLayoutPolicy
+    data class VariantB(override val variantName: String = "layout_b") : AiFeatureAbTestLayoutPolicy
 }
 
-
 class GetAiFeatureTestLayoutPolicy @Inject constructor(
-  private val remoteConfigRepository: FirebaseRemoteConfigRepository
+    private val remoteConfigRepository: FirebaseRemoteConfigRepository
 ) {
 
     private val TAG = "GetAiFeatureTestLayoutPolicy"
@@ -27,9 +26,7 @@ class GetAiFeatureTestLayoutPolicy @Inject constructor(
         return when (rawValue) {
             "layout_a" -> AiFeatureAbTestLayoutPolicy.VariantA()
             "layout_b" -> AiFeatureAbTestLayoutPolicy.VariantB()
-            else -> AiFeatureAbTestLayoutPolicy.VariantA()      // Self-healing
+            else -> AiFeatureAbTestLayoutPolicy.VariantA() // Self-healing
         }
     }
-
-
 }

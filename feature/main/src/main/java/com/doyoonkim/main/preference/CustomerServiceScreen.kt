@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
@@ -51,6 +50,7 @@ import com.doyoonkim.common.theme.variantPurple
 import com.doyoonkim.common.ui.TopAppBarWithNavButton
 import com.doyoonkim.main.contract.CustomerServiceEvent
 import com.doyoonkim.main.contract.CustomerServiceSideEffect
+import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 
 @Composable
 fun CustomerServiceScreen(
@@ -153,13 +153,12 @@ fun CustomerServiceScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(start = 3.dp, end = 3.dp)
-                    ,
+                        .padding(start = 3.dp, end = 3.dp),
                     enabled = !uiState.isSubmissionProcessing && uiState.exceedMinCharacters,
                     shape = RoundedCornerShape(10.dp),
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.variantPurple,
-                        contentColor = Color.White,
+                        contentColor = Color.White
                     ),
                     onClick = {
                         viewModel.sendUiEvent(CustomerServiceEvent.SubmitUserReport(versionInfo))
@@ -195,8 +194,11 @@ fun CustomerServiceScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.title,
                                 text = stringResource(
-                                    if (uiState.isSubmissionSuccess) R.string.submission_completed_title
-                                    else R.string.error_submission_unavailable
+                                    if (uiState.isSubmissionSuccess) {
+                                        R.string.submission_completed_title
+                                    } else {
+                                        R.string.error_submission_unavailable
+                                    }
                                 )
                             )
                             Text(
@@ -204,8 +206,11 @@ fun CustomerServiceScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.title,
                                 text = stringResource(
-                                    if (uiState.isSubmissionSuccess) R.string.submission_completed__subtitle
-                                    else R.string.error_submission_unavailable_description
+                                    if (uiState.isSubmissionSuccess) {
+                                        R.string.submission_completed__subtitle
+                                    } else {
+                                        R.string.error_submission_unavailable_description
+                                    }
                                 )
                             )
                             Button(

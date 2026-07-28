@@ -25,7 +25,7 @@ class FetchTopicSubscriptionStatusImpl @Inject constructor(
     override operator fun invoke(topicType: TopicType) =
         remoteRepository.queryTopicSubscriptionStatus(topicType).transform { nullable ->
             nullable?.let {
-                when(topicType) {
+                when (topicType) {
                     TopicType.NOTICE -> {
                         // TODO: Revise Later (Change Return Type to either Map<String, Boolean> or Pair<String, Boolean>
                         val result = listOf(
@@ -53,7 +53,6 @@ class FetchTopicSubscriptionStatusImpl @Inject constructor(
                         emit(Result.success(result))
                     }
                 }
-
             } ?: emit(Result.failure(NoSuchElementException("Subscription Status Not Found")))
         }.catch {
             // Internal Error

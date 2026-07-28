@@ -90,12 +90,12 @@ fun HomeDashboard(
         viewModel.uiSideEffect.collect { effect ->
             when (effect) {
                 is HomeSideEffect.NavToNoticeDetail -> {
-                    with (effect) {
+                    with(effect) {
                         onFullContentRequested(id, url)
                     }
                 }
                 is HomeSideEffect.NavToMoreNoticeInCategory -> {
-                    with (effect) {
+                    with(effect) {
                         onMoreNoticeRequested(dest)
                     }
                 }
@@ -103,7 +103,7 @@ fun HomeDashboard(
                     onMoreMajorNoticeRequested()
                 }
                 is HomeSideEffect.NavToTipDetail -> {
-                    with (effect) {
+                    with(effect) {
                         onTipClicked(category, url)
                     }
                 }
@@ -159,7 +159,7 @@ fun HomeDashboard(
         } else {
             // Read HomeScreen content safe bottom padding
             val bottomPadding = LocalHomeSafeBottomPadding.current
-            
+
             // LazyColumnState
             val lazyColumnState = rememberLazyListState()
 
@@ -268,7 +268,6 @@ fun HomeDashboard(
                         ) {
                             viewModel.sendUiEvent(HomeEvent.RequestNoticeDetail(it.nttId, it.url))
                         }
-
                     }
                 }
 

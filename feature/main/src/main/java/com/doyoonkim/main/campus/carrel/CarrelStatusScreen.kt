@@ -15,11 +15,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.webkit.WebViewCompat
+import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
+import com.doyoonkim.common.ui.NavButtonType
 import com.doyoonkim.main.BuildConfig
 import com.doyoonkim.main.campus.components.LifecycleAwareWebView
+import com.doyoonkim.main.campus.components.LifecycleAwareWebViewFallbackType
 import com.doyoonkim.main.campus.model.WebAppAction
 import com.doyoonkim.main.campus.model.WebBridgeEnvelop
 import com.doyoonkim.main.viewmodel.CarrelStatusViewModel
@@ -55,8 +59,10 @@ fun CarrelStatusScreen(
             try {
                 val bridgeEnvelop = Json.decodeFromString<WebBridgeEnvelop>(rawMessage)
                 when (bridgeEnvelop.type) {
-                    WebAppAction.CLOSE_WEBVIEW.name -> { onBackClicked() }
-                    else ->  Unit
+                    WebAppAction.CLOSE_WEBVIEW.name -> {
+                        onBackClicked()
+                    }
+                    else -> Unit
                 }
             } catch (e: Exception) {
                 Log.d("WebMessageListener", "Invalid Envelope ${e.stackTraceToString()}")
@@ -70,7 +76,7 @@ fun CarrelStatusScreen(
             override fun onPageFinished(view: WebView?, url: String?) {
                 // If view is ready, return onPageFinished immediately to avoid multiple JS execution.
                 if (!isKeyProvided.value) {
-                    val call = "${BuildConfig.CARREL_BRIDGE}('${tokenState}');"
+                    val call = "${BuildConfig.CARREL_BRIDGE}('$tokenState');"
                     val script = "javascript:$call;"
                     view?.evaluateJavascript(script, null)
 
@@ -79,7 +85,7 @@ fun CarrelStatusScreen(
                 }
 
                 if (roomId.isNotBlank() && !isRoomSelectionProvided.value) {
-                    val call = "${BuildConfig.CARREL_ROOM_BRIDGE}('${roomId}');"
+                    val call = "${BuildConfig.CARREL_ROOM_BRIDGE}('$roomId');"
                     val script = "javascript:$call;"
                     view?.evaluateJavascript(script, null)
 
@@ -95,6 +101,7 @@ fun CarrelStatusScreen(
             .windowInsetsPadding(WindowInsets.systemBars)
             .background(MaterialTheme.colorScheme.displayBackground),
         url = BuildConfig.KNUTICE_ORIGIN + BuildConfig.CARREL_PATH,
+        fallbackType = LifecycleAwareWebViewFallbackType.Scaffold(stringResource(R.string.knutice_carrel_widget_title), NavButtonType.BACK),
         onWebViewCreate = { webView ->
             webView.webViewClient = webViewClient
 

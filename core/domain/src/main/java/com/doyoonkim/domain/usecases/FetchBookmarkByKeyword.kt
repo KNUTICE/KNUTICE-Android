@@ -20,7 +20,9 @@ class FetchBookmarkByKeywordImpl @Inject constructor(
 ) : FetchBookmarkByKeyword {
     override fun invoke(keyword: String, size: Int, pageNumber: Int) =
         bookmarkLocalRepository.queryBookmarkByKeyword(
-            keyword, size, pageNumber
+            keyword,
+            size,
+            pageNumber
         ).transform { result ->
             result?.let {
                 emit(Result.success(it))

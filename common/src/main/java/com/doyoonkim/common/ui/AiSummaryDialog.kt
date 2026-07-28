@@ -85,7 +85,7 @@ fun AiSummaryDialog(
                     .padding(top = 10.dp, bottom = 10.dp, start = 40.dp, end = 15.dp)
                     .background(Color.Transparent),
                 color = containerColor,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(16.dp)
             ) { content() }
 
             // Attribution

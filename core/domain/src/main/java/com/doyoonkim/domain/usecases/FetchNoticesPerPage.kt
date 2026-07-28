@@ -1,7 +1,6 @@
 package com.doyoonkim.domain.usecases
 
 import com.doyoonkim.domain.interfaces.NoticeRemoteRepository
-import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,16 +16,24 @@ interface FetchNoticesPerPage {
 
 class FetchNoticesPerPageImpl @Inject constructor(
     private val remoteRepository: NoticeRemoteRepository,
+    private val checkRecentNoticeUseCase: CheckRecentNotice,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ) : FetchNoticesPerPage {
 
     override operator fun invoke(category: String, lastNttId: Int) =
         remoteRepository.run {
-            if (lastNttId == 0) queryNoticesPerPage(category, null)
-            else queryNoticesPerPage(category, lastNttId)
+            if (lastNttId == 0) {
+                queryNoticesPerPage(category, null)
+            } else {
+                queryNoticesPerPage(category, lastNttId)
+            }
         }.transform { result ->
             result?.let {
-                emit(Result.success(it))
+                if (lastNttId == 0) {
+                    emit(Result.success(checkRecentNoticeUseCase(it)))
+                } else {
+                    emit(Result.success(it))
+                }
             } ?: emit(Result.failure(NoSuchElementException()))
         }.catch {
             /* Internal Error. */

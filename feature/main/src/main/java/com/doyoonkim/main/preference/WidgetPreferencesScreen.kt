@@ -1,6 +1,5 @@
 package com.doyoonkim.main.preference
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,7 +62,6 @@ import com.doyoonkim.main.viewmodel.WidgetConfigViewModel
 import com.doyoonkim.model.WidgetCategoryPolicy
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WidgetPreferencesScreen(
@@ -106,14 +104,14 @@ fun WidgetPreferencesScreen(
         snackbarHost = {
             SnackbarHost(
                 hostState = snackBarState
-            ) {data ->
+            ) { data ->
                 Snackbar(
                     modifier = Modifier.padding(bottom = 80.dp),
                     snackbarData = data,
                     containerColor = MaterialTheme.colorScheme.secondaryBackground,
                     contentColor = MaterialTheme.colorScheme.title,
                     actionColor = MaterialTheme.colorScheme.variantPurple,
-                    shape = RoundedCornerShape(16.dp),
+                    shape = RoundedCornerShape(16.dp)
                 )
             }
         },
@@ -225,7 +223,7 @@ fun WidgetPreferencesScreen(
             // Circular Progress Indicator.
             if (uiState.isProcessing) {
                 Dialog(
-                    onDismissRequest = {  },
+                    onDismissRequest = { },
                     properties = DialogProperties(
                         dismissOnBackPress = false,
                         dismissOnClickOutside = false,

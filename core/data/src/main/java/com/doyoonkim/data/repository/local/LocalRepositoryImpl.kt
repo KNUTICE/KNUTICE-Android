@@ -136,7 +136,7 @@ class LocalRepositoryImpl @Inject constructor(
 
     override fun queryBookmarkSorted(size: Int, pageNumber: Int, option: SortOption) = flow {
         runCatching {
-            with (localDao) {
+            with(localDao) {
                 when (option) {
                     SortOption.ASC_CREATION -> getBookmarkListSortedNewest(size, pageNumber)
                     SortOption.DES_CREATION -> getBookmarkListSortedOldest(size, pageNumber)
@@ -158,8 +158,11 @@ class LocalRepositoryImpl @Inject constructor(
             localDao.getNoticeByNttId(nttId)
         }.onFailure { throw it }.fold(
             onSuccess = {
-                if (it != null) emit(it.toNoticeVO())
-                else emit(null)
+                if (it != null) {
+                    emit(it.toNoticeVO())
+                } else {
+                    emit(null)
+                }
             },
             onFailure = { it.printLog().also { emit(null) } }
         )
@@ -216,7 +219,7 @@ class LocalRepositoryImpl @Inject constructor(
     }
 
     override fun createBookmarkFts(ftsEntry: BookmarkFtsVO) = flow {
-        Log.d("LocalRepositoryImpl", "Create FTS entry using ${ftsEntry.toString()}")
+        Log.d("LocalRepositoryImpl", "Create FTS entry using $ftsEntry")
         runCatching {
             localDao.createBookmarkFts(
                 with(ftsEntry) {
@@ -232,7 +235,7 @@ class LocalRepositoryImpl @Inject constructor(
         }.fold(
             onSuccess = {
                 emit(true)
-                        },
+            },
             onFailure = {
                 it.printLog()
                 emit(false)

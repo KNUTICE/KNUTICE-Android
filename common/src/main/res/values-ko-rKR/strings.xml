@@ -188,5 +188,6 @@
     <string name="title_dining_menu">학식 조회</string>
     <string name="info_need_select_major">우리 학과의 중요한 소식을 놓치지 않도록\n전공을 설정해 볼까요?</string>
     <string name="text_download_not_available">현재 파일을 다운로드 할 수 없어요</string>
+    <string name="text_carrel_widget_remaining_seat">%1$d석</string>
     <string name="text_content_unavailable">화면을 불러오는 데 문제가 생겼어요.</string>
 </resources>

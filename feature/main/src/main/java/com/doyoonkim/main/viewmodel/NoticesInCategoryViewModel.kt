@@ -58,8 +58,11 @@ class NoticesInCategoryViewModel @Inject constructor(
 
     private fun List<NoticeVO>.addAll(extra: List<NoticeVO>) =
         List(this.size + extra.size) {
-            if (it < this.size) this[it]
-            else extra[it - this.size]
+            if (it < this.size) {
+                this[it]
+            } else {
+                extra[it - this.size]
+            }
         }
 
     // Main Reducer
@@ -68,7 +71,9 @@ class NoticesInCategoryViewModel @Inject constructor(
         mutation: NoticesInCategoryMutation
     ): NoticesInCategoryState {
         return when (mutation) {
-            is NoticesInCategoryMutation.Loading -> { currentState.copy(isLoading = true) }
+            is NoticesInCategoryMutation.Loading -> {
+                currentState.copy(isLoading = true)
+            }
             is NoticesInCategoryMutation.Refreshing -> {
                 currentState.copy(
                     isRefreshing = true,

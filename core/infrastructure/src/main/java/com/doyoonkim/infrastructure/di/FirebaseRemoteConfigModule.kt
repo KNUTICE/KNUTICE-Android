@@ -26,5 +26,4 @@ object FirebaseRemoteConfigModule {
         }
         return FirebaseRemoteConfigRepositoryImpl(remoteConfig)
     }
-
 }

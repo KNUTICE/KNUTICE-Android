@@ -17,10 +17,11 @@ interface FetchTopThreeNotices {
 
 class FetchTopThreeNoticesImpl @Inject constructor(
     private val remoteRepository: NoticeRemoteRepository,
+    private val checkRecentNoticeUseCase: CheckRecentNotice
 ) : FetchTopThreeNotices {
 
     override suspend operator fun invoke(): Result<TopThreeNoticeVO> {
-       return runCatching {
+        return runCatching {
             remoteRepository.run {
                 coroutineScope {
                     val general = async {
@@ -40,11 +41,11 @@ class FetchTopThreeNoticesImpl @Inject constructor(
                     }
 
                     TopThreeNoticeVO(
-                        general = general.await() ?: emptyList(),
-                        academic = academic.await() ?: emptyList(),
-                        scholarship = scholarship.await() ?: emptyList(),
-                        event = event.await() ?: emptyList(),
-                        employment = employment.await() ?: emptyList()
+                        general = checkRecentNoticeUseCase(general.await() ?: emptyList()),
+                        academic = checkRecentNoticeUseCase(academic.await() ?: emptyList()),
+                        scholarship = checkRecentNoticeUseCase(scholarship.await() ?: emptyList()),
+                        event = checkRecentNoticeUseCase(event.await() ?: emptyList()),
+                        employment = checkRecentNoticeUseCase(employment.await() ?: emptyList())
                     )
                 }
             }
@@ -56,5 +57,4 @@ class FetchTopThreeNoticesImpl @Inject constructor(
             Result.success(it)
         } ?: Result.failure(NoSuchElementException("Unable to fetch the notices"))
     }
-
 }

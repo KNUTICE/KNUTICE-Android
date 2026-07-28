@@ -22,8 +22,9 @@ class SettingsViewModel @Inject constructor(
     override fun handleEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.CheckDatabaseSyncStatus -> {
-                if (appDatabasePreference.isPartialFailedDuringDatabaseSync())
+                if (appDatabasePreference.isPartialFailedDuringDatabaseSync()) {
                     mutate(SettingsMutation.Database.SyncNeeded)
+                }
             }
             is SettingsEvent.RequestManualSync -> requestManualDatabaseSync()
             is SettingsEvent.DismissSyncDialog -> mutate(SettingsMutation.Database.Dismiss)
@@ -66,7 +67,9 @@ class SettingsViewModel @Inject constructor(
     // Specialized Reducer
     private fun SettingsMutation.Database.reducer(state: SettingsState) =
         when (this) {
-            is SettingsMutation.Database.SyncNeeded -> { state.copy(isSyncNecessary = true) }
+            is SettingsMutation.Database.SyncNeeded -> {
+                state.copy(isSyncNecessary = true)
+            }
             is SettingsMutation.Database.Syncing -> {
                 state.copy(
                     isSyncDialogVisible = true,
@@ -79,6 +82,8 @@ class SettingsViewModel @Inject constructor(
                     databaseSyncResult = result
                 )
             }
-            is SettingsMutation.Database.Dismiss -> { state.copy(isSyncDialogVisible = false) }
+            is SettingsMutation.Database.Dismiss -> {
+                state.copy(isSyncDialogVisible = false)
+            }
         }
 }

@@ -1,8 +1,6 @@
 package com.doyoonkim.main.ui
 
-import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,9 +26,7 @@ import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.subTitle
 import com.doyoonkim.common.ui.LazyText
 import com.doyoonkim.common.ui.NotificationPreview
-import com.doyoonkim.common.ui.NotificationPreviewCard
 import com.doyoonkim.model.NoticeVO
-import kotlin.collections.forEach
 
 @Composable
 fun NotificationPreviewList(
@@ -39,7 +35,7 @@ fun NotificationPreviewList(
     titleColor: Color = Color.Unspecified,
     isContentLoading: Boolean = false,
     contents: List<NoticeVO> = listOf(),
-    onMoreClicked: () -> Unit = {  },
+    onMoreClicked: () -> Unit = { },
     onNoticeClicked: (NoticeVO) -> Unit
 ) {
     Box(
@@ -93,17 +89,19 @@ fun NotificationPreviewList(
                         interactionSource = null,
                         indication = null,
                         enabled = true,
-                        onClick = { onNoticeClicked(content) },
+                        onClick = { onNoticeClicked(content) }
                     ),
                     isLoading = isContentLoading,
                     notificationTitle = content.title,
-                    notificationInfo = "[${content.departName}] ${content.timestamp}"
+                    notificationInfo = "[${content.departName}] ${content.timestamp}",
+                    isRecent = content.isRecent
                 )
-                if (index != contents.lastIndex)
+                if (index != contents.lastIndex) {
                     HorizontalDivider(
                         thickness = 1.2.dp,
                         color = MaterialTheme.colorScheme.onAnyBackground
                     )
+                }
             }
         }
     }

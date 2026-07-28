@@ -24,13 +24,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.doyoonkim.common.R
+import com.doyoonkim.common.navigation.Destination
+import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.notificationType1
 import com.doyoonkim.common.theme.notificationType2
 import com.doyoonkim.common.theme.notificationType3
 import com.doyoonkim.common.theme.notificationType4
-import com.doyoonkim.common.R
-import com.doyoonkim.common.navigation.Destination
-import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.notificationType5
 import com.doyoonkim.common.theme.title
 import com.doyoonkim.common.ui.PlaceholderScreen
@@ -54,7 +54,6 @@ fun HomeScreen(
     onFullContentRequested: (Int, String) -> Unit,
     onTipClicked: (TipCategory, String) -> Unit
 ) {
-
     val uiState by viewModel.uiState.collectAsState()
 
     // Back button/gesture actions
@@ -68,18 +67,18 @@ fun HomeScreen(
         viewModel.uiSideEffect.collect { effect ->
             when (effect) {
                 is HomeSideEffect.NavToNoticeDetail -> {
-                    with (effect) {
+                    with(effect) {
                         onFullContentRequested(id, url)
                     }
                 }
                 is HomeSideEffect.NavToMoreNoticeInCategory -> {
-                    with (effect) {
+                    with(effect) {
                         onMoreNoticeRequested(dest)
                     }
                 }
                 is HomeSideEffect.NavToTipDetail -> {
-                    with (effect) {
-                        onTipClicked(category,url)
+                    with(effect) {
+                        onTipClicked(category, url)
                     }
                 }
                 is HomeSideEffect.NavToSettings -> {
@@ -145,7 +144,7 @@ fun HomeScreen(
                 }
 
                 item {
-                    NotificationPreviewList (
+                    NotificationPreviewList(
                         listTitle = stringResource(R.string.general_news),
                         titleColor = MaterialTheme.colorScheme.notificationType1,
                         isContentLoading = uiState.mainContentState.isLoading,

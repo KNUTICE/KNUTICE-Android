@@ -12,7 +12,7 @@ class DaggerViewModelFactory @Inject constructor(
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         val provider = providers[modelClass]
             ?: providers.entries.firstOrNull { modelClass.isAssignableFrom(it.key) }?.value
-            ?:throw IllegalArgumentException("Unknown ViewModel Class $modelClass")
+            ?: throw IllegalArgumentException("Unknown ViewModel Class $modelClass")
 
         @Suppress("UNCHECKED_CAST")
         return provider.get() as T

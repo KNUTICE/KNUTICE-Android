@@ -2,30 +2,32 @@ package com.doyoonkim.knutice.di.components
 
 import android.app.Application
 import androidx.work.ListenableWorker
+import com.doyoonkim.common.worker.IntermediateWorkerFactory
+import com.doyoonkim.data.di.CampusRemoteModule
 import com.doyoonkim.data.di.LocalModule
+import com.doyoonkim.data.di.LocalPreferenceModule
+import com.doyoonkim.data.di.NoticeRemoteModule
+import com.doyoonkim.data.di.PreferencesRemoteModule
+import com.doyoonkim.data.di.RoomDatabaseModule
+import com.doyoonkim.data.di.SystemCoroutineModule
 import com.doyoonkim.data.di.TokenRemoteModule
 import com.doyoonkim.domain.di.AsyncFtsEntryInsertionModule
+import com.doyoonkim.domain.di.PreferencesUseCaseModule
 import com.doyoonkim.domain.di.TokenUseCaseModule
+import com.doyoonkim.infrastructure.di.FirebaseAnalyticsModule
+import com.doyoonkim.infrastructure.di.FirebaseRemoteConfigModule
 import com.doyoonkim.knutice.MainApplication
 import com.doyoonkim.knutice.di.modules.AppModule
 import com.doyoonkim.knutice.di.modules.DispatcherModule
 import com.doyoonkim.knutice.di.modules.WorkerModule
-import com.doyoonkim.network.di.NetworkModule
-import com.doyoonkim.notification.di.FcmTokenModule
-import com.doyoonkim.common.worker.IntermediateWorkerFactory
-import com.doyoonkim.data.di.CampusRemoteModule
-import com.doyoonkim.data.di.LocalPreferenceModule
-import com.doyoonkim.data.di.NoticeRemoteModule
-import com.doyoonkim.data.di.RoomDatabaseModule
-import com.doyoonkim.data.di.SystemCoroutineModule
-import com.doyoonkim.infrastructure.di.FirebaseAnalyticsModule
-import com.doyoonkim.infrastructure.di.FirebaseRemoteConfigModule
 import com.doyoonkim.knutice.di.util.FirebaseInfrastructureProvider
 import com.doyoonkim.knutice.di.util.LocalCacheProvider
 import com.doyoonkim.knutice.di.util.LocalPreferenceProvider
 import com.doyoonkim.knutice.di.util.LocalStorageProvider
 import com.doyoonkim.knutice.di.util.NetworkProvider
 import com.doyoonkim.knutice.di.util.SystemServices
+import com.doyoonkim.network.di.NetworkModule
+import com.doyoonkim.notification.di.FcmTokenModule
 import com.doyoonkim.widget.di.WidgetModule
 import dagger.BindsInstance
 import dagger.Component
@@ -53,8 +55,7 @@ interface AppComponent :
     LocalStorageProvider,
     LocalCacheProvider,
     LocalPreferenceProvider,
-    FirebaseInfrastructureProvider
-{
+    FirebaseInfrastructureProvider {
     fun inject(app: MainApplication)
 
     // Worker Subcomponent
@@ -68,17 +69,18 @@ interface AppComponent :
         // --> This would provide 'Context' to DI graph as well because Application is a context.
         fun create(@BindsInstance application: Application): AppComponent
     }
-
 }
 
 @Subcomponent(
     modules = [
         WorkerModule::class,
         WidgetModule::class,
+        PreferencesUseCaseModule::class,
         FcmTokenModule::class,
         TokenUseCaseModule::class,
         TokenRemoteModule::class,
         AsyncFtsEntryInsertionModule::class,
+        PreferencesRemoteModule::class,
         NoticeRemoteModule::class,
         CampusRemoteModule::class
     ]

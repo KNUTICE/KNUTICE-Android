@@ -207,8 +207,8 @@ fun NotificationPreferencesScreen(
                                     )
                                 },
                                 enabled = uiStatus.isMainNotificationPermissionGranted &&
-                                        uiStatus.isSyncCompleted &&
-                                        uiStatus.isMajorSubscribed
+                                    uiStatus.isSyncCompleted &&
+                                    uiStatus.isMajorSubscribed
                             )
                         }
                     }

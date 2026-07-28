@@ -12,7 +12,7 @@
     <string name="about_title">About</string>
     <string name="about_version">Version</string>
     <string name="about_oss">Open Source License</string>
-    <string name="version_code" translatable="false">1.7.2</string>
+    <string name="version_code" translatable="false">1.7.3</string>
     <string name="pref_notification_title">Notification</string>
     <string name="title_preference">Preference</string>
     <string name="new_notice">New Notice has been delivered!</string>
@@ -203,4 +203,5 @@
     <string name="info_need_select_major">Set up your major to start receiving your college\'s announcements!</string>
     <string name="text_download_not_available">Cannot download attachment.</string>
     <string name="text_content_unavailable">We are having trouble loading this page.</string>
+    <string name="text_carrel_widget_remaining_seat">%1$d seats</string>
 </resources>

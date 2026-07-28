@@ -7,6 +7,6 @@ import androidx.compose.ui.unit.Dp
 val LocalHomeSafeBottomPadding = compositionLocalOf<Dp> {
     error(
         "LocalHomeSafeBottomPadding is not provided. Ensure this screen is a child of Composable" +
-                " where this Local Composition is being provided."
+            " where this Local Composition is being provided."
     )
 }

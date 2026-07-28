@@ -44,7 +44,7 @@ fun NoticesInCategoryScreen(
     modifier: Modifier,
     category: NoticeCategory = NoticeCategory.Unspecified,
     viewModel: NoticesInCategoryViewModel,
-    onBackButtonPressed: () -> Unit = {  },
+    onBackButtonPressed: () -> Unit = { },
     onNoticeSelected: (Int, String) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -59,7 +59,7 @@ fun NoticesInCategoryScreen(
     // Back Handler
     BackHandler { viewModel.sendUiEvent(NoticesInCategoryEvent.GoBack) }
 
-     // Pull-to-Refresh
+    // Pull-to-Refresh
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState.isRefreshing,
         onRefresh = {
@@ -77,7 +77,7 @@ fun NoticesInCategoryScreen(
         viewModel.uiSideEffect.collect { effect ->
             when (effect) {
                 is NoticesInCategorySideEffect.NavToNoticeDetail -> {
-                    with (effect) {
+                    with(effect) {
                         onNoticeSelected(id, url)
                     }
                 }
@@ -140,7 +140,8 @@ fun NoticesInCategoryScreen(
                                 .clickable {
                                     viewModel.sendUiEvent(
                                         NoticesInCategoryEvent.RequestNoticeDetail(
-                                            notice.nttId, notice.url
+                                            notice.nttId,
+                                            notice.url
                                         )
                                     )
                                 }
@@ -150,7 +151,8 @@ fun NoticesInCategoryScreen(
                                 notificationTitle = notice.title,
                                 notificationInfo = "[${notice.departName}] ${notice.timestamp}",
                                 isImageContained = notice.imageUrl != null,
-                                imageUrl = notice.imageUrl ?: ""
+                                imageUrl = notice.imageUrl ?: "",
+                                isRecent = notice.isRecent
                             )
                         }
                     }

@@ -14,13 +14,14 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-configure<LibraryExtension>() {
+configure<LibraryExtension> {
     namespace = "com.doyoonkim.main"
 
     // BuildConfig
-    val properties = Properties().apply {
-        load(FileInputStream("${rootDir}/local.properties"))
-    }
+    val properties =
+        Properties().apply {
+            load(FileInputStream("$rootDir/local.properties"))
+        }
 
     val origin = properties["knutice_web_app_origin"] ?: ""
     val carrelPath = properties["carrel_path"] ?: ""

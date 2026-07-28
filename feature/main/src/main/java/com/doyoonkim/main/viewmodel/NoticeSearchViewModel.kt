@@ -5,13 +5,13 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.viewModelScope
 import com.doyoonkim.common.base.BaseViewModel
 import com.doyoonkim.domain.usecases.FetchBookmarkByKeyword
-import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.domain.usecases.FetchNoticesByKeyword
 import com.doyoonkim.main.contract.FetchingSource
 import com.doyoonkim.main.contract.NoticeSearchEvent
 import com.doyoonkim.main.contract.NoticeSearchMutation
 import com.doyoonkim.main.contract.NoticeSearchSideEffect
 import com.doyoonkim.main.contract.NoticeSearchState
+import com.doyoonkim.model.di.DefaultDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -42,7 +42,7 @@ class NoticeSearchViewModel @Inject constructor(
                 fetchMoreNotices()
             }
             is NoticeSearchEvent.RequestNoticeDetail -> {
-                with (event) {
+                with(event) {
                     sendSideEffect(
                         NoticeSearchSideEffect.NavToNoticeDetail(id, url)
                     )
@@ -123,7 +123,7 @@ class NoticeSearchViewModel @Inject constructor(
                     fetchBookmarkByKeyword(keyword, 20, 0)
                         .collectLatest { result ->
                             result.fold(
-                                onSuccess =  { vo ->
+                                onSuccess = { vo ->
                                     Log.d(TAG, "Received Local Search Result: ${vo.size}")
                                     vo.forEach { Log.d("TAG", it.toString()) }
                                     mutate(NoticeSearchMutation.Local.Success(vo))
@@ -194,9 +194,15 @@ class NoticeSearchViewModel @Inject constructor(
                     localFetchResult = emptyList()
                 )
             }
-            is NoticeSearchMutation.Loading -> { currentState.copy(isFetching = true) }
-            is NoticeSearchMutation.Remote -> { mutation.reducer(currentState) }
-            is NoticeSearchMutation.Local -> { mutation.reducer(currentState) }
+            is NoticeSearchMutation.Loading -> {
+                currentState.copy(isFetching = true)
+            }
+            is NoticeSearchMutation.Remote -> {
+                mutation.reducer(currentState)
+            }
+            is NoticeSearchMutation.Local -> {
+                mutation.reducer(currentState)
+            }
         }
     }
 
@@ -210,7 +216,7 @@ class NoticeSearchViewModel @Inject constructor(
                     fetchResult = state.fetchResult.toMutableList().apply {
                         addAll(result)
                     }.toList(),
-                    canRequestMoreNotices = result.size == 20,
+                    canRequestMoreNotices = result.size == 20
                 )
             }
             is NoticeSearchMutation.Remote.Failure -> {

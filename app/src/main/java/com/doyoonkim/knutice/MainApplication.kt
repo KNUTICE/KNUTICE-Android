@@ -7,9 +7,9 @@ import android.os.Build
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.work.Configuration
 import androidx.work.WorkManager
+import com.doyoonkim.common.R
 import com.doyoonkim.common.di.AppInjector
 import com.doyoonkim.common.di.AppInjectorProvider
-import com.doyoonkim.common.R
 import com.doyoonkim.knutice.di.components.AppComponent
 import com.doyoonkim.knutice.di.components.DaggerAppComponent
 import com.doyoonkim.knutice.di.components.DaggerNotificationServiceComponent
@@ -28,7 +28,7 @@ class MainApplication() : Application(), AppInjectorProvider, WidgetDependencyPr
 
     override val appInjector: AppInjector = object : AppInjector {
         override fun inject(target: Any) {
-            when(target) {
+            when (target) {
                 is PushNotificationService -> {
                     DaggerNotificationServiceComponent.factory()
                         .create(
@@ -40,19 +40,20 @@ class MainApplication() : Application(), AppInjectorProvider, WidgetDependencyPr
                 else -> error("Unsupported Target $target")
             }
         }
-
     }
-
 
     override fun provide(): WidgetDependency {
         return DaggerWidgetComponent.factory().create(
             systemServices = appComponent,
             networkProvider = appComponent,
-            localPreferenceProvider = appComponent)
+            localPreferenceProvider = appComponent
+        )
     }
 
     @Inject lateinit var notificationManager: NotificationManager
+
     @Inject lateinit var workerFactory: DaggerWorkerFactory
+
     @Inject lateinit var widgetSyncObserver: WidgetSyncObserver
 
     override fun onCreate() {

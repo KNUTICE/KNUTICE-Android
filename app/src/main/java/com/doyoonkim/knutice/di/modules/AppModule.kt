@@ -5,6 +5,11 @@ import android.app.Application
 import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.SharedPreferencesMigration
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.work.WorkManager
 import com.doyoonkim.model.di.ApplicationContext
 import dagger.Module
@@ -28,7 +33,7 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providesAlarmManager(@ApplicationContext context: Context) : AlarmManager =
+    fun providesAlarmManager(@ApplicationContext context: Context): AlarmManager =
         context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
     @Provides
@@ -42,4 +47,22 @@ object AppModule {
     fun providesWorkManager(@ApplicationContext context: Context) =
         WorkManager.getInstance(context)
 
+    // PreferenceDataStore
+    @Provides
+    @Singleton
+    fun providePreferenceDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            // Partial Key migration: SUBSCRIBED MAJOR
+            migrations = listOf(
+                SharedPreferencesMigration(
+                    context = context,
+                    sharedPreferencesName = "app_pref",
+                    // Once full migration is required, remove this line to let Migration triggers ALL_KEYS_MIGRATION.
+                    keysToMigrate = setOf("SUBSCRIBED_MAJOR")
+                )
+            ),
+            produceFile = {
+                context.preferencesDataStoreFile(name = "user_preferences")
+            }
+        )
 }

@@ -209,7 +209,7 @@ fun NoticeByMajorScreen(
                 .padding(innerPadding)
                 .pullRefresh(pullRefreshState),
             contentAlignment = Alignment.TopCenter
-        ) { 
+        ) {
             if (uiState.targetMajor == MajorCategory.UNSPECIFIED) {
                 // Read HomeScreen content safe bottom padding
                 val bottomPadding = LocalHomeSafeBottomPadding.current
@@ -243,7 +243,7 @@ fun NoticeByMajorScreen(
                     }
                     if (!uiState.isFetchable) {
                         PlaceholderScreen(
-                            modifier= Modifier.fillMaxSize().padding(bottom = bottomPadding),
+                            modifier = Modifier.fillMaxSize().padding(bottom = bottomPadding),
                             imageResource = R.drawable.question_mark,
                             contentText = stringResource(R.string.text_no_major_notice)
                         )
@@ -269,7 +269,8 @@ fun NoticeByMajorScreen(
                                 isImageContained = item.imageUrl != null,
                                 notificationTitle = item.title,
                                 notificationInfo = "[${item.departName}] ${item.timestamp}",
-                                imageUrl = item.imageUrl ?: ""
+                                imageUrl = item.imageUrl ?: "",
+                                isRecent = item.isRecent
                             )
                         }
 
@@ -313,7 +314,7 @@ fun NoticeByMajorScreen(
                 modifier = Modifier.align(Alignment.TopCenter)
                     .padding(top = 10.dp),
                 backgroundColor = MaterialTheme.colorScheme.onAnyBackground,
-                contentColor = MaterialTheme.colorScheme.variantPurple,
+                contentColor = MaterialTheme.colorScheme.variantPurple
             )
         }
 
@@ -357,7 +358,6 @@ fun NoticeByMajorScreen(
                                             .padding(vertical = 10.dp, horizontal = 5.dp)
                                     )
                                 }
-
                             }
 
                             items(majors) { major ->
@@ -395,7 +395,7 @@ fun NoticeByMajorScreen(
                                         enabled = true,
                                         colors = RadioButtonDefaults.colors().copy(
                                             selectedColor = MaterialTheme.colorScheme.variantPurple,
-                                            unselectedColor = MaterialTheme.colorScheme.subTitle,
+                                            unselectedColor = MaterialTheme.colorScheme.subTitle
                                         )
                                     )
                                 }

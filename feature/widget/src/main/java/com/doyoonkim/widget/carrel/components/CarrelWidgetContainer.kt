@@ -53,6 +53,8 @@ fun CarrelWidgetContainer(
     val context = LocalContext.current
     Log.d("Widget", "IsLoading: $isLoading")
 
+    val titleString = context.getString(R.string.knutice_carrel_widget_title)
+
     Column(
         modifier = GlanceModifier
             .fillMaxSize()
@@ -62,7 +64,7 @@ fun CarrelWidgetContainer(
     ) {
         WidgetHeader(
             modifier = GlanceModifier.defaultWeight(),
-            title = "열람실 현황",
+            title = titleString,
             lastUpdated = lastSync,
             iconResId = R.drawable.outline_sync_24,
             onRefreshClick = actionRunCallback<CarrelStatusRefreshAction>()
@@ -83,13 +85,15 @@ fun CarrelWidgetContainer(
                         .defaultWeight()
                         .cornerRadius(15.dp)
                         .background(GlanceTheme.colors.secondaryContainer)
-                        .clickable(actionStartActivity(
-                            NoticeWidgetUtil.createDeeplinkIntent(
-                                context.packageName,
-                                deeplink = "reading-room?roomId=${vo.id}&seat=0",
-                                type = null
+                        .clickable(
+                            actionStartActivity(
+                                NoticeWidgetUtil.createDeeplinkIntent(
+                                    context.packageName,
+                                    deeplink = "reading-room?roomId=${vo.id}&seat=0",
+                                    type = null
+                                )
                             )
-                        )),
+                        ),
                     contentAlignment = Alignment.Center
                 ) {
                     Column(
@@ -99,6 +103,8 @@ fun CarrelWidgetContainer(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         val carrelName = vo.name.split(" ").firstOrNull() ?: vo.name
+                        val currentRemainingSeats = vo.total - vo.occupied
+
                         Text(
                             text = carrelName,
                             style = TextStyle(
@@ -128,7 +134,10 @@ fun CarrelWidgetContainer(
                         )
 
                         Text(
-                            text = "${vo.occupied} / ${vo.total}",
+                            text = context.getString(
+                                R.string.text_carrel_widget_remaining_seat,
+                                currentRemainingSeats
+                            ),
                             style = TextStyle(
                                 fontSize = 16.sp,
                                 fontWeight = FontWeight.Medium,
@@ -181,7 +190,7 @@ fun CarrelWidget_Preview() {
                 name = "제3협업 학습 ZONE (콘센트)",
                 total = 300,
                 occupied = 280
-            ),
+            )
         )
     )
 

@@ -57,7 +57,9 @@ fun MainServiceScreen(
 
     // Navigation via BottomNavBar handling
     val bottomNavigationState = rememberBottomNavigationState(
-        navController, GraphRoute.MAIN, onExit
+        navController,
+        GraphRoute.MAIN,
+        onExit
     )
 
     val isDarkTheme = isSystemInDarkTheme()

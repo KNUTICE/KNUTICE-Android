@@ -20,8 +20,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,7 +52,7 @@ import kotlin.math.roundToInt
 data class BottomBarButton(
     val titleResourceId: Int,
     val iconResourceId: Int,
-    val dest: String,
+    val dest: String
 )
 
 @Composable
@@ -121,7 +121,7 @@ fun AnimatedBottomBar(
                 modifier = Modifier.fillMaxWidth()
                     .wrapContentHeight()
                     .background(Color.Transparent)
-                    .onGloballyPositioned {coordinates ->
+                    .onGloballyPositioned { coordinates ->
                         bottomBarSize = coordinates.size
                     },
                 verticalAlignment = Alignment.CenterVertically,
@@ -167,7 +167,7 @@ fun AnimatedBottomNavBarItem(
             )
             .clickable(
                 interactionSource = interactionSource,
-                indication = null,      // Disable default Material Ripple
+                indication = null, // Disable default Material Ripple
                 onClick = onClicked
             )
             .background(Color.Transparent),

@@ -25,7 +25,7 @@ class CollegeResource {
         }
 
         private fun getLocalizedString(name: String): Int {
-            return when(name) {
+            return when (name) {
                 CollegeType.CONVERGENCE_TECH.name -> R.string.college_convergence_technology
                 CollegeType.ENGINEERING.name -> R.string.college_engineering
                 CollegeType.HUMANITIES.name -> R.string.college_humanities
@@ -35,6 +35,5 @@ class CollegeResource {
                 else -> R.string.text_value_not_found
             }
         }
-
     }
 }

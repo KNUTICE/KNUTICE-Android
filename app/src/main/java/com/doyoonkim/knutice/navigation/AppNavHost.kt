@@ -35,11 +35,9 @@ fun AppNavHost(
     onHomeTabSwitched: (String) -> Unit,
     onPopBottomNavHistory: () -> Unit = { /* ON EXIT HANDLING */ }
 ) {
-
     val appComponent = with(LocalContext.current) {
         remember { (this.applicationContext as MainApplication).appComponent }
     }
-
 
     NavHost(
         modifier = modifier.padding(
@@ -51,7 +49,6 @@ fun AppNavHost(
         navController = navController,
         startDestination = GraphRoute.MAIN
     ) {
-
         navigation(
             route = GraphRoute.MAIN,
             startDestination = NavRoutes.Home.route
@@ -69,7 +66,7 @@ fun AppNavHost(
 
         navigation(
             route = GraphRoute.NOTICE,
-            startDestination = NavRoutes.MajorNotices.route     // Need to revise in 1.7.1 based on updated use case
+            startDestination = NavRoutes.MajorNotices.route // Need to revise in 1.7.1 based on updated use case
         ) {
             noticeServiceGraph(
                 navController = navController,

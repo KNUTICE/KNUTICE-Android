@@ -31,12 +31,15 @@ class RemoteTokenRepositoryImpl @Inject constructor(
             )
         ).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) return TokenStatus.SUCCESS
-                else it.result.printLog().also { return TokenStatus.RETRY }
+                if (it.result?.resultCode == 200) {
+                    return TokenStatus.SUCCESS
+                } else {
+                    it.result.printLog().also { return TokenStatus.RETRY }
+                }
             },
             onFailure = {
                 it.printLog()
-                return when(it) {
+                return when (it) {
                     is ConnectException -> TokenStatus.RETRY
                     is SocketTimeoutException -> TokenStatus.RETRY
                     else -> TokenStatus.FAILURE
@@ -54,12 +57,15 @@ class RemoteTokenRepositoryImpl @Inject constructor(
             request = FcmTokenSaveRequest(body.deviceType)
         ).fold(
             onSuccess = {
-                if (it.result?.resultCode == 200) return TokenStatus.SUCCESS
-                else it.result.printLog().also { return TokenStatus.RETRY }
+                if (it.result?.resultCode == 200) {
+                    return TokenStatus.SUCCESS
+                } else {
+                    it.result.printLog().also { return TokenStatus.RETRY }
+                }
             },
             onFailure = {
                 it.printLog()
-                return when(it) {
+                return when (it) {
                     is ConnectException -> TokenStatus.RETRY
                     is SocketTimeoutException -> TokenStatus.RETRY
                     else -> TokenStatus.FAILURE
@@ -74,7 +80,9 @@ class RemoteTokenRepositoryImpl @Inject constructor(
         Log.d(TAG, "Failed to receive data\nREASON: ${this.stackTraceToString()}")
 
     private fun Metadata?.printLog() =
-        Log.d(TAG, "Failed to receive data (${this?.resultCode})" +
-                "\nREASON:${this?.resultMessage}")
-
+        Log.d(
+            TAG,
+            "Failed to receive data (${this?.resultCode})" +
+                "\nREASON:${this?.resultMessage}"
+        )
 }

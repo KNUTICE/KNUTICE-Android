@@ -31,14 +31,14 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Color.White,
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
-    */
+     */
 )
 
 val DarkWidgetColorScheme = darkColorScheme(
     primary = TitleWhite,
     secondary = SubtitleAny,
     primaryContainer = DarkBackground,
-    secondaryContainer = SecondaryDark,
+    secondaryContainer = SecondaryDark
 )
 
 val LightWidgetColorScheme = lightColorScheme(
@@ -71,23 +71,23 @@ val ColorScheme.notificationType5: Color
 
 val ColorScheme.displayBackground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) DarkBackground else WhiteBackground
+    get() = if (isSystemInDarkTheme()) DarkBackground else WhiteBackground
 
 val ColorScheme.secondaryBackground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) SecondaryDark else SecondaryLight
+    get() = if (isSystemInDarkTheme()) SecondaryDark else SecondaryLight
 
 val ColorScheme.containerGray: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) Color.Gray else Color.LightGray
+    get() = if (isSystemInDarkTheme()) Color.Gray else Color.LightGray
 
 val ColorScheme.onAnyBackground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) OnBackgroundDark else OnBackgroundLight
+    get() = if (isSystemInDarkTheme()) OnBackgroundDark else OnBackgroundLight
 
 val ColorScheme.title: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) TitleWhite else TitleBlack
+    get() = if (isSystemInDarkTheme()) TitleWhite else TitleBlack
 
 val ColorScheme.subTitle: Color
     @Composable
@@ -97,22 +97,29 @@ val ColorScheme.variantPurple: Color
     @Composable
     get() = VariantPurple
 
+val ColorScheme.variantPurpleStrong: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) VariantPurpleStrongDark else VariantPurpleStrong
+
+val ColorScheme.variantPurpleLight: Color
+    @Composable
+    get() = if (isSystemInDarkTheme()) VariantPurpleBackgroundDark else VariantPurpleBackground
+
 val ColorScheme.buttonOnBackground: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) ButtonDark else ButtonLight
+    get() = if (isSystemInDarkTheme()) ButtonDark else ButtonLight
 
 val ColorScheme.animationGradientStart: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) GradientStartDark else GradientStartLight
+    get() = if (isSystemInDarkTheme()) GradientStartDark else GradientStartLight
 
 val ColorScheme.animationGradientIntermediate: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) GradientIntermediateDark else GradientIntermediateLight
+    get() = if (isSystemInDarkTheme()) GradientIntermediateDark else GradientIntermediateLight
 
 val ColorScheme.animationGradientEnd: Color
     @Composable
-    get() = if(isSystemInDarkTheme()) GradientEndDark else GradientEndLight
-
+    get() = if (isSystemInDarkTheme()) GradientEndDark else GradientEndLight
 
 @Composable
 fun KNUTICETheme(

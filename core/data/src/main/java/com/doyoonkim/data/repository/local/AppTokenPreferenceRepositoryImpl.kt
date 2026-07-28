@@ -11,6 +11,7 @@ class AppTokenPreferenceRepositoryImpl @Inject constructor(
 
     companion object {
         private const val TAG = "AppTokenPreferenceRepositoryImpl"
+
         // Token Caching
         private const val DEVICE_TOKEN = "DEVICE_TOKEN"
     }
@@ -26,5 +27,4 @@ class AppTokenPreferenceRepositoryImpl @Inject constructor(
     override fun getCachedToken(): String? {
         return appPref.getString(DEVICE_TOKEN, null)
     }
-
 }

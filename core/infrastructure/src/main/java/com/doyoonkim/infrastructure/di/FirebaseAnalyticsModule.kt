@@ -4,10 +4,9 @@ import android.Manifest
 import android.content.Context
 import androidx.annotation.RequiresPermission
 import com.doyoonkim.common.analytics.AnalyticsLogger
-import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.infrastructure.firebase.FirebaseAnalyticsLogger
+import com.doyoonkim.model.di.ApplicationContext
 import com.google.firebase.analytics.FirebaseAnalytics
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -23,5 +22,4 @@ object FirebaseAnalyticsModule {
         val analytics = FirebaseAnalytics.getInstance(context)
         return FirebaseAnalyticsLogger(analytics)
     }
-
 }

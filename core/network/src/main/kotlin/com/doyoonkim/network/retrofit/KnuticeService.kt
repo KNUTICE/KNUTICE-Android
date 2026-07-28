@@ -4,7 +4,6 @@ import com.doyoonkim.network.model.FcmTokenSaveRequest
 import com.doyoonkim.network.model.FcmTokenUpdateRequest
 import com.doyoonkim.network.model.ReportSaveRequest
 import com.doyoonkim.network.model.TopicUpdateRequest
-import com.doyoonkim.network.model.dto.CarrelRoomStatusDTO
 import model.NoticeByIdResult
 import model.NoticeSummaryResult
 import model.NoticesByKeywordResult

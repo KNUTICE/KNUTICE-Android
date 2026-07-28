@@ -50,7 +50,9 @@ class ModifyBookmarkImpl @Inject constructor(
 
             // Bookmark Entity Creation (Sequential DB Operation)
             val result = bookmarkLocalRepository.createBookmark(
-                bookmark, vo, PendingBookmarkFtsVO(
+                bookmark,
+                vo,
+                PendingBookmarkFtsVO(
                     bookmarkId = bookmark.bookmarkId,
                     notes = bookmark.bookmarkNote,
                     title = vo.title,
@@ -64,7 +66,8 @@ class ModifyBookmarkImpl @Inject constructor(
         } else {
             // Update
             val result = bookmarkLocalRepository.updateBookmark(
-                bookmark, PendingBookmarkFtsVO(
+                bookmark,
+                PendingBookmarkFtsVO(
                     bookmarkId = bookmark.bookmarkId,
                     notes = bookmark.bookmarkNote,
                     title = notice.title,
@@ -73,24 +76,25 @@ class ModifyBookmarkImpl @Inject constructor(
             )
             if (result) pendingWorkScheduler.execute()
 
-            emit(result)     // Bookmark Entity insertion is already successful.
+            emit(result) // Bookmark Entity insertion is already successful.
         }
     }.catch { /* Internal Error */ }.flowOn(ioDispatcher)
 
     override fun delete(bookmark: BookmarkVO, notice: NoticeVO): Flow<Boolean> = flow {
         val result = bookmarkLocalRepository.requestBookmarkDeletion(
-            bookmark, notice, PendingBookmarkFtsVO(
+            bookmark,
+            notice,
+            PendingBookmarkFtsVO(
                 bookmarkId = bookmark.bookmarkId,
                 notes = bookmark.bookmarkNote,
                 title = notice.title,
                 policy = StagingPolicy.DELETE
-            ))
+            )
+        )
         if (result) pendingWorkScheduler.execute()
 
         emit(result)
     }.catch {
         /* Internal Error. Consume values, and never emit values. */
     }.flowOn(ioDispatcher)
-
 }
-

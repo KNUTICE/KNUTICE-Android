@@ -10,12 +10,12 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
 }
 
-configure<ApplicationExtension>() {
+configure<ApplicationExtension> {
     namespace = "com.doyoonkim.knutice"
 
     defaultConfig {
         applicationId = "com.doyoonkim.knutice"
-        versionCode = 41
+        versionCode = 42
         versionName = "@string/version_code"
     }
     buildTypes {
@@ -59,7 +59,7 @@ dependencies {
     // Navigation for Compose
     implementation(libs.androidx.navigation.compose)
     // DataStore
-    implementation (libs.androidx.datastore.preferences)
+    implementation(libs.androidx.datastore.preferences)
     // WorkManager
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.work.runtime.ktx)

@@ -59,9 +59,9 @@ import com.doyoonkim.bookmark.contract.EditBookmarkSideEffect
 import com.doyoonkim.bookmark.viewmodel.EditBookmarkViewModel
 import com.doyoonkim.common.CollegeResource
 import com.doyoonkim.common.NoticeResources
+import com.doyoonkim.common.R
 import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NoticeDetail
-import com.doyoonkim.common.R
 import com.doyoonkim.common.theme.displayBackground
 import com.doyoonkim.common.theme.onAnyBackground
 import com.doyoonkim.common.theme.secondaryBackground
@@ -135,9 +135,11 @@ fun EditBookmarkScreen(
                 notificationTitle = bookmarkInfo.noticeTitle,
                 notificationInfo = stringResource(
                     NoticeResources.getStringResourcesByCategory(bookmarkInfo.noticeInfo).let {
-                        if (it == R.string.text_category_not_found)
+                        if (it == R.string.text_category_not_found) {
                             CollegeResource.getLocalizedCollegeStringByMajor(bookmarkInfo.noticeInfo)
-                        else it
+                        } else {
+                            it
+                        }
                     }
                 )
             ) {
@@ -179,7 +181,7 @@ fun EditBookmarkScreen(
                 ) {
                     RoundedCornerColumnItem(
                         verticalPadding = 12.dp,
-                        hasBottomDivider = false,
+                        hasBottomDivider = false
                     ) {
                         Row(
                             modifier = Modifier
@@ -275,7 +277,7 @@ fun EditBookmarkScreen(
                     enabled = true,
                     colors = ButtonDefaults.buttonColors().copy(
                         containerColor = MaterialTheme.colorScheme.variantPurple,
-                        contentColor = Color.White,
+                        contentColor = Color.White
                     ),
                     shape = RoundedCornerShape(10.dp),
                     onClick = {
@@ -340,7 +342,6 @@ fun EditBookmarkScreen(
                     // Dismiss the dialog when the user clicks outside the dialog or on the back
                     // button. If you want to disable that functionality, simply use an empty
                     // onDismissRequest.
-
                 }
             ) {
                 Surface(

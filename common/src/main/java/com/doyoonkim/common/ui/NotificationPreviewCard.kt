@@ -48,5 +48,4 @@ fun NotificationPreviewCard(
 @Composable
 @Preview(showBackground = true, showSystemUi = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 fun NotificationPreviewContainer_Preview() {
-
 }
