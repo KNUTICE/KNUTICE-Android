@@ -21,10 +21,10 @@ class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
         @Deprecated("Use New PreferenceKey Value.")
         private const val SUBSCRIBED_MAJOR = "SUBSCRIBED_MAJOR"
 
-        // DataStore Preferences Key
-        private val MAJORS_SUBSCRIBED = stringSetPreferencesKey("MAJORS_SUBSCRIBED")
-        private val MAJORS_SUBSCRIPTION_PENDING = stringSetPreferencesKey("MAJORS_SUBSCRIPTION_PENDING")
-        private val MAJORS_TO_BE_UNSUBSCRIBED = stringSetPreferencesKey("MAJORS_UNSUBSCRIPTION_PENDING")
+        // DataStore Preferences Key (LEGACY)
+        private val MAJORS_SUBSCRIBED = stringSetPreferencesKey("LEGACY_MAJORS_SUBSCRIBED")
+        private val MAJORS_SUBSCRIPTION_PENDING = stringSetPreferencesKey("LEGACY_MAJORS_SUBSCRIPTION_PENDING")
+        private val MAJORS_TO_BE_UNSUBSCRIBED = stringSetPreferencesKey("LEGACY_MAJORS_UNSUBSCRIPTION_PENDING")
     }
 
     /**
