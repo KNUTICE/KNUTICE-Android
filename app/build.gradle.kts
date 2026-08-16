@@ -15,7 +15,7 @@ configure<ApplicationExtension> {
 
     defaultConfig {
         applicationId = "com.doyoonkim.knutice"
-        versionCode = 42
+        versionCode = 43
         versionName = "@string/version_code"
     }
     buildTypes {
@@ -36,7 +36,7 @@ configure<ApplicationExtension> {
     }
     packaging {
         resources {
-            excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/LICENSE*"
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
