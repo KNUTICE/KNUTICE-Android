@@ -17,7 +17,7 @@ internal fun Project.configureAndroidCommon() {
     val libs = extensions.getByType<VersionCatalogsExtension>().named("libs")
     extensions.getByType<CommonExtension>().apply {
         // Compile SDK
-        compileSdk = 35
+        compileSdk = 36
 
         // Default Configuration
         with(defaultConfig) {
