@@ -2,7 +2,7 @@
 agp = "9.0.0"
 coilCompose = "2.4.0"
 converterGson = "2.11.0"
-datastorePreferences = "1.2.0"
+datastorePreferences = "1.2.1"
 firebaseMessagingDirectboot = "24.0.2"
 jetpackGlance = "1.1.1"
 javaxInject = "1"
