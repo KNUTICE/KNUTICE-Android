@@ -12,7 +12,9 @@ import com.doyoonkim.main.contract.NoticeListUiState
 import com.doyoonkim.main.contract.NoticeListViewModelState
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
+import com.doyoonkim.model.NoticeVO.Companion.isNotEmpty
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,7 +50,7 @@ class NoticeListViewModel @Inject constructor(
     override fun handleEvent(event: NoticeListEvent) {
         when (event) {
             is NoticeListEvent.FetchCoreCategories -> {
-                val coreCategories = NoticeCategory.entries.map { it.name }
+                val coreCategories = NoticeCategory.entries.map { it.name }.dropLast(1)
                 coreCategories.forEach { category ->
                     fetchNotices(category)
                 }
@@ -80,26 +82,27 @@ class NoticeListViewModel @Inject constructor(
     }
 
     init {
+        // Receive values from DataStore.
+        collectSubscriptionPreferenceFlow()
         // Fetch Notices of Core Categories First.
         // Underlying problem: What if user access this UI via Deeplink that directly links to specific major notices?
         sendUiEvent(NoticeListEvent.FetchCoreCategories)
-
-        // Receive values from DataStore.
-        collectSubscriptionPreferenceFlow()
     }
 
     private fun collectSubscriptionPreferenceFlow() = viewModelScope.launch {
-        // TODO: Collect exposed FLow<String> (Potentially, Flow<TopicType>) to initialize UiState.
-
-        // TEST ONLY
-        val received: Set<String> = setOf("COMPUTER_SCIENCE")
-        // Tigger Event (UpdateMajorSubscription(Set<String>)
-        sendUiEvent(NoticeListEvent.UpdateMajorSubscription(received))
+        val cachedSubscriptionStatus = appSubscriptionPreferenceRepository.getSubscribedMajor().first()
+        Log.d(TAG, "Cached: ${cachedSubscriptionStatus.size}")
+        if (cachedSubscriptionStatus.isNotEmpty()) {
+            // Tigger Event (UpdateMajorSubscription(Set<String>)
+            sendUiEvent(NoticeListEvent.UpdateMajorSubscription(cachedSubscriptionStatus))
+        }
     }
 
     // Later parameter type would be changed to Int
     private fun fetchNotices(category: String) =
         viewModelScope.launch {
+            Log.d(TAG, "Received Category: $category")
+
             // Check Current category is fetchable.
             val isFetchable = viewModelState.value.isFetchable[category]
             if (isFetchable == null) {
@@ -113,7 +116,7 @@ class NoticeListViewModel @Inject constructor(
             }
 
             if (!isFetchable) {
-                TODO("Issue SideEffect to show Toast/SnackBar message.")
+                sendSideEffect(NoticeListSideEffect.ShowMessage("Unable to Fetch"))
                 return@launch
             }
 
@@ -132,7 +135,7 @@ class NoticeListViewModel @Inject constructor(
             }
 
             // LastNttId for pagination.
-            val currentLastNttId = snapshot.lastOrNull()?.nttId ?: 0
+            val currentLastNttId = (snapshot.lastOrNull()?.nttId ?: 0).takeIf { it > 0 } ?: 0
 
             fetchNoticesPerPage(category, currentLastNttId)
                 .collectLatest { result ->
@@ -185,8 +188,9 @@ class NoticeListViewModel @Inject constructor(
 
             is NoticeListMutation.MajorUpdated -> {
                 val coreCategories = NoticeCategory.entries.map { it.name }
+                val updatedCategories = (currentState.categories + mutation.categories).toSet()
 
-                val updatedNoticeMap = hashMapOf<String, List<NoticeVO>>().apply {
+                val updatedNoticeMap = mutableMapOf<String, List<NoticeVO>>().apply {
                     // Initialize Core Categories first.
                     coreCategories.forEach { category ->
                         this[category] = currentState.notices[category] ?: List(20) { NoticeVO() }
@@ -196,7 +200,7 @@ class NoticeListViewModel @Inject constructor(
                         this[category] = currentState.notices[category] ?: List(20) { NoticeVO() }
                     }
                 }
-                val updatedFetchableMap = hashMapOf<String, Boolean>().apply {
+                val updatedFetchableMap = mutableMapOf<String, Boolean>().apply {
                     coreCategories.forEach { category ->
                         this[category] = currentState.isFetchable[category] ?: true
                     }
@@ -206,6 +210,7 @@ class NoticeListViewModel @Inject constructor(
                 }
 
                 currentState.copy(
+                    categories = updatedCategories.toList(),
                     notices = updatedNoticeMap,
                     isFetchable = updatedFetchableMap
                 )
@@ -223,15 +228,13 @@ class NoticeListViewModel @Inject constructor(
             is NoticeListMutation.Notices.Success -> {
                 // Append Received List to existing values.
                 val existing = currentState.notices[category] ?: emptyList()
-                val updated = existing.toMutableList().apply { addAll(received) }
+                val updated = existing.filter { it.isNotEmpty() } + received
 
                 // Update Notice Map
-                val updatedNotices = currentState.notices
-                updatedNotices[category] = updated
+                val updatedNotices = currentState.notices + mapOf(category to updated)
 
                 // Check Fetchable Status
-                val updatedFetchableMap = currentState.isFetchable
-                updatedFetchableMap[category] = received.size % 20 == 0
+                val updatedFetchableMap = currentState.isFetchable + mapOf(category to (received.size % 20 == 0))
 
                 currentState.copy(
                     isLoading = false,
@@ -252,5 +255,4 @@ class NoticeListViewModel @Inject constructor(
             }
         }
     }
-
 }

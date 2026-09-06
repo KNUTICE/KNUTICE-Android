@@ -1,5 +1,6 @@
 package com.doyoonkim.common.base
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.channels.BufferOverflow
@@ -25,7 +26,12 @@ interface ViewModelState<S : UiState> {
 }
 
 abstract class KNBaseViewModel<
-        VS : ViewModelState<S>, S : UiState, E : UiEvent, SE : UiSideEffect, M : UiMutation>() :
+    VS : ViewModelState<S>,
+    S : UiState,
+    E : UiEvent,
+    SE : UiSideEffect,
+    M : UiMutation
+    >() :
     ViewModel() {
 
     companion object {
@@ -43,7 +49,7 @@ abstract class KNBaseViewModel<
      * ViewModelFlow would be transformed to collectable state flow of [UiState]
      */
     val uiState: StateFlow<S> = _viewModelState
-        .map { it.toUiState() }
+        .map { it.toUiState().also { resolved -> Log.d(TAG, "Resolved UI State: $resolved") } }
         .stateIn(
             viewModelScope,
             SharingStarted.Eagerly,
@@ -120,5 +126,4 @@ abstract class KNBaseViewModel<
      * Pure function that mutate the [ViewModelState] based on the given [UiMutation]
      */
     protected abstract fun reduce(currentState: VS, mutation: M): VS
-
 }

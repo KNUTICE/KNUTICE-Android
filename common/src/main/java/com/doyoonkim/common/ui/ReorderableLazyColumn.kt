@@ -50,11 +50,11 @@ class ReorderState(
 ) {
     // Index of dragged item
     var draggedItemIndex by mutableStateOf<Int?>(null)
-        private set     // allow private access to its setter. Value update can only be happened within this class scope.
+        private set // allow private access to its setter. Value update can only be happened within this class scope.
 
     // Applied Offset value of item to be dragged.
     var draggedItemOffset by mutableFloatStateOf(0f)
-        private set     // allow private access to its setter. Value update can only be happened within this class scope.
+        private set // allow private access to its setter. Value update can only be happened within this class scope.
 
     // State Variables for Internal Physics Calculation
     // functions to perform dragging animation and necessary calculation.
@@ -67,14 +67,14 @@ class ReorderState(
             }?.also { visibleItemInfo ->
                 draggedItemIndex = visibleItemInfo.index
                 draggedItemOffset =
-                    0f  // Overall dragged distance. Starting from 0f (Drag not yet performed.)
+                    0f // Overall dragged distance. Starting from 0f (Drag not yet performed.)
             }
     }
 
     fun onDrag(offset: Offset) {
         // Dragging. Main purpose of this function: Calculate each drag distance, and maintain cumulative total offset to be applied when drag is completed.
         val currentItemIndex = draggedItemIndex
-            ?: return   // Early return when draggedItemIndex is not yet initialized.
+            ?: return // Early return when draggedItemIndex is not yet initialized.
 
         // Get each drag distance from dragAmount: Offset provided by graphicsLayer.
         // Each drag distance to be added to overall offset to get cumulative distance to be applied vertically when dragging is completed.
@@ -98,7 +98,7 @@ class ReorderState(
             // This evaluation would ultimately return the very first direct vertical adjacent item.
             // Without visibleItem.index != draggedItemIndex, this evaluation would return exactly the same element of dragged item.
             visibleItem.index != draggedItemIndex &&
-                    (absoluteYOffset.toInt() + (currentItem.size / 2)) in visibleItem.offset..(visibleItem.offset + visibleItem.size)
+                (absoluteYOffset.toInt() + (currentItem.size / 2)) in visibleItem.offset..(visibleItem.offset + visibleItem.size)
         } ?: return
 
         // Perform Visual/Structural Swap.
@@ -108,7 +108,7 @@ class ReorderState(
         draggedItemIndex = adjacentItem.index
 
         // Add 'Swapped' distance to the cumulative offset tracking value.
-        draggedItemOffset += currentItem.offset - adjacentItem.offset       // Move up by adjacent item's height (vertical offset)
+        draggedItemOffset += currentItem.offset - adjacentItem.offset // Move up by adjacent item's height (vertical offset)
     }
 
     fun onDragInterrupted() {
@@ -139,7 +139,7 @@ fun Modifier.reorderable(state: ReorderState): Modifier =
             detectDragGesturesAfterLongPress(
                 onDragStart = { offset -> state.onDragStarts(offset) },
                 onDrag = { pointerInputChange, dragAmount ->
-                    pointerInputChange.consume()        // Prevent detected gesture event repeatedly consumed by others. (ex: Vertical Scroll enabled in parent LazyColumn.)
+                    pointerInputChange.consume() // Prevent detected gesture event repeatedly consumed by others. (ex: Vertical Scroll enabled in parent LazyColumn.)
                     // Programmatically prevent onDrag calling if element goes outside of list boundaries.
                     state.onDrag(dragAmount)
                 },
@@ -159,12 +159,12 @@ fun Modifier.reorderableItem(state: ReorderState, idx: Int): Modifier =
                     // Provide visual feedback to indicate item is selected, and ready to be reordered.
                     // Vertical Movement, while scaling it slightly, and dropping shadow for visual distinction.
                     with(state.listState.layoutInfo.visibleItemsInfo) {
-                        if (idx == 0 && state.draggedItemOffset < 0f
-                            || idx == lastIndex && state.draggedItemOffset > 0f
+                        if (idx == 0 && state.draggedItemOffset < 0f ||
+                            idx == lastIndex && state.draggedItemOffset > 0f
                         ) {
                             // Element hits either very top or bottom element, and user is trying to drag
                             // element outside of the content-safe area
-                            return@graphicsLayer    // Consume visual vertical translation.
+                            return@graphicsLayer // Consume visual vertical translation.
                         }
                     }
 
@@ -179,7 +179,6 @@ fun Modifier.reorderableItem(state: ReorderState, idx: Int): Modifier =
                 if (state.draggedItemIndex == idx) 1f else 0f
             )
     )
-
 
 @Composable
 fun <T> ReorderableLazyColumn(

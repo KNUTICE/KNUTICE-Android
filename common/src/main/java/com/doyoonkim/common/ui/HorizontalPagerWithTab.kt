@@ -2,6 +2,7 @@ package com.doyoonkim.common.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
@@ -52,7 +54,9 @@ fun HorizontalPagerWithTab(
 ) {
     val coroutineScope = rememberCoroutineScope()
 
-    var selected by remember { mutableIntStateOf(initialPage) }
+    var selected by remember(tabItems, initialPage) {
+        mutableIntStateOf(initialPage.takeIf { it >= 0 } ?: 0)
+    }
 
     // Pager
     val pagerSize = tabItems.size
@@ -70,11 +74,27 @@ fun HorizontalPagerWithTab(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        // LazyListState
+        val listState = rememberLazyListState()
+        LaunchedEffect(selected) {
+            val layoutInfo = listState.layoutInfo
+
+            val target = layoutInfo.visibleItemsInfo.firstOrNull { it.index == selected }
+            target?.let {
+                val viewportCenter = layoutInfo.viewportEndOffset / 2
+                val itemCenter = it.offset + it.size / 2
+                val resolvedOffset = itemCenter - viewportCenter
+
+                listState.animateScrollBy(resolvedOffset.toFloat())
+            }
+        }
+
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(40.dp)
                 .padding(vertical = 3.dp),
+            state = listState,
             horizontalArrangement = Arrangement.Start,
             verticalAlignment = Alignment.CenterVertically
         ) {

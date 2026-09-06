@@ -38,10 +38,7 @@ import com.doyoonkim.model.CollegeType
 import com.doyoonkim.model.MajorCategory
 
 @Composable
-fun MajorSubscriptionScreen(
-
-) {
-
+fun MajorSubscriptionScreen() {
     val majors = MajorCategory.entries.groupBy { it.collegeType }
     Scaffold(
         topBar = {
@@ -117,7 +114,6 @@ fun MajorSubscriptionScreen(
                             RadioButton(
                                 selected = false,
                                 onClick = {
-
                                 },
                                 modifier = Modifier
                                     .wrapContentSize()

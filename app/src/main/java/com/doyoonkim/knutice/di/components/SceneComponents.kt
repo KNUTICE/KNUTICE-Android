@@ -27,6 +27,7 @@ import com.doyoonkim.main.di.HomeSceneModule
 import com.doyoonkim.main.di.NoticeByMajorSceneModule
 import com.doyoonkim.main.di.NoticeDetailSceneModule
 import com.doyoonkim.main.di.NoticeInCategorySceneModule
+import com.doyoonkim.main.di.NoticeListScreenModule
 import com.doyoonkim.main.di.NoticeSearchSceneModule
 import com.doyoonkim.main.di.NotificationPreferencesSceneModule
 import com.doyoonkim.main.di.SettingsSceneModule
@@ -93,6 +94,32 @@ interface NoticeByMajorSceneComponent {
             networkProvider: NetworkProvider,
             localPreferenceProvider: LocalPreferenceProvider
         ): NoticeByMajorSceneComponent
+    }
+}
+
+@Component(
+    dependencies = [
+        SystemServices::class,
+        NetworkProvider::class,
+        LocalPreferenceProvider::class
+    ],
+    modules = [
+        ViewModelFactoryModule::class,
+        NoticeListScreenModule::class,
+        NoticeUseCaseModule::class,
+        NoticeRemoteModule::class
+    ]
+)
+interface NoticeListSceneComponent {
+    fun getViewModelFactory(): ViewModelProvider.Factory
+
+    @Component.Factory
+    interface Factory {
+        fun create(
+            systemService: SystemServices,
+            networkProvider: NetworkProvider,
+            localPreferenceProvider: LocalPreferenceProvider
+        ): NoticeListSceneComponent
     }
 }
 

@@ -11,10 +11,11 @@ import com.doyoonkim.model.NoticeVO
 // TopicTypeVO
 // id: String, value: String (Server-driven localized value.)
 
+@Immutable
 data class NoticeListViewModelState(
     val categories: List<String> = emptyList(),
-    val notices: HashMap<String, List<NoticeVO>> = hashMapOf(),
-    val isFetchable: HashMap<String, Boolean> = hashMapOf(),
+    val notices: Map<String, List<NoticeVO>> = mapOf(),
+    val isFetchable: Map<String, Boolean> = mapOf(),
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val isError: Boolean = false,
@@ -28,7 +29,6 @@ data class NoticeListViewModelState(
                 categories = categories,
                 notices = notices
             )
-
             else -> NoticeListUiState.NoticeUnavailableOnError(
                 errorMessage = errorMessages.last()
             )
@@ -41,7 +41,7 @@ sealed interface NoticeListUiState : UiState {
 
     data class NoticeAvailableOnSuccess(
         val categories: List<String>,
-        val notices: HashMap<String, List<NoticeVO>>
+        val notices: Map<String, List<NoticeVO>>
     ) : NoticeListUiState
 
     data class NoticeUnavailableOnError(
@@ -50,7 +50,6 @@ sealed interface NoticeListUiState : UiState {
 
     data object NoticeLoading : NoticeListUiState
     data object NoticeRefreshing : NoticeListUiState
-
 }
 
 sealed interface NoticeListEvent : UiEvent {
