@@ -11,4 +11,12 @@ data class NoticeVO(
     val noticeName: String = "",
     val isSummaryAvailable: Boolean = false,
     val isRecent: Boolean = false
-)
+) {
+    companion object {
+        fun NoticeVO?.isEmpty(): Boolean = !this.isNotEmpty()
+
+        fun NoticeVO?.isNotEmpty(): Boolean {
+            return this != null && nttId != -1
+        }
+    }
+}
