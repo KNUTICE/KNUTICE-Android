@@ -13,7 +13,7 @@ data class NoticeVO(
     val isRecent: Boolean = false
 ) {
     companion object {
-        fun NoticeVO?.isEmpty(): Boolean = this.isNotEmpty()
+        fun NoticeVO?.isEmpty(): Boolean = !this.isNotEmpty()
 
         fun NoticeVO?.isNotEmpty(): Boolean {
             return this != null && nttId != -1
