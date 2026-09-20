@@ -13,9 +13,11 @@ import com.doyoonkim.main.contract.NoticeListViewModelState
 import com.doyoonkim.model.NoticeCategory
 import com.doyoonkim.model.NoticeVO
 import com.doyoonkim.model.NoticeVO.Companion.isNotEmpty
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.concurrent.CancellationException
 import javax.inject.Inject
 
 class NoticeListViewModel @Inject constructor(
@@ -26,6 +28,9 @@ class NoticeListViewModel @Inject constructor(
     companion object {
         private const val TAG = "NoticeListViewModel"
     }
+
+    // Top-level Map to track per-category Job
+    private val fetchingJobPerCategory: MutableMap<String, Job> = mutableMapOf()
 
     override fun setInitialViewModelState(): NoticeListViewModelState {
         val keys = NoticeCategory.entries.dropLast(1).map(NoticeCategory::name)
@@ -40,7 +45,6 @@ class NoticeListViewModel @Inject constructor(
         }
 
         return NoticeListViewModelState(
-            isLoading = true,
             categories = keys,
             notices = noticesMap,
             isFetchable = fetchableMap
@@ -103,6 +107,8 @@ class NoticeListViewModel @Inject constructor(
         viewModelScope.launch {
             Log.d(TAG, "Received Category: $category")
 
+            if (viewModelState.value.isError) return@launch
+
             // Check Current category is fetchable.
             val isFetchable = viewModelState.value.isFetchable[category]
             if (isFetchable == null) {
@@ -120,8 +126,13 @@ class NoticeListViewModel @Inject constructor(
                 return@launch
             }
 
+            // Check whether there is an active job for this category. If present, cancel it.
+            fetchingJobPerCategory[category]?.cancel(
+                CancellationException("New fetching request for this category received.")
+            )
+
             // Mutate State to isLoading
-            mutate(NoticeListMutation.Loading)
+            mutate(NoticeListMutation.Loading(category))
             // Current Notices Map Snapshot
             val snapshot = viewModelState.value.notices[category]
             if (snapshot == null) {
@@ -137,18 +148,20 @@ class NoticeListViewModel @Inject constructor(
             // LastNttId for pagination.
             val currentLastNttId = (snapshot.lastOrNull()?.nttId ?: 0).takeIf { it > 0 } ?: 0
 
-            fetchNoticesPerPage(category, currentLastNttId)
-                .collectLatest { result ->
-                    result.fold(
-                        onSuccess = { vo ->
-                            // Update State using Key as Category, received list as a values.
-                            mutate(NoticeListMutation.Notices.Success(category, vo))
-                        },
-                        onFailure = {
-                            Log.d(TAG, "Unable to fetch notices: ${it.stackTraceToString()}")
-                        }
-                    )
-                }
+            fetchingJobPerCategory[category] = launch {
+                fetchNoticesPerPage(category, currentLastNttId)
+                    .collectLatest { result ->
+                        result.fold(
+                            onSuccess = { vo ->
+                                // Update State using Key as Category, received list as a values.
+                                mutate(NoticeListMutation.Notices.Success(category, vo))
+                            },
+                            onFailure = {
+                                Log.d(TAG, "Unable to fetch notices: ${it.stackTraceToString()}")
+                            }
+                        )
+                    }
+            }
         }
 
     // Reducer
@@ -159,7 +172,7 @@ class NoticeListViewModel @Inject constructor(
         return when (mutation) {
             is NoticeListMutation.Loading -> {
                 currentState.copy(
-                    isLoading = true
+                    isLoading = currentState.isLoading + mapOf(mutation.category to true)
                 )
             }
 
@@ -179,7 +192,7 @@ class NoticeListViewModel @Inject constructor(
                 }
 
                 currentState.copy(
-                    isLoading = false,
+                    isLoading = currentState.isLoading.keys.associateWith { false },
                     isRefreshing = true,
                     notices = newNoticesMap,
                     isFetchable = newIsFetchableMap
@@ -227,19 +240,22 @@ class NoticeListViewModel @Inject constructor(
         return when (this) {
             is NoticeListMutation.Notices.Success -> {
                 // Append Received List to existing values.
-                val existing = currentState.notices[category] ?: emptyList()
-                val updated = existing.filter { it.isNotEmpty() } + received
+                val existing = currentState.notices[category]
+                val updated = (existing?.filter { it.isNotEmpty() } ?: emptyList()) + received
 
                 // Update Notice Map
                 val updatedNotices = currentState.notices + mapOf(category to updated)
 
                 // Check Fetchable Status
-                val updatedFetchableMap = currentState.isFetchable + mapOf(category to (received.size % 20 == 0))
+                val updatedFetchableMap = currentState.isFetchable + mapOf(
+                    category to (received.isNotEmpty() && received.size % 20 == 0)
+                )
 
                 currentState.copy(
-                    isLoading = false,
-                    isRefreshing = false,
+                    isLoading = currentState.isLoading + mapOf(category to false),
+                    isRefreshing = fetchingJobPerCategory.isAllJobCompleted(),
                     isError = false,
+                    isInitialized = true,
                     notices = updatedNotices,
                     isFetchable = updatedFetchableMap
                 )
@@ -247,12 +263,19 @@ class NoticeListViewModel @Inject constructor(
 
             is NoticeListMutation.Notices.Failure -> {
                 currentState.copy(
-                    isLoading = false,
-                    isRefreshing = false,
+                    isLoading = currentState.isLoading + mapOf(this.category to false),
+                    isRefreshing = fetchingJobPerCategory.isAllJobCompleted(),
                     isError = true,
                     errorMessages = currentState.errorMessages + this.reason
                 )
             }
         }
+    }
+
+    private fun MutableMap<String, Job>.isAllJobCompleted(): Boolean {
+        this.forEach { (_, job) ->
+            if (!job.isCompleted) return false
+        }
+        return true
     }
 }
