@@ -66,7 +66,7 @@ fun AppNavHost(
 
         navigation(
             route = GraphRoute.NOTICE,
-            startDestination = NavRoutes.MajorNotices.route // Need to revise in 1.7.1 based on updated use case
+            startDestination = NavRoutes.NoticeListDashboard.route
         ) {
             noticeServiceGraph(
                 navController = navController,

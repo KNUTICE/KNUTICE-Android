@@ -56,20 +56,18 @@ fun NavGraphBuilder.mainServiceNavGraph(
                 onPopBottomNavHistory()
             },
             onMoreNoticeRequested = { dest ->
-                with(NavRoutes.NoticeList) {
+                with(NavRoutes.NoticeListDashboard) {
                     // Will be revised in 1.7.2 with updated use case.
-                    navController.run {
-                        when (dest) {
-                            Destination.MORE_GENERAL -> navigate(createRoute(NoticeCategory.GENERAL_NEWS.name))
-                            Destination.MORE_ACADEMIC -> navigate(createRoute(NoticeCategory.ACADEMIC_NEWS.name))
-                            Destination.MORE_SCHOLARSHIP -> navigate(createRoute(NoticeCategory.SCHOLARSHIP_NEWS.name))
-                            Destination.MORE_EVENT -> navigate(createRoute(NoticeCategory.EVENT_NEWS.name))
-                            Destination.MORE_EMPLOYMENT -> navigate(createRoute(NoticeCategory.EMPLOYMENT_NEWS.name))
-                            else -> {
-                                /* DO NOTHING. */
-                            }
-                        }
+                    val route = when (dest) {
+                        Destination.MORE_GENERAL -> createRoute(NoticeCategory.GENERAL_NEWS.name)
+                        Destination.MORE_ACADEMIC -> createRoute(NoticeCategory.ACADEMIC_NEWS.name)
+                        Destination.MORE_SCHOLARSHIP -> createRoute(NoticeCategory.SCHOLARSHIP_NEWS.name)
+                        Destination.MORE_EVENT -> createRoute(NoticeCategory.EVENT_NEWS.name)
+                        Destination.MORE_EMPLOYMENT -> createRoute(NoticeCategory.EMPLOYMENT_NEWS.name)
+                        else -> null
                     }
+
+                    route?.let { dest -> onTabSwitches(dest) }
                 }
             },
             onFullContentRequested = { id, url ->
@@ -79,7 +77,7 @@ fun NavGraphBuilder.mainServiceNavGraph(
                 navController.navigate("tipDetail/${category.name}/${Uri.encode(url)}")
             },
             onMoreMajorNoticeRequested = {
-                // Tab Switches. Revised in 1.7.2
+                // Tab Switches. TODO: Resolve destination via createRoute function call.
                 onTabSwitches(GraphRoute.NOTICE)
             },
             onCarrelStatusRequested = { navController.navigate(NavRoutes.CarrelStatus.route) },

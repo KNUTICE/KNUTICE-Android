@@ -48,7 +48,7 @@ fun MainServiceScreen(
     val bottomBarSelectionState = remember(backStackEntryState) {
         when (backStackEntryState?.destination?.route) {
             NavRoutes.Home.route -> 0
-            NavRoutes.MajorNotices.route -> 1
+            NavRoutes.NoticeListDashboard.route -> 1
             NavRoutes.Bookmark.route -> 2
             NavRoutes.NoticeSearch.route -> 3
             else -> -1
@@ -73,7 +73,7 @@ fun MainServiceScreen(
                 GraphRoute.MAIN
             ),
             BottomBarButton(
-                R.string.bottom_bar_major_title,
+                R.string.bottom_bar_notices_title,
                 R.drawable.outline_school_24,
                 GraphRoute.NOTICE
             ),
@@ -102,7 +102,8 @@ fun MainServiceScreen(
             LocalHomeSafeBottomPadding provides contentSafeBottomPadding
         ) {
             Box(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(
                         start = contentPadding.calculateStartPadding(LayoutDirection.Ltr),
                         end = contentPadding.calculateEndPadding(LayoutDirection.Ltr)
@@ -124,7 +125,8 @@ fun MainServiceScreen(
                 if (bottomBarSelectionState >= 0) {
                     // Blur Effect in Overlapping Area
                     Spacer(
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
                             .align(Alignment.BottomCenter)
                             .height(80.dp)
                             .background(
