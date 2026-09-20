@@ -7,8 +7,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -18,6 +20,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.IconButton
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -79,7 +82,8 @@ fun NoticeListScreenItem(
             when (sideEffect) {
                 is NoticeListSideEffect.GoBack -> onBackButtonPressed()
                 is NoticeListSideEffect.NavToSettings -> onSettingsRequested()
-                is NoticeListSideEffect.ShowMessage -> { /* Display toast message */
+                is NoticeListSideEffect.ShowMessage -> {
+                    /* Display toast message */
                 }
             }
         }
@@ -88,6 +92,7 @@ fun NoticeListScreenItem(
     BackHandler { viewModel.sendUiEvent(NoticeListEvent.RequestGoBack) }
 
     // Pull-to-Refresh action
+    // TODO: Implement Overall PULL-to-Refresh [KAN-156]
     val pullRefreshState = rememberPullRefreshState(
         refreshing = false,
         onRefresh = {
@@ -123,15 +128,15 @@ fun NoticeListScreenItem(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(bottom = bottomPadding),
+                .padding(innerPadding),
             contentAlignment = Alignment.TopCenter
         ) {
             when (uiState) {
-                is NoticeListUiState.NoticeLoading -> {
+                is NoticeListUiState.Initialize -> {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
+                            .padding(bottom = bottomPadding)
                             .background(Color.Transparent),
                         contentAlignment = Alignment.Center
                     ) {
@@ -142,7 +147,7 @@ fun NoticeListScreenItem(
                                 .clip(RoundedCornerShape(20.dp)),
                             color = MaterialTheme.colorScheme.onAnyBackground
                         ) {
-                            androidx.compose.material3.CircularProgressIndicator(
+                            CircularProgressIndicator(
                                 modifier = Modifier
                                     .align(Alignment.Center)
                                     .padding(25.dp),
@@ -152,7 +157,7 @@ fun NoticeListScreenItem(
                     }
                 }
 
-                is NoticeListUiState.NoticeRefreshing -> Box { }
+                is NoticeListUiState.NoticeRefreshing -> Box { /* TODO: Implement overall pull-to-refresh logic [KAN-156] */ }
                 is NoticeListUiState.NoticeAvailableOnSuccess -> {
                     val state = uiState as NoticeListUiState.NoticeAvailableOnSuccess
                     NoticeListScreenContent(
@@ -165,7 +170,6 @@ fun NoticeListScreenItem(
                         onNewMajorSubscriptionRequested = { }
                     )
                 }
-
                 is NoticeListUiState.NoticeUnavailableOnError -> NoticeListUnavailable()
             }
         }
@@ -193,51 +197,77 @@ private fun NoticeListScreenContent(
         },
         isTabDynamic = true
     ) {
-        LazyColumn(
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            verticalArrangement = Arrangement.spacedBy(5.dp),
-            userScrollEnabled = true
+                .fillMaxSize(),
+            contentAlignment = Alignment.TopCenter
         ) {
-            val key = uiState.categories[it]
-            uiState.notices[key]?.let { notices ->
-                itemsIndexed(notices) { i, notice ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                verticalArrangement = Arrangement.spacedBy(5.dp),
+                userScrollEnabled = true
+            ) {
+                val key = uiState.categories[it]
+                uiState.notices[key]?.let { notices ->
+                    itemsIndexed(notices) { i, notice ->
 
-                    LaunchedEffect(i) {
-                        // Refresh Logic
-                        if (i == notices.lastIndex) {
-                            onNextPageRequested(key)
+                        LaunchedEffect(i) {
+                            // Load More Notices
+                            if (i == notices.lastIndex) {
+                                onNextPageRequested(key)
+                            }
+                        }
+
+                        if (i != 0) {
+                            HorizontalDivider(
+                                Modifier.fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.onAnyBackground,
+                                thickness = 1.2.dp
+                            )
+                        }
+
+                        Row(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .clickable {
+                                    onNoticeDetailRequested(notice)
+                                }
+                        ) {
+                            NotificationPreview(
+                                isLoading = notice.title.isBlank(),
+                                notificationTitle = notice.title,
+                                notificationInfo = with(notice) { "[$departName] $timestamp" },
+                                isImageContained = !notice.imageUrl.isNullOrBlank(),
+                                imageUrl = notice.imageUrl ?: "",
+                                isRecent = notice.isRecent
+                            )
                         }
                     }
+                }
 
-                    if (i != 0) {
-                        HorizontalDivider(
-                            Modifier.fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.onAnyBackground,
-                            thickness = 1.2.dp
-                        )
+                item {
+                    if (uiState.isLoading[key] == true) {
+                        // Per-page Loading Indicator
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.wrapContentSize(),
+                                color = MaterialTheme.colorScheme.variantPurple,
+                                trackColor = MaterialTheme.colorScheme.displayBackground
+                            )
+                        }
+                    } else {
+                        // End of List ContentSafe Bottom Spacing
+                        val bottomPadding = LocalHomeSafeBottomPadding.current
+                        Spacer(Modifier.height(bottomPadding))
                     }
-
-                    Row(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .clickable {
-                                onNoticeDetailRequested(notice)
-                            }
-                    ) {
-                        NotificationPreview(
-                            isLoading = notice.title.isBlank(),
-                            notificationTitle = notice.title,
-                            notificationInfo = with(notice) { "[$departName] $timestamp" },
-                            isImageContained = !notice.imageUrl.isNullOrBlank(),
-                            imageUrl = notice.imageUrl ?: "",
-                            isRecent = notice.isRecent
-                        )
-                    }
-
-                    /* Loading Indicator
-                     */
                 }
             }
         }
@@ -288,7 +318,8 @@ fun NoticeListScreen_Preview() {
 
     val sampleUiState = NoticeListUiState.NoticeAvailableOnSuccess(
         categories = category,
-        notices = notices
+        notices = notices,
+        isLoading = category.associateWith { true }
     )
 
     KNUTICETheme {
