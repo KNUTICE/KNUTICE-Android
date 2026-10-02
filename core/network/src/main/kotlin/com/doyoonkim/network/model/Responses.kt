@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import com.doyoonkim.network.model.dto.CarrelRoomStatusDTO
 import com.doyoonkim.network.model.dto.NoticeSummaryDTO
 import com.doyoonkim.network.model.dto.TipDTO
+import com.doyoonkim.network.model.dto.TopicSubscriptionStatus
 import com.doyoonkim.network.model.dto.TopicSubscriptionStatusDTO
 import com.google.gson.annotations.SerializedName
 import model.dto.NoticeDTO
@@ -79,4 +80,16 @@ data class TipResult(
 data class ReadingRoomStatusResult(
     @SerializedName("metaData") var result: Metadata? = Metadata(),
     @SerializedName("data") var body: ArrayList<CarrelRoomStatusDTO>? = null
+)
+
+@Keep
+data class TopicSubscriptionStatusResponse(
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: TopicSubscriptionStatus? = null
+)
+
+@Keep
+data class TopicSubscriptionUpdateResponse(
+    @SerializedName("metaData") var result: Metadata? = Metadata(),
+    @SerializedName("data") var body: Boolean? = null
 )
