@@ -24,6 +24,13 @@ configure<LibraryExtension> {
     buildFeatures {
         buildConfig = true
     }
+
+    testOptions {
+        unitTests {
+            // let unmocked Android-owned classes return default value.
+            isReturnDefaultValues = true
+        }
+    }
 }
 
 dependencies {

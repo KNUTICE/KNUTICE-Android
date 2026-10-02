@@ -30,3 +30,8 @@ data class TopicUpdateRequest(
     val topic: String,
     val enabled: Boolean
 )
+
+data class TopicSubscriptionUpdateRequest(
+    val topicId: Int,
+    val enabled: Boolean
+)
