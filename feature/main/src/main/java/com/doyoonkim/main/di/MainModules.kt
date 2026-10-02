@@ -7,6 +7,7 @@ import com.doyoonkim.main.viewmodel.CustomerServiceViewModel
 import com.doyoonkim.main.viewmodel.HomeViewModel
 import com.doyoonkim.main.viewmodel.NoticeByMajorViewModel
 import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
+import com.doyoonkim.main.viewmodel.NoticeListViewModel
 import com.doyoonkim.main.viewmodel.NoticeSearchViewModel
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.main.viewmodel.NotificationPreferencesViewModel
@@ -31,6 +32,14 @@ abstract class NoticeByMajorSceneModule {
     @IntoMap
     @ViewModelKey(NoticeByMajorViewModel::class)
     abstract fun bindViewModel(viewModel: NoticeByMajorViewModel): ViewModel
+}
+
+@Module
+abstract class NoticeListScreenModule {
+    @Binds
+    @IntoMap
+    @ViewModelKey(NoticeListViewModel::class)
+    abstract fun bindViewModel(viewModel: NoticeListViewModel): ViewModel
 }
 
 @Module
