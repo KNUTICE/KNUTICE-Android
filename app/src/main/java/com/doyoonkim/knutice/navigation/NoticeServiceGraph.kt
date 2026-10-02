@@ -16,14 +16,14 @@ import com.doyoonkim.common.navigation.BookmarkInfo
 import com.doyoonkim.common.navigation.NavRoutes
 import com.doyoonkim.common.navigation.NoticeDetail
 import com.doyoonkim.knutice.di.components.AppComponent
-import com.doyoonkim.knutice.di.components.DaggerNoticeByMajorSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNoticeDetailSceneComponent
 import com.doyoonkim.knutice.di.components.DaggerNoticeInCategorySceneComponent
-import com.doyoonkim.main.notice.NoticeByMajorScreen
+import com.doyoonkim.knutice.di.components.DaggerNoticeListSceneComponent
 import com.doyoonkim.main.notice.NoticeDetailScreen
+import com.doyoonkim.main.notice.NoticeListScreenItem
 import com.doyoonkim.main.notice.NoticesInCategoryScreen
-import com.doyoonkim.main.viewmodel.NoticeByMajorViewModel
 import com.doyoonkim.main.viewmodel.NoticeDetailViewModel
+import com.doyoonkim.main.viewmodel.NoticeListViewModel
 import com.doyoonkim.main.viewmodel.NoticesInCategoryViewModel
 import com.doyoonkim.model.NoticeCategory
 
@@ -35,21 +35,34 @@ fun NavGraphBuilder.noticeServiceGraph(
     onPopBottomNavHistory: () -> Unit = { }
 ) {
     composable(
-        route = NavRoutes.MajorNotices.route
+        route = NavRoutes.NoticeListDashboard.route
     ) {
         val sceneComponent = remember(appComponent) {
-            DaggerNoticeByMajorSceneComponent.factory().create(
-                systemServices = appComponent,
+            DaggerNoticeListSceneComponent.factory().create(
+                systemService = appComponent,
                 networkProvider = appComponent,
                 localPreferenceProvider = appComponent
             )
         }
 
-        NoticeByMajorScreen(
+        // Get Category value from NavArgument
+        val selectedCategory = it.arguments?.getString(
+            NavRoutes.NoticeList.SELECTED_CATEGORY
+        ) ?: NoticeCategory.GENERAL_NEWS.name
+
+        val target = try {
+            NoticeCategory.valueOf(selectedCategory)
+        } catch (e: Exception) {
+            NoticeCategory.GENERAL_NEWS
+        }
+
+        NoticeListScreenItem(
             modifier = Modifier,
-            viewModel = viewModel<NoticeByMajorViewModel>(factory = sceneComponent.getViewModelFactory()),
-            onGoBackRequested = { onPopBottomNavHistory() },
-            onSettingRequested = { navController.navigate(NavRoutes.Settings.route) },
+            viewModel = viewModel<NoticeListViewModel>(factory = sceneComponent.getViewModelFactory()),
+            initialCategory = target.name,
+            onNewSubscriptionRequested = { },
+            onSettingsRequested = { navController.navigate(NavRoutes.Settings.route) },
+            onBackButtonPressed = { onPopBottomNavHistory() },
             onNoticeDetailRequested = { id, url -> onNoticeDetailRequested(NoticeDetail(id, url)) }
         )
     }

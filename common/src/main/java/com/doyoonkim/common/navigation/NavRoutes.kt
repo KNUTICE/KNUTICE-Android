@@ -4,7 +4,6 @@ sealed class NavRoutes(val route: String) {
 
     data object Home : NavRoutes(Destination.HOME.name)
     data object Bookmark : NavRoutes(Destination.BOOKMARKS.name)
-    data object MajorNotices : NavRoutes(Destination.MAJOR_NOTICES.name)
 
     data object Settings : NavRoutes(Destination.SETTINGS.name)
     data object NotificationPreferences : NavRoutes(Destination.NOTIFICATION.name)
@@ -22,6 +21,12 @@ sealed class NavRoutes(val route: String) {
 
         fun createRoute(category: String) = "notices_list/$category"
     }
+
+    // TODO: Dest with Different category treated as different destination. --> Should be considered as same destination.
+    data object NoticeListDashboard : NavRoutes("notices_dashboard/{category}") {
+        const val SELECTED_CATEGORY = "category"
+        fun createRoute(category: String) = "notices_dashboard/$category"
+    }
 }
 
 enum class Destination {
@@ -36,7 +41,5 @@ enum class Destination {
     CS,
     SEARCH,
     NOTIFICATION,
-    BOOKMARKS,
-    MAJOR_NOTICES,
-    NOTICES_LIST
+    BOOKMARKS
 }
