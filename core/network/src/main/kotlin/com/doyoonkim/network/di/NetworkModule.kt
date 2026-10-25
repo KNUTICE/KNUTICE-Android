@@ -1,6 +1,7 @@
 package com.doyoonkim.network.di
 
 import com.doyoonkim.network.BuildConfig
+import com.doyoonkim.network.retrofit.KnuticeNoticeService
 import com.doyoonkim.network.retrofit.KnuticeService
 import com.doyoonkim.network.retrofit.KnuticeTopicService
 import dagger.Module
@@ -47,5 +48,11 @@ object NetworkModule {
     @Singleton
     fun providesKnuticeTopicService(): KnuticeTopicService {
         return retrofit.create(KnuticeTopicService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providesKnuticeNoticeService(): KnuticeNoticeService {
+        return retrofit.create(KnuticeNoticeService::class.java)
     }
 }
