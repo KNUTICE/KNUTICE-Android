@@ -18,7 +18,8 @@ data class NoticeDTO(
     @SerializedName("isContentSummary") var isSummaryAvailable: Boolean? = null,
     @SerializedName("registrationDate") var registeredAt: String? = null,
     @SerializedName("topic") var topic: String? = null,
-    @SerializedName("isAttachment") var hasAttachment: Boolean? = null
+    @SerializedName("isAttachment") var hasAttachment: Boolean? = null,
+    @SerializedName("topicId") var topicId: Int? = null
 ) {
     fun toVO() =
         NoticeVO(

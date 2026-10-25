@@ -19,7 +19,9 @@ import com.doyoonkim.domain.interfaces.abtest.FirebaseRemoteConfigRepository
 import com.doyoonkim.model.di.ApplicationContext
 import com.doyoonkim.model.di.DefaultDispatcher
 import com.doyoonkim.model.di.IoDispatcher
+import com.doyoonkim.network.retrofit.KnuticeNoticeService
 import com.doyoonkim.network.retrofit.KnuticeService
+import com.doyoonkim.network.retrofit.KnuticeTopicService
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 
@@ -53,6 +55,10 @@ interface SystemServices {
 
 interface NetworkProvider {
     fun knuticeService(): KnuticeService
+
+    fun knuticeTopicService(): KnuticeTopicService
+
+    fun knuticeNoticeService(): KnuticeNoticeService
 }
 
 interface LocalStorageProvider {
