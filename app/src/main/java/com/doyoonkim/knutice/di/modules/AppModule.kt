@@ -6,12 +6,16 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
 import androidx.datastore.preferences.SharedPreferencesMigration
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.work.WorkManager
+import com.doyoonkim.data.repository.local.preferences.MajorSubscriptionPreferenceSerializer
 import com.doyoonkim.model.di.ApplicationContext
+import com.doyoonkim.model.preferencemodel.SubscribedMajors
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -65,4 +69,23 @@ object AppModule {
                 context.preferencesDataStoreFile(name = "user_preferences")
             }
         )
+
+    // DataStore (JSON Type Value)
+    @Provides
+    @Singleton
+    fun provideSubscribedMajorPreferenceDataStore(
+        @ApplicationContext context: Context,
+        serializer: MajorSubscriptionPreferenceSerializer
+    ): DataStore<SubscribedMajors> =
+        DataStoreFactory.create(
+            serializer = serializer,
+            produceFile = {
+                context.dataStoreFile(fileName = "major_preference.json")
+            }
+        )
+
+    // Custom JSON Serializer
+    @Provides
+    @Singleton
+    fun provideMajorSubscriptionSerializer() = MajorSubscriptionPreferenceSerializer()
 }

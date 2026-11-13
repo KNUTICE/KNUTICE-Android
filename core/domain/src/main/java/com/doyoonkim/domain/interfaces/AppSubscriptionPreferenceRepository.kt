@@ -1,5 +1,7 @@
 package com.doyoonkim.domain.interfaces
 
+import com.doyoonkim.model.preferencemodel.Major
+import com.doyoonkim.model.preferencemodel.SubscribedMajors
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -22,4 +24,16 @@ interface AppSubscriptionPreferenceRepository {
     suspend fun removeUnsubscribedTarget(completed: Set<String>)
 
     suspend fun updateUnsubscribeTarget(target: String)
+}
+
+interface MajorSubscriptionPreferenceRepository {
+    fun getSubscribedMajors(): Flow<SubscribedMajors>
+
+    suspend fun addPendingSubscribeTarget(target: Major)
+
+    suspend fun removePendingSubscribeTarget(completed: Set<Major>)
+
+    suspend fun addPendingUnsubscribeTarget(target: Major)
+
+    suspend fun removePendingUnsubscribeTarget(completed: Set<Major>)
 }
