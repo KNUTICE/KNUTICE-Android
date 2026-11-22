@@ -1,4 +1,4 @@
-package com.doyoonkim.data.repository.local
+package com.doyoonkim.data.repository.local.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -6,13 +6,17 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.core.stringSetPreferencesKey
 import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
+import com.doyoonkim.domain.interfaces.MajorSubscriptionPreferenceRepository
+import com.doyoonkim.model.preferencemodel.Major
+import com.doyoonkim.model.preferencemodel.SubscribedMajors
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
-    private val preferenceDataStore: DataStore<Preferences>
-) : AppSubscriptionPreferenceRepository {
+    private val preferenceDataStore: DataStore<Preferences>,
+    private val majorSubscriptionPreferenceStore: DataStore<SubscribedMajors>
+) : AppSubscriptionPreferenceRepository, MajorSubscriptionPreferenceRepository {
 
     companion object {
         private const val TAG = "AppSubscriptionPreferenceRepositoryImpl"
@@ -23,17 +27,20 @@ class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
 
         // DataStore Preferences Key
         private val MAJORS_SUBSCRIBED = stringSetPreferencesKey("MAJORS_SUBSCRIBED")
-        private val MAJORS_SUBSCRIPTION_PENDING = stringSetPreferencesKey("MAJORS_SUBSCRIPTION_PENDING")
-        private val MAJORS_TO_BE_UNSUBSCRIBED = stringSetPreferencesKey("MAJORS_UNSUBSCRIPTION_PENDING")
+        private val MAJORS_SUBSCRIPTION_PENDING =
+            stringSetPreferencesKey("MAJORS_SUBSCRIPTION_PENDING")
+        private val MAJORS_TO_BE_UNSUBSCRIBED =
+            stringSetPreferencesKey("MAJORS_UNSUBSCRIPTION_PENDING")
     }
 
     /**
      * Major Subscription Status
+     * LEGACY MAJOR MANAGEMENT. (TARGETED TO BE DEPRECATED)
      */
     override fun getSubscribedMajor(): Flow<Set<String>> =
         preferenceDataStore.data.map { preference ->
             preference[MAJORS_SUBSCRIBED]
-                // Check if pre-existing subscription value in SharedPreference, apply it to updated subscription value.
+            // Check if pre-existing subscription value in SharedPreference, apply it to updated subscription value.
                 ?: preference[stringPreferencesKey(SUBSCRIBED_MAJOR)]?.let { setOf(it) }
                 ?: emptySet()
         }
@@ -97,5 +104,24 @@ class AppSubscriptionPreferenceRepositoryImpl @Inject constructor(
 
             preferences[MAJORS_TO_BE_UNSUBSCRIBED] = updatedTargets
         }
+    }
+
+    /* Refactored Major Subscription Management */
+    override fun getSubscribedMajors(): Flow<SubscribedMajors> = majorSubscriptionPreferenceStore.data
+
+    override suspend fun addPendingSubscribeTarget(target: Major) {
+        addPendingTarget(target.id.toString())
+    }
+
+    override suspend fun removePendingSubscribeTarget(completed: Set<Major>) {
+        removePendingTarget(completed.map { it.id.toString() }.toSet())
+    }
+
+    override suspend fun addPendingUnsubscribeTarget(target: Major) {
+        updateUnsubscribeTarget(target.id.toString())
+    }
+
+    override suspend fun removePendingUnsubscribeTarget(completed: Set<Major>) {
+        removeUnsubscribedTarget(completed.map { it.id.toString() }.toSet())
     }
 }

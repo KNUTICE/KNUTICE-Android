@@ -28,4 +28,9 @@ dependencies {
 
     // PreferenceDataStore
     implementation(libs.androidx.datastore.preferences)
+    // DataStore
+    implementation(libs.androidx.datastore)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.kotlinx.coroutines.test)
 }

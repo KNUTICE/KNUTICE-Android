@@ -2,11 +2,11 @@ package com.doyoonkim.data.di
 
 import android.content.Context
 import com.doyoonkim.data.repository.local.AppDatabasePreferenceRepositoryImpl
-import com.doyoonkim.data.repository.local.AppSubscriptionPreferenceRepositoryImpl
 import com.doyoonkim.data.repository.local.AppTokenPreferenceRepositoryImpl
 import com.doyoonkim.data.repository.local.AppWidgetPreferenceRepositoryImpl
 import com.doyoonkim.data.repository.local.LocalRepositoryImpl
 import com.doyoonkim.data.repository.local.LocalWidgetCacheRepositoryImpl
+import com.doyoonkim.data.repository.local.preferences.AppSubscriptionPreferenceRepositoryImpl
 import com.doyoonkim.data.room.LocalDatabase
 import com.doyoonkim.domain.interfaces.AppDatabasePreferenceRepository
 import com.doyoonkim.domain.interfaces.AppSubscriptionPreferenceRepository
